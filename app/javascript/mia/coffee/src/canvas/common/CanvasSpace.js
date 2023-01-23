@@ -16,7 +16,7 @@ import Chassis from '../../canvas/irv/view/Chassis';
 import Machine from '../../canvas/irv/view/Machine';
 import PowerStrip from '../../canvas/irv/view/PowerStrip';
 import ViewModel from '../../canvas/irv/ViewModel';
-// import 'irv/Profiler'
+import Profiler from 'Profiler'
 
 class CanvasSpace {
   static initClass() {

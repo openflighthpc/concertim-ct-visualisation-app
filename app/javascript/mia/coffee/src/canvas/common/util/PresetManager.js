@@ -10,7 +10,7 @@
 
 import Util from './Util';
 import Events from './Events';
-// import Profiler from '../../../irv/Profiler';
+import Profiler from 'Profiler';
 
 class PresetManager {
   static initClass() {

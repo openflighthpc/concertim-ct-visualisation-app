@@ -8,7 +8,7 @@
  */
 
 import Util from './util/Util';
-// import 'irv/Profiler'
+import Profiler from 'Profiler';
 
 // takes the various JSON structures, reformats if necessary and populates the view model
 class CanvasParser {

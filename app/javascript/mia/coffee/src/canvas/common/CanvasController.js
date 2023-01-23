@@ -14,7 +14,7 @@ import Util from './util/Util';
 
 import Configurator from '../../canvas/irv/util/Configurator';
 import AssetManager from '../../canvas/irv/util/AssetManager';
-import Profiler from '../../../../javascript/irv/NullProfiler';
+import Profiler from 'Profiler';
 
 class CanvasController {
   static initClass() {
@@ -48,14 +48,12 @@ class CanvasController {
     document._P         = Profiler;
     document._U         = Util;
     this.initialised        = false;
-    // require.ready(this.getConfig);
-    document.addEventListener("DOMContentLoaded", this.getConfig);
     this.rackParent      = $(this.options.parent_div_id);
   }
 
   // loads configuration file during start up
   getConfig() {
-    $('dialogue').innerHTML = 'Loading config';
+    document.getElementById('dialogue').innerHTML = 'Loading config';
     return new Request.JSON({url: this.config_file + '?' + (new Date()).getTime(), onSuccess: this.configReceived, onFail: this.loadFail, onError: this.loadError}).get();
   }
 

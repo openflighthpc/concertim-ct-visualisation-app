@@ -13,7 +13,6 @@ import RackSpaceObject from '../../../canvas/irv/view/RackSpaceObject';
 import Util from '../../../canvas/common/util/Util';
 import Highlight from '../../../canvas/irv/view/Highlight';
 import Events from '../../../canvas/common/util/Events';
-// import Profiler from '../../../irv/Profiler';
 import RackObject from '../../../canvas/irv/view/RackObject';
 import Rack from '../../../canvas/irv/view/Rack';
 import Socket from '../../../canvas/irv/view/Socket';

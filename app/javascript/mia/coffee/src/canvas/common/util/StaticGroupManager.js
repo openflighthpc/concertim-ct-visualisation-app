@@ -10,7 +10,6 @@
 
 import Util from './Util';
 import Events from './Events';
-// import 'irv/Profiler'
 
 class StaticGroupManager {
   static initClass() {

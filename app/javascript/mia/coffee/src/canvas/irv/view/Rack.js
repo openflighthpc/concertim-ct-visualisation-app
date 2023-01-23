@@ -18,7 +18,7 @@ import RackObject from './RackObject';
 import Chassis from './Chassis';
 import Breacher from './Breacher';
 import ImageLink from './ImageLink';
-// import 'irv/Profiler'
+import Profiler from 'Profiler'
 
 class Rack extends RackObject {
   static initClass() {

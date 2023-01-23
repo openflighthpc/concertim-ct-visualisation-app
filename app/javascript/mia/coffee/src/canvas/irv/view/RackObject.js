@@ -19,7 +19,7 @@ import RackSpaceObject from './RackSpaceObject';
 import PowerSupply from './PowerSupply';
 import MessageHint from './MessageHint';
 import ViewModel from '../ViewModel';
-// import 'irv/Profiler'
+import Profiler from 'Profiler'
 
 class RackObject extends RackSpaceObject {
   static initClass() {

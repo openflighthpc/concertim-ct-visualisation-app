@@ -18,7 +18,7 @@ import RackObject from './RackObject';
 import Machine from './Machine';
 import Breacher from './Breacher';
 import Highlight from './Highlight';
-// import 'irv/Profiler'
+import Profiler from 'Profiler';
 
 
 class Chassis extends RackObject {

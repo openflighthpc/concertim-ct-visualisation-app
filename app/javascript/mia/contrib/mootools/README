@@ -1,0 +1,48 @@
+= base =
+explicit: Event, Class.Extras
+implicit: Core, Array, String, Number, Function, Object, Browser, Class
+version: 1.3
+
+= element =
+explicit: Element
+implicit: Slick.Finder, Slick.Parser
+requires: base (Core, Array, String, Number, Function, Browser)
+version: 1.3
+
+= elementext =
+explicit: Element.Dimensions, Element.Event
+implicit: Element.Style
+requires: element, base (Object, Event)
+version: 1.3
+
+= fx =
+explicit: Fx
+requires: base (Core, Array, String, Number, Function, Class, Class.Extras)
+version: 1.3
+
+= request =
+explicit: Request
+requires: element, base (Object, Class, Class.Extras)
+version: 1.3
+
+= request.json =
+explicit: Request.JSON
+requires: request
+version: 1.3.2
+
+= morestring = 
+explicit: String.Extras, String.QueryString
+requires: base (Core, Array, String)
+version: 1.3.1.1
+
+= moresortables =
+explicit: Sortables
+implicit: Drag, Drag.Move
+requires: base (Events, Options), elementext (Event, Style, Dimensions)
+version: 1.3.2.1
+
+= elementdelegation =
+explicit: Element.Delegation
+implicit: Element.Event.Psuedos, Events.Pseudos
+requires: base (Class.Extras, ), element (Slick.Parser), elementext (Element.Event)
+

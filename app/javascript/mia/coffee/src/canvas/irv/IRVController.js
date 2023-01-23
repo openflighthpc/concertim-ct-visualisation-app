@@ -31,16 +31,13 @@ import ViewModel from '../../canvas/irv/ViewModel';
 import Parser from '../../canvas/irv/util/Parser';
 import PresetManager from '../../canvas/common/util/PresetManager';
 import StaticGroupManager from '../../canvas/common/util/StaticGroupManager'
-// import 'irv/Profiler'
+import Profiler from 'Profiler';
 // import  'util/ComboBox'
 import Tooltip from '../../canvas/irv/view/Tooltip';
 import PieCountdown from '../../canvas/common/widgets/PieCountdown';
 import RBAC from '../../canvas/common/util/RBAC';
-// import '../../lib/mootools/element'
-// import '../../lib/mootools/request.json'
 
 // These are all expected to provide global objects.
-// import 'knockout'; //inc
 // import 'AjaxPopup'; //legacy
 // import 'MessageSlider'; //legacy
 // import 'canvg'; //inc
@@ -206,6 +203,7 @@ class IRVController extends CanvasController {
     this.options = options;
     this.config_file = '/-/irv/configuration';
     console.log("Constructing IRV :::: with the options :::: ",this.options);
+    $(document).ready(this.getConfig);
 
     // Store global reference to controller
     document.IRV = this;

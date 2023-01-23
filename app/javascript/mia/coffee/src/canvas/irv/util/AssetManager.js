@@ -7,7 +7,7 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-// import Profiler from '../Profiler';
+import Profiler from 'Profiler';
 
 // static asset loader utility, grabs images and triggers a callback
 class AssetManager {

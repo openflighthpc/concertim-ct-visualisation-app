@@ -3,6 +3,8 @@
 const Profiler = {
     makeCompatible: function() {},
     trace: function() {},
+    begin: function() {},
+    end: function() {},
 };
 
 export default Profiler;

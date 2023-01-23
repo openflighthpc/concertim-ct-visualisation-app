@@ -9,7 +9,6 @@
 import Util from '../../../canvas/common/util/Util';
 import Highlight from '../../../canvas/irv/view/Highlight';
 import Events from '../../../canvas/common/util/Events';
-// import Profiler from '../../../irv/Profiler';
 import Rack from '../../../canvas/irv/view/Rack';
 import RackObject from '../../../canvas/irv/view/RackObject';
 import AssetManager from '../../../canvas/irv/util/AssetManager';

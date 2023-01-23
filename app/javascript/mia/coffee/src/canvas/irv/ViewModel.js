@@ -12,7 +12,6 @@
 
 import CanvasViewModel from '../../canvas/common/CanvasViewModel'
 import Util from '../../canvas/common/util/Util'
-// import 'irv/Profiler'
 
 class ViewModel extends CanvasViewModel {
   static initClass() {
