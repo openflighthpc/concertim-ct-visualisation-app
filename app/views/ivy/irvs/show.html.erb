@@ -1,0 +1,9 @@
+<% content_for(:head) do %>
+<% end %>
+
+<div id="interactive_canvas_view">
+  <div id="loader">
+    <div>Initialising</div>
+  </div>
+  <%= tag('div', id: "rack_view", data: {preset: 0, focus: "", filter: "", show: "full_irv", applyfilter: ""}) %>
+</div>
