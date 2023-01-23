@@ -1,0 +1,333 @@
+<h4 id="rack_actions">Rack actions</h4>
+<div id="side_bar" class="main_pane">
+  <div id="thumb_nav" class="thumb_nav"></div>
+  <div id="zoom_container" class="div_table" >
+    <div class="div_row div_row_header">
+        Zoom
+    </div>
+    <div class="div_row">
+      <div class="div_cell_three_col">
+        <div class="fieldinput toolTip zoom_in" title="Zoom in">
+          <span class="icon-zoom-in" id="zoom_in_btn"></span>
+        </div>
+      </div>
+      <div class="div_cell_three_col">
+    		<div class="fieldinput toolTip zoom_out" title="Zoom out">
+          <span class="icon-zoom-out" id="zoom_out_btn"></span>
+        </div>
+      </div>
+      <div class="div_cell_three_col">
+    		<div class="fieldinput toolTip zoom_reset" title="Zoom reset">
+          <span class="icon-zoom-reset" id="reset_zoom_btn"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="preset_container" class="div_table">
+    <div class="div_row div_row_header">
+      &nbsp;Presets
+    </div>
+    <div class="div_row">
+      <div class="div_cell">
+        <select id="presets" data-bind="options: presetNames, optionsCaption: 'Select a preset', value: selectedPreset, enable: enableMetricSelection"></select>
+      </div>
+    </div>
+    <div class="div_row">
+      <div class="div_cell">
+        <div id="save_dialogue">
+          <label>
+            Enter preset name <input type="text" id="save_input"/>
+          </label>
+          <br>
+          <a id="confirm_preset_save" href="#" >Save</a>
+          <a id="cancel_preset_save" href"#">Cancel</a>
+        </div>
+      </div>
+    </div>
+    <div class="div_row">
+      <div class="div_cell right_col">
+        <a href="#" id="reload_preset" data-bind="click: document.IRV.switchPreset">Reload preset</a>
+      </div>
+    </div>
+    <div class="div_row">
+      <div class="div_cell right_col">
+        <a href="#" id="update_preset">Update preset</a>
+      </div>
+    </div>
+    <div class="div_row">
+      <div class="div_cell right_col">
+	    	<a href="#" id="create_preset">Create preset</a>
+      </div>
+    </div>
+  </div>
+
+  <div id="metric_container" class="div_table">
+    <div class="div_row div_row_header">
+      Metrics
+    </div>
+    <div class="div_row">
+      <div class="div_cell">
+        <label>
+          Select metric
+        </label>
+      </div>
+    </div>
+    <div class="div_row">
+      <div class="div_cell">
+        <%# render_autocomplete_field( "metrics", {:name=>'associated_metric', :no_field_id_prepend=>true, :is_remote_url => false, :url => "document.IRV.model.metricIds", :onfocus => "document.IRV.evFocusMetricSelect(event)", :onmouseup => "document.IRV.evMouseUpMetricSelect(event)", :databind => "value: selectedMetric"}) %>
+      </div>
+    </div>
+    <div class="div_row">
+      <div class="div_cell">
+        <label class="toolTip" title="Minimum value: 60, set to 0 to switch off metric polling">
+          Metric refresh rate (s)
+        </label>
+      </div>
+    </div>
+    <div class="div_row toolTip" title="Minimum value: 60, set to 0 to switch off metric polling">
+      <div class="div_cell">
+        <input type="text" name="metric_poll_rate" id="metric_poll_input" />
+      </div>
+    </div>
+    <div class="div_row">
+      <div class="div_cell">
+        <label>
+          Show settings
+        </label>
+      </div>
+    </div>
+    <div class="div_row">
+      <div class="div_cell">
+        <select id="view_mode" data-bind="options: viewModes, value: viewMode"></select>
+      </div>
+    </div>
+  </div>
+
+  <div id="extra_options" class="div_table">
+    <div class="div_row div_row_header">
+      &nbsp;Options
+    </div>
+    <div class="div_row">
+      <div class="div_cell_label">
+        <label>
+          Scale metric bars
+        </label>
+      </div>
+      <div class="div_cell_check_radio right_col">
+        <input type="checkbox" id="scale_metrics" name="scale_metrics" value="scale_metrics" data-bind="checked: scaleMetrics"/>
+      </div>
+    </div>
+    <div class="div_row">
+      <div class="div_cell_label">
+        <label>
+          Show chart
+        </label>
+      </div>
+      <div class="div_cell_check_radio right_col">
+        <input type="checkbox" id="show_chart" name="show_chart" value="show_chart" data-bind="checked: showChart"/>
+      </div>
+    </div>
+    <div class="div_row">
+      <div class="div_cell_label">
+        <label>
+          Show filter bar
+        </label>
+      </div>
+      <div class="div_cell_check_radio right_col">
+        <input type="checkbox" id="show_filter_bar" name="show_filter_bar" value="show_filter_bar" data-bind="checked: showFilterBar"/>
+      </div>
+    </div>
+    <div class="div_row">
+      <div class="div_cell_label">
+        <label title = "Can only be enabled when there are <=5 racks." class="inline_tooltip nowrap">
+          Show holding area
+        </label>
+      </div>
+      <div class="div_cell_check_radio right_col">
+        <input disabled="true" type="checkbox" id="show_holding_area" name="show_holding_area" value="show_holding_area" data-bind="checked: showHoldingArea"/>
+      </div>
+    </div>
+    <div class="div_row">
+      <div class="div_cell_label">
+        <label title = "Can only be enabled when there are <=5 racks." class="inline_tooltip nowrap">
+          Gradient LBC metric
+        </label>
+      </div>
+      <div class="div_cell_check_radio right_col">
+        <input type="checkbox" id="gradient_lbc_metric" name="gradient_lbc_metric" value="gradient_lbc_metric" data-bind="checked: gradientLBCMetric"/>
+      </div>
+    </div>
+    <div class="div_row">
+      <div class="div_cell_label">
+        <label title = "Invert the colours of the Filter Bar and the Graph." class="inline_tooltip nowrap">
+          Inverted colours
+        </label>
+      </div>
+      <div class="div_cell_check_radio right_col">
+        <input type="checkbox" id="inverted_colours" name="inverted_colours" value="inverted_colours" data-bind="checked: invertedColours"/>
+      </div>
+    </div>
+  </div>
+
+  <div id="toggle_rack_view" class="div_table">
+    <div class="div_row div_row_header">
+      &nbsp;Toggle rack view
+    </div>
+    <div class="div_row">
+      <div class="div_cell">
+        <label>
+          Front
+        </label>
+      </div>
+      <div class="div_cell right_col">
+        <input type="radio" id="face_front" name="face" value="front" data-bind="checked: face" />
+      </div>
+    </div>
+    <div class="div_row">
+      <div class="div_cell">
+        <label>
+          Rear
+        </label>
+      </div>
+      <div class="div_cell right_col">
+        <input type="radio" id="face_rear" name="face" value="rear" data-bind="checked: face" />
+      </div>
+    </div>
+    <div class="div_row">
+      <div class="div_cell">
+        <label>
+          Both
+        </label>
+      </div>
+      <div class="div_cell right_col">
+        <input type="radio" id="face_both" name="face" value="both" data-bind="checked: face" />
+      </div>
+    </div>
+  </div>
+
+  <div id="toggle_device_view" class="div_table">
+    <div class="div_row div_row_header">
+      &nbsp;Toggle device view
+    </div>
+    <div class="div_row">
+      <div class="div_cell_label">
+        <label>
+          All
+        </label>
+      </div>
+      <div class="div_cell_check_radio right_col">
+        <input type="radio" id="all_level" name="metric_level" value="all"  data-bind="checked: metricLevel" />
+      </div>
+    </div>
+    <div class="div_row">
+      <div class="div_cell">
+        <label>
+          Chassis
+        </label>
+      </div>
+      <div class="div_cell right_col">
+        <input type="radio" id="chassis_level" name="metric_level" value="chassis"  data-bind="checked: metricLevel" />
+      </div>
+    </div>
+    <div class="div_row">
+      <div class="div_cell">
+        <label>
+          Devices
+        </label>
+      </div>
+      <div class="div_cell right_col">
+        <input type="radio" id="machine_level" name="metric_level" value="devices"  data-bind="checked: metricLevel"/>
+      </div>
+    </div>
+    <div class="div_row">
+      <div class="div_cell_label">
+        <label title = "This option shows virtual machine hosts and their virtual machines' aggregated metrics, not the metrics from the virtual machine hosts themselves." class = "inline_tooltip">
+          VM hosts (aggregated)
+        </label>
+      </div>
+      <div class="div_cell_check_radio right_col">
+        <input type="radio" id="vm_level" name="metric_level" value="vhosts"  data-bind="checked: metricLevel"/>
+      </div>
+    </div>
+  </div>
+
+  <div id="metric_filter_container" class="div_table div_last_table">
+    <div class="div_row div_row_header">
+      Metric filters
+    </div>
+
+
+    <div class="icon-reset" id="reset_filters" title="Reset"></div>
+    <% if current_user.can? :read, Meca::MecaThreshold %>
+      <div class="div_row">
+        <div class="div_cell">
+          <div class="fieldInput toolTip" title="Reset filters">
+            <label>
+              Threshold 
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="div_row">
+        <div class="div_cell">
+          <select id="threshold_select" data-bind="options: availableThresholds, optionsCaption: thresholdSelectCaption(), value: selectedThresholdName, enable: enableThresholdSelection"></select>
+        </div>
+      </div>
+    <% end %>
+
+
+    <div class="div_row">
+      <div class="div_cell">
+        <label>
+          Groups
+        </label>
+      </div>
+    </div>
+    <div class="div_row">
+      <div class="div_cell">
+        <%# render_autocomplete_field("groups", {:name=>'associated_group', :no_field_id_prepend=>true, :is_remote_url => false, :url => "document.IRV.model.groupNames", :databind => "value: selectedGroup"}) %>
+      </div>
+    </div>
+    <div class="div_row">
+      <div class="div_cell">
+        <label>
+          Graph Order
+        </label>
+      </div>
+    </div>
+    <div class="div_row">
+      <div class="div_cell">
+        <select id="sort" data-bind="options: graphOrders, value: graphOrder"></select>
+      </div>
+    </div>
+    <div class="div_row">
+      <div class="div_cell">
+        <div id="group_save_dialogue">
+          <label>
+            Enter static group name <input type="text" id="group_save_input"/>
+          </label>
+          <br>
+          <a id="confirm_group_save" href="#" class="button primary">Save</a>
+          <a id="cancel_group_save" href"#" class="button primary">Cancel</a>
+        </div>
+      </div>
+    </div>
+
+    <% if current_user.can? :update, Ivy::Group %>
+      <div class="div_row">
+        <div class="div_cell right_col">
+          <a href="#" id="update_group">Update group</a>
+        </div>
+      </div>
+    <% end %>
+
+    <% if current_user.can? :create, Ivy::Group %>
+      <div class="div_row">
+        <div class="div_cell right_col">
+          <a href="#" id="create_group">Create group</a>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

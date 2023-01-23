@@ -45,15 +45,9 @@ const Util = {
 
   // set a css property
   setStyle(element, prop, value) {
-    return element.setStyle(prop, value);
+    element.style[prop] = value;
+    return element;
   },
-    //console.log "setting #{element} #{prop} #{value}"
-    //console.log element.currentStyle[prop] = value
-    //element.style[prop] = value
-    //return
-    //if element.currentStyle
-    //  return element.currentStyle[prop] = value
-    //element.style[prop] = value
 
 
   // takes two numeric colour values and blends one into the other by 'amount'

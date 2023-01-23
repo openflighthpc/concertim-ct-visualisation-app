@@ -17,6 +17,11 @@
   </head>
 
   <body>
-    <%= yield %>
+    <div id="mid">
+      <%= render :partial => 'share/sidebar' %>
+      <div id="main">
+        <%= yield %>
+      </div><!--main-->
+    </div><!--mid-->
   </body>
 </html>

@@ -3,6 +3,10 @@
   <%= javascript_import_module_tag "IRV" %>
 <% end %>
 
+<% content_for(:side_content) do %>
+  <%= render 'actions' %>
+<% end %>
+
 <div id="interactive_canvas_view">
   <div id="loader">
     <div id="dialogue">Initialising</div>

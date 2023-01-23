@@ -68,7 +68,7 @@ class StaticGroupManager {
       onError   : this.loadError
     }).get();
 
-    this.saveDialogueEl = $(StaticGroupManager.DOM_DEPENDENCIES.saveDialogue);
+    this.saveDialogueEl = document.getElementById(StaticGroupManager.DOM_DEPENDENCIES.saveDialogue);
 
     this.modelRefs.selectedGroup.subscribe(this.evSwitchGroup);
     this.changeSub = this.modelRefs.activeSelection.subscribe(this.evSelectionChange);
