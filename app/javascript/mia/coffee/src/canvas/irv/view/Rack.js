@@ -99,10 +99,10 @@ class Rack extends RackObject {
   }
 
   constructor(def) {
-    this.evSpaceHidden = this.evSpaceHidden.bind(this);
-    this.setBreaching = this.setBreaching.bind(this);
     Profiler.begin(Profiler.DEBUG);
     super(def, 'racks');
+    this.evSpaceHidden = this.evSpaceHidden.bind(this);
+    this.setBreaching = this.setBreaching.bind(this);
     if (Rack.IMAGES_BY_TEMPLATE[this.template.id] == null) { this.setImages(); }
     this.uHeight = def.uHeight;
 

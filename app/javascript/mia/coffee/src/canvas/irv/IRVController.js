@@ -203,7 +203,7 @@ class IRVController extends CanvasController {
     this.options = options;
     this.config_file = '/-/irv/configuration';
     console.log("Constructing IRV :::: with the options :::: ",this.options);
-    $(document).ready(this.getConfig);
+    jQuery(document).ready(this.getConfig);
 
     // Store global reference to controller
     document.IRV = this;

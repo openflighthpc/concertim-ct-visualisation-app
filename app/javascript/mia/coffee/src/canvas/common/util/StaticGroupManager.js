@@ -75,13 +75,13 @@ class StaticGroupManager {
 
     if (this.saveDialogueEl != null) { Util.setStyle(this.saveDialogueEl, 'display', 'none'); }
 
-    let el = $(StaticGroupManager.DOM_DEPENDENCIES.createNewBtn);
+    let el = document.getElementById(StaticGroupManager.DOM_DEPENDENCIES.createNewBtn);
     if (el != null) { Events.addEventListener(el, 'click', this.evShowGroupSaveDialogue); }
-    el = $(StaticGroupManager.DOM_DEPENDENCIES.updateBtn);
+    el = document.getElementById(StaticGroupManager.DOM_DEPENDENCIES.updateBtn);
     if (el != null) { Events.addEventListener(el, 'click', this.evUpdateGroup); }
-    el = $(StaticGroupManager.DOM_DEPENDENCIES.confirmGroupSave);
+    el = document.getElementById(StaticGroupManager.DOM_DEPENDENCIES.confirmGroupSave);
     if (el != null) { Events.addEventListener(el, 'click', this.evConfirmGroupSave); }
-    el = $(StaticGroupManager.DOM_DEPENDENCIES.cancelGroupSave);
+    el = document.getElementById(StaticGroupManager.DOM_DEPENDENCIES.cancelGroupSave);
     if (el != null) { Events.addEventListener(el, 'click', this.evCancelGroupSave); }
 
     document.GROUPS = this;
@@ -97,7 +97,7 @@ class StaticGroupManager {
   showSaveDialogue() {
     if (!this.groupsLoaded) { return; }
     Util.setStyle(this.saveDialogueEl, 'display', 'block');
-    const input       = $(StaticGroupManager.DOM_DEPENDENCIES.nameInput);
+    const input       = document.getElementById(StaticGroupManager.DOM_DEPENDENCIES.nameInput);
     input.value = '';
     return input.focus();
   }

@@ -14,13 +14,13 @@ import ViewModel from '../../../canvas/irv/ViewModel';
 
 class IRVChart extends LBC {
   constructor(...args) {
-    this.setSubscriptions = this.setSubscriptions.bind(this);
-    this.evShowHint = this.evShowHint.bind(this);
-    this.evHideHint = this.evHideHint.bind(this);
-    this.applySeriesFadeDefault = this.applySeriesFadeDefault.bind(this);
-    this.applySeriesFadeSortMin = this.applySeriesFadeSortMin.bind(this);
-    this.applySeriesFadeSortMean = this.applySeriesFadeSortMean.bind(this);
     super(...args);
+    // this.setSubscriptions = this.setSubscriptions.bind(this);
+    // this.evShowHint = this.evShowHint.bind(this);
+    // this.evHideHint = this.evHideHint.bind(this);
+    // this.applySeriesFadeDefault = this.applySeriesFadeDefault.bind(this);
+    // this.applySeriesFadeSortMin = this.applySeriesFadeSortMin.bind(this);
+    // this.applySeriesFadeSortMean = this.applySeriesFadeSortMean.bind(this);
   }
 
   static initClass() {

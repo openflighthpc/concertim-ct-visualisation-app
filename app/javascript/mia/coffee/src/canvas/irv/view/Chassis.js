@@ -34,9 +34,9 @@ class Chassis extends RackObject {
 
   constructor(def, parent) {
     let face;
+    super(def, 'chassis', parent);
     this.setMetricVisibility = this.setMetricVisibility.bind(this);
     this.setBreaching = this.setBreaching.bind(this);
-    super(def, 'chassis', parent);
     this.uHeight      = def.template.height;
     this.manufacturer = def.template.manufacturer;
     this.model        = def.template.model;

@@ -24,6 +24,7 @@ import RackObject from '../../../canvas/irv/view/RackObject';
 import Rack from '../../../canvas/irv/view/Rack';
 import Chassis from '../../../canvas/irv/view/Chassis';
 import Machine from '../../../canvas/irv/view/Machine';
+import Profiler from 'Profiler';
 
 class RackSpace extends CanvasSpace {
   static initClass() {
@@ -67,6 +68,7 @@ class RackSpace extends CanvasSpace {
 
 
   constructor(rackEl, chartEl, model, rackParent) {
+    super(...arguments);
     let left;
     this.createSocketPowerDataRequest = this.createSocketPowerDataRequest.bind(this);
     this.getPowerStripRequest = this.getPowerStripRequest.bind(this);

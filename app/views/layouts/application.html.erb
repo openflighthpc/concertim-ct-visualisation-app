@@ -6,9 +6,12 @@
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
-    <script src="assets/mia/contrib/mootools/base.js" type="text/javascript"></script>
-    <script src="assets/mia/contrib/mootools/element.js" type="text/javascript"></script>
-    <script src="assets/mia/contrib/mootools/request.js" type="text/javascript"></script>
+    <%# <script src="assets/mia/contrib/mootools/base.js" type="text/javascript"></script> %>
+    <%# <script src="assets/mia/contrib/mootools/element.js" type="text/javascript"></script> %>
+    <%# <script src="assets/mia/contrib/mootools/request.js" type="text/javascript"></script> %>
+
+    <script src="assets/mia/contrib/mootools/mootools.js" type="text/javascript"></script>
+
     <script src="assets/mia/contrib/mootools/request.json.js" type="text/javascript"></script>
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
@@ -20,7 +23,13 @@
     <div id="mid">
       <%= render :partial => 'share/sidebar' %>
       <div id="main">
-        <%= yield %>
+        <div id="pagePane">
+          <div id="pageBox">
+            <div id="pageContent">
+              <%= yield %>
+            </div><!--pageContent-->
+          </div><!--pagePane-->
+        </div><!--pageBox-->
       </div><!--main-->
     </div><!--mid-->
   </body>

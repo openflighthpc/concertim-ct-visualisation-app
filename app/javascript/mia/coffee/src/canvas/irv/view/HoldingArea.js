@@ -34,6 +34,7 @@ class HoldingArea extends RackSpaceObject {
   }
 
   constructor(conf) {
+    super(...arguments);
     this.executeMove = this.executeMove.bind(this);
     this.evZoomReady = this.evZoomReady.bind(this);
     this.evHoldingAreaZoomComplete = this.evHoldingAreaZoomComplete.bind(this);

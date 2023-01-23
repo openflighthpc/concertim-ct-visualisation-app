@@ -8,8 +8,15 @@
 <% end %>
 
 <div id="interactive_canvas_view">
+  <div id="tooltip" class="rack_view_tooltip"></div>
+
   <div id="loader">
     <div id="dialogue">Initialising</div>
   </div>
-  <%= tag('div', id: "rack_view", data: {preset: 0, focus: "", filter: "", show: "full_irv", applyfilter: ""}) %>
+  <div id="context_menu"></div>
+  <div id="rack_view" data-preset="<%=@preset%>" data-focus="<%=@data_focus%>" data-filter="<%=@data_filter%>" data-show="<%=@show%>" data-applyfilter="<%=@data_applyfilter%>">
+    <div id="rack_container" class="main_pane"></div>
+  </div>
+  <div id="colour_map"><input id="input_min" type="text" name="min" value=""><input id="input_max" type="text" name="max" value=""></div>
+  <div id="graph_container" class="main_pane"><div id="graph"></div><div id="pointer"></div></div>
 </div>

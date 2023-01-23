@@ -22,6 +22,7 @@ class Parser extends CanvasParser {
 
 
   constructor(model) {
+    super(...arguments);
     // !! dummy thresholds
     this.model = model;
     this.thresholds = {};

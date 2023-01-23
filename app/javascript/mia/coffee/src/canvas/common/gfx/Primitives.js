@@ -37,9 +37,9 @@ Primitives.Asset = class {
 Primitives.Line = class extends Primitives.Asset {
 
   constructor(def,scale,ctx) {
+    super(this.def);
     this.def = def;
     this.ctx = ctx;
-    super(this.def);
     this.width  = this.def.x2 - this.def.x;
     this.height = 1;
   }
@@ -61,9 +61,9 @@ Primitives.Line = class extends Primitives.Asset {
 Primitives.Arrow = class extends Primitives.Asset {
 
   constructor(def,scale,ctx) {
+    super(this.def);
     this.def = def;
     this.ctx = ctx;
-    super(this.def);
     this.tip_height = 10;
     this.y1_5   = def.y1_5;
     this.x2     = def.x2;
@@ -103,8 +103,8 @@ Primitives.Arrow = class extends Primitives.Asset {
 Primitives.Circle = class extends Primitives.Asset {
 
   constructor(def,scale,ctx) {
-    this.ctx = ctx;
     super(def);
+    this.ctx = ctx;
     this.width  = def.width;
     this.fill = def.fill;
     this.stroke      = def.stroke;
@@ -155,8 +155,8 @@ Primitives.Rect = class extends Primitives.Asset {
 Primitives.FilledRect = class extends Primitives.Rect {
 
   constructor(def, scale, ctx) {
-    this.ctx = ctx;
     super(def);
+    this.ctx = ctx;
     this.fill = def.fill;
   }
 
@@ -172,8 +172,8 @@ Primitives.FilledRect = class extends Primitives.Rect {
 Primitives.LineRect = class extends Primitives.Rect {
 
   constructor(def, scale, ctx) {
-    this.ctx = ctx;
     super(def);
+    this.ctx = ctx;
     this.stroke      = def.stroke;
     this.strokeWidth = def.strokeWidth;
   }
@@ -196,8 +196,8 @@ Primitives.LineRect = class extends Primitives.Rect {
 Primitives.FullRect = class extends Primitives.Rect {
 
   constructor(def, scale, ctx) {
-    this.ctx = ctx;
     super(def);
+    this.ctx = ctx;
     this.fill        = def.fill;
     this.stroke      = def.stroke;
     this.strokeWidth = def.strokeWidth;
@@ -272,8 +272,8 @@ Primitives.Poly = class extends Primitives.Asset {
 Primitives.FilledPoly = class extends Primitives.Poly {
 
   constructor(def, scale, ctx) {
-    this.ctx = ctx;
     super(def);
+    this.ctx = ctx;
     this.fill = def.fill;
   }
 
@@ -289,8 +289,8 @@ Primitives.FilledPoly = class extends Primitives.Poly {
 Primitives.LinePoly = class extends Primitives.Poly {
 
   constructor(def, scale, ctx) {
-    this.ctx = ctx;
     super(def);
+    this.ctx = ctx;
     this.stroke      = def.stroke;
     this.strokeWidth = def.strokeWidth;
   }
@@ -313,8 +313,8 @@ Primitives.LinePoly = class extends Primitives.Poly {
 Primitives.FullPoly = class extends Primitives.Poly {
 
   constructor(def, scale, ctx) {
-    this.ctx = ctx;
     super(def);
+    this.ctx = ctx;
     this.fill        = def.fill;
     this.stroke      = def.stroke;
     this.strokeWidth = def.strokeWidth;
@@ -369,8 +369,8 @@ Primitives.Ellipse = class extends Primitives.Asset {
 Primitives.FilledEllipse = class extends Primitives.Ellipse {
 
   constructor(def, scale, ctx) {
-    this.ctx = ctx;
     super(def);
+    this.ctx = ctx;
     this.fill = def.fill;
   }
 
@@ -386,8 +386,8 @@ Primitives.FilledEllipse = class extends Primitives.Ellipse {
 Primitives.LineEllipse = class extends Primitives.Ellipse {
 
   constructor(def, scale, ctx) {
+    super(def, scale, ctx);
     this.ctx = ctx;
-    super(def, scale, this.ctx);
     this.stroke      = def.stroke;
     this.strokeWidth = def.strokeWidth;
   }
@@ -410,8 +410,8 @@ Primitives.LineEllipse = class extends Primitives.Ellipse {
 Primitives.FullEllipse = class extends Primitives.Ellipse {
 
   constructor(def, scale, ctx) {
+    super(def, scale, ctx);
     this.ctx = ctx;
-    super(def, scale, this.ctx);
     this.stroke      = def.stroke;
     this.strokeWidth = def.strokeWidth;
     this.fill        = def.fill;
@@ -437,8 +437,8 @@ Primitives.FullEllipse = class extends Primitives.Ellipse {
 Primitives.Image = class extends Primitives.Asset {
 
   constructor(def, scale, ctx) {
-    this.ctx = ctx;
     super(def);
+    this.ctx = ctx;
     this.img         = def.img;
     this.width       = def.width;
     this.height      = def.height;
@@ -472,8 +472,8 @@ Primitives.Text = (function() {
 
 
     constructor(def, scale, ctx) {
-      this.ctx = ctx;
       super(def);
+      this.ctx = ctx;
       this.font     = def.font;
       this.fill     = def.fill;
       this.align    = def.align;
@@ -575,13 +575,13 @@ Primitives.Text = (function() {
 Primitives.LabelText = class extends Primitives.Text {
 
   constructor(def, scale, ctx) {
+    super(def, scale, ctx);
     this.ctx = ctx;
     this.bgFill        = def.bgFill;
     this.bgStroke      = def.bgStroke;
     this.bgStrokeWidth = def.bgStrokeWidth;
     this.bgPadding     = def.bgPadding;
     this.bgAlpha       = def.bgAlpha;
-    super(def, scale, this.ctx);
   }
 
 
@@ -638,12 +638,12 @@ Primitives.LabelText = class extends Primitives.Text {
 Primitives.ShadowText = class extends Primitives.Text {
 
   constructor(def, scale, ctx) {
+    super(def, scale, ctx);
     this.ctx = ctx;
     this.shadowColour  = def.shadowColour;
     this.shadowOffsetX = def.shadowOffsetX;
     this.shadowOffsetY = def.shadowOffsetY;
     this.shadowBlur    = def.shadowBlur;
-    super(def, scale, this.ctx);
   }
 
 
@@ -664,10 +664,10 @@ Primitives.ShadowText = class extends Primitives.Text {
 Primitives.BorderText = class extends Primitives.Text {
 
   constructor(def, scale, ctx) {
+    super(def, scale, ctx);
     this.ctx = ctx;
     this.borderColour = def.borderColour;
     this.borderWidth  = def.borderWidth;
-    super(def, scale, this.ctx);
   }
 
 

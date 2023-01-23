@@ -58,12 +58,12 @@ class RackObject extends RackSpaceObject {
   }
 
   constructor(def, group, parent1) {
+    super(...arguments);
     this.create_request = this.create_request.bind(this);
     this.sendConfirmation = this.sendConfirmation.bind(this);
     this.setLayers = this.setLayers.bind(this);
     this.group = group;
     this.parent = parent1;
-    super(...arguments);
     this.gfx           = RackObject.RACK_GFX;
     this.infoGfx       = RackObject.INFO_GFX;
     this.rackInfoGfx   = RackObject.RACK_INFO_GFX;

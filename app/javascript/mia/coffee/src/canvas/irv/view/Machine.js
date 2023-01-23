@@ -19,12 +19,12 @@ import Profiler from 'Profiler';
 
 class Machine extends RackObject {
   constructor(def, parent) {
+    super(def, 'devices', parent);
     let dim_image, natural_ratio, rotated_ratio;
     this.draw = this.draw.bind(this);
     this.setSingleMetricVisibility = this.setSingleMetricVisibility.bind(this);
     this.setVHMetricVisibility = this.setVHMetricVisibility.bind(this);
     this.setBreaching = this.setBreaching.bind(this);
-    super(def, 'devices', parent);
     
     this.images       = {};
     if (def.template.images.front != null) { this.images.front = AssetManager.CACHE[RackObject.IMAGE_PATH + def.template.images.front]; }
