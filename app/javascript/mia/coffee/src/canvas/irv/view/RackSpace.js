@@ -24,6 +24,17 @@ import RackObject from '../../../canvas/irv/view/RackObject';
 import Rack from '../../../canvas/irv/view/Rack';
 import Chassis from '../../../canvas/irv/view/Chassis';
 import Machine from '../../../canvas/irv/view/Machine';
+import Chart from '../../../canvas/irv/view/IRVChart';
+import MessageHint from '../../../canvas/irv/view/MessageHint';
+import RackHint from '../../../canvas/irv/view/RackHint';
+import ContextMenu from '../../../canvas/irv/view/ContextMenu';
+import VMDialogue from '../../../canvas/irv/view/VMDialogue';
+import ViewModel from '../../../canvas/irv/ViewModel';
+import PowerStrip from '../../../canvas/irv/view/PowerStrip';
+import Socket from '../../../canvas/irv/view/Socket';
+import Link from '../../../canvas/irv/view/Link';
+import ImageLink from '../../../canvas/irv/view/ImageLink';
+import HoldingArea from '../../../canvas/irv/view/HoldingArea';
 import Profiler from 'Profiler';
 
 class RackSpace extends CanvasSpace {

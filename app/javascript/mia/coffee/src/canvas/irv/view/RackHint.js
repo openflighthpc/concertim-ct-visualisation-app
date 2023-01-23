@@ -31,9 +31,9 @@ class RackHint extends Hint {
 
 
   constructor(container_el, model) {
+    super(container_el, model);
     this.getMore = this.getMore.bind(this);
     this.appendData = this.appendData.bind(this);
-    super(container_el, model);
   }
 
 

@@ -347,20 +347,20 @@ class IRVController extends CanvasController {
 
   // creates metric combo box select event handler
   connectMetricCombos() {
-    ComboBox.connect_all('cbox');
-    if (ComboBox.boxes.metrics != null) {
-      this.model.metricIds.subscribe(new_metric_ids => {
-        return ComboBox.boxes.metrics.updateDataIds(new_metric_ids);
-      });
-      ComboBox.boxes.metrics.add_change_callback(() => {
-        return this.model.selectedMetric(ComboBox.boxes.metrics.value);
-      });
-    }
-    if (ComboBox.boxes.groups != null) {
-      return ComboBox.boxes.groups.add_change_callback(() => {
-        return this.model.selectedGroup(ComboBox.boxes.groups.value);
-      });
-    }
+    // ComboBox.connect_all('cbox');
+    // if (ComboBox.boxes.metrics != null) {
+    //   this.model.metricIds.subscribe(new_metric_ids => {
+    //     return ComboBox.boxes.metrics.updateDataIds(new_metric_ids);
+    //   });
+    //   ComboBox.boxes.metrics.add_change_callback(() => {
+    //     return this.model.selectedMetric(ComboBox.boxes.metrics.value);
+    //   });
+    // }
+    // if (ComboBox.boxes.groups != null) {
+    //   return ComboBox.boxes.groups.add_change_callback(() => {
+    //     return this.model.selectedGroup(ComboBox.boxes.groups.value);
+    //   });
+    // }
   }
 
   // makes server requests required for initialisation

@@ -34,28 +34,31 @@ class CanvasSpace {
     this.NAME_LBL_SCALE_CUTOFF     = .01;
   }
 
-  constructor(rackEl, chartEl, model, rackParent) {
-    this.draw = this.draw.bind(this);
-    this.rackEl = rackEl;
-    this.chartEl = chartEl;
-    this.model = model;
-    this.rackParent = rackParent;
-    Profiler.begin(Profiler.DEBUG);
-    this.createGfx();
-
-    this.scrollAdjust = Util.getScrollbarThickness();
-
-    RackObject.MODEL     = this.model;
-    RackObject.RACK_GFX  = this.rackGfx;
-
-    this.setUpRacks();
-
-    this.setScale();
-
-    this.draw();
-    this.centreRacks();
-    Profiler.end(Profiler.DEBUG);
-  }
+  // XXX This class has a single derived class; this constructor isn't compatible
+  // with calling super in the derieved class. So its disabled until I figure
+  // out if something better is needed.
+  // constructor(rackEl, chartEl, model, rackParent) {
+  //   this.draw = this.draw.bind(this);
+  //   this.rackEl = rackEl;
+  //   this.chartEl = chartEl;
+  //   this.model = model;
+  //   this.rackParent = rackParent;
+  //   Profiler.begin(Profiler.DEBUG);
+  //   this.createGfx();
+  //
+  //   this.scrollAdjust = Util.getScrollbarThickness();
+  //
+  //   RackObject.MODEL     = this.model;
+  //   RackObject.RACK_GFX  = this.rackGfx;
+  //
+  //   this.setUpRacks();
+  //
+  //   this.setScale();
+  //
+  //   this.draw();
+  //   this.centreRacks();
+  //   Profiler.end(Profiler.DEBUG);
+  // }
 
   createGfx() {
     return this.rackGfx  = this.createGfxLayer(this.rackEl, 0, 0, 1, 1, 1);   // bottom layer, draws rack and device images
