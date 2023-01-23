@@ -1,4 +1,6 @@
 <% content_for(:head) do %>
+  <%= javascript_include_tag "mia/contrib/knockout.js" %>
+  <%= javascript_import_module_tag "IRV" %>
 <% end %>
 
 <div id="interactive_canvas_view">
