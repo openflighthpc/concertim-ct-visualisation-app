@@ -90,7 +90,6 @@ class LBC {
 
 
   updateLayout() {
-    console.log('LBC.updateLayout', this.containerEl, this.cvs.id);
     const dims        = this.containerEl.getCoordinates();
     this.cvs.width  = dims.width;
     this.cvs.height = dims.height + this.heightOffset;
