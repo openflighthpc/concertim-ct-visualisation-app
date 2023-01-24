@@ -9,12 +9,14 @@ $icon-sizes: (s: 16, m: 32, l:48, xl: 64);
 
 
 @font-face {
+  // XXX Remove the use of `/--/assets`.  Does rails/sass have a helper we can use
+  // here?
   font-family: 'Icomoon-ct';  
-  src:url('icomoon.eot');
-  src:url('icomoon.eot?#iefix') format('embedded-opentype'),
-  url('icomoon.svg#icomoon') format('svg'),
-  url('icomoon.woff') format('woff'),
-  url('icomoon.ttf') format('truetype');
+  src:url('/--/assets/icomoon.eot');
+  src:url('/--/assets/icomoon.eot?#iefix') format('embedded-opentype'),
+  url('/--/assets/icomoon.svg#icomoon') format('svg'),
+  url('/--/assets/icomoon.woff') format('woff'),
+  url('/--/assets/icomoon.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
