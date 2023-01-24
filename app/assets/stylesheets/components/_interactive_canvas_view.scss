@@ -1,0 +1,324 @@
+/*
+   Styles within this cover IRV and DCPV views, which are wrapped
+   inside a "#interactive_canvas_view" div. The reason for this is that
+   whoever did these styles failed to grasp the point of object oriented CSS, 
+   and has styled many individual elements based on the elements ID. 
+
+   Don't copy what they did!
+
+   So, wrappign the whole lot in #interactive_canvas_view keeps these styles
+   compartmentalised to the interactive canvas view elements.
+*/
+
+#interactive_canvas_view {
+
+  height: 100%;
+  
+  #loader
+  {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 99999;
+
+    //background: rgb(0, 0, 0);
+    //background: rgba(0, 0, 0, 0.2);
+    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#33000000, endColorstr=#33000000);
+    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#33000000, endColorstr=#33000000)";
+  }
+
+  #loader #dialogue
+  {
+    margin: 10% auto;
+    width: 300px;
+    height: 185px;
+    line-height: 185px;
+    text-align: center;
+//    background-image: url('/images/irv/concurrent-thinking/stripe_bg.png');
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border: 3px solid #666;
+    -moz-box-shadow: 3px 3px 12px 3px rgba(0,0,0,0.3);
+    -webkit-box-shadow: 3px 3px 12px 3px rgba(0,0,0,0.3);
+    box-shadow: 3px 3px 12px 3px rgba(0,0,0,0.3);
+  }
+
+  .updater_mask
+  {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 99998;
+  }
+
+  #updater_msg
+  {
+    background: white;
+    padding: 10px;
+    -moz-box-shadow: 3px 3px 12px 3px rgba(0,0,0,0.3);
+    -webkit-box-shadow: 3px 3px 12px 3px rgba(0,0,0,0.3);
+    box-shadow: 3px 3px 12px 3px rgba(0,0,0,0.3);
+    width: 70px;
+  }
+
+
+  #group_save_dialogue
+  {
+    top:220px;
+    left:0;
+    background:#ddf2bb;
+    width:93%;
+    display:none;
+    padding: 5px;
+  }
+
+  #group_save_dialogue input
+  {
+    width: 95%;
+    margin-bottom:5px;
+  }
+
+  #rack_thumbnail
+  {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+  }
+
+  #single_rack_view, #power_strip_view {
+    position: absolute;
+    overflow: hidden;
+    width: 100%;
+  }
+
+  #rack_view {
+    position: absolute;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .rack_view_tooltip, .threshold_tooltip
+  {
+    font-size: 12px;
+    padding: 5px 5px 5px 15px;
+    margin: 10px;
+    position: absolute;
+    visibility: hidden;
+    z-index: 99998;
+    background-color: white;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border: 1px solid #666;
+    -moz-box-shadow: 3px 3px 12px 3px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 3px 3px 12px 3px rgba(0, 0, 0, 0.3);
+    box-shadow: 3px 3px 12px 3px rgba(0, 0, 0, 0.3);
+    color:black;
+  }
+
+  .inline_tooltip
+  {
+    border-bottom: dotted black 1px;
+    cursor: help;
+  }
+
+  #colour_map
+  {
+    z-index: 99997;
+    position: absolute;
+    background-color: rgba(255, 255, 255, 1);
+    border: 1px solid #ddd;
+  }
+
+  #colour_map input
+  {
+    font-family: 'Karla';
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    visibility: hidden;
+  }
+
+  #input_max
+  {
+    z-index: 9999;
+  }
+
+  #input_min
+  {
+    z-index: 9998;
+  }
+
+  #vm_dialogue
+  {
+    z-index: 99999;
+    background: #eee;
+    position: absolute;
+    margin: 0;
+    padding: 10px;
+    font-size: 12px;
+    -moz-box-shadow: 3px 3px 12px 3px rgba(0,0,0,0.3);
+    -webkit-box-shadow: 3px 3px 12px 3px rgba(0,0,0,0.3);
+    box-shadow: 3px 3px 12px 3px rgba(0,0,0,0.3);
+  }
+
+  #context_menu
+  {
+    z-index: 99999;
+    background: #eee;
+    visibility: hidden;
+    position: absolute;
+    margin: 0;
+    padding: 10px;
+    font-size: 12px;
+    -moz-box-shadow: 3px 3px 12px 3px rgba(0,0,0,0.3);
+    -webkit-box-shadow: 3px 3px 12px 3px rgba(0,0,0,0.3);
+    box-shadow: 3px 3px 12px 3px rgba(0,0,0,0.3);
+  }
+
+  .disabled_context_menu_item
+  {
+    color: #666;
+    padding-left: 10px;
+  }
+
+  .context_menu_item
+  {
+    padding-left: 10px;
+  }
+
+  .context_menu_item:hover
+  {
+    background: black;
+  }
+
+  #context_menu img
+  {
+    display: block;
+    margin: 10px auto;
+    padding: 0;
+  }
+
+  #context_menu h1
+  {
+    font-style: italic;
+    font-size: 14px;
+    color: #999;
+    margin: 2px;
+  }
+
+  #context_menu a
+  {
+    text-decoration: none;
+  }
+
+  #context_menu a:hover 
+  {
+      background: black;
+      color: white;
+  }
+
+  #context_menu a:hover 
+  {
+  }
+
+  #graph_container
+  {
+    position: absolute;
+    padding: 0;
+    width: 100%;
+    /*border-top: 2px solid;*/
+  }
+
+  #pointer
+  {
+    border-color: #555 transparent transparent transparent;
+    border-style: solid;
+    border-width: 10px 5px;
+    width: 0;
+    height: 0;
+    position: relative;
+    /*display: none;*/
+    display: block;
+    visibility: hidden;
+    z-index: 99999;
+  }
+
+  #thumb_nav
+  {
+    background-color: white;
+    padding: 0;
+    margin: 0 auto 0;
+    top: 0;
+    border: 1px solid #555;
+    /*width: auto;
+    height: auto;*/
+  }
+
+  #cancel_group_save
+  {
+    float: right; 
+  }
+
+  #cancel_preset_save
+  {
+    float: right;
+  }
+
+  #confirm_group_save
+  {
+    position: relative; 
+  }
+
+  #confirm_preset_save
+  {
+    position: relative;
+  }
+
+  #reset_filters
+  {
+    width: 15px;
+    height: 15px;
+    vertical-align: middle;
+    margin-top: -2px;
+    float: right;
+  }
+
+  #graph_order_label
+  {
+    padding-bottom: 15px;
+  }
+
+  #metrics
+  {
+    width: 75%;
+  }
+
+  #save_dialogue
+  {
+    top:220px;
+    left:0;
+    background: $lightest-grey;
+    width:93%;
+    display:none;
+    padding: 5px;
+  }
+
+  #save_dialogue input
+  {
+    width: 95%;
+    margin-bottom:5px;
+  }
+
+  #context_menu a
+  {
+    color: black;
+  }
+
+
+}

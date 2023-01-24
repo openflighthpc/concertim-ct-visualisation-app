@@ -1,0 +1,83 @@
+/**************************************************************/
+/* Styles below are ported from emma's legacy/screen.css */
+
+/* andreas08 - an open source xhtml/css website layout by Andreas Viklund - http://andreasviklund.com . Free to use in any way and for any purpose as long as the proper credits are given to the original designer. Version: 1.0, November 28, 2005 */
+
+/*** STRUCTURE ***/
+#app{
+  min-height: 500px;
+  overflow: hidden;
+}
+
+.fill {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+/**************** Header and navigation styles ****************/
+
+#mid {
+  top: 75px;
+  bottom: 27px;
+  z-index: 0;
+}
+
+#sidemenu {
+    line-height:1.3em;
+    overflow-y: auto;
+    overflow-x: hidden;
+    top: 41px;
+    width: 195px;
+    padding-left: 5px;
+}
+
+#hideSideContent { 
+  position: absolute;
+  left: 200px;
+  top: 0;
+  bottom: 0;
+  border: solid 1px #ddd;
+  background-color: #f5f5f5;
+  background-image: url(/images/hide-arrow-left.gif);
+  background-repeat: no-repeat;
+  background-position: center 0.3em;
+  cursor: w-resize;
+  width: 5px;
+}
+
+#main {
+    position: absolute;
+    right: 0;
+    left: 0;
+    height: 100%;
+}
+
+#hideSideContent + #main {
+    left: 210px;
+}
+
+/**************** Menublock styles ****************/
+
+#side ul{margin-left: 5px;}
+#side ul ul{margin-left: 10px; margin-bottom: 2px;}
+#sidemenu ul{ }
+#sidemenu ul li{list-style:none; display:block; padding:0px; margin-bottom:2px;}
+#sidemenu ul li a{font-weight:bold; text-decoration:none;}
+#sidemenu ul li a:hover{text-decoration:none;}
+#sidemenu ul li ul{margin:3px 0 3px 15px; font-weight:normal;}
+#sidemenu ul li ul li{margin-bottom:0;}
+// #sidemenu ul li.current a{padding-right: 13px; background: transparent url(/images/arrows/hollow/brown/left.gif) no-repeat center right;}
+#sidemenu ul li ul a{font-weight:normal;}
+// #sidemenu ul li.current ul li.current a{background: transparent url(/images/arrows/hollow/brown/left.gif) no-repeat center right;}
+#sidemenu ul li.current ul li a{background-image: none;}
+
+/**************** Misc classes and styles ****************/
+
+.box{
+  margin:0 0 20px 0;
+  padding-bottom: 6px;
+  line-height:1.5em;
+}

@@ -1,0 +1,16 @@
+[class^="icon-zoom-"], [class^=" icon-zoom-"] {
+  font-size:1.5em;
+  color: $dark-blue;
+}
+
+#zoom_container {
+  float: right;
+
+  .zoom_button {
+    display: inline-block;
+    
+    &:hover { cursor: pointer; }
+    
+    &_disabled { color: $lightest-blue; } 
+  }
+}

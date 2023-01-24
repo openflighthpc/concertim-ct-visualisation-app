@@ -1,0 +1,30 @@
+
+@mixin header-font-family {
+  //font-family: Ubuntu, sans-serif;
+  font-family: "Trebuchet MS", Ubuntu, Helvetica, Arial, sans-serif ;
+  text-rendering: optimizelegibility;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  @include header-font-family;
+  color: $dark-blue; 
+}
+
+/*
+ RWD is out of scope and there has been some small amount
+ of agonization over the size of fonts.. this will probably
+ get worse over time, so for now setting sizes to fixed
+ values.
+*/
+h1 { font-size: 25px; }
+h2 { font-size: 20px; }
+h3 { font-size: 18px; }
+h4 { font-size: 15px; }
+h5 { font-size: 14px; }
+h6 { font-size: 12px; }
+

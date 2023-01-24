@@ -20,17 +20,19 @@
   </head>
 
   <body>
-    <div id="mid">
-      <%= render :partial => 'share/sidebar' %>
-      <div id="main">
-        <div id="pagePane">
-          <div id="pageBox">
-            <div id="pageContent">
-              <%= yield %>
-            </div><!--pageContent-->
-          </div><!--pagePane-->
-        </div><!--pageBox-->
-      </div><!--main-->
-    </div><!--mid-->
+    <div class="fill" id="app">
+      <div id="mid" class="content fill">
+        <%= render :partial => 'share/sidebar' %>
+        <div id="main">
+          <div id="pagePane">
+            <div id="pageBox" class="fill box">
+              <div id="pageContent">
+                <%= yield %>
+              </div><!--pageContent-->
+            </div><!--pagePane-->
+          </div><!--pageBox-->
+        </div><!--main-->
+      </div><!--mid-->
+    </div><!--app-->
   </body>
 </html>

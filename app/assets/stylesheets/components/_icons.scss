@@ -1,0 +1,426 @@
+/*
+  Map of icon sizes, to reduce repeating definitions (assumes unit as 'px').
+*/
+$icon-sizes: (s: 16, m: 32, l:48, xl: 64);
+
+/*
+   Include actual font.
+*/
+
+
+@font-face {
+  font-family: 'Icomoon-ct';  
+  src:url('icomoon.eot');
+  src:url('icomoon.eot?#iefix') format('embedded-opentype'),
+  url('icomoon.svg#icomoon') format('svg'),
+  url('icomoon.woff') format('woff'),
+  url('icomoon.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+@mixin icon-style {
+  font-family: 'Icomoon-ct';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+[class^="icon-"], [class*=" icon-"],
+table.show th span.asc,
+table.show th span.desc,
+.errorExplanation,
+.statusMessage,
+.overviewStatusMessage,
+.required_field,
+.alc_hideable,
+.ajax-loading, .pleasewait {
+  &:before, &:after { @include icon-style; }
+}
+
+#sidemenu ul li.current a:after { @include icon-style; }
+
+@mixin icon($content) {
+  &:before { content: $content; } 
+}
+
+@mixin icon-after($content) {
+  &:after { content: $content; }
+}
+
+@mixin icon-size($size) {
+  &:before { font-size: $size; }
+}
+
+
+@mixin content_toggle_to($normal, $name, $alternate) {
+  @include icon($normal);
+  &-#{$name}, &.#{$name} { @include icon($alternate); }
+}
+
+
+/*
+  Menu icons
+*/
+.icon-dashboard { @include icon("\e237"); }
+
+/*** Assets icons ***/
+.icon-assets,
+.icon-hardware { @include icon("\e0bf"); }
+.icon-datacentre,
+.icon-data-centre,
+.icon-plan-view { @include icon("\e2a2"); }
+.icon-infra_racks,
+.icon-rack-list,
+.icon-rack-view,
+.icon-racks { @include icon("\e12b"); }
+.icon-devices,
+.icon-add_device,
+.icon-add_vm { @include icon("\e124"); }
+.icon-groups { @include icon("\e096"); }
+.icon-temperature { @include icon("\e2ea"); }
+.icon-luminance  { @include icon("\e24e"); }
+.icon-pressure { @include icon("\e236"); }
+.icon-sound { @include icon("\e06b"); }
+.icon-humidity { @include icon("\e2f1"); }
+
+/*** Management icons ***/
+.icon-management { @include icon("\e199"); }
+.icon-faults { @include icon("\e10a"); }
+.icon-derived-metrics,    // mia
+.icon-monitoring { @include icon("\e1ee"); }
+.icon-thresholds { @include icon("\e207"); }
+.icon-chart,
+.icon-graph,
+.icon-graphs,
+[class^="icon-graphs_"], [class*=" icon-graphs_"],
+.icon-graphs-and-thresholds { @include icon("\e1fe"); }
+.icon-snmp { @include icon("\e2c8"); }
+.icon-modbus { @include icon("\e605"); }
+.icon-wmi { @include icon("\e4c9"); }
+.icon-derived_metrics { @include icon("\e602"); }
+.icon-events { @include icon("\e103"); }
+.icon-user-events { @include icon("\e105"); }
+.icon-reports { @include icon("\e4e7"); }
+.icon-power { @include icon("\e28e"); }
+.icon-schedule { @include icon("\e115"); }
+.icon-jobs { @include icon("\e29b"); }
+
+/*** Imaging icons ***/
+.icon-imaging { @include icon("\e134"); }
+.icon-repo { @include icon("\e138"); }
+.icon-filesystems { @include icon("\e136"); }
+.icon-images { @include icon("\e033"); }
+.icon-diskless { @include icon("\e033"); }
+
+/*** Scripting icons ***/
+.icon-scripting { @include icon("\e0ea"); }
+.icon-scripts { @include icon("\e07b"); }
+.icon-actions { @include icon("\e08e"); }
+.icon-tasks { @include icon("\e295"); }
+
+/*** System icons ***/
+.icon-system { @include icon("\e1e0"); }
+.icon-config { @include icon("\e1e1"); }
+.icon-network { @include icon("\e2a8"); }
+.icon-overview { @include icon("\e2c4"); }
+.icon-appliance_power { @include icon("\e290"); }
+.icon-backup,             // mia
+.icon-tools { @include icon("\e1e9"); }
+.icon-settings { @include icon("\e1dc"); }
+.icon-retention { @include icon("\e2cd"); }
+.icon-users { @include icon("\e186"); }
+.icon-integrator-tools { @include icon("\e1eb"); }
+.icon-feature-packs { @include icon("\e26d"); }
+
+/*** Help icons ***/
+.icon-help { @include icon("\e2c4"); }
+.icon-support { @include icon("\e154"); }
+.icon-overview { @include icon("\e2c4"); }
+.icon-userguide { @include icon("\e070"); }
+.icon-about { @include icon("\e363"); }
+.icon-search { @include icon("\e1ba"); }
+.icon-privacy { @include icon("\e2da"); }
+
+/*** Your account icons ***/
+.icon-youraccount { @include icon("\e185"); }
+.icon-account-details,
+.icon-details { @include icon("\e073"); }
+.icon-account-preferences,
+.icon-prefs { @include icon("\e1dd"); }
+.icon-dashboard-preferences { @extend .icon-dashboard; }
+.icon-skins { @include icon("\e021"); }
+.icon-active-consoles,
+.icon-console { @include icon("\e481"); }
+.icon-logout {  @include icon("\e37c"); }
+
+/*** Log in icons ***/
+.icon-session,
+.icon-login { @include icon("\e37b"); }
+
+/** Notification icons ***/
+.icon-star { @include content_toggle_to("\e2fc", "filled", "\e2fe"); }
+.icon-warning { @include content_toggle_to("\e355", "filled", "\e356"); }
+.icon-bang { @include content_toggle_to("\e357", "filled", "\e358"); }
+.icon-exclamation { @include content_toggle_to("\e357", "filled", "\e358"); }
+.icon-info { @include content_toggle_to("\e362", "filled", "\e363"); }
+.icon-question { @include content_toggle_to("\e359", "filled", "\e35a"); }
+
+/** Dashboard icons **/
+.icon-cog { @include icon("\e1e1"); }
+
+/*** Paging icons ***/
+.icon-paging {
+  &-first { @include icon("\e3ae"); }
+  &-next { @include icon("\e3b1"); }
+  &-prev { @include icon("\e3b3"); }
+  &-last { @include icon("\e3af"); }
+}
+
+/*** Sorting icons ***/
+.icon-sort {
+  &-asc { @include icon("\e3b4"); }
+  &-desc { @include icon("\e3b6"); }
+}
+
+// Circular Icons
+.icon-circle {
+  &-play, &-start { @include icon("\e380"); }
+  &-pause { @include icon("\e381"); }
+  &-stop { @include icon("\e382"); }
+  &-restart { @include icon("\e3a8"); }
+  
+  // Outlined (Default) + Filled state icons
+  &-bang,
+  &-exclamation { @include content_toggle_to("\e357", "filled", "\e358"); }
+  &-plus { @include content_toggle_to("\e35e", "filled", "\e35f"); }
+  &-minus { @include content_toggle_to("\e360", "filled", "\e361"); }
+  &-info { @include content_toggle_to("\e362", "filled", "\e363"); }
+  &-cross { @include content_toggle_to("\e365", "filled", "\e366"); }
+  &-tick { @include content_toggle_to("\e367", "filled", "\e368"); }
+  &-up { @include content_toggle_to("\e3c9", "filled", "\e3d1"); }
+  &-down { @include content_toggle_to("\e3cd", "filled", "\e3d5"); }
+  &-left { @include content_toggle_to("\e3cf", "filled", "\e3d7"); }
+  &-right { @include content_toggle_to("\e3cb", "filled", "\e3d3"); }
+}
+
+.statusMessage,
+.overviewStatusMessage {
+  &.good { @extend .icon-circle-tick-filled; }
+  &.bad { @extend .icon-circle-cross-filled; }
+  &.medium { @extend .icon-circle-bang-filled; }
+}
+
+/*
+  Action icons
+*/
+
+.icon-action {
+  width: 20px;
+  /*** Table icons ***/
+  &-new, &-add, &-configure { @extend .icon-circle-plus; }
+  &-show, &-view, &-output { @include icon("\e077"); }
+  &-edit { @include icon("\e011"); }
+  &-delete, &-destroy { @include icon("\e251"); }
+  &-unconfigure { @include icon("\e36b"); }
+  &-duplicate, &-copy { @include icon("\e087"); }
+  &-manualreset { @include icon("\e33e"); }
+  &-preview { @include icon("\e2d9"); }
+  
+  &-line-graph { @extend .icon-graph; }
+  &-graph { @include icon("\e202"); }
+
+  &-run { @extend .icon-circle-play; }
+  &-multirun { @include icon("\e384"); }
+  &-exception { @extend .icon-warning; }
+  &-sort { @include icon("\e425"); }
+  &-move { @include icon("\e423"); }
+  &-promote { @extend .icon-circle-up; }
+  &-resolve { @extend .icon-circle-tick; }
+  &-refresh { @include icon("\e1b2"); }
+  &-set { @include icon("\e1d7"); }
+  &-remove { @include icon("\e36b"); }
+
+  /*** Inline action icons ***/
+  &-dcpv { @extend .icon-data-centre; }
+  &-dcrv { @extend .icon-racks; }
+  &-print { @include icon("\e117"); }
+  &-image, &-save { @include icon("\e02b"); }
+  &-export { @include icon("\e081"); }
+  &-historical_report { @include icon("\e089"); }
+}
+[class^="icon-action-toggle"], [class*=" icon-action-toggle"] {
+  @extend .icon-circle-tick;
+
+  &[class*=" not_"] { @extend .icon-circle-cross-filled; }
+}
+
+
+
+/*
+  Metric icons
+*/
+.icon-metric {
+  &-derived { @include icon("\e602"); }
+  &-inferred { @include icon("\e603"); }
+  &-mapped { @include icon("\e601"); }
+  &-power { @include icon("\e600"); }
+}
+
+
+/*
+  Misc. icons
+*/
+.icon-ct {
+  @include icon("\e604");
+  &:before {
+    color: $ct-green;
+    font-size: 16px;
+  }
+}
+
+.icon-arrow {
+  &-expanded { @include icon("\e3b6"); }
+  &-collapsed {  @include icon("\e3b5"); }
+}
+
+.icon-dropdown-current { @include icon("\e3b5"); }
+.icon-menu-current { @include icon-after("\e3b7"); }
+.ajax-loading, .pleasewait { @include icon-after("\e3a8"); }
+.icon-keyboard { @include  content_toggle_to("\e11e", "filled", "\e11f"); }
+.icon-spinner { @include icon("\e3a8"); }
+.icon-zoom {
+  &-in { @include icon("\e1b8"); }
+  &-out { @include icon("\e1b9"); }
+  &-reset { @include icon("\e1b2"); }
+}
+.icon-pdf { @include icon("\e4e2"); }
+
+.icon-reset { @include icon("\e1b2"); }
+
+/*
+  Graph icons
+*/
+.icon-graph {
+  &-bar { @include icon("\e206"); }
+  &-line { @include icon("\e1fe"); }
+  &-stack { @include icon("\e20b"); }
+  &-area { @include icon("\e20b"); }
+  &-pie { @include icon("\e1f7"); }
+}
+
+/*
+  Wizard Progress icons
+*/
+.wizard-progress {
+  .icon-step {
+    @extend .icon-circle-right;
+    line-height: 1.5;
+  
+    &.active { @extend .icon-circle-right-filled; }
+    &.failed { @extend .icon-circle-cross-filled; }
+    &.complete { @extend .icon-circle-tick-filled; }
+  }
+}
+
+/*
+  Form icons
+*/
+label.required_field {
+  @extend .icon-circle-left-filled;
+  &:before {
+    float: right;
+    color: $pastel-red;
+  }
+}
+
+/*
+  Hint Help icons
+*/
+.icon-hint-help {
+  @include icon-after("\e35a");
+  &:after { padding-left: 0.25em; }
+}
+
+
+
+/*
+  Status icons
+*/
+.icon-good {
+  @extend .icon-circle-tick;
+  color: $ct-green-dark;
+}
+
+.icon-bad {
+  @extend .icon-circle-cross;
+  color: $pastel-red;
+}
+
+.icon-good, .icon-bad {
+  &.no-color { color: $dark-blue; }
+}
+
+/*
+  Icon styling
+*/
+[class^="icon-"], [class*=" icon-"] {
+  &.red:before { color: $pastel-red; }
+  &.green:before { color: $ct-green-dark; }
+  &.gray, &.grey { color:$grey; } 
+  &.blue { color: $dark-blue; }
+}
+
+.console_access {
+  &:before {
+    display: block;
+    margin-left: 50px;
+    margin-bottom: 5px;
+  }
+}
+
+
+.alc_hideable {
+  @extend .icon-arrow-collapsed;
+
+  &.show { @extend .icon-arrow-expanded; }
+}
+
+
+
+/*
+  Icon sizing
+*/
+td .icon-indicator {
+  &:before { 
+    font-size: 20px;
+  }
+}
+
+.icon-indicator.icon,
+.icon {
+  @each $name, $size in $icon-sizes {
+    &-#{$name}, &-#{$size} {
+      &:before { font-size: #{$size}px; }
+    }
+  }
+}
+
+// Prevent icons, such as SSH console, from being displayed in navigation menu.
+.top-bar .dropdown .no_icon {
+  &[class^="icon-"], &[class*=" icon-"] {
+    &:before { display: none; }
+  }
+}
+
+.large-icon {
+  font-size: 20px;
+}

@@ -1,0 +1,9 @@
+#pagePane {
+  position: absolute;
+  top: 45px;
+  bottom: 5px;
+  left: 5px;
+  right: 5px;
+  
+  &.with-partner-logos { right: 85px; }
+}

@@ -1,0 +1,260 @@
+#side
+{
+  float: left;
+  width: 190px;
+  padding: 5px;
+  padding-top: 0;
+
+  h2 {
+    color: $dark-blue;
+    margin-bottom: 5px;
+    height: 36px;
+    line-height: 36px;
+    white-space: nowrap;
+
+    &[class^="icon-"], &[class*=" icon-"] {
+      @include icon-size(1.3em);
+      &:before {
+        // color: $ct-green-dark;
+        padding-right: 0.3em;
+      }
+    }
+  }
+  p {
+    margin:0 0 16px 0; 
+  }
+}
+
+#side_bar {
+
+  #thumb_nav
+  {
+    background-color: white;
+    padding: 0;
+    margin: 0 auto 0;
+    top: 0;
+    border: 1px solid #555;
+    /*width: auto;
+    height: auto;*/
+  }
+
+  #cancel_group_save
+  {
+    float: right; 
+  }
+
+  #cancel_preset_save
+  {
+    float: right;
+  }
+
+  #confirm_group_save
+  {
+    position: relative; 
+  }
+
+  #confirm_preset_save
+  {
+    position: relative;
+  }
+
+  #reset_filters
+  {
+    width: 15px;
+    height: 15px;
+    vertical-align: middle;
+    margin-top: -2px;
+    float: right;
+  }
+
+  #graph_order_label
+  {
+    padding-bottom: 15px;
+  }
+
+  #metrics
+  {
+    width: 142px;
+  }
+
+  #save_dialogue
+  {
+    top:220px;
+    left:0;
+    background:#ddf2bb;
+    width:93%;
+    display:none;
+    padding: 5px;
+  }
+
+  #save_dialogue input
+  {
+    width: 95%;
+    margin-bottom:5px;
+  }
+
+  #context_menu a
+  {
+    color: black;
+  }
+  #reset_filters {
+    color: $ct-green-darker;
+    float: right;
+    margin-top: 1px;
+  }
+}
+#side_bar h4
+{
+  border-top: 2px solid;
+  padding-left: 4px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin-right: 5px;
+}
+
+#side_bar .zoom_container 
+{
+}
+
+#side_bar .zoom_in
+{
+  padding-right: 10px;
+}
+
+#side_bar .zoom_out
+{
+  padding-right: 15px;
+}
+
+#side_bar .zoom_reset
+{
+  padding-right: 20px;
+}
+
+#side_bar a 
+{
+  position: relative !important;
+}
+
+#side_bar .div_table
+{
+  display: table;
+  table-layout: fixed;
+  margin-top: 10px;
+  width: 100%;
+  border: 1px solid #666666;
+  border-spacing: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+}
+
+#side_bar .div_table .div_row
+{
+  display: table-row;
+  width: 100%;
+  clear: both;
+}
+
+#side_bar .div_table .div_cell
+{
+  display: table-cell;
+  width: 50%;
+}
+
+#side_bar .div_table .div_cell_label
+{
+  display: table-cell;
+  width: 80%;
+}
+
+#side_bar .div_table .div_cell_check_radio
+{
+  display: table-cell;
+  width: 20%;
+}
+
+#side_bar .div_table .div_cell_three_col
+{
+  display: table-cell;
+  width: 33%;
+}
+
+#side_bar .div_table .right_col
+{
+  text-align: right;
+}
+
+#side_bar .div_table .div_row_header
+{
+  display: table-caption;
+  font-weight: bold;
+}
+
+#side_bar .div_last_table
+{
+  margin-bottom: 15px;
+}
+
+#side_bar
+{
+  /*padding: 5px;*/
+  position: absolute;
+  width: 170px;
+  /*height: 100%;
+  background-color: #bbb;
+  overflow: auto;*/
+}
+
+#side_bar select, #side_bar input[type="text"] 
+{
+  width: 142px;
+}
+
+#side_bar label
+{
+  font-size: .8em;
+}
+
+#side_bar .right_col input[type='text']
+{
+  width: 50px;
+}
+
+#side_bar a
+{
+  font-size: .8em;
+  position:absolute;
+}
+
+#side_bar a:hover
+{
+  /*float: right;*/
+  color: #339922;
+}
+
+#side_bar input[type='checkbox']
+{
+  border:0;
+  background:transparent;
+}
+
+#side_bar button
+{
+  font-size: 9px;
+  width: 78px;
+  display: inline-block;
+}
+
+#side_bar #save_input
+{
+  width: 99%;
+  padding: 0;
+  height: 16px;
+}
+
+#side_bar #save_input:focus
+{
+  border-width: 2px;
+}
+
+

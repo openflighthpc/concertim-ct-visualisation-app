@@ -1,0 +1,45 @@
+
+/*
+ Helpers
+ Sass tools and helpers we’ll use across the project. 
+*/ 
+@import "helpers/color_variables";
+@import "helpers/color_mixins";
+// @import "helpers/mixins";
+// @import "helpers/utility";
+// @import "helpers/animations";
+@import "components/icons";
+
+/*
+ Base
+ "boilerplate" stuff
+*/
+@import "base/reset";
+@import "base/typography";
+
+/*
+ Layout
+ Any styles relating to the "layout" (e.g. header, footer...)
+*/
+@import "layout/structure";
+// @import "layout/header";
+// @import "layout/footer";
+@import "layout/sidebar";
+@import "layout/screen";
+// @import "layout/show_page";
+
+
+/*
+ Components
+ Smaller components such as topbar, widgets etc.
+*/
+@import "components/zoom";
+@import "components/canvas";
+@import "components/interactive_canvas_view";
+
+/*
+ Legacy Stylesheets
+ These were ported directly over - the plan is to get rid.
+*/
+@import "legacy/screen";
+// @import "legacy/decoration";

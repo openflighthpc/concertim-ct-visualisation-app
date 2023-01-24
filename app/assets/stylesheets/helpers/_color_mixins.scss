@@ -1,0 +1,26 @@
+@mixin light-text-for-dark-background {
+  * {
+    color: white;
+  }
+  a:hover { 
+    color: $light-grey;
+  }
+}
+
+@mixin dark-blue-background {
+  //background: url(/images/2014/backgrounds/sidebar-blue.jpg);
+  background-color: $dark-blue;
+  @include light-text-for-dark-background;
+}
+
+@mixin lighter-background {
+  //background: url(/images/2014/backgrounds/alt.png) #F3F3F3;
+  background-color: #F3F3F3;
+  color: $dark-grey;
+}
+
+@mixin light-background {
+  //background: url(/images/2014/backgrounds/body.jpg) #EEE;
+  background-color: #EEE;
+  color: $dark-grey;
+}
