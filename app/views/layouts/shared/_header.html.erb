@@ -1,0 +1,21 @@
+<div id="header">
+  <%= link_to "/about", title: "Command" do %>
+    <img class="logo" src="/-/personalities/ct/images/logo-left.png">
+  <% end %>
+</div>
+
+
+<nav class="top-bar" data-topbar>
+  <ul class="title-area">
+    <li class="name">
+      <li class="toggle-topbar menu-icon">
+        <a href="#menu">
+          <span>Menu</span>
+        </a>
+      </li>
+    </li>
+  </ul>
+  <section class="top-bar-section">
+    <%= render_navigation expand_all: true, renderer: TopbarRenderer  %>
+  </section>
+</nav>

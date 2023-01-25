@@ -1,0 +1,43 @@
+.top-bar {
+  /* ensure top bar is at very front */
+  z-index: 999;
+}
+
+
+.top-bar-section .has-dropdown .dropdown li.has-dropdown > a:after {
+  /* ensure arrows line up on sub-menu dropdowns. */
+  line-height: 0;
+}
+
+
+/*
+
+  DELAY
+
+  See ticket #17256. This adds a short delay before the navigation becomes
+  visible when you hover over it. I don't agree with this change, and neither
+  do the developers of the plugin as they've not provided an option to do this,
+  so I've had to achieve the effect with css.
+
+*/
+
+.top-bar-section ul li.has-dropdown {
+  .dropdown {
+    display:block;
+    visibility: hidden;
+    transition-delay: 0.5s; /* This is the "tuneable" delay */
+  }
+
+  &:hover > .dropdown {
+    visibility: visible;
+  }
+}
+
+/*
+  This next rule ensures that none of the "delay" related css 
+  affects the mobile navigation.
+*/
+nav.expanded .top-bar-section ul li.has-dropdown .dropdown {
+  transition-delay: 0s !important;
+  visibility: visible;
+}

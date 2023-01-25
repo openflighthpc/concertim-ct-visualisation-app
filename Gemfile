@@ -72,3 +72,6 @@ group :test do
 end
 
 gem "dartsass-rails", "~> 0.4.1"
+
+gem "simple-navigation", "~> 4.4"
+
