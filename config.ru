@@ -2,5 +2,11 @@
 
 require_relative "config/environment"
 
-run Rails.application
+app = Rack::Builder.new do
+  map "/--" do
+    run Rails.application
+  end
+end
+run app
+
 Rails.application.load_server
