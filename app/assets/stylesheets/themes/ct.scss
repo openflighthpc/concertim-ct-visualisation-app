@@ -1,0 +1,157 @@
+/*
+TODO: Move Concertim specific themes into here (maybe)
+*/
+
+/* Concertim Infrastructure Management Limited branding styles */
+
+header {
+  background-color: $lighter-grey;
+}
+
+#footer p {
+  color: $dark-blue;
+}
+
+
+#loadSpinner {
+  background-color: transparent;
+}
+
+.hinttitle { 
+  background-color: /*hilight*/ $light-blue;
+}
+
+a, .nojs a.ajax {
+   color: /*primary*/ rgb(43, 74, 107);
+}
+
+div.action_link_div a.delete_link.ajax {
+  display: block;
+  height: 20px;
+  background-position: center;
+}
+
+#side_bar .div_table a.ajax, 
+#side_bar .div_table a[href="#"] {
+  background-image: none;
+}
+  
+#pageLinks a.ajax {
+  background: inherit;
+  padding: inherit;
+}
+
+a[href^="#"] {
+}
+
+a.disabled {
+  color: $grey !important;
+}
+
+a.disabled:hover {
+  color: $grey !important;
+  text-decoration: none !important;
+  cursor: text;
+}
+
+a:hover {
+  color: /*hilight*/ $blue;
+}
+
+.deviceOn { 
+  background-color: /*hilight*/ $blue !important;
+}
+
+.deviceUnknown, .deviceBrokerless { 
+  background-color: /*failred*/ $pastel-red !important;
+}
+
+/* fail colours */
+
+#warn, #ajax_warn {
+  background-color: $pastel-red;
+}
+
+#errorExplanation {
+  border: 2px solid $pastel-red;
+}
+
+
+#pageContent #errorExplanation h2, #overDiv #errorExplanation h2, #overDiv2 #errorExplanation h2 {
+  background-color: $pastel_red;
+}
+
+
+/* end of fail colours */
+
+
+/* AJAX BUTTONS */
+
+button.ajax, form.ajax input[type="button"],form.ajax input[type="submit"] {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  background-repeat: no-repeat;
+  background-position: 93% top;
+}
+
+.nojs button.ajax {
+}
+
+/* HOVER */
+
+form.ajax input[type="button"]:hover,form.ajax input[type="submit"]:hover {
+  cursor: pointer;
+}
+
+/* ACTIVE */
+
+form.ajax input[type="button"]:active,form.ajax input[type="submit"]:active {
+  cursor: pointer;
+}
+
+/*
+  form input[type="submit"] {
+  margin-bottom: 10px;
+}
+  */
+
+/* DISABLED */
+
+form.ajax input[type="button"][disabled="disabled"],form.ajax input[type="submit"][disabled="disabled"] {
+//  background-image: url(/images/icons/circle-arrows-grey.png);
+  background-color: $lighter-grey;
+  border: 3px outset $light-grey;
+  opacity: 0.6;
+  filter: alpha(opacity=60);
+}
+
+.nojs form.ajax input[type="button"],.nojs form.ajax input[type="submit"] {
+  cursor: pointer;
+}
+
+
+/*
+button,input[type="submit"],input[type="button"] {
+ background-color: #fae8cf; 
+background-color: #eee;
+color: #0D2237;
+border: 3px outset #845c21;
+padding: 4px;
+border-radius: 4px;
+cursor: pointer;
+margin-top: 5px;
+margin-bottom: 10px;
+font-size: 95%;
+}
+
+button:hover,input[type="submit"]:hover {
+  cursor: pointer;
+}
+
+button:active,input[type="submit"]:active,input[type="button"]:active {
+  border-style: inset;
+  background-color: #D8Bd94;
+}
+*/
+
+
