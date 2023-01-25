@@ -1,4 +1,3 @@
-import "jquery";
 import IRVController from './mia/coffee/src/canvas/irv/IRVController';
 
 // Overwrite jquery's `$` to one that is closer to prototype's `$`.
