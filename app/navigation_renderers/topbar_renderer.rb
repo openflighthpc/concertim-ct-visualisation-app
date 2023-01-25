@@ -19,7 +19,7 @@ class TopbarRenderer < SimpleNavigation::Renderer::Base
     right_menu = []
 
     item_container.items.each do |menu_item|
-      if menu_item.html_options.delete(:align) == :right
+      if menu_item.options.delete(:align) == :right
         right_menu << menu_item
       else
         left_menu << menu_item
@@ -99,7 +99,7 @@ class TopbarRenderer < SimpleNavigation::Renderer::Base
   # <span class="icon-info"></span>
   #
   def icon_for(item, item_level)
-    css_class = "icon-#{item.html_options[:icon]}" unless item_level > 2
+    css_class = "icon-#{item.options[:icon]}" unless item_level > 2
     content_tag(:span, nil, class: css_class)
   end
 end

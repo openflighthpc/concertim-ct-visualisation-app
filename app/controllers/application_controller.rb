@@ -4,6 +4,8 @@ class ApplicationController < ActionController::Base
       def o.can?(action, resource)
         true
       end
+      def o.firstname; 'Mr'; end
+      def o.surname; 'Admin'; end
     end
   end
   helper_method :current_user
