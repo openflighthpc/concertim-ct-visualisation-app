@@ -11,8 +11,7 @@
 
 
 // Allows the use of rem-calc() or lower-bound() in your settings
-// @import "../../../../vendor/foundation/stylesheets/foundation/functions";
-@import "./foundation/foundation/functions";
+@import "foundation/functions";
 
 // $experimental: true;
 
@@ -1216,5 +1215,5 @@ $topbar-media-query: "only screen and (min-width: 850px)";
 // $include-table-visibility-classes: true;
 // $include-legacy-visibility-classes: true;
 
-@import './foundation/foundation';
+@import 'foundation';
 // @import "../../../../vendor/foundation/stylesheets/foundation";
