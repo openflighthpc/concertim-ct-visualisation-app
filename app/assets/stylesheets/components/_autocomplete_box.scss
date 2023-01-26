@@ -1,0 +1,25 @@
+.cbox {
+  clear: both;
+
+  .drop_down_box {
+    display: inline-block;
+    @include grid-column($columns: 6);
+    float: none;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    margin-right: 0 !important; /* because the dropdown arrow will be there! */
+
+    &.autowidth { width: auto; }
+  }
+}
+
+
+/*
+
+*/
+.fixed-width-autocomplete-box {
+  min-width: 230px;
+  input {
+    display: inline;
+  }
+}

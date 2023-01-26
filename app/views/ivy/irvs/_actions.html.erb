@@ -75,7 +75,7 @@
     </div>
     <div class="div_row">
       <div class="div_cell">
-        <%# render_autocomplete_field( "metrics", {:name=>'associated_metric', :no_field_id_prepend=>true, :is_remote_url => false, :url => "document.IRV.model.metricIds", :onfocus => "document.IRV.evFocusMetricSelect(event)", :onmouseup => "document.IRV.evMouseUpMetricSelect(event)", :databind => "value: selectedMetric"}) %>
+        <%= render_autocomplete_field( "metrics", {:name=>'associated_metric', :no_field_id_prepend=>true, :is_remote_url => false, :url => "document.IRV.model.metricIds", :onfocus => "document.IRV.evFocusMetricSelect(event)", :onmouseup => "document.IRV.evMouseUpMetricSelect(event)", :databind => "value: selectedMetric"}) %>
       </div>
     </div>
     <div class="div_row">
@@ -286,7 +286,7 @@
     </div>
     <div class="div_row">
       <div class="div_cell">
-        <%# render_autocomplete_field("groups", {:name=>'associated_group', :no_field_id_prepend=>true, :is_remote_url => false, :url => "document.IRV.model.groupNames", :databind => "value: selectedGroup"}) %>
+        <%= render_autocomplete_field("groups", {:name=>'associated_group', :no_field_id_prepend=>true, :is_remote_url => false, :url => "document.IRV.model.groupNames", :databind => "value: selectedGroup"}) %>
       </div>
     </div>
     <div class="div_row">

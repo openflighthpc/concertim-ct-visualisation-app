@@ -1,0 +1,25 @@
+<div class="cbox" id="<%= field.containing_div_id %>">
+  <input type="hidden" id="<%= field.url_field_id %>" value="<%= field.url %>" />
+  <input
+      type="text"
+      id="<%= field.id %>"
+      class="<%= field.classes %> drop_down_box"
+      autocomplete="off"
+      value="<%= field.value %>"
+      placeholder="Please Select"
+      tabindex="<%= field.tabindex %>"
+      onfocus="<%= field.onfocus %>"
+      required="<%= field.required %>"
+      style="<%= field.style %>"
+      data-is-remote-url="<%= field.is_remote_url %>"
+      data-bind="<%= field.data_bind %>"
+  />
+  <input
+      class="drop_down_button csshide"
+      id="<%= field.button_field_id %>"
+      disabled="disabled"
+      type="button"
+      value=""
+      style="<%= field.button_style %>"
+  />
+</div>

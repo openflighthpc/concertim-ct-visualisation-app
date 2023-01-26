@@ -1,0 +1,96 @@
+@import url(/stylesheets/drop_down_button.css);
+
+.auto_complete {
+  background: #fff;
+}
+
+.auto_complete.drop_down ul {
+  background: #fff;
+  width:110%;
+}
+
+.auto_complete ul {
+  border:1px solid #888;
+  margin:0;
+  padding:0;
+  list-style-type:none;
+  max-height: 400px;
+  overflow: auto;
+}
+
+.auto_complete ul li {
+  margin:0;
+  padding:3px;
+}
+
+.auto_complete ul li.selected {
+  background-color: #ffb;
+}
+
+.auto_complete ul strong.highlight {
+  color: #800;
+  margin:0;
+  padding:0;
+}
+
+.drop_down_box.loading { 
+  cursor: wait;
+}
+
+.drop_down_box { 
+  margin-right: 0;
+}
+
+.drop_down_box:focus { 
+}
+
+.metric_box {
+  width: 300px;
+}
+
+div#deviceFind .label {
+  width: 100px;
+}
+
+div#deviceFind .cbox {
+  display: block;
+}
+
+.cbox {
+  display: inline;
+  position: relative;
+}
+
+.cbox-item { 
+  cursor: pointer;
+  background: white;
+  border: 1px solid white;
+  color: black;
+}
+
+.cbox-hilite {
+  background: rgb(234,242,255);
+  border: 1px solid rgb(120,172,255);
+}
+
+.cbox-list {
+  border: 1px solid black;
+  background: white;
+  padding: 1px;
+  padding-bottom: 1.5em;
+  width: 149px;
+  z-index: 1000;
+  position: absolute;
+  overflow: auto;
+  min-height: 38px;  /* if the list is displayed, we have at least 1 result. Do not let the box be smaller than 1 result. */
+}
+
+.drop_down_meta {
+  color: #555;
+  font-size: 80%;
+  width: 30em;
+}
+
+.drop_down_box.fieldWithErrors {
+    display: inline;
+}

@@ -2,8 +2,21 @@
 // import "@hotwired/turbo-rails"
 // import "controllers"
 
-// The old asset pipeline way of doing things.  This exists to support an old
-// version of foundation.
+// The old asset pipeline way of doing things.  We should remove the old JS
+// libraries and remove use of the old asset pipeline mechanism.
+//
+//= require mia/contrib/mootools/mootools
+//= require mia/contrib/mootools/request.json.js
+//= require mia/contrib/mootools/morebinds
+//= require mia/contrib/mootools/fxcss
+//= require mia/contrib/mootools/fxtween
+//
+//= require mia/contrib/MochiKit/Base
+//= require mia/contrib/MochiKit/Iter
+//= require mia/contrib/MochiKit/DOM
+//= require mia/contrib/MochiKit/Style
+//= require mia/contrib/MochiKit/Signal
+//
 //= require jquery
 //= require foundation
 

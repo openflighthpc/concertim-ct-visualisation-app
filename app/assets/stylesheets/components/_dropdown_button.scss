@@ -1,0 +1,54 @@
+/*
+  This relates to the dropdown-buttons next to autocomplte text boxes such as those found on the
+  find-device page.
+*/
+input.drop_down_button {
+  padding: 0;
+  border: 0;
+  margin: 0;
+  width: 17px;
+  height:32px;
+  margin-left: -5px;
+  margin-top: -2px;
+  vertical-align: middle;
+  background-image: url(/images/arrows/hollow/blue/down.gif) !important;
+  background-repeat: no-repeat;
+  background-position: center center !important;
+  background-size: 7px 6px;
+  cursor: pointer;
+  display: none;
+  background-color: $dark-blue;
+}
+
+input.drop_down_button.loading { 
+  display: inline;
+  background-image: url(/images/inline-loading.gif);
+  cursor: wait;
+}
+
+input.drop_down_button.loaded { 
+  display: inline;
+}
+
+input.drop_down_button.loading:disabled { 
+  cursor: wait;
+}
+
+input.drop_down_button:disabled { 
+  background-color: $light-grey;
+  cursor: default;
+}
+
+.drop_down_button:focus { 
+  padding: 0;
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+
+#device_of_group_hider_div {
+  display: inline-block;
+
+  #device_of_group_auto_complete_box {
+    display: inline-block;
+  }
+}

@@ -32,7 +32,7 @@ import Parser from '../../canvas/irv/util/Parser';
 import PresetManager from '../../canvas/common/util/PresetManager';
 import StaticGroupManager from '../../canvas/common/util/StaticGroupManager'
 import Profiler from 'Profiler';
-// import  'util/ComboBox'
+import ComboBox from '../../../../javascript/util/ComboBox';
 import Tooltip from '../../canvas/irv/view/Tooltip';
 import PieCountdown from '../../canvas/common/widgets/PieCountdown';
 import RBAC from '../../canvas/common/util/RBAC';
@@ -347,20 +347,20 @@ class IRVController extends CanvasController {
 
   // creates metric combo box select event handler
   connectMetricCombos() {
-    // ComboBox.connect_all('cbox');
-    // if (ComboBox.boxes.metrics != null) {
-    //   this.model.metricIds.subscribe(new_metric_ids => {
-    //     return ComboBox.boxes.metrics.updateDataIds(new_metric_ids);
-    //   });
-    //   ComboBox.boxes.metrics.add_change_callback(() => {
-    //     return this.model.selectedMetric(ComboBox.boxes.metrics.value);
-    //   });
-    // }
-    // if (ComboBox.boxes.groups != null) {
-    //   return ComboBox.boxes.groups.add_change_callback(() => {
-    //     return this.model.selectedGroup(ComboBox.boxes.groups.value);
-    //   });
-    // }
+    ComboBox.connect_all('cbox');
+    if (ComboBox.boxes.metrics != null) {
+      this.model.metricIds.subscribe(new_metric_ids => {
+        return ComboBox.boxes.metrics.updateDataIds(new_metric_ids);
+      });
+      ComboBox.boxes.metrics.add_change_callback(() => {
+        return this.model.selectedMetric(ComboBox.boxes.metrics.value);
+      });
+    }
+    if (ComboBox.boxes.groups != null) {
+      return ComboBox.boxes.groups.add_change_callback(() => {
+        return this.model.selectedGroup(ComboBox.boxes.groups.value);
+      });
+    }
   }
 
   // makes server requests required for initialisation

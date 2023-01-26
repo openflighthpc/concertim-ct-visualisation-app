@@ -75,3 +75,7 @@ gem "dartsass-rails", "~> 0.4.1"
 
 gem "simple-navigation", "~> 4.4"
 
+
+gem "cells-rails", "~> 0.1.5"
+
+gem "cells-erb", "~> 0.1.0"
