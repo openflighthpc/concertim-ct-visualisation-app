@@ -14,27 +14,49 @@
 #   
 class ActionsCell < Cell::ViewModel
   # include Devise::Controllers::Helpers
-  include FakeAuthConcern
   # helper_method :current_user
+  include FakeAuthConcern
+
+  attr_reader :actions, :dropdown_id
 
   def show(title, block, opts = {})
-    @title = title
+    # @title = title
     @is_dropdown = opts[:is_dropdown] || false
     @dropdown_id = opts[:dropdown_id] || 'drop'
-    @li_attrs = {}
 
+    ActionBuilder.new(current_user, self).tap do |builder|
+      block.call(builder)
+      @actions = @is_dropdown ? builder.dropdown_actions : builder.actions
+    end
+
+    template = @is_dropdown ? :dropdown_actions : :side_actions
+    render view: template
+  end
+
+  def li_attrs(action)
+    attrs =
+      if action.matches_request?(request)
+        { class: 'current' }
+      else
+        {}
+      end
+    attrs.merge(action.li_opts)
+  end
+
+  def ul_attrs
     if @is_dropdown
       @ul_attrs = {id: @dropdown_id, class: ['f-dropdown', 'content'], "data-dropdown-content": ""}
     else
       @ul_attrs = {:class => ['menublock']}
     end
+  end
 
-    ActionBuilder.new(current_user).tap do |builder|
-      block.call(builder)
-      @actions = builder.actions
+  def div_attrs
+    if @is_dropdown
+      { class: :dropdown_actions }
+    else
+      {}
     end
-
-    render
   end
 
   private
@@ -42,10 +64,11 @@ class ActionsCell < Cell::ViewModel
   class ActionBuilder
     attr_reader :actions, :dropdown_actions, :subject
 
-    def initialize(current_user)
+    def initialize(current_user, cell)
       @actions = Array.new
       @dropdown_actions = Array.new
       @current_user = current_user
+      @cell = cell
     end
     
     #
@@ -117,7 +140,6 @@ class ActionsCell < Cell::ViewModel
     def divider(title = nil)
       unless @actions.empty?
         divider = ActionDivider.new(title)
-        @actions << divider
         @dropdown_actions << divider
       end
     end
@@ -130,8 +152,7 @@ class ActionsCell < Cell::ViewModel
     # Adds a basic link action
     #
     def add_item(title, path, opts = {})
-      action = Action.new(title, path, opts)
-      @actions << action
+      action = Action.new(title, path, opts, @cell)
       @dropdown_actions << action
     end
 
@@ -143,7 +164,6 @@ class ActionsCell < Cell::ViewModel
     #
     def add_custom(html, opts = {})
       action = CustomAction.new(html, opts)
-      @actions << action
       @dropdown_actions << action
     end
 
@@ -154,7 +174,6 @@ class ActionsCell < Cell::ViewModel
     #
     def add_side(html, opts = {})
       action = SideAction.new(html, opts)
-
       @actions << action
     end
  end
@@ -168,25 +187,22 @@ class ActionsCell < Cell::ViewModel
       request.fullpath == @path unless @opts[:method].to_s == 'delete'
     end
 
-    def custom?
-      false
-    end
-
     def divider?
-      false
-    end
-
-    def side?
       false
     end
   end
 
   class Action < ActionItem
     attr_reader :title, :path, :opts
-    def initialize(title, path, opts = {})
+    def initialize(title, path, opts = {}, cell)
       @title = title
       @path = path
       @opts = opts
+      @cell = cell
+    end
+
+    def html
+      @cell.link_to @title, @path, @tops
     end
   end
 
@@ -212,10 +228,6 @@ class ActionsCell < Cell::ViewModel
       @path = opts[:path]
       @opts = opts
     end
-
-    def custom?
-      true
-    end
   end
 
   class SideAction < ActionItem
@@ -226,10 +238,5 @@ class ActionsCell < Cell::ViewModel
       @path = nil
       @opts = opts
     end
-
-    def side?
-      true
-    end
   end
-
 end

@@ -1,0 +1,22 @@
+<% unless actions.empty? -%>
+  <%= content_tag :div, **div_attrs do -%>
+    <%= content_tag :ul, **ul_attrs do -%>
+      <% actions.each do |action| -%>
+        <% if action.divider? -%>
+          <%= render view: :divider, locals: { action: action } %>
+        <% else -%>
+          <%= content_tag :li, action.html, li_attrs(action) %>
+        <% end -%>
+      <% end -%>
+    <% end -%>
+    <a
+        class="button dropdown"
+        href="#"
+        data-dropdown="<%= dropdown_id %>"
+        data-options="align: left"
+        aria-expanded="false"
+        >
+        Actions
+    </a>
+  <% end -%>
+<% end -%>
