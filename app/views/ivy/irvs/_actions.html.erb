@@ -1,3 +1,16 @@
+<%=
+  render_lhm_actions 'Rack actions' do |lhm_actions|
+    lhm_actions.add title: 'Print image', path: '#', id: :print_link
+    lhm_actions.add title: 'Save image', path: '#', id: :save_link
+    lhm_actions.add title: 'Export data', path: '#', id: :export_link
+
+    #lhm_actions.divider 'Navigation'
+    #lhm_actions.add_with_auth can: :create, on: Ivy::HwRack, title: 'Add rack', path: new_rack_path
+    #lhm_actions.add_with_auth can: :create, on: Ivy::Device, title: 'Add device', path: wizard_items_path(nonrack: true)
+    #lhm_actions.add title: 'Data Centre Plan View', path: ivy_data_centre_path, :id => :dcpv_link
+  end
+%>
+
 <h4 id="rack_actions">Rack actions</h4>
 <div id="side_bar" class="main_pane">
   <div id="thumb_nav" class="thumb_nav"></div>
@@ -330,8 +343,4 @@
       </div>
     <% end %>
   </div>
-<h5>Extra rack actions</h5>
-<a id="print_link" href="#">Print image</a>
-<a id="save_link" href="#">Save image</a>
-<a id="export_link" href="#">Export data</a>
 </div>

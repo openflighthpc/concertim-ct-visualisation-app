@@ -1,0 +1,48 @@
+/*
+ This relates to the action-menu that appears next to titles.
+*/
+
+.dropdown_actions {
+  float: right;
+
+  .divider {
+    hr { margin: 0; }
+  }
+
+  .button.dropdown {
+    top: rem-calc(1); 
+  }
+
+  .f-dropdown {
+    z-index: 99999999;
+    
+    &.content {
+      padding: ($f-dropdown-content-padding / 2) 0;
+      max-width: 200px;
+    }
+
+    li {
+      &.divider {
+        * { padding-left: ($f-dropdown-content-padding / 1.5); }
+
+        hr { padding-left: 0; }
+      }
+
+      a {
+        display: inline-block;
+        width: 100%;
+  
+        &:before {
+          content: "";
+          display: inline-block;
+          width: 1rem;
+        }
+      }
+    
+      &.current a:before {
+        @include icon-style;
+        @extend .icon-dropdown-current;
+      }
+    }
+  }
+}
