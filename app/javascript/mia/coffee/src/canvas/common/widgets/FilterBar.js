@@ -99,8 +99,8 @@ class FilterBar {
     // set input sizes and event listeners
     this.inputMax = $('input_max');
     this.inputMin = $('input_min');
-    Util.setStyle(this.inputMax, 'width', FilterBar.INPUT_WIDTH);
-    Util.setStyle(this.inputMin, 'width', FilterBar.INPUT_WIDTH);
+    Util.setStyle(this.inputMax, 'width', FilterBar.INPUT_WIDTH + "px");
+    Util.setStyle(this.inputMin, 'width', FilterBar.INPUT_WIDTH + "px");
     this.inputHeight = Util.getStyleNumeric(this.inputMax, 'height');
 
     Events.addEventListener(this.inputMax, 'blur', this.evBlurInput);
@@ -323,20 +323,20 @@ class FilterBar {
 
     Util.setStyle(this.containerEl, 'left', container_x + 'px');
     Util.setStyle(this.containerEl, 'top', container_y + 'px');
-    Util.setStyle(this.containerEl, 'width', this.width);
-    Util.setStyle(this.containerEl, 'height', this.height);
+    Util.setStyle(this.containerEl, 'width', this.width + 'px');
+    Util.setStyle(this.containerEl, 'height', this.height + 'px');
 
     if (this.horizontal) {
       const y = (this.height - this.inputHeight) / 2;
-      Util.setStyle(this.inputMin, 'top', y);
-      Util.setStyle(this.inputMin, 'left', FilterBar.INPUT_SPACING);
-      Util.setStyle(this.inputMax, 'top', y);
-      return Util.setStyle(this.inputMax, 'left', this.width - FilterBar.INPUT_SPACING - FilterBar.INPUT_WIDTH);
+      Util.setStyle(this.inputMin, 'top', y + 'px');
+      Util.setStyle(this.inputMin, 'left', FilterBar.INPUT_SPACING + 'px');
+      Util.setStyle(this.inputMax, 'top', y + 'px');
+      return Util.setStyle(this.inputMax, 'left', (this.width - FilterBar.INPUT_SPACING - FilterBar.INPUT_WIDTH) + 'px');
     } else {
-      Util.setStyle(this.inputMax, 'top', this.height - FilterBar.INPUT_SPACING - this.inputHeight);
-      Util.setStyle(this.inputMax, 'left', (this.width - FilterBar.INPUT_WIDTH) / 2);
-      Util.setStyle(this.inputMin , 'top', FilterBar.INPUT_SPACING);
-      return Util.setStyle(this.inputMin , 'left', (this.width - FilterBar.INPUT_WIDTH) / 2);
+      Util.setStyle(this.inputMax, 'top', (this.height - FilterBar.INPUT_SPACING - this.inputHeight) + 'px');
+      Util.setStyle(this.inputMax, 'left', ((this.width - FilterBar.INPUT_WIDTH) / 2) + 'px');
+      Util.setStyle(this.inputMin , 'top', FilterBar.INPUT_SPACING + 'px');
+      return Util.setStyle(this.inputMin , 'left', ((this.width - FilterBar.INPUT_WIDTH) / 2) + 'px');
     }
   }
 
