@@ -3,6 +3,10 @@
   <%= javascript_import_module_tag "IRV" %>
 <% end %>
 
+<% content_for(:title) do %>
+    Data centre rack view
+<% end %>
+
 <% content_for(:side_content) do %>
   <%= render 'actions' %>
 <% end %>

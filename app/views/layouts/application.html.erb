@@ -22,6 +22,7 @@
       <div id="mid" class="content fill">
         <%= render :partial => 'share/sidebar' %>
         <div id="main">
+          <%= render partial: 'layouts/shared/title_bar' %>
           <div id="pagePane">
             <div id="pageBox" class="fill box">
               <div id="pageContent">
@@ -31,6 +32,7 @@
           </div><!--pageBox-->
         </div><!--main-->
       </div><!--mid-->
+      <%= render :partial => 'layouts/shared/footer' %>
     </div><!--app-->
   </body>
 </html>

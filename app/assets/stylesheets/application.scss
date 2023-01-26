@@ -28,7 +28,7 @@
 */
 @import "layout/structure";
 @import "layout/header";
-// @import "layout/footer";
+@import "layout/footer";
 @import "layout/sidebar";
 @import "layout/screen";
 // @import "layout/show_page";
@@ -41,6 +41,9 @@
 @import "components/zoom";
 @import "components/canvas";
 @import "components/topbar";
+@import "components/titlebar";
+// @import "components/taskbar";
+@import "components/load_spinner";
 @import "components/interactive_canvas_view";
 
 /*

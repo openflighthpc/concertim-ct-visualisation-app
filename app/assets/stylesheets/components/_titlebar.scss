@@ -1,0 +1,33 @@
+#titleBar
+{
+  margin-left: -5px;
+  background-color: $lightest-grey;
+  border-bottom: 1px solid $light-grey;
+  height: 35px;
+  padding: 0 0.5em;
+  text-align: left;
+
+  &.inlineActions {
+    height: 48px;
+  }
+
+  h2
+  {
+    color: $dark-blue;
+    line-height:1.9em;
+    padding-left: 5px;
+    padding-bottom: 5px;
+
+    &[class^="icon-"], &[class*=" icon-"] {
+      @include icon-size(1.3em);
+      &:before {
+        // color: $ct-green-dark;
+        padding-right: 0.5em;
+      }
+    }
+
+    [class^="title_"], [class*=" title_"] {
+      line-height: 1;
+    }
+  }
+}

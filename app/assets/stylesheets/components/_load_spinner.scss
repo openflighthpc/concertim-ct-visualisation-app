@@ -1,0 +1,51 @@
+#loadSpinner { 
+/* might need this to get mouseover working for non-legacy/good pages in IE */
+  background-color: rgb(47,46,43);
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 27px;
+  height: 40px;
+
+  .icon-spinner {
+    display: none;
+    padding: 6px;
+    font-size: 16px;
+  }
+   &.loading .icon-spinner { display: inline-block; }
+}
+
+#loadSpinner.slow {
+//  background: transparent url(/images/icons/warn-triangle.png) no-repeat scroll center center;
+}
+
+#loadSpinner .loadMeta {
+    background:gray none repeat scroll 0 0;
+    color: black;
+    text-align: center;
+    border:1px solid black;
+    left:3px;
+    position:absolute;
+    bottom:31px;
+    width: 20em;
+    line-height: 1.4em;
+    padding: 0;
+}
+
+#loadSpinner .loadMeta .title {
+  background-color: black;
+  color: white;
+  font-weight: bold;
+  font-size: 110%;
+  padding: 5px;
+}
+
+#loadSpinner .loadMeta ul li.serverLoad {
+/*  border-bottom: 1px solid black; */
+}
+
+#loadSpinner .loadMeta ul {
+  text-align: left;
+  padding-left: 0.3em;
+  list-style-type: none;
+}

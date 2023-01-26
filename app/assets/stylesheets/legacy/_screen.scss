@@ -17,11 +17,24 @@
     right: 0;
 }
 
+
+/**************** Content ****************/
 img.left,img.center,img.right{padding:4px; border:1px solid #a0a0a0;}
 img.left{float:left; margin:0 12px 5px 0;}
 img.center{display:block; margin:0 auto 5px auto;}
 img.right{float:right; margin:0 0 5px 12px;}
 img.logo{padding:4px;}
+
+a{
+  color:#467aa7;
+  font-weight:bold;
+  text-decoration:none;
+  background-color:inherit;
+  cursor: pointer;
+}
+a:hover{color:#2a5a8a; text-decoration:none; background-color:inherit;}
+a img{border:none;}
+
 
 /**************** Header and navigation styles ****************/
 
