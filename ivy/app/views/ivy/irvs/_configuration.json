@@ -129,7 +129,7 @@
               "systemDateTime"  : "/sys/date",
               "metricData"      : "/-/api/v1/irv/metrics/[[metric_id]]",
               "hintData"        : "/-/api/v1/irv/[[group]]/[[device_id]]/tooltip",
-              "thresholds"      : "/-/api/v1/irv/thresholds",
+              "thresholds"      : "/--/api/v1/irv/thresholds",
               "breaches"        : "/-/api/v1/metrics/breaches",
               "vhMetricData"    : "/-/api/v1/groups/vshosts/[[metric_id]]",
               "vmMetricData"    : "/-/api/v1/metrics/virtual_server/[[metric_id]]"

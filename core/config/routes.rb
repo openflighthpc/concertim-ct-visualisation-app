@@ -13,8 +13,9 @@ Rails.application.routes.draw do
       namespace version do
 
         namespace :irv do
-          resources :racks
-          resources :nonrack_devices
+          resources :racks, only: [:index]
+          resources :thresholds, :constraints => { :id => /.*/ }, only: [:index]
+          resources :nonrack_devices, only: [:index]
         end
 
         namespace :groups do
