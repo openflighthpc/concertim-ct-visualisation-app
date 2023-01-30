@@ -201,7 +201,7 @@ class IRVController extends CanvasController {
     this.receivedVMMetrics = this.receivedVMMetrics.bind(this);
     if (options == null) { options = {}; }
     this.options = options;
-    this.config_file = '/-/irv/configuration';
+    this.config_file = '/--/irv/configuration';
     console.log("Constructing IRV :::: with the options :::: ",this.options);
     jQuery(document).ready(this.getConfig);
 

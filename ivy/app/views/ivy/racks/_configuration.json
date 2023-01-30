@@ -1,0 +1,23 @@
+{
+  "RACKSPACE": 
+  {
+    "padding"                : 100,
+    "h_padding"              : 100,
+    "bothViewPairPadding"    : 300,
+    "rackHSpacing"           : 50,
+    "rackVSpacing"           : 300,
+    "uLblScaleCutoff"        : 0.20,
+    "nameLblScaleCutoff"     : 0.038,
+    "zoomDuration"           : 1000,
+    "flipDuration"           : 400,
+    "flipDelay"              : 15,
+    "infoFadeDuration"       : 200,
+    "fps"                    : 24,
+    "metricFadeFill"         : "#000000",
+    "metricFadeAlpha"        : 1,
+    "additionalRowTolerance" : 0,
+    "layoutUpdateDelay"      : 300,
+    "canvasMaxDimension"     : 7500
+  }
+}
+

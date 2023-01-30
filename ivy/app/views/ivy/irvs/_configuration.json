@@ -1,0 +1,941 @@
+{
+	"*COMMENT*" : "IRV configuration: class statics are overwritten with these values. Class/package config",
+	"*COMMENT*" : "objects are in uppercase, config structure loosely mirrors IRV class heirachy.",
+	"*COMMENT*" : "NOTES: canvas colours should be in the form '#RRGGBB' to allow for colour transformations",
+	"*COMMENT*" : "       canvas co-ordinates are in px relative to natural scale/zoom (1)",
+	"*COMMENT*" : "       canvas fonts should be in the form '[size]px [font]' e.g. '15px Karla'",
+
+		"ASSETMANAGER":
+		{
+      "*COMMENT*"          : "How many image load requests to make concurrently",
+			"numConcurrentLoads" : 30
+		},
+
+    "IRVUTIL":
+    {
+      "*COMMENT*" : "How many significant figures to use when formatting a numeric value",
+      "sigFig" : 5
+    },
+
+    "PARSER":
+    {
+      "offlineMetricVariance" : 0.4
+    },
+
+    "VIEWMODEL":
+    {
+      "startUp":
+      {
+        "viewMode"       : "Images and bars",
+        "metricLevel"    : "devices",
+        "face"           : "front",
+        "graphOrder"     : "descending",
+        "scaleMetrics"   : true,
+        "showChart"      : true,
+        "metricPollRate" : 60000
+      },
+
+      "*COMMENT*" : "Defines the colour map applied to metric values",
+      "colourScale":
+      [
+        {
+          "pos" : 0,
+          "col" : "#336600"
+        },
+        {
+          "pos" : 0.3,
+          "col" : "#b3a300"
+        },
+        {
+          "pos" : 1,
+          "col" : "#b40000"
+        }
+      ],
+
+      "*COMMENT*"              : "The threshold drop-down caption is programmatically managed, these are the captions",
+      "noThresholdsCaption"    : "No thresholds available",
+      "selectThresholdCaption" : "Select threshold"
+    },
+
+    "CONTROLLER":
+    {
+        "*COMMENT*"                : "How long to wait before showing the rack hint",
+        "rackHintHoverDelay"       : 1000,
+        "*COMMENT*"                : "How long to wait before showing the thumb nav hint",
+        "thumbHintHoverDelay"      : 300,
+        "*COMMENT*"                : "Delay threshold between two clicks to determine wether to interpret as two single clicks or a double click",
+        "doubleClickTimeout"       : 250,
+        "*COMMENT*"                : "The px distance threshold an drag action needs to exceed to be interpreted as dragging",
+        "dragActivationDist"       : 8,
+        "*COMMENT*"                : "How often to poll for breaches",
+        "breachPollRate"           : 60000,
+        "*COMMENT*"                : "What proportion of the height of the page is used for the racks, the remainder being used for the chart and filter bar",
+        "rackPageHeightProportion" : 0.70,
+        "*COMMENT*"                : "ASCII value of the key used in step-zooming",
+        "zoomKey"                  : 90,
+        "*COMMENT*"                : "Relative step zoom amount, e.g. 0.2 indicates a 20% change from the current zoom level",
+        "stepZoomAmount"           : 0.2,
+        "*COMMENT*"                : "Caption to display while loading resources",
+        "resourceLoadCaption"      : "Loading Resources: [[progress]]",
+        "*COMMENT*"                : "Filename given when clicking save image button",
+        "screenShotFilename"       : "dcrv_[[day]]-[[month]]-[[year]]_[[hours]]-[[minutes]]-[[seconds]].png",
+        "*COMMENT*"                : "Minimum permitted metric poll rate",
+        "minMetricPollRate"        : 60000,
+        "*COMMENT*"                : "Period of time to wait in ms before actioning edits made to the metric poll rate input box",
+        "metricPollEditDelay"      : 1000,
+        "*COMMENT*"                : "Colour to apply to metric poll rate input box if value is too low or contains garbage",
+        "invalidPollColour"        : "#f99",
+        "defaultMetricStat"        : "max",
+        "modifiedRackPollRate"     : 30000,
+        "modifiedPowerStripsPollRate"     : 30000,
+
+
+        "*COMMENT*" : "Export CVS button settings",
+        "export":
+        {
+            "*COMMENT*" : "Message displayed whilst processing request",
+            "message"   : "Saving image, please wait.",
+            "*COMMENT*" : "Filename given to exported data",
+            "filename"  : "[[metric_name]]_[[day]]-[[month]]-[[year]]_[[hours]]-[[minutes]]-[[seconds]].csv",
+            "*COMMENT*" : "Outputted data header",
+            "header"    : "Metric Name,[[metric_name]]\nUnits,[[metric_units]]\nDevice Name,Metric Value",
+            "*COMMENT*" : "Format of each outputted metric",
+            "record"    : "[[device_name]],[[value]]"
+        },
+
+        "*COMMENT*" : "Server API URLs and misc resource locations",
+        "resources":
+        {
+            "*COMMENT*"          : "Flag used to switch to and from offline mode",
+            "live"               : true,
+            "*COMMENT*"          : "First place to look for device images",
+            "primaryImagePath"   : "/images/irv/concurrent-thinking/",
+            "*COMMENT*"          : "Second place to look for device images should primary location return a 404",
+            "secondaryImagePath" : "/images/irv/customer/",
+            "*COMMENT*"          : "Number of server requests made during initialisation",
+            "numResources"       : 0,
+
+            "*COMMENT*" : "Server API URLs",
+            "liveResources"      :
+            {
+              "path"            : "/-/api/v1/",
+              "metricTemplates" : "metrics/metrics/structure",
+              "rackDefinitions" : "irv/racks",
+              "modifiedRackIds" : "irv/racks/modified",
+              "powerStripDefinitions" : "irv/power_strips",
+              "modifiedPowerStripIds" : "irv/power_strips/modified",
+              "nonrackDeviceDefinitions" : "irv/nonrack_devices",
+              "modifiedNonRackIds" : "irv/nonrack_devices/modified",
+              "systemDateTime"  : "/sys/date",
+              "metricData"      : "irv/metrics/[[metric_id]]",
+              "hintData"        : "irv/[[group]]/[[device_id]]/tooltip",
+              "thresholds"      : "irv/thresholds",
+              "breaches"        : "metrics/breaches",
+              "vhMetricData"    : "groups/vshosts/[[metric_id]]",
+              "vmMetricData"    : "metrics/virtual_server/[[metric_id]]"
+            },
+
+            "*COMMENT*" : "Location of dummy responses for offline mode",
+            "offlineResources":
+            {
+              "path"            : "/racks/irv/offline/",
+              "metricTemplates" : "structure",
+              "rackDefinitions" : "racks",
+              "metricData"      : "[[metric_id]]",
+              "hintData"        : "racks/[[device_id]]/tooltip",
+              "thresholds"      : "thresholds",
+              "vhMetricData"    : "groups/vshosts/[[metric_id]]",
+              "vmMetricData"    : "metrics/virtual_server/[[metric_id]]"
+            }
+			}
+    },
+
+    "PRESETMANAGER":
+    {
+        "*COMMENT*"        : "Common aspect of preset server API",
+        "path"             : "/-/api/v1/irv/",
+        "*COMMENT*"        : "Get preset server API",
+        "get"              : "rackview_presets",
+        "*COMMENT*"        : "Set preset server API",
+        "new"              : "rackview_presets",
+        "*COMMENT*"        : "Updaate preset server API",
+        "update"           : "rackview_presets/[[preset_id]]",
+        "*COMMENT*"        : "Warning message to display when no threshold is associated with the newly selected preset",
+        "warnThreshold"    : "No threshold has been associated with your chosen preset.",
+        "*COMMENT*"        : "How long the threshold warning message persists for, in seconds",
+        "msgHoldDuration"  : 5,
+        "*COMMENT*"        : "Preset update warning message",
+        "msgConfirmUpdate" : "Are you sure you wish to overwrite the preset [[selected_preset]] with the current display settings?",
+
+        "*COMMENT*"         : "The names of the model values required by PresetManager",
+        "modelDependencies" :
+        {
+          "*COMMENT*"      : "The string name value of the currently selected preset",
+          "selectedPreset" : "selectedPreset",
+          "*COMMENT*"      : "A hash containing all preset definitions using preset ID as the key",
+          "presetsById"    : "presetsById"
+        },
+
+        "*COMMENT*"       : "DOM dependencies, specific elements are accessed by their ID",
+        "domDependencies" :
+        {
+          "saveDialogue" : "save_dialogue",
+          "nameInput"    : "save_input",
+          "createNewBtn" : "create_preset",
+          "updateBtn"    : "update_preset",
+          "saveBtn"      : "confirm_preset_save",
+          "cancelBtn"    : "cancel_preset_save",
+
+          "*COMMENT*"       : "Defines how to access the default preset ID, this is an attribute written on page load when the user clicks through from the view presets page. It overrides the account preferences default preset and should not be confused with it.",
+          "defaultAccessor" :
+          {
+            "*COMMENT*" : "Element id of DOM element to query",
+            "element"   : "rack_view",
+            "*COMMENT*" : "Attribute to inspect",
+            "property"  : "data-preset"
+          }
+        },
+
+        "*COMMENT*" : "The various possible errors which can be encountered",
+        "errors" :
+        {
+            "*COMMENT*"     : "Generic aspect of an error message",
+            "caption"       : "Failed to save preset: [[error_message]]",
+            "*COMMENT*"     : "Thrown when creating a new preset and attepting to use an existing name",
+            "duplicateName" : "The chosen name is already in use.",
+            "*COMMENT*"     : "Thrown when using illegal characters in the preset name",
+            "invalidName"   : "The chosen name contains invalid characters",
+            "*COMMENT*"     : "Thrown when a preset contains only spaces, tab characters etc.",
+            "whiteName"     : "The chosen name contains no characters",
+            "*COMMENT*"     : "Thrown when the chosen preset is attempted to be edited by someone that doens't own it.",
+            "notOwned"      : "The chosen preset does not belong to you, please re-save"
+       },
+        
+        "*COMMENT*" : "List of values to store and recall in a preset. The order in which these are defined here defines",
+        "*COMMENT*" : "the order in which they will be set when a preset is loaded. These are values held in the ViewModel and",
+        "*COMMENT*" : "due to the order sensitivity of knockout can break the IRV if not set in a particular order. Examples of",
+        "*COMMENT*" : "such breakages: if colourMaps is set before filter or if selectedMetric is set before colourMaps",
+        "values" :
+        [
+            {
+                "name" : "metricPollRate",
+                "type" : "simple"
+            },
+            {
+                "name" : "showChart",
+                "type" : "simple"
+            },
+            {
+                "name" : "gradientLBCMetric",
+                "type" : "simple"
+            },
+            {
+                "name" : "scaleMetrics",
+                "type" : "simple"
+            },
+            {
+                "name" : "viewMode",
+                "type" : "simple"
+            },
+            {
+                "name" : "face",
+                "type" : "simple"
+            },
+            {
+                "name" : "metricLevel",
+                "type" : "simple"
+            },
+            {
+                "name" : "graphOrder",
+                "type" : "simple"
+            },
+            {
+                "name" : "filters",
+                "type" : "complex",
+                "key"  : "selectedMetric"
+            },
+            {
+                "name" : "colourMaps",
+                "type" : "complex",
+                "key"  : "selectedMetric"
+            },
+            {
+                "name" : "selectedMetric",
+                "type" : "simple"
+            },
+            {
+                "name" : "selectedGroup",
+                "type" : "simple"
+            },
+            {
+                "name" : "selectedThresholdId",
+                "type" : "simple"
+            },
+            {
+                "name" : "invertedColours",
+                "type" : "simple"
+            }
+        ]
+    },
+
+    "STATICGROUPMANAGER":
+    {
+        "*COMMENT*"        : "Server API URL to grab a list of static group names and their associated IDs",
+        "list"             : "/-/api/v1/groups/groups?group_for=irv&group_filter=excluding_system_non_physical_device_groups",
+        "*COMMENT*"        : "Server API URL to get a specific static group",
+        "get"              : "/-/api/v1/groups/groups/[[group_id]]?group_for=irv",
+        "*COMMENT*"        : "Server API UTL to post a new static group",
+        "new"              : "/-/api/v1/groups/static_groups",
+        "*COMMENT*"        : "Server API URL to update an existing static group",
+        "update"           : "/-/api/v1/groups/static_groups/[[group_id]]",
+        "*COMMENT*"        : "Static group update confirmation message",
+        "msgConfirmUpdate" : "Are you sure you wish to overwrite the static group [[selected_group]] with the current selection?",
+
+        "*COMMENT*"         : "The names of the model values required by StaticGroupManager",
+        "modelDependencies" :
+        {
+          "selectedGroup"      : "selectedGroup",
+          "groupsById"         : "groupsById",
+          "deviceLookup"       : "deviceLookup",
+          "groups"             : "groups",
+          "activeSelection"    : "activeSelection",
+          "selectedDevices"    : "selectedDevices",
+          "activeFilter"       : "activeFilter",
+          "filteredDevices"    : "filteredDevices",
+          "displayingAllRacks" : "displayingAllRacks"
+        },
+
+        "*COMMENT*"       : "DOM dependencies, specific elements are accessed by the IDs stipulated below",
+        "domDependencies" :
+        {
+          "saveDialogue"     : "group_save_dialogue",
+          "nameInput"        : "group_save_input",
+          "createNewBtn"     : "create_group",
+          "updateBtn"        : "update_group",
+          "confirmGroupSave" : "confirm_group_save",
+          "cancelGroupSave"  : "cancel_group_save"
+        },
+
+        "*COMMENT*" : "All possible error messages",
+        "errors" :
+        {
+            "*COMMENT*"       : "Generic aspect of error message",
+            "caption"         : "Failed to save static group: [[error_message]]",
+            "*COMMENT*"       : "The user attempted to create a group with the same name as an existing group",
+            "duplicateName"   : "The chosen name is already in use.",
+            "invalidName"     : "The chosen name contains invalid characters.",
+            "whiteName"       : "The chosen name contains no characters.",
+            "readOnly"        : "The selected group is of type [[group_type]] and cannot be modified.",
+            "emptyGroup"      : "Your request could not be processed as the current selection is empty.",
+            "groupDataCentre" : "Your request could not be processed. The current selection includes the entire data centre; a group for this already exists."
+        }
+    },
+
+    "UPDATEMSG":
+    {
+      "message": "Updating..."
+    },
+
+    "FILTERBAR":
+    {
+      "*COMMENT*"          : "length is a relative proportion to the containing div's width or height",
+      "length"             : 0.8,
+      "thickness"          : 45,
+      "padding"            : 20,
+      "font"               : "Verdana",
+      "fontSize"           : 14,
+      "fontFill"           : "#000000",
+      "*COMMENT*"          : "accepts values 'top', 'bottom', 'left' or 'right'",
+      "defaultAlign"       : "bottom",
+      "labelMinSeparation" : 10,
+
+      "slider":
+      {
+        "shape": 
+        [
+          { "x": -5, "y": -15 },
+          { "x": 5, "y": -15 }, 
+          { "x": 5, "y": -5 }, 
+          { "x": 0, "y": 0 }, 
+          { "x": -5, "y": -5 }
+        ],
+
+        "fill"          : "#999999",
+        "stroke"        : "#444444",
+        "strokeWidth"   : 1,
+        "disabledAlpha" : 0.2,
+        "updateDelay"   : 1000
+      },
+
+      "cutoffLine":
+      {
+        "stroke"      : "#000000",
+        "strokeWidth" : 1,
+        "alpha"       : 0.3
+      },
+
+      "input":
+      {
+        "width"       : 40,
+        "spacing"     : 20,
+        "updateDelay" : 2000
+      },
+
+      "dragBox":
+      {
+        "stroke"      : "#99ccff",
+        "strokeWidth" : 10,
+        "alpha"       : 1
+      },
+
+      "modelDependencies":
+      {
+        "colourScale"    : "colourScale",
+        "colourMaps"     : "colourMaps",
+        "filters"        : "filters",
+        "activeFilter"   : "activeFilter",
+        "selectedMetric" : "selectedMetric",
+        "showFilterBar"  : "showFilterBar"
+      }
+    },
+
+    "THUMBNAV":
+    {
+      "width"         : 170,
+      "height"        : 170,
+      "shadeFill"     : "#000000",
+      "shadeAlpha"    : 0.2,
+      "maskFill"      : "#999999",
+      "maskFillAlpha" : 1,
+      "breachFill"    : "#ff0000",
+      "breachAlpha"   : 1,
+
+      "modelDependencies":
+      {
+         "scale"       : "scale",
+         "breachZones" : "breachZones",
+         "rackImage"   : "rackImage",
+         "groups"      : "groups",
+         "powerStripImage" : "powerStripImage"
+      }
+    },
+
+    "RACKSPACE": 
+    {
+
+      "selectionCount":
+      {
+        "font"    : "14px Verdana",
+        "fill"    : "#ffffff",
+        "bgFill"  : "#000000",
+        "bgAlpha" : 0.5,
+        "caption" : "[[selection_count]] selected",
+        "offsetX" : 0,
+        "offsetY" : -10
+      },
+
+      "selectBox":
+      {
+        "stroke"      : "#000000",
+        "strokeWidth" : 2,
+        "alpha"       : 0.5
+      },
+
+      "drag": 
+      {
+        "fadeFill"  : "#000000",
+        "fadeAlpha" : 0.7,
+        "snapRange" : 30
+      },
+
+      "CONTEXTMENU":
+      {
+        "*COMMENT*" : "Verbose mode, when enabled appends all parent device options to the context menu",
+        "*COMMENT*" : "e.g. for a rack and chassis options will also be displayed for a device",
+        "verbose"           : false,
+        "urlInternalPrefix" : "internal::",
+        "spacer"            : "<img src='/images/irv/concurrent-thinking/spacer.gif'>",
+	      "commandModel"      : "Command",
+
+        "aspectMap":
+        {
+          "front" : "f",
+          "rear"  : "b"
+        },
+
+	      "deviceTypeURLMap":
+	      {
+	          "ManagedDevice"       : "managed",
+	          "MiscellaneousDevice" : "misc",
+	          "PowerStrip"          : "power_strips",
+	          "Switch"              : "switch",
+            "Server"              : "server",
+            "VirtualHost"         : "virtual_host"
+	      },
+
+        "options":
+        {
+          "*COMMENT*": "url parameter substitutions: [[device_id]] [[machine_id]] [[chassis_id]] [[rack_id]]",
+          "*COMMENT*": "device_id represents the top level device and will usually be the chassis or machine",
+          "*COMMENT*": "substitutions are only made when the particular id is known. Optional statements can",
+          "*COMMENT*": "be made using double brackest e.g. '((some statement [[some_param]]!))' in this case",
+          "*COMMENT*": "if some_param is undefined the param and the accompanying text will be ommitted",
+
+          "sockets":
+          [
+            {
+              "content":"<h1>Socket</h1>"
+            }
+          ],  
+          "powerStrips":
+          [
+            {
+              "content" : "<h1>PDU [[device_name]]</h1>"
+            },
+            {
+              "caption" : "Show",
+              "url"     : "/-/devices/[[device_id]]"
+            },
+            {
+              "caption" : "Edit",
+              "url"     : "/-/devices/[[device_id]]/edit",
+              "RBAC"    : {"action": "manage", "resource": "Ivy::Device"}
+            },
+            {
+              "caption" : "Delete",
+              "url"     : "/-/devices/[[device_id]]/show_destroy_issues?return=IRV",
+              "onClick" : "new AjaxPopup('destroy_server', '/-/devices/[[device_id]]/show_destroy_issues', {xpos: function() {return $('rack_container').getWidth()/2}, ypos: function() {return $('rack_container').getHeight()/2}, method:'get', asynchronous:true, evalScripts:true, header:'<h2>Delete [[device_name]]</h2>', jump:'top', onComplete:function(request){manageRedirect(request,'destroy_server','production')}, onLoading:function(request){please_wait('destroy_server')}}); return false;",
+              "disableForCommand" : true,
+              "RBAC"    : {"action": "manage", "resource": "Ivy::Device"}
+            }
+          ],
+
+ 	        "global":
+	        [
+	          {
+	            "content" : "<h1>Rack View</h1>"
+            },
+            {
+              "caption" : "Reset filters",
+              "url"     : "internal::reset"
+            },
+            {
+              "caption" : "Clear de-selected racks and devices",
+              "url"     : "internal::clearDeselected"
+            },
+            {
+              "caption" : "Re-select all racks and devices",
+              "url"     : "internal::reSelectAll"
+            }
+          ],
+
+          "racks":
+          [
+            {
+              "content" : "<h1>Rack [[rack_name]]</h1>"
+            },
+            {
+              "caption" : "Focus",
+              "url"     : "internal::focusOn,racks,[[rack_id]]"
+            },
+            {
+              "caption" : "Show",
+              "url"     : "/-/racks/[[rack_id]]"
+            },
+            {
+              "caption" : "View",
+              "url"     : "/-/racks/[[rack_id]]/view"
+            },
+            {
+              "caption" : "Metrics",
+              "url"     : "/-/racks/[[rack_id]]/metrics"
+            },
+            {
+              "caption" : "Edit",
+              "url"     : "/-/racks/[[rack_id]]/edit",
+              "RBAC"    : {"action": "manage", "resource": "Ivy::HwRack"}
+            },
+            {
+              "caption" : "Delete",
+              "url"     : "/-/racks/[[rack_id]]/show_destroy_issues?return=IRV",
+              "onClick" : "new AjaxPopup('destroy_ajax_list', '/-/racks/[[rack_id]]/show_destroy_issues', {xpos: function() {return $('rack_container').getWidth()/2}, ypos: function() {return $('rack_container').getHeight()/2}, method:'get', asynchronous:true, evalScripts:true, header:'<h2>Delete Rack</h2>', jump:'top', onComplete:function(request){manageRedirect(request,'destroy_ajax_list','production')}, onLoading:function(request){please_wait('destroy_ajax_list')}}); return false;",
+              "RBAC"    : {"action": "manage", "resource": "Ivy::HwRack"}
+            },
+            {
+              "content": "[[spacer]]<h1>Devices</h1>"
+            },
+            {
+              "caption" : "[[view_devices]]",
+              "url"     : "/-/racks/[[rack_id]]/devices"
+            },
+            {
+              "caption" : "((Add device at u[[empty_u]]))",
+              "url"     : "/-/items/wizard?location_type=rack&facing=[[aspect]]&rack_id=[[rack_id]]&start_u=[[empty_u]]",
+              "RBAC"    : {"action": "manage", "resource": "Ivy::Device"}
+            },
+            {
+              "content": "[[spacer]]<h1>PDUs</h1>"
+            },
+            {
+              "caption" : "[[view_hide_power_strips]]",
+              "url"     : "internal::viewPowerStrips,[[rack_id]]"
+            },
+            {
+              "caption" : "Add PDU",
+              "url"     : "/-/items/wizard?rack_id=[[rack_id]]&type=PowerStrip",
+              "RBAC"    : {"action": "manage", "resource": "Ivy::Device"}
+            },
+            {
+              "content": "[[spacer]]<h1>Zero-U Devices</h1>"
+            },
+            {
+              "caption" : "Add a zero-U device",
+              "url"     : "/-/items/wizard?aspect=[[aspect]]&rack_id=[[rack_id]]&location_type=zerou",
+              "RBAC"    : {"action": "manage", "resource": "Ivy::Device"}
+            }
+          ],
+
+          "chassis":
+          [
+            {
+              "content": "<h1>Chassis [[chassis_name]]</h1>"
+            },
+            {
+              "caption" : "Focus",
+              "url"     : "internal::focusOn,chassis,[[chassis_id]]"
+            },
+            {
+              "caption" : "Show",
+              "url"     : "/-/chassis/[[chassis_id]]"
+            },
+            {
+              "caption" : "Edit",
+              "url"     : "/-/chassis/[[chassis_id]]/edit",
+              "RBAC"    : {"action": "manage", "resource": "Ivy::Chassis"}
+            },
+            {
+              "caption" : "Delete",
+              "url"     : "/-/chassis/[[chassis_id]]/show_destroy_issues?return=IRV",
+              "onClick" : "new AjaxPopup('destroy_chassis', '/-/chassis/[[chassis_id]]/show_destroy_issues', {xpos: function() {return $('rack_container').getWidth()/2}, ypos: function() {return $('rack_container').getHeight()/2}, method:'get', asynchronous:true, evalScripts:true, header:'<h2>Delete Chassis</h2>', jump:'top', onComplete:function(request){manageRedirect(request,'destroy_chassis','production')}, onLoading:function(request){please_wait('destroy_chassis')}}); return false;",
+	            "disableForCommand" : true,
+              "RBAC"    : {"action": "manage", "resource": "Ivy::Chassis"}
+            },
+            {
+              "caption" : "((Add blade to column [[empty_col]], row [[empty_row]]))",
+              "url"     : "/-/chassis/[[chassis_id]]/devices/new?slot_id=[[slot_id]]",
+              "RBAC"    : {"action": "manage", "resource": "Ivy::Device"}
+            }
+          ],
+
+          "devices":
+          [
+            {
+              "content" : "<h1>Device [[device_name]]</h1>"
+            },
+            {
+              "caption" : "Focus",
+              "url"     : "internal::focusOn,devices,[[device_id]]"
+            },
+            {
+              "caption" : "Show",
+              "url"     : "/-/devices/[[device_id]]"
+            },
+            {
+              "caption" : "Edit",
+              "url"     : "/-/devices/[[device_id]]/edit",
+              "RBAC"    : {"action": "manage", "resource": "Ivy::Device"}
+            },
+            {
+              "caption" : "Delete",
+              "url"     : "/-/devices/[[device_id]]/show_destroy_issues?return=IRV",
+              "onClick" : "new AjaxPopup('destroy_device', '/-/devices/[[device_id]]/show_destroy_issues', {xpos: function() {return $('rack_container').getWidth()/2}, ypos: function() {return $('rack_container').getHeight()/2}, method:'get', asynchronous:true, evalScripts:true, header:'<h2>Delete [[device_name]]</h2>', jump:'top', onComplete:function(request){manageRedirect(request,'destroy_device','production')}, onLoading:function(request){please_wait('destroy_device')}}); return false;",
+              "disableForCommand" : true,
+              "RBAC"    : {"action": "manage", "resource": "Ivy::Device"}
+            },
+            {
+              "content" : "(([[spacer]]<span style='display:none;'>[[is_virtual_host]]</span>))"
+            },
+            {
+              "caption" : "((Show virtual machines<span style='display:none;'>[[device_id]]</span><span style='display:none;'>[[is_virtual_host]]</span>))",
+              "url"     : "internal::showVMs,[[device_id]]"
+            }
+          ],
+
+          "common":
+          [
+          ]
+        }
+      },
+
+      "HINT":
+      {
+        "RACKHINT":
+        {
+          "moreInfoDelay" : 2000,
+          "rackText"      : "<div style='font-weight:700;margin-left:-10px;'>Rack: [[name]]</div>Height: [[u_height]]U<br>((Url: [[url]]<br>))",
+          "chassisText"   : "<div style='font-weight:700;margin-left:-10px;'>Chassis: [[name]]</div>((Rack: [[parent_name]]<br>))((Metric: [[metric_name]]<br>))(((Min: [[metric_min]]<br>))((Max: [[metric_max]]<br>))((Average: [[metric_mean]]<br>))((Total: [[metric_total]]<br>))(Value: [[metric_value]]<br>))Height: [[u_height]]U<br>((Config: [[num_rows]] rows x [[slots_per_row]] slots<br>))((Position: [[u_position]]<br>))((Free slots: [[slots_available]]<br>))((Power Supplies: [[power_supplies]]))",
+          "deviceText"    : "<div style='font-weight:700;margin-left:-10px;'>Device: [[name]]</div>((Rack: [[rack_name]]<br>))((Chassis: [[parent_name]]<br>))((Metric: [[metric_name]]<br>))((Min: [[metric_min]]<br>))((Max: [[metric_max]]<br>))((Average: [[metric_mean]]<br>))((Total: [[metric_total]]<br>))((Value: [[metric_value]]<br>))((Height: [[u_height]]U<br>))((Position: [[position]]<br>))((Type: [[device_type]]<br>))((Power Supplies: [[power_supplies]]))",
+          "powerStripText": "<div style='font-weight:700;margin-left:-10px;'>PDU: [[name]]</div>Manufacturer: [[power_strip_manufacturer]]<br>Model: [[power_strip_model]]<br>Managed: [[managed]]<br>Amount of sockets: [[amount_of_sockets]]((<br>Powered on and connected: [[on_busy]]))((<br>Powered on and disconnected: [[on_free]]))((<br>Powered off and connected: [[off_busy]]))((<br>Powered off and disconnected: [[off_free]]))((<br>Connected: [[busy]]))((<br>Disconnected: [[free]]))",
+          "socketText"    : "<div style='font-weight:700;margin-left:-10px;'>Socket: [[id]]</div>((Powered on: [[socket_on]]<br>))Connected: [[socket_connected]]((<br>Device connected to: [[device_connected]]))((<br>Power supply connected to: [[power_supply_connected]]))"
+        },
+
+        "THUMBHINT":
+        {
+          "caption" : "<div style='margin-left:-10px;'>[[device_name]]</div>"
+        }
+      },
+
+      "RACKOBJECT":
+      {
+        "metricFadeFill"  :"#d5d5d5",
+        "metricFadeAlpha" : 1,
+        "blankFill"       : "#2f4ff4",
+        "excludedAlpha"   : 0.5,
+        "uPxHeight"       : 34,
+
+        "RACK": 
+        {
+          "captionFront"     : "",
+          "captionRear"      : "",
+          "fadeInMetricMode" : false,
+
+          "uLbl": 
+          {
+            "offsetX" : 22,
+            "offsetY" : 26,
+            "font"    : "Verdana",
+            "fontSize": 11,
+            "colour"  : "#ffffff",
+            "align"   : "center"
+          },
+
+          "nameLbl": 
+          {
+            "offsetX" : 0,
+            "offsetY" : -40,
+            "font"    : "Verdana",
+            "size"    : 38,
+            "minSize" : 8,
+            "colour"  : "#000000",
+            "align"   : "center",
+
+            "bg": 
+            {
+              "fill"    : "#000",
+              "alpha"   : 0.01,
+              "padding" : 4
+            }
+          },
+
+          "space": 
+          {
+            "fill"         : "#66ff66",
+            "alpha"        : 0.5,
+            "fadeDuration" : 500
+          }
+        },
+
+        "CHASSIS":
+        {
+          "unknownFill"        : "#551111",
+          "defaultWidth"       : 370,
+          "depthShadeFill"     : "#000000",
+          "depthShadeMaxAlpha" : 0.5
+        }
+      },
+
+      "POWERSTRIP":
+      {
+        "backBroundColor" :"#838383",
+        "uPxHeight"       : 34,
+
+        "nameLbl":
+        {
+          "size"    : 10,
+          "font"    : "Verdana",
+          "colour"  : "#ffffff",
+          "align"   : "center"
+        },
+
+        "images": 
+        {
+          "top"    : "power_strip_front_top.png",
+          "bottom" : "power_strip_front_btm.png",
+          "repeat" : "power_strip_front_repeat.png"
+        },
+      
+        "SOCKET": 
+        {
+          "images": 
+          {
+            "front_grey"       : "socket_grey.png",
+            "front_grey_busy"  : "socket_grey_busy.png",
+            "front_red"        : "socket_red.png",
+            "front_red_busy"   : "socket_red_busy.png",
+            "front_green"      : "socket_green.png",
+            "front_green_busy" : "socket_green_busy.png"
+          }
+        }
+      },
+
+      "BREACHER":
+      {
+        "stroke"       : "#ff0000",
+        "strokeWidth"  : 20,
+        "maxAlpha"     : 1,
+        "minAlpha"     : 0.3,
+        "animDuration" : 500
+      },
+
+      "HIGHLIGHT": 
+      {
+        "selected": 
+        {
+          "fill"         : "#ffba00",
+          "maxAlpha"     : 0.9,
+          "minAlpha"     : 0.3,
+          "animDuration" : 500
+        },
+        "dragged": 
+        {
+          "fill"         : "#882200",
+          "maxAlpha"     : 0.7,
+          "minAlpha"     : 0.3,
+          "animDuration" : 1200
+        }
+      },
+
+      "METRIC": 
+      {
+        "alpha"        : 0.6,
+        "animDuration" : 500,
+        "fadeDuration" : 500
+      },
+
+      "SIMPLECHART":
+      {
+        "truncationSuffix"       : "...",
+        "lineDatumHoverRadius"   : 10,
+        "mouseMoveThrottleDelay" : 10,
+
+        "label":
+        {
+          "divisions"  : [ 5, 2, 1 ],
+          "minGap"     : 20,
+          "tickSize"   : 3,
+          "font"       : "Verdana",
+          "fontSize"   : 11,
+          "fontColour" : "#000",
+          "margin"     : 3
+        },
+
+        "title":
+        {
+          "font"       : "Verdana",
+          "fontStyle"  : "bold",
+          "fontSize"   : 13,
+          "fontColour" : "#000"
+        },
+
+        "margin":
+        {
+          "left"   : 50,
+          "right"  : 20,
+          "top"    : 40,
+          "bottom" : 20
+        },
+
+        "axis":
+        {
+          "stroke"      : "#000",
+          "strokeWidth" : 0.3
+        },
+
+        "grid":
+        {
+          "stroke"      : "rgba(0,0,0,0.5)",
+          "strokeWidth" : 0.3
+        },
+
+        "tooltip":
+        {
+          "caption"     : "[[name]] : [[metric]]((<br>Device : [[device_type]]))((<br>&nbsp;total : [[total]]))((<br>&nbsp;max : [[max]]))((<br>&nbsp;average : [[mean]]))((<br>&nbsp;min : [[min]]))",
+          "colourField" : "colour"
+        }
+      },
+
+      "LBC":
+      {
+        "titleCaption"               : "[[metric_name]](( [[metric_units]] )) [[[num_metrics]] of [[total_metrics]]] (current selection: min=[[min_val]], av=[[av_val]], max=[[max_val]])",
+        "pointerOffsetX"             : -4,
+        "pointerOffsetY"             : 10,
+        "thresholdAlpha"             : 0.2,
+        "barChartMinDatumWidth"      : 2,
+        "fillSingleSeriesLineCharts" : true,
+        "linePointerColour"          : "#0",
+        "linePointerWidth"           : 1,
+
+        "modelDependencies":
+        {
+          "showChart"         : "showChart",
+          "selectedDevices"   : "selectedDevices",
+          "filteredDevices"   : "filteredDevices",
+          "metricData"        : "metricData",
+          "colourMaps"        : "colourMaps",
+          "colourScale"       : "colourScale",
+          "graphOrder"        : "graphOrder",
+          "racks"             : "racks",
+          "highlighted"       : "highlighted",
+          "selectedThreshold" : "selectedThreshold",
+          "metricLevel"       : "metricLevel",
+          "metricTemplates"   : "metricTemplates",
+          "selectedMetric"    : "selectedMetric",
+          "deviceLookup"      : "deviceLookup",
+          "groups"            : "groups",
+          "activeSelection"   : "activeSelection",
+          "gradientLBCMetric" : "gradientLBCMetric",
+          "activeFilter"      : "activeFilter"
+        },
+
+        "selectCount":
+        {
+          "font"    : "14px Verdana",
+          "fill"    : "#ffffff",
+          "bgFill"  : "#000000",
+          "bgAlpha" : 0.5,
+          "caption" : "[[selection_count]] selected",
+          "offsetX" : 0,
+          "offsetY" : -10
+        },
+
+        "selectBox":
+        {
+          "stroke"      : "#000000",
+          "strokeWidth" : 2,
+          "alpha"       : 0.5
+        },
+
+        "VMDIALOGUE":
+        {
+          "width"        : 0.5,
+          "height"       : 0.5,
+          "noMetricsMsg" : "No metric data to display",
+          "msgFont"      : "12px Verdana",
+          "msgFill"      : "#0"
+        },
+
+        "IRVCHART":
+        {
+          "seriesFadeAlpha" : 0.4
+        }
+      },
+
+      "PRIMITIVES": 
+      {
+        "text": 
+        {
+          "truncationSuffix": "..."
+        }
+      }
+    }
+  }
