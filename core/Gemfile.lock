@@ -100,6 +100,8 @@ GEM
       actionpack (>= 5.0)
       cells (>= 4.1.6, < 5.0.0)
     concurrent-ruby (1.1.10)
+    crack (0.4.5)
+      rexml
     crass (1.0.6)
     dartsass-rails (0.4.1)
       railties (>= 6.0.0)
@@ -245,6 +247,7 @@ DEPENDENCIES
   capybara
   cells-erb (~> 0.1.0)
   cells-rails (~> 0.1.5)
+  crack (~> 0.4.5)
   dartsass-rails (~> 0.4.1)
   debug
   importmap-rails

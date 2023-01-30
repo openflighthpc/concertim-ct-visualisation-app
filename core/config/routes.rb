@@ -6,9 +6,8 @@ Rails.application.routes.draw do
     ['v1'].each do |version|
       namespace version do
         namespace :irv do
-          resources :nonrack_devices do
-            get :modified, :on => :collection
-          end
+          resources :racks
+          resources :nonrack_devices
         end
         namespace :groups do
           resources :groups, only: [:index]
