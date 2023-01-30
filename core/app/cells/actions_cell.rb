@@ -15,7 +15,7 @@
 class ActionsCell < Cell::ViewModel
   # include Devise::Controllers::Helpers
   # helper_method :current_user
-  include FakeAuthConcern
+  include Emma::ControllerConcerns::Authentication
 
   attr_reader :actions, :dropdown_id
 
