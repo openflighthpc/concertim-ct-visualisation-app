@@ -27,7 +27,8 @@ gem "bootsnap", require: false
 #
 ###################################
 
-gem "ivy", '0.1.0', :require => "ivy",   :path => "../ivy"
+gem "ivy",  '0.1.0', :require => "ivy",   :path => "../ivy"
+gem "meca", '0.1.0', :require => "meca",   :path => "../meca"
 
 
 ###################################
@@ -80,6 +81,8 @@ gem "rabl", "~> 0.16.1"
 ###################################
 
 gem "crack", "~> 0.4.5"
+# A memcache client.
+gem "dalli", "~> 3.2"
 
 
 ###################################

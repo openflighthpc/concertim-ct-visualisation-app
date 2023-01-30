@@ -8,7 +8,6 @@ Gem::Specification.new do |spec|
   spec.homepage    = "https://github.com/alces-flight/concertim-ct-visualisation-app/ivy"
   spec.summary     = "Hardware and configuration inventory engine"
   # spec.description = "TODO: Description of Ivy."
-  spec.license     = "MIT"
   
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the "allowed_push_host"
   # to allow pushing to a single host or delete this section to allow pushing to any host.
@@ -19,7 +18,7 @@ Gem::Specification.new do |spec|
   # spec.metadata["changelog_uri"] = "https://github.com/alces-flight/concertim-ct-visualisation-app/ivy/CHANGELOG"
 
   spec.files = Dir.chdir(File.expand_path(__dir__)) do
-    Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
+    Dir["{app,config,db,lib}/**/*", "Rakefile", "README.md"]
   end
 
   spec.add_dependency "rails", ">= 7.0.4"

@@ -102,13 +102,13 @@ class ViewModel extends CanvasViewModel {
     // id groups, both group and id are required to identify an individual device
     this.groups = ko.observable(['racks', 'chassis', 'devices', 'vms', 'powerStrips']);
 
-    // temporary storage of device defenitions (used in synchronising changes to devices)
+    // temporary storage of device definitions (used in synchronising changes to devices)
     this.modifiedRackDefs = ko.observable();
 
     // temporary storage of dcrvShowableNonRackChassis
     this.modifiedDcrvShowableNonRackChassis = ko.observable();
 
-    // temporary storage of device defenitions (used in synchronising changes to PowerStrips)
+    // temporary storage of device definitions (used in synchronising changes to PowerStrips)
     this.modifiedPowerStripDefs = ko.observable();
 
     // arrays of thresholds grouped by their associated metric using metric id as the key 

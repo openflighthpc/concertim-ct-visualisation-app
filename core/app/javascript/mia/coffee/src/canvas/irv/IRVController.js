@@ -384,7 +384,7 @@ class IRVController extends CanvasController {
     return this.getNonrackDeviceDefs();
   }
 
-  // load PowerStrip defenitions
+  // load PowerStrip definitions
   // @param  power_strips_ids  option array of PowerStrip ids to fetch
   getPowerStripDefs(power_strip_ids) {
     const query_str = (power_strip_ids != null) ? this.idsAsParams(power_strip_ids,'power_strip_ids') : '';

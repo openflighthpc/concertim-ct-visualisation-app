@@ -10,10 +10,16 @@ ivy: &ivy
   <<: *default
   database: hacor
 
+meca: &meca
+  <<: *default
+  database: meca
+
 repo_base: &repo_base
   repositories:
     ivy:
       <<: *ivy
+    meca:
+      <<: *meca
 
 development:
   <<: *default

@@ -5,6 +5,13 @@ PATH
       pg (~> 1.1)
       rails (>= 7.0.4)
 
+PATH
+  remote: ../meca
+  specs:
+    meca (0.1.0)
+      pg (~> 1.1)
+      rails (>= 7.0.4)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -103,6 +110,7 @@ GEM
     crack (0.4.5)
       rexml
     crass (1.0.6)
+    dalli (3.2.3)
     dartsass-rails (0.4.1)
       railties (>= 6.0.0)
     date (3.3.3)
@@ -248,11 +256,13 @@ DEPENDENCIES
   cells-erb (~> 0.1.0)
   cells-rails (~> 0.1.5)
   crack (~> 0.4.5)
+  dalli (~> 3.2)
   dartsass-rails (~> 0.4.1)
   debug
   importmap-rails
   ivy (= 0.1.0)!
   jbuilder
+  meca (= 0.1.0)!
   pg (~> 1.1)
   puma (~> 5.0)
   rabl (~> 0.16.1)
