@@ -281,7 +281,7 @@
     "STATICGROUPMANAGER":
     {
         "*COMMENT*"        : "Server API URL to grab a list of static group names and their associated IDs",
-        "list"             : "/-/api/v1/groups/groups?group_for=irv&group_filter=excluding_system_non_physical_device_groups",
+        "list"             : "/--/api/v1/groups/groups?group_for=irv&group_filter=excluding_system_non_physical_device_groups",
         "*COMMENT*"        : "Server API URL to get a specific static group",
         "get"              : "/-/api/v1/groups/groups/[[group_id]]?group_for=irv",
         "*COMMENT*"        : "Server API UTL to post a new static group",
