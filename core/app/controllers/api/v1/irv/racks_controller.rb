@@ -22,4 +22,15 @@ class Api::V1::Irv::RacksController < Api::V1::Irv::BaseController
     #
     # @racks = Ivy::HwRack.all
    end
+
+  def modified
+    rack_ids = Array(params[:rack_ids]).collect(&:to_i)
+    timestamp = params[:modified_timestamp]
+    suppressAdditions = params[:suppress_additions]
+
+    @added = suppressAdditions == "true" ? [] : Ivy::HwRack.all_except(rack_ids)
+    @modified = Ivy::HwRack.where(id: rack_ids).modified_after(timestamp)
+    @deleted = rack_ids - Ivy::HwRack.where(id: rack_ids).pluck(:id)
+  end
+
 end

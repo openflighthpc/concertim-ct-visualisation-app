@@ -24,11 +24,12 @@ order:
 6. Validations.
 7. Delegation.
 8. Defaults.
-9. Public class methods.
-10. Private class methods.
-11. Public instance methods.
-12. Protected instance methods.
-13. Private instance methods.
+9. Scopes.
+10. Public class methods.
+11. Private class methods.
+12. Public instance methods.
+13. Protected instance methods.
+14. Private instance methods.
 
 Each section should be proceeded by a header in the following format.
 

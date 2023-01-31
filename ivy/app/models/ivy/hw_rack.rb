@@ -29,14 +29,21 @@ module Ivy
     has_many :chassis_tagged_devices, through: :chassis
 
 
+    ####################################
+    #
+    # Scopes
+    #
+    ####################################
+
+    scope :all_except,     ->(rack_ids) { where.not(id: rack_ids) }
+    scope :modified_after, ->(timestamp) { where("modified_timestamp > ?", timestamp.to_i) }
+
+
     ############################
     #
     # Class Methods
     #
     ############################
-
-    # ------------------------------------
-    # Canvas functions
 
     def self.get_canvas_config
       JSON.parse(File.read(Engine.root.join("app/views/ivy/racks/_configuration.json")))

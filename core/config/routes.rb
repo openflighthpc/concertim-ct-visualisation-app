@@ -13,7 +13,11 @@ Rails.application.routes.draw do
       namespace version do
 
         namespace :irv do
-          resources :racks, only: [:index]
+          resources :racks, only: [:index] do
+            collection do 
+              get :modified
+            end
+          end
           resources :thresholds, :constraints => { :id => /.*/ }, only: [:index]
           resources :nonrack_devices, only: [:index]
         end
