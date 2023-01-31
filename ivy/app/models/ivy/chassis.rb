@@ -10,8 +10,7 @@ module Ivy
     #
     #######################
 
-    belongs_to  :rack, :class_name => "Ivy::HwRack" 
-    belongs_to  :template
+    belongs_to :template
 
     #
     # Simple chassis relationship (one of everything)
@@ -47,5 +46,6 @@ module Ivy
           .where("templates.rackable = ?", 1)
       }
     scope :dcrvshowable, -> { where("rack_id is null and show_in_dcrv = true") }
+    scope :modified_after, ->(timestamp) { where("modified_timestamp > ?", timestamp.to_i) }
   end
 end

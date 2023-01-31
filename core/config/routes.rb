@@ -19,7 +19,11 @@ Rails.application.routes.draw do
             end
           end
           resources :thresholds, :constraints => { :id => /.*/ }, only: [:index]
-          resources :nonrack_devices, only: [:index]
+          resources :nonrack_devices, only: [:index] do
+            collection do
+              get :modified
+            end
+          end
         end
 
         namespace :groups do

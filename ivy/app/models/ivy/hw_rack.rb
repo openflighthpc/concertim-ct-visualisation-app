@@ -35,7 +35,7 @@ module Ivy
     #
     ####################################
 
-    scope :all_except,     ->(rack_ids) { where.not(id: rack_ids) }
+    scope :excluding_ids,  ->(ids) { where.not(id: ids) }
     scope :modified_after, ->(timestamp) { where("modified_timestamp > ?", timestamp.to_i) }
 
 

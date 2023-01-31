@@ -125,7 +125,7 @@
               "powerStripDefinitions" : "/-/api/v1/irv/power_strips",
               "modifiedPowerStripIds" : "/-/api/v1/irv/power_strips/modified",
               "nonrackDeviceDefinitions" : "/--/api/v1/irv/nonrack_devices",
-              "modifiedNonRackIds" : "/-/api/v1/irv/nonrack_devices/modified",
+              "modifiedNonRackIds" : "/--/api/v1/irv/nonrack_devices/modified",
               "systemDateTime"  : "/sys/date",
               "metricData"      : "/-/api/v1/irv/metrics/[[metric_id]]",
               "hintData"        : "/-/api/v1/irv/[[group]]/[[device_id]]/tooltip",
