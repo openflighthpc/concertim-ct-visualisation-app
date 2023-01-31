@@ -5,6 +5,32 @@ module Ivy
 
     ############################
     #
+    # Associations 
+    #
+    # Re: chassis relationship (it's done differently here to legacy due to
+    # chassis object heirachy having changed). See notes on "rack_chassis"
+    # method below.
+    #
+    ############################
+    
+    has_many :chassis, ->{ order(:rack_start_u, :desc) },
+      class_name: 'Ivy::Chassis',
+      foreign_key: :rack_id,
+      dependent: :destroy
+
+    has_many :zero_u_rack_chassis, ->{ order(:rack_start_u, :desc) },
+      class_name: "Ivy::Chassis::ZeroURackChassis",
+      foreign_key: :rack_id,
+      dependent: :destroy
+
+    has_many :chassis_rows,           through: :chassis,      source: :chassis_rows
+    has_many :slots,                  through: :chassis_rows, source: :slots
+    has_many :devices,                through: :slots
+    has_many :chassis_tagged_devices, through: :chassis
+
+
+    ############################
+    #
     # Class Methods
     #
     ############################

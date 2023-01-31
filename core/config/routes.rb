@@ -24,9 +24,9 @@ Rails.application.routes.draw do
 
         namespace :metrics do
           resources :metrics, :constraints => { :id => /.*/ }, only: [] do
-            # get :index, :on => :collection
             get :structure, :on => :collection
           end
+          resources :breaches
         end
       end
     end
