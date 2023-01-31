@@ -24,6 +24,11 @@ Rails.application.routes.draw do
               get :modified
             end
           end
+          resources :metrics, :constraints => { :id => /.*/ }, only: [] do
+            member do
+              post :show
+            end
+          end
         end
 
         namespace :groups do
