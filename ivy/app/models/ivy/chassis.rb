@@ -3,6 +3,7 @@ module Ivy
 
     self.table_name = "base_chassis"
 
+    include Ivy::Concerns::Templateable
 
     #######################
     #
@@ -22,7 +23,6 @@ module Ivy
     #
     # A better solution may be available, but I haven't found it.
     belongs_to :rack, :class_name => "Ivy::HwRack", optional: true
-    belongs_to :template
 
     #
     # Simple chassis relationship (one of everything)

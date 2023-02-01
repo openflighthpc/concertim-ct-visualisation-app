@@ -14,6 +14,9 @@ Rails.application.routes.draw do
 
         namespace :irv do
           resources :racks, only: [:index] do
+            member do
+              get :tooltip
+            end
             collection do 
               get :modified
             end
@@ -22,6 +25,16 @@ Rails.application.routes.draw do
           resources :nonrack_devices, only: [:index] do
             collection do
               get :modified
+            end
+          end
+          resources :chassis do
+            member do
+              get :tooltip
+            end
+          end
+          resources :devices, only: [] do
+            member do
+              get :tooltip
             end
           end
           resources :metrics, :constraints => { :id => /.*/ }, only: [] do

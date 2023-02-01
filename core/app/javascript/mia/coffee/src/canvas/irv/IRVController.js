@@ -2723,10 +2723,9 @@ class IRVController extends CanvasController {
 
     return new Request.JSON({
       url,
-      data       : { virtual_host: this.rackSpace.hint.device.type === 'VirtualHost' },
       headers    : { 'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content') },
       onComplete : this.hintInfoReceived
-    }).send();
+    }).get();
   }
 
 

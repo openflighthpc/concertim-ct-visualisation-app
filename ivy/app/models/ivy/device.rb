@@ -2,14 +2,6 @@ module Ivy
   class Device < Ivy::Model
     self.table_name = "devices"
 
-
-    ####################################
-    #
-    # Constants 
-    #
-    ####################################
-
-
     ####################################
     #
     # Associations
@@ -22,14 +14,16 @@ module Ivy
     #
     # A device can have a relationship with a chassis in one of two ways:
     #
-    # * A direct relationship, where base_chassis_id on devices joins straight to the base_chassis table
+    # * A direct relationship, where base_chassis_id on devices joins straight
+    #   to the base_chassis table
     # * An indirect relationship, through slots => chassis_rows => base_chassis
     #
-    # A direct relationship indicates that the device is a "tagged" device - unfortunately
-    # doing things this way means the relationship between a device and a chassis can't
-    # be implemented in a simple way. Instead, we have two relationships (one for each of
-    # the two bullet points above) and a convinience method within the device class
-    # called "chassis" that works out which to call.
+    # A direct relationship indicates that the device is a "tagged" device -
+    # unfortunately doing things this way means the relationship between a
+    # device and a chassis can't be implemented in a simple way. Instead, we
+    # have two relationships (one for each of the two bullet points above) and
+    # a convinience method within the device class called "chassis" that works
+    # out which to call.
     #
     belongs_to :direct_chassis, class_name:  "Ivy::Chassis", foreign_key: :base_chassis_id
     has_one :indirect_chassis, through: :chassis_row, class_name: "Ivy::Chassis"
@@ -41,26 +35,13 @@ module Ivy
     has_one :direct_rack, through: :direct_chassis, source: :rack
     has_one :indirect_rack, through: :indirect_chassis, source: :rack
 
+    #
+    # As per above, we now have direct and indirect "templates" through the
+    # respective chassis.
+    # 
+    has_one :indirect_template, through: :indirect_chassis, source: :template
+    has_one :direct_template, through: :direct_chassis, source: :template
 
-    ####################################
-    #
-    # Properties
-    #
-    ####################################
-
-
-    ####################################
-    #
-    # Hooks 
-    #
-    ####################################
-
-
-    ####################################
-    #
-    # Validations 
-    #
-    ####################################
 
 
     ####################################
@@ -69,13 +50,8 @@ module Ivy
     #
     ####################################
 
-
-    ####################################
-    #
-    # Defaults 
-    #
-    ####################################
-
+    delegate :manufacturer, :model,
+      to: :template, allow_nil: true
 
     ####################################
     #
@@ -123,6 +99,17 @@ module Ivy
     end
 
     #
+    # for tagged devices, because they don't have their own template
+    #
+    def template
+      if has_direct_chassis?
+        direct_template
+      else
+        indirect_template
+      end
+    end
+
+    #
     # rack
     #
     # As with chassis, infers the rack of this device based on whether
@@ -136,12 +123,17 @@ module Ivy
       end
     end
 
-    ####################################
-    #
-    # Private Instance Methods
-    #
-    ####################################
+    def metrics
+      return cache_get && cache_get[:metrics] || {}
+    end
 
+    def memcache_key
+      "hacor:device:#{id}"
+    end
+
+    def cache_get
+      MEMCACHE.get(memcache_key)
+    end
   end
 end
 

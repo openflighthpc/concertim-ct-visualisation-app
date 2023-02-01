@@ -33,4 +33,9 @@ class Api::V1::Irv::RacksController < Api::V1::Irv::BaseController
     @deleted = rack_ids - Ivy::HwRack.where(id: rack_ids).pluck(:id)
   end
 
+  def tooltip
+    @rack = Ivy::HwRack.find_by_id(params[:id])
+
+    error_for('Rack') if @rack.nil?
+  end
 end

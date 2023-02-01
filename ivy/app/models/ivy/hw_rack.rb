@@ -3,6 +3,21 @@ module Ivy
 
     self.table_name = "racks"
 
+    def self.tagged_device_type; 'RackTaggedDevice'; end
+
+    include Ivy::Concerns::Taggable
+    include Ivy::Concerns::Templateable
+
+
+    #############################
+    #
+    # CONSTANTS
+    # 
+    ############################
+
+    SPACE_USED_METRIC_KEY = 'ct.capacity.rack.space_used'
+
+
     ############################
     #
     # Associations 
@@ -28,6 +43,10 @@ module Ivy
     has_many :devices,                through: :slots
     has_many :chassis_tagged_devices, through: :chassis
 
+    has_one :group,
+      class_name: "Ivy::Group::RuleBasedGroup",
+      foreign_key: :ref_text,
+      primary_key: :name
 
     ####################################
     #
@@ -49,5 +68,33 @@ module Ivy
       JSON.parse(File.read(Engine.root.join("app/views/ivy/racks/_configuration.json")))
     end
 
+
+    ####################################
+    #
+    # Instance Methods
+    #
+    ####################################
+
+    #
+    # number_of_devices
+    #
+    def number_of_devices
+      group ? (MEMCACHE.get("hacor:group:#{group.id}")[:members].size rescue 0) : 0
+    end
+
+    #
+    # space_used
+    #
+    def space_used
+      value_for_metric(SPACE_USED_METRIC_KEY).to_i rescue 0
+    end
+
+    #
+    # total_space
+    # 
+    def total_space
+      u_height
+    end
+  
   end
 end
