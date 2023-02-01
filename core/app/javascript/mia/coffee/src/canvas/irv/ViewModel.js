@@ -20,6 +20,7 @@ class ViewModel extends CanvasViewModel {
     this.INIT_METRIC_LEVEL   = 'machine';
     this.INIT_GRAPH_ORDER    = 'ascending';
     this.INIT_SCALE_METRICS  = true;
+    this.INIT_SHOW_BREACHES  = true;
     this.INIT_SHOW_CHART     = true;
     this.INIT_SHOW_FILTER_BAR     = true;
     this.INIT_METRIC         = null;
@@ -73,6 +74,9 @@ class ViewModel extends CanvasViewModel {
 
     // boolean, do metric bars on devices scale to reflect their value or just show a colour
     this.scaleMetrics = ko.observable(ViewModel.INIT_SCALE_METRICS);
+
+    // boolean, whether breaches should be highlighted or not.
+    this.showBreaches = ko.observable(ViewModel.INIT_SHOW_BREACHES);
 
     // set chart visibility
     this.showChart = ko.observable(ViewModel.INIT_SHOW_CHART);

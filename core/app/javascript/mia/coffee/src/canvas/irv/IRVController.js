@@ -36,6 +36,7 @@ import ComboBox from '../../../../javascript/util/ComboBox';
 import Tooltip from '../../canvas/irv/view/Tooltip';
 import PieCountdown from '../../canvas/common/widgets/PieCountdown';
 import RBAC from '../../canvas/common/util/RBAC';
+import BreachesManager from '../../canvas/common/util/BreachesManager';
 
 // These are all expected to provide global objects.
 // import 'AjaxPopup'; //legacy
@@ -112,9 +113,7 @@ class IRVController extends CanvasController {
     this.retryPowerStripDefs = this.retryPowerStripDefs.bind(this);
     this.retryNonrackDeviceDefs = this.retryNonrackDeviceDefs.bind(this);
     this.retrySystemDateTime = this.retrySystemDateTime.bind(this);
-    this.loadBreaches = this.loadBreaches.bind(this);
     this.scrollPanelUp = this.scrollPanelUp.bind(this);
-    this.evReceivedBreaches = this.evReceivedBreaches.bind(this);
     this.evClearDeselected = this.evClearDeselected.bind(this);
     this.evReset = this.evReset.bind(this);
     this.evResetZoom = this.evResetZoom.bind(this);
@@ -732,15 +731,13 @@ class IRVController extends CanvasController {
 
     this.tooltip = new Tooltip();
 
-    // since the metrics and breaches poll at the same rate (default), put
-    // the requests out of phase with each other
     if (this.model.showingFullIrv()) {
-      this.loadBreaches();
-
-      setTimeout(() => {
-        return this.breachTmr = setInterval(this.loadBreaches, IRVController.BREACH_POLL_RATE);
-      }
-      , IRVController.BREACH_POLL_RATE / 2);
+      this.breachesManager = new BreachesManager(
+        this.model,
+        this.resources.path + this.resources.breaches,
+        IRVController.BREACH_POLL_RATE,
+      );
+      this.breachesManager.setup();
     }
 
     if ((this.options != null) && (this.options.applyfilter === "true")) { this.applyCrossAppSettings(); }
@@ -770,34 +767,11 @@ class IRVController extends CanvasController {
     return this.showFinishedTime();
   }
 
-
-  // requests a list of breaching device ids from the server
-  loadBreaches() {
-    return new Request.JSON({url: this.resources.path + this.resources.breaches + '?' + (new Date()).getTime(), onSuccess: this.evReceivedBreaches}).get();
-  }
-
   scrollPanelUp() {
     const container = $("sidemenu");
     const scrollTo = $("rack_actions");
     if (!scrollTo || !container) { return; }
     return container.scrollTop = scrollTo.offsetTop + container.scrollTop;
-  }
-
-  // called when the server returns the list of breaching device ids. Stores breaches in the model
-  // @param  breaches  breaching device ids returned from server
-  evReceivedBreaches(breaches) {
-    let group;
-    const device_lookup    = this.model.deviceLookup();
-    const groups           = this.model.groups();
-    const breaching        = {};
-    for (group of Array.from(groups)) { breaching[group] = {}; }
-
-    for (group in breaches) {
-      if (breaching[group] == null) { continue; }
-      for (var id of Array.from(breaches[group])) { breaching[group][id] = true; }
-    }
-
-    return this.model.breaches(breaching);
   }
 
   // actions settings carried over from other apps, e.g. DCPV

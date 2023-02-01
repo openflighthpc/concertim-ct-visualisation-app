@@ -67,7 +67,7 @@
     "doubleClickTimeout"       : 250,
     "*COMMENT*"                : "The px distance threshold an drag action needs to exceed to be interpreted as dragging",
     "dragActivationDist"       : 8,
-    "*COMMENT*"                : "How often to poll for breaches",
+    "*COMMENT*"                : "How often to poll for breaches (ms)",
     "breachPollRate"           : 60000,
     "*COMMENT*"                : "What proportion of the height of the page is used for the racks, the remainder being used for the chart and filter bar",
     "rackPageHeightProportion" : 0.70,
