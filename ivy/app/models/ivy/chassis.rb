@@ -10,6 +10,18 @@ module Ivy
     #
     #######################
 
+    # The `rack` assocation needs to be `optional: true`.  The assocation is
+    # inherited by `NonRackChassis` which obviously doesn't have a rack.  If
+    # `optional: true` is not set, a `NonRackChassis` would never be valid.
+    # Unfortunately, it isn't possible to set this association on the
+    # subclasses with appropriate `optional` settings as it is used in `has_one
+    # through:` relationship in `Device`.
+    #
+    # This mimics the behaviour that this association had in new-legacy where
+    # `belongs_to` associations where optional by default.
+    #
+    # A better solution may be available, but I haven't found it.
+    belongs_to :rack, :class_name => "Ivy::HwRack", optional: true
     belongs_to :template
 
     #
