@@ -2557,7 +2557,7 @@ class RackSpace extends CanvasSpace {
         return Events.dispatchEvent(this.rackEl, 'rackSpaceClearDeselected');
       case 'reSelectAll':
         CrossAppSettings.clear('irv');
-        return window.location = "/-/irv";
+        return window.location = "/--/irv";
       case 'startDraggingDevice':
         return this.startDraggingDevice(params);
       case 'disconnectPowerSupplyAndSocket':
