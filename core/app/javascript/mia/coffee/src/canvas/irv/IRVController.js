@@ -37,6 +37,7 @@ import Tooltip from '../../canvas/irv/view/Tooltip';
 import PieCountdown from '../../canvas/common/widgets/PieCountdown';
 import RBAC from '../../canvas/common/util/RBAC';
 import BreachesManager from '../../canvas/common/util/BreachesManager';
+import Dialog from '../../../../../util/Dialog';
 
 // These are all expected to provide global objects.
 // import 'AjaxPopup'; //legacy
@@ -1005,53 +1006,58 @@ class IRVController extends CanvasController {
   // grabs image data from both the rack view and LBC and posts it out to the server using a hidden form
   saveScreen() {
     let chart_b64, chart_cvs;
-    alert_dialog(IRVController.EXPORT_MESSAGE);
-    const ts       = new Date();
-    let filename = IRVController.SCREENSHOT_FILENAME;
-    filename = Util.substitutePhrase(filename, 'day', Util.addLeadingZeros(ts.getUTCDate()));
-    filename = Util.substitutePhrase(filename, 'month', Util.addLeadingZeros(ts.getUTCMonth() + 1));
-    filename = Util.substitutePhrase(filename, 'year', Util.addLeadingZeros(ts.getUTCFullYear()));
-    filename = Util.substitutePhrase(filename, 'hours', Util.addLeadingZeros(ts.getUTCHours()));
-    filename = Util.substitutePhrase(filename, 'minutes', Util.addLeadingZeros(ts.getUTCMinutes()));
-    filename = Util.substitutePhrase(filename, 'seconds', Util.addLeadingZeros(ts.getUTCSeconds()));
-    filename = Util.cleanUpSubstitutions(filename);
-    //console.log filename
-    const rack_b64    = this.grabScreen();
+    const dialog = alert_dialog(IRVController.EXPORT_MESSAGE);
+    setTimeout(() => {
+      dialog.alert("Saving image failed.");
+    }, 2000);
 
-    const addFrmVal = function(name, value) {
-      const val       = document.createElement('input');
-      val.name  = name;
-      val.type  = 'hidden';
-      val.value = value;
-      return frm.appendChild(val);
-    };
-
-    if (this.model.showChart()) {
-      chart_cvs  = this.rackSpace.chart.cvs;
-      chart_b64  = chart_cvs.toDataURL();
-    }
-
-    var frm         = document.createElement('form');
-    frm.name    = 'imagePost-a-tron';
-    frm.method  = 'post';
-    frm.enctype = 'multipart/form-data';
-
-    addFrmVal('filename', filename);
-    addFrmVal('type[]', 'text');
-    addFrmVal('data[]', rack_b64.split(',')[1]);
-    addFrmVal('size[]', String(this.rackSpace.coordReferenceEl.width) + 'x' + String(this.rackSpace.coordReferenceEl.height));
-
-    if (this.model.showChart()) {
-      addFrmVal('type[]', 'text'); 
-      addFrmVal('data[]', chart_b64.split(',')[1]);
-      addFrmVal('size[]', String(Math.ceil(chart_cvs.width)) + 'x' + String(Math.ceil(chart_cvs.height)));
-    }
-
-    addFrmVal('authenticity_token', $$('meta[name="csrf-token"]')[0].getAttribute('content'));
-
-    document.body.appendChild(frm);
-    frm.action = IRVController.EXPORT_IMAGE_URL;
-    return frm.submit();
+    // XXX The below is broken FSR.  Fix it.
+    // const ts       = new Date();
+    // let filename = IRVController.SCREENSHOT_FILENAME;
+    // filename = Util.substitutePhrase(filename, 'day', Util.addLeadingZeros(ts.getUTCDate()));
+    // filename = Util.substitutePhrase(filename, 'month', Util.addLeadingZeros(ts.getUTCMonth() + 1));
+    // filename = Util.substitutePhrase(filename, 'year', Util.addLeadingZeros(ts.getUTCFullYear()));
+    // filename = Util.substitutePhrase(filename, 'hours', Util.addLeadingZeros(ts.getUTCHours()));
+    // filename = Util.substitutePhrase(filename, 'minutes', Util.addLeadingZeros(ts.getUTCMinutes()));
+    // filename = Util.substitutePhrase(filename, 'seconds', Util.addLeadingZeros(ts.getUTCSeconds()));
+    // filename = Util.cleanUpSubstitutions(filename);
+    // //console.log filename
+    // const rack_b64    = this.grabScreen();
+    //
+    // const addFrmVal = function(name, value) {
+    //   const val       = document.createElement('input');
+    //   val.name  = name;
+    //   val.type  = 'hidden';
+    //   val.value = value;
+    //   return frm.appendChild(val);
+    // };
+    //
+    // if (this.model.showChart()) {
+    //   chart_cvs  = this.rackSpace.chart.cvs;
+    //   chart_b64  = chart_cvs.toDataURL();
+    // }
+    //
+    // var frm         = document.createElement('form');
+    // frm.name    = 'imagePost-a-tron';
+    // frm.method  = 'post';
+    // frm.enctype = 'multipart/form-data';
+    //
+    // addFrmVal('filename', filename);
+    // addFrmVal('type[]', 'text');
+    // addFrmVal('data[]', rack_b64.split(',')[1]);
+    // addFrmVal('size[]', String(this.rackSpace.coordReferenceEl.width) + 'x' + String(this.rackSpace.coordReferenceEl.height));
+    //
+    // if (this.model.showChart()) {
+    //   addFrmVal('type[]', 'text'); 
+    //   addFrmVal('data[]', chart_b64.split(',')[1]);
+    //   addFrmVal('size[]', String(Math.ceil(chart_cvs.width)) + 'x' + String(Math.ceil(chart_cvs.height)));
+    // }
+    //
+    // addFrmVal('authenticity_token', $$('meta[name="csrf-token"]')[0].getAttribute('content'));
+    //
+    // document.body.appendChild(frm);
+    // frm.action = IRVController.EXPORT_IMAGE_URL;
+    // frm.submit();
   }
 
 
