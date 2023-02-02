@@ -1,5 +1,7 @@
 class Api::V1::Groups::GroupsController < Api::V1::Groups::BaseController
 
+  before_action :check_params, :only=>[:show]
+
   def index
     @groups = group_loader.sort do |i,j|
       i[:name].downcase <=> j[:name].downcase
@@ -7,7 +9,13 @@ class Api::V1::Groups::GroupsController < Api::V1::Groups::BaseController
 
     determine_renderer_for('index')
   end
-  
+
+  def show
+    @group = Ivy::Group.find(params[:id])
+
+    determine_renderer_for('show')
+  end
+
   private
 
   def group_loader
@@ -21,6 +29,10 @@ class Api::V1::Groups::GroupsController < Api::V1::Groups::BaseController
     else
       Ivy::Group.all
     end
+  end
+
+  def check_params
+    error_for('Group') if params[:id].nil? || params[:id].empty?
   end
 
 end

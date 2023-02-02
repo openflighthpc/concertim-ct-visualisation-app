@@ -46,7 +46,7 @@ Rails.application.routes.draw do
         end
 
         namespace :groups do
-          resources :groups, only: [:index]
+          resources :groups, only: [:index, :show]
         end
 
         namespace :metrics do

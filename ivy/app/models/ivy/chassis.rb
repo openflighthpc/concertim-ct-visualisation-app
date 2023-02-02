@@ -59,5 +59,12 @@ module Ivy
       }
     scope :dcrvshowable, -> { where("rack_id is null and show_in_dcrv = true") }
     scope :modified_after, ->(timestamp) { where("modified_timestamp > ?", timestamp.to_i) }
+    scope :for_devices, ->(device_ids) {
+      joins(:chassis_rows => {:slots => :device}).where(:devices => {:id => device_ids})
+    }
+    scope :for_tagged_devices, ->(device_ids) { 
+      joins(:device).where(:devices => {:id => device_ids})
+    }
+
   end
 end
