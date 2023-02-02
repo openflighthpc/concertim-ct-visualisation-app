@@ -1,23 +1,14 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS206: Consider reworking classes to avoid initClass
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-
 import Util from './Util';
 import Events from './Events';
 
-  // RBAC = Rule Based Access Control
-  // This model queries the api action /-/api/v1/users/users/can_i with an especific set of permissions (getPermissionsToQuery) on construction time.
-  // Then, via the function can_i, the results obtained from the api call are queried.
-  // This class is shared between the DCRV and DCPV.
-
+// RBAC = Rule Based Access Control
+//
+// RBAC queries the api action /-/api/v1/users/users/can_i with a
+// specific set of permissions (getPermissionsToQuery) on construction time.
+// Then, via the function can_i, the results obtained from the api call are queried.
+// This class is shared between the DCRV and DCPV.
 class RBAC {
-  static initClass() {
-
-    this.PATH    = '/-/api/v1/users/users/can_i';
-  }
+  static PATH = '/--/api/v1/users/users/can_i';
 
   constructor(model, ignoreDefault) {
     this.permisionsReceived = this.permisionsReceived.bind(this);
@@ -26,7 +17,7 @@ class RBAC {
     new Request.JSON({
       headers   : {'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content')},
       url       : RBAC.PATH,
-      method    : 'post',
+      method    : 'get',
       data      : this.getPermissionsToQuery(),
       onSuccess : this.permisionsReceived
     }).send();
@@ -34,7 +25,7 @@ class RBAC {
 
 
   permisionsReceived(permissions) {
-    return this.permissions = permissions;
+    this.permissions = permissions;
   }
 
   getPermissionsToQuery() {
@@ -52,12 +43,12 @@ class RBAC {
   }
 
   can_i_move_devices() {
-    return this.can_i("move","Ivy::Device") || this.can_i("move","Ivy::Chassis");
+    return this.can_i("move", "Ivy::Device") || this.can_i("move", "Ivy::Chassis");
   }
 
   can_i_manage_devices() {
-    return this.can_i("manage","Ivy::Device") || this.can_i("manage","Ivy::Chassis");
+    return this.can_i("manage", "Ivy::Device") || this.can_i("manage", "Ivy::Chassis");
   }
 };
-RBAC.initClass();
+
 export default RBAC;
