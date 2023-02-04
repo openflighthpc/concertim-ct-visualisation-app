@@ -27,7 +27,5 @@ module CtApp
     config.action_controller.asset_host = Proc.new do |source, request|
       request.nil? ? nil : "#{request.protocol}#{request.host_with_port}/--"
     end
-
-    config.web_console.permissions = '10.0.2.2/16'
   end
 end
