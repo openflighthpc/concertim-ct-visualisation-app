@@ -12,32 +12,32 @@
 // ║ IRV ║ ~ ©Concurrent Thinking Ltd. 2012 ~ ║
 // ╚═════╩════════════════════════════════════╝
 
-import CanvasController from '../../canvas/common/CanvasController';
-import CrossAppSettings from '../../canvas/common/util/CrossAppSettings';
-import UpdateMsg from '../../canvas/irv/view/UpdateMsg';
-import Configurator from '../../canvas/irv/util/Configurator';
-import Events from '../../canvas/common/util/Events';
-import Util from '../../canvas/common/util/Util';
-import AssetManager from '../../canvas/irv/util/AssetManager';
-import Hint from '../../canvas/irv/view/Hint';
-import ThumbHint from '../../canvas/irv/view/ThumbHint';
-import RackSpace from '../../canvas/irv/view/RackSpace';
-import Rack from '../../canvas/irv/view/Rack';
-import PowerStrip from '../../canvas/irv/view/PowerStrip';
-import Socket from '../../canvas/irv/view/Socket';
-import ThumbNav from '../../canvas/common/widgets/ThumbNav';
-import FilterBar from '../../canvas/common/widgets/FilterBar';
-import ViewModel from '../../canvas/irv/ViewModel';
-import Parser from '../../canvas/irv/util/Parser';
-import PresetManager from '../../canvas/common/util/PresetManager';
-import StaticGroupManager from '../../canvas/common/util/StaticGroupManager'
+import CanvasController from 'canvas/common/CanvasController';
+import CrossAppSettings from 'canvas/common/util/CrossAppSettings';
+import UpdateMsg from 'canvas/irv/view/UpdateMsg';
+import Configurator from 'canvas/irv/util/Configurator';
+import Events from 'canvas/common/util/Events';
+import Util from 'canvas/common/util/Util';
+import AssetManager from 'canvas/irv/util/AssetManager';
+import Hint from 'canvas/irv/view/Hint';
+import ThumbHint from 'canvas/irv/view/ThumbHint';
+import RackSpace from 'canvas/irv/view/RackSpace';
+import Rack from 'canvas/irv/view/Rack';
+import PowerStrip from 'canvas/irv/view/PowerStrip';
+import Socket from 'canvas/irv/view/Socket';
+import ThumbNav from 'canvas/common/widgets/ThumbNav';
+import FilterBar from 'canvas/common/widgets/FilterBar';
+import ViewModel from 'canvas/irv/ViewModel';
+import Parser from 'canvas/irv/util/Parser';
+import PresetManager from 'canvas/common/util/PresetManager';
+import StaticGroupManager from 'canvas/common/util/StaticGroupManager'
 import Profiler from 'Profiler';
-import ComboBox from '../../../../javascript/util/ComboBox';
-import Tooltip from '../../canvas/irv/view/Tooltip';
-import PieCountdown from '../../canvas/common/widgets/PieCountdown';
-import RBAC from '../../canvas/common/util/RBAC';
-import BreachesManager from '../../canvas/common/util/BreachesManager';
-import Dialog from '../../../../../util/Dialog';
+import ComboBox from 'util/ComboBox';
+import Tooltip from 'canvas/irv/view/Tooltip';
+import PieCountdown from 'canvas/common/widgets/PieCountdown';
+import RBAC from 'canvas/common/util/RBAC';
+import BreachesManager from 'canvas/common/util/BreachesManager';
+import Dialog from 'util/Dialog';
 
 // These are all expected to provide global objects.
 // import 'AjaxPopup'; //legacy

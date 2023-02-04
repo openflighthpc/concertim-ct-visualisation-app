@@ -1,4 +1,4 @@
-import IRVController from './mia/coffee/src/canvas/irv/IRVController';
+import IRVController from 'canvas/irv/IRVController';
 
 // Overwrite jquery's `$` to one that is closer to prototype's `$`.
 // We don't have prototype installed, because my sanity wouldn't survive

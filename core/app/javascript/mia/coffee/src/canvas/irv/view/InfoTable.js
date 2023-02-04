@@ -8,9 +8,9 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import Util from '../../../canvas/common/util/Util';
-import Text from '../../../canvas/irv/view/Text';
-import Link from '../../../canvas/irv/view/Link';
+import Util from 'canvas/common/util/Util';
+import Text from 'canvas/irv/view/Text';
+import Link from 'canvas/irv/view/Link';
 
 class InfoTable {
   static initClass() {

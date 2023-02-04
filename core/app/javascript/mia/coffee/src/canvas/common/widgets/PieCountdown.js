@@ -5,7 +5,7 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-import Util from '../util/Util';
+import Util from 'canvas/common/util/Util';
 
 class PieCountdown {
   static initClass() {

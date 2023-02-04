@@ -11,13 +11,13 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import BarMetric from '../../../canvas/common/widgets/BarMetric';
-import AssetManager from '../../../canvas/irv/util/AssetManager';
-import ViewModel from '../../../canvas/irv/ViewModel';
-import RackObject from './RackObject';
-import Machine from './Machine';
-import Breacher from './Breacher';
-import Highlight from './Highlight';
+import BarMetric from 'canvas/common/widgets/BarMetric';
+import AssetManager from 'canvas/irv/util/AssetManager';
+import ViewModel from 'canvas/irv/ViewModel';
+import RackObject from 'canvas/irv/view/RackObject';
+import Machine from 'canvas/irv/view/Machine';
+import Breacher from 'canvas/irv/view/Breacher';
+import Highlight from 'canvas/irv/view/Highlight';
 import Profiler from 'Profiler';
 
 

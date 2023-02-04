@@ -7,7 +7,7 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import Events from '../../../canvas/common/util/Events';
+import Events from 'canvas/common/util/Events';
 
 class UpdateMsg {
   static initClass() {

@@ -9,16 +9,16 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import RackSpaceObject from '../../../canvas/irv/view/RackSpaceObject';
-import  RackObject from '../../../canvas/irv/view/RackObject';
-import  Util from '../../../canvas/common/util/Util';
-import  Events from '../../../canvas/common/util/Events';
-import  SimpleRenderer from '../../../canvas/common/gfx/SimpleRenderer';
-import  Easing from '../../../canvas/common/gfx/Easing';
-import  MessageHint from '../../../canvas/irv/view/MessageHint';
-import  RackHint from '../../../canvas/irv/view/RackHint';
-import  ContextMenu from '../../../canvas/irv/view/ContextMenu';
-import  ViewModel from '../../../canvas/irv/ViewModel';
+import RackSpaceObject from 'canvas/irv/view/RackSpaceObject';
+import  RackObject from 'canvas/irv/view/RackObject';
+import  Util from 'canvas/common/util/Util';
+import  Events from 'canvas/common/util/Events';
+import  SimpleRenderer from 'canvas/common/gfx/SimpleRenderer';
+import  Easing from 'canvas/common/gfx/Easing';
+import  MessageHint from 'canvas/irv/view/MessageHint';
+import  RackHint from 'canvas/irv/view/RackHint';
+import  ContextMenu from 'canvas/irv/view/ContextMenu';
+import  ViewModel from 'canvas/irv/ViewModel';
 
 
 class HoldingArea extends RackSpaceObject {

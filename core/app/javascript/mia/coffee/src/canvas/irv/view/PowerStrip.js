@@ -9,17 +9,17 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import RackSpaceObject from '../../../canvas/irv/view/RackSpaceObject';
-import Util from '../../../canvas/common/util/Util';
-import Highlight from '../../../canvas/irv/view/Highlight';
-import Events from '../../../canvas/common/util/Events';
-import RackObject from '../../../canvas/irv/view/RackObject';
-import Rack from '../../../canvas/irv/view/Rack';
-import Socket from '../../../canvas/irv/view/Socket';
-import AssetManager from '../../../canvas/irv/util/AssetManager';
-import InfoTable from '../../../canvas/irv/view/InfoTable';
-import Link from '../../../canvas/irv/view/Link';
-import ImageLink from '../../../canvas/irv/view/ImageLink';
+import RackSpaceObject from 'canvas/irv/view/RackSpaceObject';
+import Util from 'canvas/common/util/Util';
+import Highlight from 'canvas/irv/view/Highlight';
+import Events from 'canvas/common/util/Events';
+import RackObject from 'canvas/irv/view/RackObject';
+import Rack from 'canvas/irv/view/Rack';
+import Socket from 'canvas/irv/view/Socket';
+import AssetManager from 'canvas/irv/util/AssetManager';
+import InfoTable from 'canvas/irv/view/InfoTable';
+import Link from 'canvas/irv/view/Link';
+import ImageLink from 'canvas/irv/view/ImageLink';
 
 class PowerStrip extends RackSpaceObject {
   static initClass() {

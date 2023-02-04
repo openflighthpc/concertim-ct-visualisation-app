@@ -9,9 +9,9 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import Easing from './Easing';
-import Primitives from './Primitives';
-import Validator from './Validator';
+import Easing from 'canvas/common/gfx/Easing';
+import Primitives from 'canvas/common/gfx/Primitives';
+import Validator from 'canvas/common/gfx/Validator';
 
 // optimise not organise
 // A simple canvas rendering engine. LIMITATIONS: doesn't support layers, it

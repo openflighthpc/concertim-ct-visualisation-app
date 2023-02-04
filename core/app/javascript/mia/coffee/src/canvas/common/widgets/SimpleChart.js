@@ -7,8 +7,8 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-import Util from '../util/Util';
-import Events from '../util/Events';
+import Util from 'canvas/common/util/Util';
+import Events from 'canvas/common/util/Events';
 
 class SimpleChart {
   static initClass() {

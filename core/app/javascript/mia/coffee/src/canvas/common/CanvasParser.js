@@ -7,7 +7,7 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import Util from './util/Util';
+import Util from 'canvas/common/util/Util';
 import Profiler from 'Profiler';
 
 // takes the various JSON structures, reformats if necessary and populates the view model

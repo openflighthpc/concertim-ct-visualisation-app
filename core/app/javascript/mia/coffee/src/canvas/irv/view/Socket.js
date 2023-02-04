@@ -6,14 +6,14 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import Util from '../../../canvas/common/util/Util';
-import Highlight from '../../../canvas/irv/view/Highlight';
-import Events from '../../../canvas/common/util/Events';
-import Rack from '../../../canvas/irv/view/Rack';
-import RackObject from '../../../canvas/irv/view/RackObject';
-import AssetManager from '../../../canvas/irv/util/AssetManager';
-import MessageHint from '../../../canvas/irv/view/MessageHint';
-import PowerSupply from '../../../canvas/irv/view/PowerSupply';
+import Util from 'canvas/common/util/Util';
+import Highlight from 'canvas/irv/view/Highlight';
+import Events from 'canvas/common/util/Events';
+import Rack from 'canvas/irv/view/Rack';
+import RackObject from 'canvas/irv/view/RackObject';
+import AssetManager from 'canvas/irv/util/AssetManager';
+import MessageHint from 'canvas/irv/view/MessageHint';
+import PowerSupply from 'canvas/irv/view/PowerSupply';
 
 class Socket {
   static initClass() {

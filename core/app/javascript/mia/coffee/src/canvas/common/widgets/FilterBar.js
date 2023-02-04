@@ -8,10 +8,10 @@
  */
 // magical orientation agnostic colour slidertron. Here be dragons.
 
-import Util from '../util/Util';
-import Events from '../util/Events';
-import SimpleRenderer from '../gfx/SimpleRenderer';
-import Hint from '../../irv/view/Hint';
+import Util from 'canvas/common/util/Util';
+import Events from 'canvas/common/util/Events';
+import SimpleRenderer from 'canvas/common/gfx/SimpleRenderer';
+import Hint from 'canvas/irv/view/Hint';
 
 class FilterBar {
   static initClass() {

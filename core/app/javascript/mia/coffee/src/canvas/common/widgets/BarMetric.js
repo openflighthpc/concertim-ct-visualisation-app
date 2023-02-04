@@ -3,8 +3,8 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-import Metric from './Metric';
-import Easing from '../gfx/Easing';
+import Metric from 'canvas/common/widgets/Metric';
+import Easing from 'canvas/common/gfx/Easing';
 
 class BarMetric extends Metric {
   

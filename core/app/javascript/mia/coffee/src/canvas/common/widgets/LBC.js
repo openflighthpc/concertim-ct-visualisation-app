@@ -8,9 +8,9 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import Util from '../util/Util';
-import SimpleRenderer from '../gfx/SimpleRenderer';
-import SimpleChart from './SimpleChart';
+import Util from 'canvas/common/util/Util';
+import SimpleRenderer from 'canvas/common/gfx/SimpleRenderer';
+import SimpleChart from 'canvas/common/widgets/SimpleChart';
 
 class LBC {
   static initClass() {

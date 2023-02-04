@@ -8,10 +8,10 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import Util from '../util/Util';
-import Events from '../util/Events';
-import SimpleRenderer from '../gfx/SimpleRenderer';
-import ThumbHint from '../../irv/view/ThumbHint';
+import Util from 'canvas/common/util/Util';
+import Events from 'canvas/common/util/Events';
+import SimpleRenderer from 'canvas/common/gfx/SimpleRenderer';
+import ThumbHint from 'canvas/irv/view/ThumbHint';
 
 class ThumbNav {
   static initClass() {

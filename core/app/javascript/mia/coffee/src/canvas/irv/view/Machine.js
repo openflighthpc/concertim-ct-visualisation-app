@@ -7,14 +7,14 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import RackObject from '../../../canvas/irv/view/RackObject';
-import AssetManager from '../../../canvas/irv/util/AssetManager';
-import Events from '../../../canvas/common/util/Events';
-import BarMetric from '../../../canvas/common/widgets/BarMetric';
-import VHMetric from '../../../canvas/irv/view/VHMetric';
-import Highlight from '../../../canvas/irv/view/Highlight';
-import Breacher from '../../../canvas/irv/view/Breacher';
-import ViewModel from '../../../canvas/irv/ViewModel';
+import RackObject from 'canvas/irv/view/RackObject';
+import AssetManager from 'canvas/irv/util/AssetManager';
+import Events from 'canvas/common/util/Events';
+import BarMetric from 'canvas/common/widgets/BarMetric';
+import VHMetric from 'canvas/irv/view/VHMetric';
+import Highlight from 'canvas/irv/view/Highlight';
+import Breacher from 'canvas/irv/view/Breacher';
+import ViewModel from 'canvas/irv/ViewModel';
 import Profiler from 'Profiler';
 
 class Machine extends RackObject {

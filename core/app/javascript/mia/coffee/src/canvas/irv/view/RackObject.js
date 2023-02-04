@@ -11,14 +11,13 @@
 // super class to Rack, Chassis, and Machine
 
 
-import Util from '../../../canvas/common/util/Util';
-import Events from '../../../canvas/common/util/Events';
-import Easing from '../../../canvas/common/gfx/Easing';
-
-import RackSpaceObject from './RackSpaceObject';
-import PowerSupply from './PowerSupply';
-import MessageHint from './MessageHint';
-import ViewModel from '../ViewModel';
+import Util from 'canvas/common/util/Util';
+import Events from 'canvas/common/util/Events';
+import Easing from 'canvas/common/gfx/Easing';
+import RackSpaceObject from 'canvas/irv/view/RackSpaceObject';
+import PowerSupply from 'canvas/irv/view/PowerSupply';
+import MessageHint from 'canvas/irv/view/MessageHint';
+import ViewModel from 'canvas/irv/ViewModel';
 import Profiler from 'Profiler'
 
 class RackObject extends RackSpaceObject {

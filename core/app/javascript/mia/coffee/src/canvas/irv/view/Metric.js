@@ -7,8 +7,8 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import Util from '../../../canvas/common/util/Util';
-import Easing from '../../../canvas/common/gfx/Easing';
+import Util from 'canvas/common/util/Util';
+import Easing from 'canvas/common/gfx/Easing';
 import Profiler from 'Profiler';
 
 class Metric {

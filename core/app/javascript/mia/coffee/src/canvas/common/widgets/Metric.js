@@ -7,8 +7,8 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-import Util from '../util/Util';
-import Easing from '../gfx/Easing';
+import Util from 'canvas/common/util/Util';
+import Easing from 'canvas/common/gfx/Easing';
 
 class Metric {
   static initClass() {

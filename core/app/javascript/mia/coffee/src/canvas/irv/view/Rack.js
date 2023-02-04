@@ -10,14 +10,14 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import Util from '../../../canvas/common/util/Util';
-import AssetManager from '../../../canvas/irv/util/AssetManager';
-import ViewModel from '../../../canvas/irv/ViewModel';
+import Util from 'canvas/common/util/Util';
+import AssetManager from 'canvas/irv/util/AssetManager';
+import ViewModel from 'canvas/irv/ViewModel';
 
-import RackObject from './RackObject';
-import Chassis from './Chassis';
-import Breacher from './Breacher';
-import ImageLink from './ImageLink';
+import RackObject from 'canvas/irv/view/RackObject';
+import Chassis from 'canvas/irv/view/Chassis';
+import Breacher from 'canvas/irv/view/Breacher';
+import ImageLink from 'canvas/irv/view/ImageLink';
 import Profiler from 'Profiler'
 
 class Rack extends RackObject {

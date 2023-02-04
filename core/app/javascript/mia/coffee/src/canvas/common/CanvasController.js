@@ -7,13 +7,12 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import CanvasViewModel from './CanvasViewModel';
-import CanvasParser from './CanvasParser';
-import CanvasSpace from './CanvasSpace';
-import Util from './util/Util';
-
-import Configurator from '../../canvas/irv/util/Configurator';
-import AssetManager from '../../canvas/irv/util/AssetManager';
+import CanvasViewModel from 'canvas/common/CanvasViewModel';
+import CanvasParser from 'canvas/common/CanvasParser';
+import CanvasSpace from 'canvas/common/CanvasSpace';
+import Util from 'canvas/common/util/Util';
+import Configurator from 'canvas/irv/util/Configurator';
+import AssetManager from 'canvas/irv/util/AssetManager';
 import Profiler from 'Profiler';
 
 class CanvasController {

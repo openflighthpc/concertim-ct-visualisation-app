@@ -6,7 +6,7 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import Easing from '../../../canvas/common/gfx/Easing';
+import Easing from 'canvas/common/gfx/Easing';
 
 class Breacher {
   static initClass() {

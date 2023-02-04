@@ -7,14 +7,14 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import ViewModel from '../../../canvas/irv/ViewModel';
-import  Rack from '../../../canvas/irv/view/Rack';
-import  Chassis from '../../../canvas/irv/view/Chassis';
-import  Machine from '../../../canvas/irv/view/Machine';
-import  PowerStrip from '../../../canvas/irv/view/PowerStrip';
-import  Socket from '../../../canvas/irv/view/Socket';
-import  Util from '../../../canvas/common/util/Util';
-import  Events from '../../../canvas/common/util/Events';
+import ViewModel from 'canvas/irv/ViewModel';
+import  Rack from 'canvas/irv/view/Rack';
+import  Chassis from 'canvas/irv/view/Chassis';
+import  Machine from 'canvas/irv/view/Machine';
+import  PowerStrip from 'canvas/irv/view/PowerStrip';
+import  Socket from 'canvas/irv/view/Socket';
+import  Util from 'canvas/common/util/Util';
+import  Events from 'canvas/common/util/Events';
 import  Profiler from 'Profiler';
 
 class ContextMenu {

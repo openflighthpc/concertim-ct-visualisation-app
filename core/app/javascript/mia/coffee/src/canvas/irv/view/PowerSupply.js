@@ -7,9 +7,9 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import Util from '../../../canvas/common/util/Util';
-import Events from '../../../canvas/common/util/Events';
-import MessageHint from './MessageHint';
+import Util from 'canvas/common/util/Util';
+import Events from 'canvas/common/util/Events';
+import MessageHint from 'canvas/irv/view/MessageHint';
 
 class PowerSupply {
   constructor(id, name, power_strip_id, socket_id, parent) {

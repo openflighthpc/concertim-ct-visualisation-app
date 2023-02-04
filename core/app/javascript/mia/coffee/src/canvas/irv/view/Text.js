@@ -4,7 +4,7 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import Util from '../../../canvas/common/util/Util';
+import Util from 'canvas/common/util/Util';
 
 class Text {
   constructor(conf) {

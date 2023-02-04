@@ -9,11 +9,11 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import LBC from '../../../canvas/common/widgets/LBC';
-import Util from '../../../canvas/common/util/Util';
-import Events from '../../../canvas/common/util/Events';
-import Breacher from '../../../canvas/irv/view/Breacher';
-import SimpleRenderer from '../../../canvas/common/gfx/SimpleRenderer';
+import LBC from 'canvas/common/widgets/LBC';
+import Util from 'canvas/common/util/Util';
+import Events from 'canvas/common/util/Events';
+import Breacher from 'canvas/irv/view/Breacher';
+import SimpleRenderer from 'canvas/common/gfx/SimpleRenderer';
 
 class VMDialogue extends LBC {
   static initClass() {

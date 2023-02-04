@@ -7,14 +7,14 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import Hint from '../../../canvas/irv/view/Hint';
-import  Rack from '../../../canvas/irv/view/Rack';
-import  Chassis from '../../../canvas/irv/view/Chassis';
-import  Machine from '../../../canvas/irv/view/Machine';
-import  PowerStrip from '../../../canvas/irv/view/PowerStrip';
-import  Socket from '../../../canvas/irv/view/Socket';
-import  Events from '../../../canvas/common/util/Events';
-import  Util from '../../../canvas/common/util/Util';
+import Hint from 'canvas/irv/view/Hint';
+import  Rack from 'canvas/irv/view/Rack';
+import  Chassis from 'canvas/irv/view/Chassis';
+import  Machine from 'canvas/irv/view/Machine';
+import  PowerStrip from 'canvas/irv/view/PowerStrip';
+import  Socket from 'canvas/irv/view/Socket';
+import  Events from 'canvas/common/util/Events';
+import  Util from 'canvas/common/util/Util';
 
 class RackHint extends Hint {
   static initClass() {

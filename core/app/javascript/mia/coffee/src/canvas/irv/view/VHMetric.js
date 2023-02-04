@@ -4,7 +4,7 @@
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-import MultiMetric from '../../../canvas/common/widgets/MultiMetric';
+import MultiMetric from 'canvas/common/widgets/MultiMetric';
 
 class VHMetric extends MultiMetric {
 

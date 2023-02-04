@@ -8,8 +8,8 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import Util from './Util';
-import Events from './Events';
+import Util from 'canvas/common/util/Util';
+import Events from 'canvas/common/util/Events';
 import Profiler from 'Profiler';
 
 class PresetManager {

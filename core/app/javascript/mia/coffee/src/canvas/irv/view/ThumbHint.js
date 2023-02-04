@@ -6,8 +6,8 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import Hint from '../../../canvas/irv/view/Hint';
-import  Util from '../../../canvas/common/util/Util';
+import Hint from 'canvas/irv/view/Hint';
+import  Util from 'canvas/common/util/Util';
 
 class ThumbHint extends Hint {
   static initClass() {

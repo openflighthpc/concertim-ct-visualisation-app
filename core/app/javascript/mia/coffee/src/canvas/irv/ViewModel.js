@@ -10,8 +10,8 @@
  */
 
 
-import CanvasViewModel from '../../canvas/common/CanvasViewModel'
-import Util from '../../canvas/common/util/Util'
+import CanvasViewModel from 'canvas/common/CanvasViewModel'
+import Util from 'canvas/common/util/Util'
 
 class ViewModel extends CanvasViewModel {
   static initClass() {

@@ -7,15 +7,14 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import Util from './util/Util';
-import SimpleRenderer from './gfx/SimpleRenderer';
-
-import RackObject from '../../canvas/irv/view/RackObject';
-import Rack from '../../canvas/irv/view/Rack';
-import Chassis from '../../canvas/irv/view/Chassis';
-import Machine from '../../canvas/irv/view/Machine';
-import PowerStrip from '../../canvas/irv/view/PowerStrip';
-import ViewModel from '../../canvas/irv/ViewModel';
+import Util from 'canvas/common/util/Util';
+import SimpleRenderer from 'canvas/common/gfx/SimpleRenderer';
+import RackObject from 'canvas/irv/view/RackObject';
+import Rack from 'canvas/irv/view/Rack';
+import Chassis from 'canvas/irv/view/Chassis';
+import Machine from 'canvas/irv/view/Machine';
+import PowerStrip from 'canvas/irv/view/PowerStrip';
+import ViewModel from 'canvas/irv/ViewModel';
 import Profiler from 'Profiler'
 
 class CanvasSpace {

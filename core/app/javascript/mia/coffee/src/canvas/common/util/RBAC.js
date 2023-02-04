@@ -1,5 +1,5 @@
-import Util from './Util';
-import Events from './Events';
+import Util from 'canvas/common/util/Util';
+import Events from 'canvas/common/util/Events';
 
 // RBAC = Rule Based Access Control
 //

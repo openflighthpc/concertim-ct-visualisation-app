@@ -7,9 +7,9 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import Util from '../../../canvas/common/util/Util';
-import  Text from '../../../canvas/irv/view/Text';
-import  RackObject from '../../../canvas/irv/view/RackObject';
+import Util from 'canvas/common/util/Util';
+import  Text from 'canvas/irv/view/Text';
+import  RackObject from 'canvas/irv/view/RackObject';
 
 class Link extends Text {
   static initClass() {

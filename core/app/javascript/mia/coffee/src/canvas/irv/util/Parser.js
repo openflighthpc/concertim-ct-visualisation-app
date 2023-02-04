@@ -8,8 +8,8 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import CanvasParser from '../../../canvas/common/CanvasParser';
-import Util from '../../../canvas/common/util/Util';
+import CanvasParser from 'canvas/common/CanvasParser';
+import Util from 'canvas/common/util/Util';
 import Profiler from 'Profiler';
 
 

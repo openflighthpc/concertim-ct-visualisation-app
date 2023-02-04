@@ -9,8 +9,8 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import LBC from '../../../canvas/common/widgets/LBC';
-import ViewModel from '../../../canvas/irv/ViewModel';
+import LBC from 'canvas/common/widgets/LBC';
+import ViewModel from 'canvas/irv/ViewModel';
 
 class IRVChart extends LBC {
   constructor(...args) {
