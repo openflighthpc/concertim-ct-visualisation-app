@@ -12,6 +12,18 @@ Rails.application.routes.draw do
     ['v1'].each do |version|
       namespace version do
 
+        namespace :racks do
+          resources :racks
+        end
+
+        namespace :nodes do
+          resources :nodes, only: [:create]
+        end
+
+        namespace :devices do
+          resources :devices, only: [:index, :show, :update, :destroy]
+        end
+
         namespace :irv do
           resources :racks, only: [:index] do
             member do
