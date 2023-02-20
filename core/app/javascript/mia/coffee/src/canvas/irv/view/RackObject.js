@@ -16,7 +16,6 @@ import Events from 'canvas/common/util/Events';
 import Easing from 'canvas/common/gfx/Easing';
 import RackSpaceObject from 'canvas/irv/view/RackSpaceObject';
 import PowerSupply from 'canvas/irv/view/PowerSupply';
-import MessageHint from 'canvas/irv/view/MessageHint';
 import ViewModel from 'canvas/irv/ViewModel';
 import Profiler from 'Profiler'
 
@@ -344,7 +343,7 @@ class RackObject extends RackSpaceObject {
   create_request(ev) {
     return new Request.JSON({
       headers    : {'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content')},
-      url: '/-/api/v1/irv/'+this.group+'/'+this.id+'/'+this.conf.action+'/',
+      url: '/--/api/v1/irv/'+this.group+'/'+this.id+'/'+this.conf.action+'/',
       onSuccess: this.sendConfirmation,
       onFail: this.loadError,
       onError: this.loadError,
@@ -353,8 +352,6 @@ class RackObject extends RackSpaceObject {
   }
 
   sendConfirmation(config) {
-    this.messageHint = new MessageHint();
-    this.messageHint.closePopUp();
     if (this.conf.action === "update_position") {
       return this.sendMessageMovingDevice(config.success);
     } else if (this.conf.action === "update_slot") {
@@ -372,22 +369,18 @@ class RackObject extends RackSpaceObject {
         name_to_show = this.children[0].name;
         type_to_show = "Device";
       }
-      const messages = [[type_to_show + ": " + name_to_show + " "+this.conf.action+".", 0]];
       Events.dispatchEvent(RackObject.RACK_GFX.containerEl, 'getModifiedRackIds');
-      return this.messageHint.show(messages);
     } else {
-      return this.messageHint.show([["Device "+this.conf.action+" error!", 0]]);
+      alert_dialog("Device "+this.conf.action+" error!");
     }
   }
 
   sendMessageMovingBlade(config_success) {
     if (config_success === true) {
       const name_to_show = this.name; 
-      const messages = [["Blade: " + name_to_show + " "+this.conf.action+".", 0]];
       Events.dispatchEvent(RackObject.RACK_GFX.containerEl, 'getModifiedRackIds');
-      return this.messageHint.show(messages);
     } else {
-      return this.messageHint.show([["Blade "+this.conf.action+" error!", 0]]);
+      alert_dialog("Blade "+this.conf.action+" error!");
     }
   }
 

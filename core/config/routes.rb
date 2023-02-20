@@ -36,11 +36,13 @@ Rails.application.routes.draw do
           resources :chassis do
             member do
               get :tooltip
+              post :update_position
             end
           end
           resources :devices, only: [] do
             member do
               get :tooltip
+              post :update_slot
             end
           end
           resources :rackview_presets, only: [:index, :create, :update, :destroy]

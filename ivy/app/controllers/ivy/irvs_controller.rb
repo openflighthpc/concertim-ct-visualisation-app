@@ -1,7 +1,6 @@
 module Ivy
   class IrvsController < Ivy::ApplicationController
     def show
-      `whoami`
       @show = "full_irv"
     end
 

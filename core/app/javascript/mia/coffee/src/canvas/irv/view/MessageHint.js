@@ -28,7 +28,7 @@ class MessageHint {
     fmtd_msg +=     '</table>';
     fmtd_msg +=   '</div>';
     fmtd_msg += '</div>';
-    return MessageSlider.instance.display(fmtd_msg, title, 5, new Date());
+    // return MessageSlider.instance.display(fmtd_msg, title, 5, new Date());
   }
 
   showPopUp(conf) {
@@ -47,7 +47,8 @@ class MessageHint {
   }
 
   closePopUp() {
-    return cClick();
+    // XXX What is this supposed to do?
+    // return cClick();
   }
 };
 

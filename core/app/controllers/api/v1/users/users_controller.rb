@@ -24,7 +24,8 @@ class Api::V1::Users::UsersController < Api::V1::Users::BaseController
       rbac_resources.each do |_, rbac_resource|
         # XXX Add this back when cancan is added.
         # result[rbac_action][rbac_resource] = current_user.can?(rbac_action.to_sym, rbac_resource)
-        result[rbac_action][rbac_resource] = false
+        permitted = rbac_action == 'move'
+        result[rbac_action][rbac_resource] = permitted
       end
     end
     render json: result
