@@ -9,7 +9,8 @@ class Api::V1::Racks::RacksController < Api::V1::Racks::BaseController
 
   def show
     # XXX load_and_authorize_resource instead.
-    @rack = Ivy::HwRack.find(params[:id])
+    @rack = Api::V1::RackPresenter.new(Ivy::HwRack.find(params[:id]))
+    @include_occupation_details = true
     render
   end
 
