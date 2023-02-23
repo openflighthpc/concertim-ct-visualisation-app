@@ -14,12 +14,7 @@ class Api::V1::Racks::RacksController < Api::V1::Racks::BaseController
   end
 
   def create
-    rp = rack_params.tap do |h|
-      # XXX Hardcode the template id for now.  Later need to decide what
-      # templates are in the new virtual world.
-      h[:template_id] = Ivy::HwRack::DEFAULT_TEMPLATE_ID
-    end
-    @rack = Ivy::HwRackServices::Create.call(rp.to_h)
+    @rack = Ivy::HwRackServices::Create.call(rack_params.to_h)
 
     if @rack.persisted?
       render action: :show
@@ -60,8 +55,12 @@ class Api::V1::Racks::RacksController < Api::V1::Racks::BaseController
   #
   # rack_params
   #
-  PERMITTED_PARAMS = %w[name description u_height u_depth template_id]
+  PERMITTED_PARAMS = %w[name description u_height]
   def rack_params
-    params.require(:rack).permit(*PERMITTED_PARAMS)
+    if params.key?(:rack)
+      params.require(:rack).permit(*PERMITTED_PARAMS)
+    else
+      {}
+    end
   end
 end

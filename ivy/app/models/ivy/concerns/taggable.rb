@@ -25,7 +25,7 @@ module Ivy
           class_name: "Ivy::Device::#{tagged_device_type}",
           dependent: :destroy
         accepts_nested_attributes_for :tagged_device
-        after_create :create_taggged_device
+        before_validation :set_tagged_device_defaults
         after_validation :fix_tagged_device_errors
       end
 
@@ -52,14 +52,17 @@ module Ivy
         metrics[key] && metrics[key][:value]
       end
 
-      def create_taggged_device
-        tagged_device.name = self.name
+      def set_tagged_device_defaults
+        return unless new_record?
+        return unless tagged_device.nil? || tagged_device.new_record?
+
+        tagged_device = self.tagged_device || self.build_tagged_device
+
+        tagged_device.tagged = true
+        tagged_device.name ||= self.name
         tagged_device.build_data_source_map(
           :data_source_id=>1, :map_to_grid => 'unspecified', :map_to_cluster => 'unspecified',
           :map_to_host => tagged_device.name)
-        tagged_device.save!
-        tagged_device.data_source_map.save!
-        save
       end
       
       def fix_tagged_device_errors

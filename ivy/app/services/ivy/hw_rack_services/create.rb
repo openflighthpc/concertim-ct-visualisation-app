@@ -15,10 +15,6 @@ module Ivy
     class Create
 
       def self.call(rack_params)
-        rack_params[:tagged_device_attributes] ||= {}
-        rack_params[:tagged_device_attributes][:name] = rack_params[:name]
-        rack_params[:tagged_device_attributes][:tagged] = true
-
         # [:initial_purchase_date, :warranty_expiry_date, :maintenance_expiry_date, :depreciation_date].each do |attr|
         #   param = rack_params.delete(attr)
         #   rack_params[:tagged_device_attributes][attr] = param unless rack_params[:tagged_device_attributes][attr]

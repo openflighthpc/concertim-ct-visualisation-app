@@ -29,6 +29,7 @@ module Ivy
     #
     ############################
     
+    belongs_to :cluster
     has_many :chassis, ->{ order(rack_start_u: :desc) },
       class_name: 'Ivy::Chassis',
       foreign_key: :rack_id,
@@ -84,12 +85,14 @@ module Ivy
     ############################
 
     def set_defaults
-      last_rack = ( cluster || Ivy::Cluster.first ).racks.last rescue nil
       self.u_depth ||= 2
-      if last_rack
-        self.template_id ||= DEFAULT_TEMPLATE_ID
-        self.u_height ||= last_rack.nil? ? 42 : last_rack.u_height
-      end
+      self.template_id ||= DEFAULT_TEMPLATE_ID
+
+      # The remaining defaults take their value from that given to the last
+      # rack.
+      last_rack = ( cluster || Ivy::Cluster.first ).racks.order(:created_on).last rescue nil
+
+      self.u_height ||= last_rack.nil? ? 42 : last_rack.u_height
       self.name ||=
         if last_rack
           last_rack.name.sub(/(\d+)(\D*$)/) do |m|
