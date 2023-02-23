@@ -13,7 +13,7 @@ module Ivy
     #############################
     #
     # CONSTANTS
-    # 
+    #
     ############################
 
     DEFAULT_TEMPLATE_ID = 669
@@ -22,14 +22,14 @@ module Ivy
 
     ############################
     #
-    # Associations 
+    # Associations
     #
     # Re: chassis relationship (it's done differently here to legacy due to
     # chassis object heirachy having changed). See notes on "rack_chassis"
     # method below.
     #
     ############################
-    
+
     belongs_to :cluster
     has_many :chassis, ->{ order(rack_start_u: :desc) },
       class_name: 'Ivy::Chassis',
@@ -53,7 +53,7 @@ module Ivy
 
     ############################
     #
-    # Validations 
+    # Validations
     #
     ############################
 
@@ -64,8 +64,8 @@ module Ivy
     validate :u_height_greater_than_highest_occupied_u?, unless: :new_record?
     validate :rack_limit, if: :new_record?
 
-    # 
-    # u_height is not allowed to be lower than space used. 
+    #
+    # u_height is not allowed to be lower than space used.
     #
     def u_height_greater_than_highest_occupied_u?
       if !(u_height >= highest_empty_u)
@@ -73,15 +73,15 @@ module Ivy
       end
     end
 
-    def rack_limit 
-      limit = YAML.load_file("/etc/concurrent-thinking/appliance/release.yml")['rack_limit'] rescue nil 
-      return if limit.nil? || Ivy::HwRack.count < limit 
-      self.errors.add(:base, "The rack limit of #{limit} has been exceeded") 
-    end 
+    def rack_limit
+      limit = YAML.load_file("/etc/concurrent-thinking/appliance/release.yml")['rack_limit'] rescue nil
+      return if limit.nil? || Ivy::HwRack.count < limit
+      self.errors.add(:base, "The rack limit of #{limit} has been exceeded")
+    end
 
     ############################
     #
-    # Defaults 
+    # Defaults
     #
     ############################
 
@@ -101,7 +101,7 @@ module Ivy
           end
         else
           "Rack-#{Ivy::HwRack.count + 1}"
-        end        
+        end
     end
 
 
@@ -138,7 +138,7 @@ module Ivy
         iv = instance_variable_get("@#{type.pluralize}")
         if iv.nil?
           instance_variable_set(
-            "@#{type.pluralize}", 
+            "@#{type.pluralize}",
             Ivy::Device::ManagedDevice
               .joins(device_joins)
               .where(['base_chassis.rack_id = ? and role = ?', id, type])

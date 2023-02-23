@@ -29,7 +29,6 @@ module Api::V1
           type: location_type,
         }
       elsif o.zero_u?
-        o.position
         {
           position: o.position,
           rack_id: o.rack.id,

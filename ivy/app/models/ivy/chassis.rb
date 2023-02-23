@@ -237,20 +237,35 @@ module Ivy
       end
     end
 
-    # otherwise construct the name from the man and model and a the current second
+    # get_default_name returns what should be a sensible and unique name.
+    #
+    # It is constructed from details taken from the chassis's template and rack
+    # if available and a unique number is added.
     def get_default_name
-      next_chassis_unique_num = Time.now.to_i
-      manufacturer_and_model = "#{template.manufacturer}-#{template.model}" rescue template_name 
-      construct_name(manufacturer_and_model, next_chassis_unique_num)
+      unique_num = Time.now.to_f
+      base_name =
+        if template.nil?
+          self.class.name
+        else
+          "#{template.manufacturer}-#{template.model}" rescue template.name 
+        end
+
+      name = base_name
+      name += "-#{rack.name}" if has_rack?
+      name += "-#{unique_num}"
+      name.gsub!(' ','-')
+      name.delete!("^a-zA-Z0-9\-")
+      name.split("-").select{|e| e!=""}.join("-")
+
+      name
     end
 
-    def construct_name(manu_model, unique_num)
-      temp_name = manu_model
-      temp_name += "-#{rack.name}" if rack?
-      temp_name += "-#{unique_num}"
-      temp_name.gsub!(' ','-')
-      temp_name.delete!("^a-zA-Z0-9\-")
-      temp_name.split("-").select{|e| e!=""}.join("-")
+    def target_u_is_empty
+      is_full_depth = u_depth == rack.u_depth
+      facing = is_full_depth ? nil : self.facing
+      return if rack.u_is_empty?(rack_start_u, exclude: self.id, facing: facing)
+
+      errors.add(:rack_start_u, 'is occupied')
     end
 
   end
