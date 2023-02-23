@@ -21,6 +21,7 @@ module Api::V1
     def location
       if o.in_rack?
         {
+          depth: o.u_depth,
           end_u: o.rack_end_u || o.rack_start_u,
           facing: o.facing,
           rack_id: o.rack.id,

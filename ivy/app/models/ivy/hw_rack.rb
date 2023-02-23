@@ -7,6 +7,7 @@ module Ivy
 
     include Ivy::Concerns::Taggable
     include Ivy::Concerns::Templateable
+    include Ivy::HwRack::Occupation
 
 
     #############################
@@ -150,52 +151,6 @@ module Ivy
       end
     end
 
-
-    ####################################
-    #
-    # Instance Methods
-    #
-    ####################################
-
-    def empty?
-      devices.empty? && chassis_tagged_devices.empty?
-    end
-
-    #
-    # number_of_devices
-    #
-    def number_of_devices
-      group ? (MEMCACHE.get("hacor:group:#{group.id}")[:members].size rescue 0) : 0
-    end
-
-    # Return the highest empty u for the given facing.
-    # Half empty u will be included iff they are empty in the given facing.
-    def highest_empty_u(facing = nil)
-      if facing.nil?
-        return (chassis.select{|ch| ch.type != 'ZeroURackChassis'}.map(&:rack_end_u).compact.sort.last || 0)
-      else
-        height = (u_height.nil? || u_height.blank?) ? 1 : u_height 
-        return first_empty_u( ( 1..height ).to_a.reverse, facing)
-      end
-    end
-    
-    #
-    # space_used
-    #
-    def space_used
-      value_for_metric(SPACE_USED_METRIC_KEY).to_i rescue 0
-    end
-
-    #
-    # total_space
-    # 
-    def total_space
-      u_height
-    end
-
-    def contains_mia?
-      !mia.nil?
-    end
 
     ############################
     #

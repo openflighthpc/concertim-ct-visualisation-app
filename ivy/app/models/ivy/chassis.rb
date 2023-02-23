@@ -86,7 +86,7 @@ module Ivy
     # Custom Validations
     validate :name_is_unique_within_device_scope
     # XXX Add validation that U is not already occupied.
-    # validate :u_is_empty
+    validate :target_u_is_empty, if: :in_rack?
     
 
     ####################################
@@ -127,6 +127,7 @@ module Ivy
     scope :for_tagged_devices, ->(device_ids) { 
       joins(:device).where(:devices => {:id => device_ids})
     }
+    scope :occupying_rack_u, ->{ where(type: :RackChassis) }
 
     #######################
     #
@@ -155,8 +156,10 @@ module Ivy
       end
     end
 
-    def rack?
-      self.respond_to?(:rack) && self.rack
+    # has_rack? returns true if the chassis has a rack.  Non-rack chassis do
+    # not have a rack, others should.
+    def has_rack?
+      !rack.nil?
     end
 
     def zero_u?
@@ -168,17 +171,10 @@ module Ivy
     end
 
     #
-    # in_rack?
-    #
-    # Is the chassis in a rack? Additionally, pass in a rack_id and 
-    # it'll tell you if it's in THAT rack.
-    #
-    def in_rack?(rack_id = nil)
-      if rack_id
-        return !zero_u? && rack && rack.id == rack_id
-      else
-        return !zero_u? && rack
-      end
+    # in_rack? returns true if the chassis is *in* a rack, i.e., it occupies a
+    # rack U.  Non-rack chassis and zero-u chassis do not.
+    def in_rack?
+      has_rack? && !zero_u?
     end
 
     def assign_name
@@ -199,6 +195,32 @@ module Ivy
       # new_name 
     end
 
+    # occupy_u? returns true if the chassis occupies the given u on the given
+    # facing.
+    #
+    # If the chassis is full depth, it occupies both facings at that U,
+    # otherwise it only occupies the facing that it faces.
+    def occupy_u?(rack_u, facing:nil, exclude:nil)
+      return false if self.id == exclude
+      return false unless in_rack?
+
+      # If the chassis starts after the U or ends before it it doesn't occupy
+      # it.
+      return false if self.rack_start_u > rack_u
+      return false if self.rack_end_u < rack_u
+
+      # Otherwise the chassis occupies the U if it is full depth, or we don't
+      # care about the facing, or it matches the given facing.
+      if self.u_depth == self.rack.u_depth
+        true
+      elsif facing.nil?
+        true
+      elsif self.facing == facing
+        true
+      else
+        false
+      end
+    end
 
     #############################
     #
