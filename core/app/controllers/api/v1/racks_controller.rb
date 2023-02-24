@@ -1,4 +1,4 @@
-class Api::V1::Racks::RacksController < Api::V1::Racks::BaseController
+class Api::V1::RacksController < Api::V1::ApplicationController
   # load_and_authorize_resource :rack, :class => Ivy::HwRack
 
   def index

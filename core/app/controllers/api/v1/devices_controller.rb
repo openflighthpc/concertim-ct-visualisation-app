@@ -1,4 +1,4 @@
-class Api::V1::Devices::DevicesController < Api::V1::ApplicationController
+class Api::V1::DevicesController < Api::V1::ApplicationController
   def index
     @devices = Ivy::Device.occupying_rack_u.map {|d| Api::V1::DevicePresenter.new(d) }
     render

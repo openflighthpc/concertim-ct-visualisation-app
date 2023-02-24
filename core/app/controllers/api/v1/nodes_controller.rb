@@ -1,4 +1,4 @@
-class Api::V1::Nodes::NodesController < Api::V1::ApplicationController
+class Api::V1::NodesController < Api::V1::ApplicationController
 
   # create a single node based on a simple chassis template
   def create
