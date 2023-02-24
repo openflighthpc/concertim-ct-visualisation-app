@@ -17,16 +17,40 @@ module Api::V1
     # in the chassis is returned.
     def location
       if o.chassis.nil?
+        # This could be a rack tagged device, data centre tagged device or
+        # sensor.  For now, we're not interested in their location.
         nil
-      elsif o.chassis_simple? || o.is_a?(Ivy::Chassis)
+
+      elsif o.chassis_simple?
+        # A simple device/chassis.  It's location is the location of its
+        # chassis.
         Api::V1::ChassisPresenter.new(o.chassis, h).location
+
+      elsif o.chassis_complex?
+        # Either a blade enclosure or a blade server.
+        if o.tagged?
+          # A blade enclosure.  It's location is the location of its chassis.
+          Api::V1::ChassisPresenter.new(o.chassis, h).location
+
+        else
+          # A blade server in an enclosure.  It's location is its location in
+          # the enclosure.
+          {
+            row: o.chassis_row.row_number,
+            slot: o.slot.chassis_row_location,
+            chassis_id: o.chassis.id,
+            type: 'blade',
+          }
+        end
+
       else
-        {
-          row: o.chassis_row.row_number,
-          slot: o.slot.chassis_row_location,
-          chassis_id: o.chassis.id,
-          type: 'blade',
-        }
+        # We shouldn't get here.
+        if Rails.env.development?
+          raise "Unhandled device location for #{o.id}"
+        else
+          Rails.logger.warn("Unhandled device location: #{o.id}")
+        end
+        nil
       end
     end
   end

@@ -95,7 +95,7 @@ module Ivy
     #
     ####################################
 
-    delegate :simple?,
+    delegate :simple?, :complex?,
       to: :template, allow_nil: true
 
 
@@ -175,6 +175,23 @@ module Ivy
     # rack U.  Non-rack chassis and zero-u chassis do not.
     def in_rack?
       has_rack? && !zero_u?
+    end
+
+    #
+    # position returns the position of a zero-u chassis;  one of `:t`, `:m`,
+    # `:b` for top, middle or bottom.
+    #
+    def position 
+      return nil unless has_rack? && zero_u?
+
+      case rack_start_u
+      when 1
+        :b
+      when rack.u_height
+        :t
+      else 
+        :m
+      end
     end
 
     def assign_name

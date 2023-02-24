@@ -74,6 +74,7 @@ module Ivy
     #
     #############################
 
+    scope :tagged,           ->{ where("devices.tagged = ?", true) } 
     scope :untagged,         ->{ where("devices.tagged != ?", true) } 
     scope :blank,            ->{ joins(:template).where("templates.model LIKE '%Blank Panel%'") }
     scope :occupying_rack_u, ->{ joins(:indirect_rack).where(base_chassis: {type: :RackChassis}) }
@@ -87,7 +88,7 @@ module Ivy
     delegate :manufacturer, :model,
       to: :template, allow_nil: true
 
-    delegate :simple?,
+    delegate :simple?, :complex?,
       to: :chassis, allow_nil: true, prefix: true
 
     ####################################

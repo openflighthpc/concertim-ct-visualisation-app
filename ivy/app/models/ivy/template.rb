@@ -10,5 +10,16 @@ module Ivy
     #######################
 
     has_many :chassis, class_name: 'Ivy::Chassis'
+
+
+    #######################
+    #
+    # Instance Methods
+    #
+    #######################
+
+    def complex?
+      !simple?
+    end
   end
 end
