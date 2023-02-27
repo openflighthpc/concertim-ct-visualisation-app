@@ -12,7 +12,6 @@ import Events from 'canvas/common/util/Events';
 import Rack from 'canvas/irv/view/Rack';
 import RackObject from 'canvas/irv/view/RackObject';
 import AssetManager from 'canvas/irv/util/AssetManager';
-import MessageHint from 'canvas/irv/view/MessageHint';
 import PowerSupply from 'canvas/irv/view/PowerSupply';
 
 class Socket {
