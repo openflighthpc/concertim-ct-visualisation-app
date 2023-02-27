@@ -22,6 +22,7 @@
           <%= render partial: 'layouts/shared/title_bar' %>
           <div id="pagePane">
             <div id="pageBox" class="fill box">
+              <%= render :partial => 'layouts/shared/flash_messages' %>
               <div id="pageContent">
                 <%= yield %>
               </div><!--pageContent-->
