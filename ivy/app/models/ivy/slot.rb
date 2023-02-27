@@ -10,6 +10,7 @@ module Ivy
 
     belongs_to :chassis_row, class_name: 'Ivy::ChassisRow'
     has_one :device, dependent: :destroy
+    has_one :chassis, through: :chassis_row
 
 
     ###############################
@@ -22,6 +23,15 @@ module Ivy
     validates :chassis_row_location, numericality: { integer_only: true }, allow_nil: false 
     validates :chassis_row_location, uniqueness: { scope: :chassis_row_id }
     validate :device_valid?
+
+
+    ####################################
+    #
+    # Delegation
+    #
+    ####################################
+
+    delegate :compatible_with_device?, to: :chassis
 
 
     ####################################

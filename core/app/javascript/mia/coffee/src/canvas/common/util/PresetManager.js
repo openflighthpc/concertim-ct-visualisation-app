@@ -318,9 +318,9 @@ class PresetManager {
     const selected_preset = this.modelRefs.selectedPreset();
     if (selected_preset === undefined) { return; }
     const message = Util.substitutePhrase(PresetManager.MSG_CONFIRM_UPDATE, 'selected_preset', selected_preset);
-    confirm_dialog(message, 'Please confirm', true).then(() => {
-      document.PRESETS.updatePreset();
-    });
+    confirm_dialog(message, 'Please confirm', true)
+      .then(() => { document.PRESETS.updatePreset(); })
+      .catch(() => {});
   }
 
 

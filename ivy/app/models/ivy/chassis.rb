@@ -239,6 +239,29 @@ module Ivy
       end
     end
 
+    def update_position(params)
+      self.rack_id = params[:rack_id]
+      self.facing = params[:facing]
+      self.rack_start_u = params[:rack_start_u]
+      self.show_in_dcrv = params[:show_in_dcrv] unless params[:show_in_dcrv].nil?
+      self.type = params[:type] unless params[:type].nil?
+    end
+
+    # 
+    # compatible_with_device?
+    # 
+    # A complex chassis will only accept a blade if it has the same 
+    # manufacturer and model.
+    #
+    def compatible_with_device?(device)
+      if complex?
+        device.manufacturer == manufacturer && device.model == model
+      else
+        false
+      end
+    end
+    
+     
     #############################
     #
     # Private Methods
