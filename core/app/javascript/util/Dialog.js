@@ -35,6 +35,7 @@ class Dialog {
       <h4 data-ref="header" id="${(Math.round(Date.now())).toString(36)}"></h4>
       <div data-ref="message"></div>
       <menu>
+        <button type="button" data-ref="cancel" value="cancel"></button>
         <button type="button" data-ref="accept" value="default"></button>
       </menu>
     </form>`
@@ -44,12 +45,12 @@ class Dialog {
     this.focusable = [];
     this.dialogEl.querySelectorAll('[data-ref]').forEach(el => this.elements[el.dataset.ref] = el);
     this.dialogEl.setAttribute('aria-labelledby', this.elements.message.id);
+    this.elements.cancel.addEventListener('click', () => {
+      this.dialogEl.dispatchEvent(new CustomEvent('dialog:cancel'));
+    })
     this.dialogEl.addEventListener('keydown', e => {
-      if (e.key === 'Enter') {
-        this.elements.accept.dispatchEvent(new Event('click'));
-      }
       if (e.key === 'Escape') {
-        this.dialogEl.dispatchEvent(new Event('cancel'));
+        this.dialogEl.dispatchEvent(new CustomEvent('dialog:cancel'));
       }
       if (e.key === 'Tab') {
         e.preventDefault();
@@ -67,6 +68,8 @@ class Dialog {
     const mergedSettings = Object.assign({}, this.settings, settings);
     this.dialogEl.className = mergedSettings.dialogClass || '';
     this.elements.accept.innerText = mergedSettings.accept;
+    this.elements.cancel.innerText = mergedSettings.cancel
+    this.elements.cancel.hidden = mergedSettings.cancel === '' || mergedSettings == null;
     this.elements.message.innerText = mergedSettings.message;
     this.elements.header.innerHTML = mergedSettings.header || '';
     this.focusable = this.getFocusable();
@@ -94,21 +97,27 @@ class Dialog {
   }
 
   waitForUser() {
-    return new Promise(resolve => {
-      this.dialogEl.addEventListener('cancel', () => { 
+    return new Promise((resolve, reject) => {
+      this.dialogEl.addEventListener('dialog:cancel', () => { 
         this.close();
-        resolve(false);
+        reject();
       }, { once: true })
-      this.elements.accept.addEventListener('click', () => {
-        let value = true;
+      this.dialogEl.addEventListener('dialog:accept', () => {
         this.close();
-        resolve(value);
+        resolve();
       }, { once: true })
     })
   }
 
   alert(message, header='') {
     const settings = { message, header };
+    this.update(settings);
+    this.open();
+    return this.waitForUser();
+  }
+
+  confirm(message, header='') {
+    const settings = { message, header, cancel: 'Cancel' };
     this.update(settings);
     this.open();
     return this.waitForUser();
@@ -123,4 +132,10 @@ window.alert_dialog = function(message, header, modal) {
   const dialog = new Dialog({ modal });
   dialog.alert(message, header);
   return dialog;
+}
+
+// (Mostly) API compatible implementation of MIA's confirm_dialog.
+window.confirm_dialog = function(question, header, modal) {
+  const dialog = new Dialog({ modal });
+  return dialog.confirm(question, header);
 }

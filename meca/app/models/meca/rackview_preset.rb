@@ -5,8 +5,30 @@ module Meca
 
     self.table_name = 'rackview_presets'
 
-    def values_as_json
-      values ? YAML.load(values) : {}
+
+    ####################################
+    #
+    # Validations
+    #
+    ####################################
+
+    validates :name, presence: true
+    validates :default, inclusion: [true, false]
+    validates :values, presence: true
+
+
+    ####################################
+    #
+    # Instance Methods
+    #
+    ####################################
+
+    def values=(v)
+      super(YAML.dump(v))
+    end
+
+    def values
+      YAML.load(super)
     rescue
       {}
     end

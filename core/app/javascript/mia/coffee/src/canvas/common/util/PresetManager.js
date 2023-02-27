@@ -247,7 +247,6 @@ class PresetManager {
       payload['preset[default]'] = false;
     } else {
       this.change.default            = this.selected.default;
-      payload['preset[id]']      = this.selected.id;
       payload['preset[name]']    = this.selected.name;
       payload['preset[default]'] = this.selected.default;
     }
@@ -267,7 +266,7 @@ class PresetManager {
     return new Request.JSON({
       headers    : {'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content')},
       url        : PresetManager.PATH + Util.substitutePhrase((create_new ? PresetManager.NEW : PresetManager.UPDATE), 'preset_id', (this.selected != null) ? this.selected.id : null) + '?' + (new Date()).getTime(),
-      method     : 'post',
+      method     : create_new ? 'post' : 'put',
       onComplete : this.response,
       data       : payload
     }).send();
@@ -318,7 +317,10 @@ class PresetManager {
     ev.stopPropagation();
     const selected_preset = this.modelRefs.selectedPreset();
     if (selected_preset === undefined) { return; }
-    return confirm_dialog(Util.substitutePhrase(PresetManager.MSG_CONFIRM_UPDATE, 'selected_preset', selected_preset), 'document.PRESETS.updatePreset()', 'void(0);', 'Please confirm', true, true);
+    const message = Util.substitutePhrase(PresetManager.MSG_CONFIRM_UPDATE, 'selected_preset', selected_preset);
+    confirm_dialog(message, 'Please confirm', true).then(() => {
+      document.PRESETS.updatePreset();
+    });
   }
 
 
