@@ -43,7 +43,7 @@ Rails.application.routes.draw do
               get :tooltip
             end
           end
-          resources :rackview_presets, only: [:index]
+          resources :rackview_presets, only: [:index, :create, :update, :destroy]
           resources :metrics, :constraints => { :id => /.*/ }, only: [] do
             member do
               post :show

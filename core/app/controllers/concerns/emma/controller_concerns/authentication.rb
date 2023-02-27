@@ -25,6 +25,7 @@ module Emma
           end
           def o.firstname; 'Mr'; end
           def o.surname; 'Admin'; end
+          def o.id; 1; end
         end
       end
 
