@@ -66,10 +66,15 @@ class Dialog {
 
   update(settings = {}) {
     const mergedSettings = Object.assign({}, this.settings, settings);
+    const cancelText = mergedSettings.cancel;
     this.dialogEl.className = mergedSettings.dialogClass || '';
     this.elements.accept.innerText = mergedSettings.accept;
-    this.elements.cancel.innerText = mergedSettings.cancel
-    this.elements.cancel.hidden = mergedSettings.cancel === '' || mergedSettings == null;
+    if (cancelText != null && cancelText !== '') {
+      this.elements.cancel.innerText = cancelText;
+      this.elements.cancel.style = ""
+    } else {
+      this.elements.cancel.style = "display: none;"
+    }
     this.elements.message.innerText = mergedSettings.message;
     this.elements.header.innerHTML = mergedSettings.header || '';
     this.focusable = this.getFocusable();
@@ -102,7 +107,7 @@ class Dialog {
         this.close();
         reject();
       }, { once: true })
-      this.dialogEl.addEventListener('dialog:accept', () => {
+      this.elements.accept.addEventListener('click', () => {
         this.close();
         resolve();
       }, { once: true })
@@ -113,7 +118,7 @@ class Dialog {
     const settings = { message, header };
     this.update(settings);
     this.open();
-    return this.waitForUser();
+    return this.waitForUser().catch(() => {});
   }
 
   confirm(message, header='') {
