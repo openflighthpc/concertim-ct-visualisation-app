@@ -23,12 +23,18 @@ meca: &meca
   <<: *pg_base
   database: meca
 
+uma: &uma
+  <<: *pg_base
+  database: uma
+
 repo_base: &repo_base
   repositories:
     ivy:
       <<: *ivy
     meca:
       <<: *meca
+    uma:
+      <<: *uma
 
 ################################
 #

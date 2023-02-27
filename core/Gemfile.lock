@@ -12,6 +12,14 @@ PATH
       pg (~> 1.1)
       rails (>= 7.0.4)
 
+PATH
+  remote: ../uma
+  specs:
+    uma (0.1.0)
+      cancancan (~> 3.4.0)
+      devise (~> 4.9.0)
+      rails (>= 7.0.4)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -82,10 +90,12 @@ GEM
       tzinfo (~> 2.0)
     addressable (2.8.1)
       public_suffix (>= 2.0.2, < 6.0)
+    bcrypt (3.1.18)
     bindex (0.8.1)
     bootsnap (1.15.0)
       msgpack (~> 1.2)
     builder (3.2.4)
+    cancancan (3.4.0)
     capybara (3.38.0)
       addressable
       matrix
@@ -120,6 +130,12 @@ GEM
     declarative-builder (0.1.0)
       declarative-option (< 0.2.0)
     declarative-option (0.1.0)
+    devise (4.9.0)
+      bcrypt (~> 3.0)
+      orm_adapter (~> 0.1)
+      railties (>= 4.1.0)
+      responders
+      warden (~> 1.2.3)
     erbse (0.1.4)
       temple
     erubi (1.12.0)
@@ -162,6 +178,7 @@ GEM
     nio4r (2.5.8)
     nokogiri (1.14.0-x86_64-linux)
       racc (~> 1.4)
+    orm_adapter (0.5.0)
     pg (1.4.5)
     public_suffix (5.0.1)
     puma (5.6.5)
@@ -202,6 +219,9 @@ GEM
     regexp_parser (2.6.1)
     reline (0.3.2)
       io-console (~> 0.5)
+    responders (3.1.0)
+      actionpack (>= 5.2)
+      railties (>= 5.2)
     rexml (3.2.5)
     rubyzip (2.3.2)
     selenium-webdriver (4.7.1)
@@ -230,6 +250,8 @@ GEM
     tzinfo (2.0.5)
       concurrent-ruby (~> 1.0)
     uber (0.1.0)
+    warden (1.2.9)
+      rack (>= 2.0.9)
     web-console (4.2.0)
       actionview (>= 6.0.0)
       activemodel (>= 6.0.0)
@@ -273,6 +295,7 @@ DEPENDENCIES
   stimulus-rails
   turbo-rails
   tzinfo-data
+  uma (= 0.1.0)!
   web-console
   webdrivers
 
