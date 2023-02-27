@@ -45,6 +45,7 @@ class Api::V1::DevicesController < Api::V1::ApplicationController
 
   def chassis_params
     permitted_params.fetch(:location, {}).tap do |h|
+      h.permit! if h.empty?
       h[:rack_start_u] = h.delete(:start_u) if h.key?(:start_u)
     end
   end

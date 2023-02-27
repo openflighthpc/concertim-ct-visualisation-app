@@ -6,7 +6,7 @@ class Api::V1::NodesController < Api::V1::ApplicationController
     if res[:success]
       device = res[:chassis].slots.reload.first.device
       @device = Api::V1::DevicePresenter.new(device)
-      render template: 'api/v1/devices/devices/show'
+      render template: 'api/v1/devices/show'
     else
       failure_response(res[:failed_objs].first)
     end
