@@ -13,7 +13,14 @@ module Ivy
     class << self
       def get_structure(racks=nil)
         sql = generate_sql(racks)
-        xml = Ivy::Model.connection.exec_query(sql).rows.join rescue ['<error>Invalid SQL query</error>']
+        begin
+          xml = Ivy::Model.connection.exec_query(sql).rows.join
+        rescue
+          Rails.logger.debug("An exception occured whilst generating IRV structure")
+          Rails.logger.debug($!.class)
+          Rails.logger.debug($!.message)
+          ['<error>Invalid SQL query</error>']
+        end
       end
 
       def get_canvas_config
