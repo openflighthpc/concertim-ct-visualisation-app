@@ -1,0 +1,7 @@
+.errorExplanation {
+  h2 { @extend .icon-warning; }
+}
+
+.alert-box .close {
+  color: white;
+}

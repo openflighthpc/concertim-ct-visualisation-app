@@ -18,6 +18,7 @@
 //= require mia/contrib/MochiKit/Signal
 //
 //= require jquery
+//= require modernizr
 //= require foundation
 
 jQuery(document).ready(function() {
