@@ -1,5 +1,15 @@
 module TitleHelper
 
+  #
+  # set_title sets the content for the :page_title page section, which is used
+  # both as a heading (h2) on all pages as well as the actual <title> meta tag.
+  #
+  def set_title(title)
+    content_for :title do
+      title
+    end
+  end
+
   def title_css_classes
     css_classes = []
     icon = @icon_override
@@ -23,4 +33,17 @@ module TitleHelper
   def inferred_heading
     "#{params[:controller].split('/').last}_#{params[:action]}"
   end
+
+  #
+  # sanitize_title removes anchors and other tags from a string (so they can be
+  # used for page titles)
+  #
+  # XXX Does rails provide a better mechanism for this than using regexes.
+  #
+  def sanitize_title(title)
+    title.gsub!(/<\/?a[^>]*>/, "")
+    title.gsub!(/<\/?[^>]*>/, '"')
+    raw title
+  end
+
 end

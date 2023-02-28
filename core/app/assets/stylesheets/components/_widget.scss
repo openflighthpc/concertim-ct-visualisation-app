@@ -1,0 +1,396 @@
+li.widget {
+  list-style: none !important;
+}
+
+.widget {
+  width: 300px;
+
+
+  border: 1px solid $grey; 
+
+  .widget_options {
+    float: right;
+    a {
+      padding-left: 10px;
+      border-left: 1px solid $light-grey;
+      color: $dark-grey;
+    }
+  }
+
+  table tr td {
+    line-height: 1.25em;
+  }
+
+
+  p, h3, h4, span, pre, dd, dl {
+    font-size: 12px;
+  }
+
+  // @include border-radius(2px);
+
+  .ct-dropdown {
+    margin-left: -15px;
+    margin-top: 5px;
+  }
+
+  .widgetHeader, .widgetDescription, .widgetBody {
+    text-align: left;
+    padding: 10px;
+  }
+
+  .widgetHeader {
+    padding-top: 3px;
+    padding-bottom: 3px;
+
+    border-radius-topleft: 2px;
+    -webkit-border-top-left-radius: 2px;
+    border-top-left-radius: 2px;
+    -moz-border-radius-topright: 2px;
+    -webkit-border-top-right-radius: 2px;
+    border-top-right-radius: 2px;
+    background-color: $lighter-grey;
+    border-bottom: 1px solid $light-grey;
+
+    h3 {
+      max-width: 205px;
+      line-height: 1.2em;
+      color: $dark-grey;
+      text-shadow: 0 1px white;
+      font-weight: bold;
+      margin: 0;
+      padding: 0;
+      font-size: 1.05em;
+    }
+  }
+
+  .widgetDescription {
+    @include lighter-background;
+    border-bottom: 1px solid $lighter-grey;
+    p {
+      color: $dark-grey;
+      margin-top: 5px;
+      margin-bottom: 0;
+    }
+  }
+
+  .widgetBody {
+    background-color: $lightest-grey;
+    h4 {
+      font-weight: bold;
+      color: $dark-blue;
+      margin: 0.4em 0;
+    }
+    :last-child {
+      /* reduce "white space" at bottom of widget >:( */
+      margin-bottom: 0;
+    }
+
+    &.warning {
+      [class^="icon-"], [class*=" icon-"] {
+        &:not(.help) { float: left; }
+      }
+    }
+    .message { padding-left: 3rem; }
+  }
+
+  .graph_error_message {
+    top: 50%;
+    left: 20%;
+    
+  }
+
+}
+
+.clear { 
+  width: 100%;
+}
+
+.pcols {
+  float: left;
+  margin-top: 10px;
+  min-width: 3500px;
+  position: absolute;
+}
+
+.pcol { 
+  /*margin-right: 30px;*/
+  float: left;
+  width: 310px;
+  min-height: 500px;
+  height: 100%;
+  list-style-type: none;
+}
+
+#app li.panel {
+  list-style-type: none;
+  background-color: $lightest-grey;
+  padding: 0 !important;
+}
+
+#app li.panel p.no_padding {
+  padding: 0;
+}
+
+.no_click {
+  pointer-events: none;
+}
+
+#app li.panel .title_div {
+  position: absolute;
+  top: 17px;
+  left: 36px;
+  overflow: hidden;
+  width: 274px;
+  height: 20px;
+  
+  /*this won't work in ie*/
+  pointer-events: none;
+}
+
+
+#app li.panel .panel_title_logged_out {
+  position: inline;
+  top: 14px;
+  left: 40px;
+  pointer-events: none;
+}
+
+.pcol.last {
+  margin-right: 0;
+}
+
+.panel { 
+  background-color: $lighter-grey;
+  position: relative;
+  width: 303px;
+}
+
+// .graphContainer img {
+//   width: 303px
+// }
+
+// .subheading {
+//   font-weight: bold;
+// }
+
+ul.monitoringProblems li { 
+  padding-left: 25px;
+  margin-left: -30px;
+  list-style: none;
+//  background-image: url(/images/icons/warn-triangle.png);
+//  background-repeat: no-repeat;
+//  background-position: center left;
+}
+
+table.show {
+  border-bottom: 1px solid #999;
+}
+
+table.show tr td:last-child { 
+  border-bottom: solid 1px #999;
+}
+
+
+table.show tr.substatus { 
+  border-top: 0;
+}
+
+.appliance_ip { 
+  font-size: 65%;
+}
+
+.appliance_version {
+  font-size: 65%;
+}
+
+.appliance_meta {
+  line-height: 0.8em;
+  color: black;
+}
+
+// #failed_schedule_submissions_overview_table {
+//   margin-bottom: 1em;
+// }
+
+// #login_form_container { 
+//   position: relative;
+// }
+//
+// #login_panel_please_wait { 
+//   position: absolute;
+//   z-index: 500;
+// }
+
+div.action_link_div {
+  display: inline;
+}
+
+div.panel_move_container {
+  cursor: move;
+}
+
+div.panel_move_container .panel_move_container {
+  margin: 0;
+}
+
+div.panel_move_container a {
+  margin-left: 10px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+h3.panel_title {
+  display: inline-block;
+  vertical-align: middle;
+  text-align: left;
+}
+
+div.collapser {
+/*  display: inline-block;*/
+  display: none;
+}
+
+div.collapser a.ajax {
+  background-image: none;
+  padding: 0px;
+}
+
+div.collapsed {
+  left: -9999px;
+  position: absolute;
+}
+
+div.expanded {
+}
+
+div.chart_container {
+  width: 100%;
+  min-width: 990px;
+  min-height: 550px;
+}
+
+div.collapsible {
+  overflow: hidden;
+
+}
+
+
+// .box .power_gauge_container .powerGaugeContainer {
+//   margin-top: -15px;
+//   margin-bottom: -15px;
+// }
+//
+// .box .power_gauge_container .powerCostContainer {
+//   margin-top: -9px;
+//   margin-bottom: -7px;
+// }
+//
+// .box .power_gauge_container .powerContainer {
+//   margin-top: -12px;
+//   margin-bottom: -7px;
+// }
+//
+// .power_gauge_container h4 {
+//   text-align: left;
+// }
+
+.box .collapsible p {
+  padding:0 0 0.2em 0;
+}
+
+// #image_repository .box {
+//   margin-bottom: 5px;
+// }
+//
+// #titleBar.inlineActions {
+//   display: block;
+// }
+//
+// .overviewStatusContainer {
+//   p{
+//     margin-top: 0;
+//     }
+//   .overviewStatusMessage {
+//     display: block;
+//     padding: 3px 5px;
+//     // @include border-radius(2px);
+//     
+//     &:before { margin-right: 0.5em; }
+//   }
+//
+// }
+//
+
+/* 
+
+  Power Graph Widgets
+
+*/
+
+// .powerContainer {
+//     margin-left: auto;
+//     margin-right: auto;
+// }
+//
+// .bi-component {
+//     margin-left: auto;
+//     margin-right:auto;
+//     position: relative;
+//     display: block;
+// }
+//
+// .dataPanel {
+//     margin-left: auto;
+//     margin-right: auto;
+// }
+//
+// .power_gauge_container h4 {
+//   margin-bottom: 10px;
+// }
+//
+// .noMetrics {
+//     background-color: $pastel-red;
+//     color: white;
+//     text-align: center;
+//     margin-left: auto;
+//     margin-right:auto;
+// }
+//
+// .widgetContainer {
+//     padding-top: 10px;
+//     position: relative;
+//     text-align: center;
+//     margin-left: auto;
+//     margin-right:auto;
+// }
+//
+
+/*
+ Individual Widget Styles
+*/
+
+// .metricsWidgetDigital {
+//   .widgetContainer {
+//     padding-top: 0;
+//   }
+// }
+//
+// //
+// // Height Calculation
+// //
+// // Very specific heights on panels so they all line up.
+// //
+// .metricsWidgetDial, .metricGraphWidgetGraph, .metricGraphWidgetChart, .powerGroupWidget {
+//   margin: 0 !important; 
+//   padding: 0 !important; 
+// }
+//
+// .metricsWidgetDial {
+//   height: 243px !important;
+// }
+// .metricGraphWidgetGraph, .metricGraphWidgetChart {
+//   height: 243px !important;
+// }
+// .powerGroupWidget {
+//   height: 394px !important; 
+// }
