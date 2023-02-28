@@ -7,8 +7,6 @@
 # to mitigate the amount of stuff that gets put in helpers for now)
 #
 class FlashCell < Cell::ViewModel
-  include HelpHelper 
-
   attr_reader :level, :content
 
   def show(context, level, text=nil, help_text=nil)
@@ -26,25 +24,11 @@ class FlashCell < Cell::ViewModel
   def generate_flash_content(level, text, help_text)
     "
       #{text || transform_flash(@context.flash[level])}
-      #{help_text || flash_help(level)}
+      #{help_text}
     "
   end
 
   
-  #
-  # flash_help
-  #
-  def flash_help(level)
-    if level == :notice && ! @context.flash[:warn]
-      help(@context.flash[:help], "Help")
-    elsif level == :warn && @context.flash[:warn]
-      help(@context.flash[:help], "Help")
-    else
-      ''
-    end
-  end
-
-
   #
   # transform_flash
   #
