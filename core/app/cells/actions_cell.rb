@@ -13,9 +13,7 @@
 # NB: #render_actions_dropdown is a helper method.
 #   
 class ActionsCell < Cell::ViewModel
-  # include Devise::Controllers::Helpers
-  # helper_method :current_user
-  include Emma::ControllerConcerns::Authentication
+  include Devise::Controllers::Helpers
 
   attr_reader :actions, :dropdown_id
 

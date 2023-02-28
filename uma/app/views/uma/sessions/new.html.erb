@@ -20,7 +20,7 @@
       </div>
 
       <div class="widgetBody">
-        <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: { class: :no_border }) do |f| %>
+        <%= form_for(resource, as: resource_name, url: "/--" + session_path(resource_name), html: { class: :no_border }) do |f| %>
           <%= f.text_field :login, autofocus: true, autocomplete: "off", placeholder: 'Username' %>
           <%= f.password_field :password, autocomplete: "off", placeholder: 'Password' %>
 

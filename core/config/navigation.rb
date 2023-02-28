@@ -8,7 +8,7 @@ SimpleNavigation::Configuration.run do |navigation|
         align: :right,
         icon: :youraccount,
         highlights_on: /--\/users/ do |acc|
-          acc.item :acc_logout, 'Log out', '#', :icon => :logout, :link => {:class => 'logout'}
+          acc.item :acc_logout, 'Log out', uma_engine.destroy_user_session_path, :icon => :logout, :link => {:class => 'logout'}
         end
 
       primary.item :hardware, 'Assets', ivy_irv_path, icon: :hardware do |hw|

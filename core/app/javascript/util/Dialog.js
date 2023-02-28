@@ -31,7 +31,7 @@ class Dialog {
     this.dialogEl = document.createElement('dialog');
     this.dialogEl.role = 'dialog';
     this.dialogEl.innerHTML = `
-    <form method="dialog" data-ref="form">
+    <form method="dialog" data-ref="form" class="no_border">
       <h4 data-ref="header" id="${(Math.round(Date.now())).toString(36)}"></h4>
       <div data-ref="message"></div>
       <menu>
