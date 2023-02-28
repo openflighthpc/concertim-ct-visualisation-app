@@ -1,0 +1,12 @@
+<% content_for(:title) do -%>
+  <span class="icon-bang"></span>
+  Not Authorized
+<% end -%>
+<p>
+  You are not authorized to view this page. If you think you should have
+  access, please consult your system administrator.
+</p>
+
+<% if @offending_action && @offending_subject -%>
+  <code>Requires ability to <%= @offending_action %> <%= @offending_subject %></code>
+<% end -%>

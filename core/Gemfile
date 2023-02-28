@@ -49,6 +49,15 @@ gem "pg", "~> 1.1"
 
 ###################################
 #
+# Authorization and Authentication
+#
+###################################
+# These are included in the uma gem and appear to need to be installed here too?
+gem "cancancan", "~> 3.4.0"
+
+
+###################################
+#
 # Assets and Asset pipeline
 #
 ###################################

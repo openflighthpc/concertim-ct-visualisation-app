@@ -1,15 +1,12 @@
 class Api::V1::RacksController < Api::V1::ApplicationController
-  # load_and_authorize_resource :rack, :class => Ivy::HwRack
+  load_and_authorize_resource :rack, :class => Ivy::HwRack
 
   def index
-    # XXX load_and_authorize_resource instead.
-    @racks = Ivy::HwRack.all
     render
   end
 
   def show
-    # XXX load_and_authorize_resource instead.
-    @rack = Api::V1::RackPresenter.new(Ivy::HwRack.find(params[:id]))
+    @rack = Api::V1::RackPresenter.new(@rack)
     @include_occupation_details = true
     render
   end
@@ -25,8 +22,6 @@ class Api::V1::RacksController < Api::V1::ApplicationController
   end
 
   def update
-    # XXX Replace with `load_and_authorize_resource :rack, :class => Ivy::HwRack`.
-    @rack = Ivy::HwRack.find(params[:id])
     if @rack.update(rack_params)
       render action: :show
     else
@@ -38,8 +33,6 @@ class Api::V1::RacksController < Api::V1::ApplicationController
   # DELETE /racks/1
   #
   def destroy
-    # XXX Replace with `load_and_authorize_resource :rack, :class => Ivy::HwRack`.
-    @rack = Ivy::HwRack.find(params[:id])
     if @rack.contains_mia?
       render json: {errors: "rack contains the Concertim device"}, status: :unprocessable_entity
     elsif !@rack.empty? && !ActiveModel::Type::Boolean.new.cast(params[:recurse])

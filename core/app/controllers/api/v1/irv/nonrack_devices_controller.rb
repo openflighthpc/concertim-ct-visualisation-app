@@ -1,5 +1,6 @@
 class Api::V1::Irv::NonrackDevicesController < Api::V1::Irv::BaseController
   def index
+    authorize! :index, Ivy::Chassis
     rackableNonRackChassis = []
     dcrvShowableNonRackChassis = []
 
@@ -34,6 +35,7 @@ class Api::V1::Irv::NonrackDevicesController < Api::V1::Irv::BaseController
   end
 
   def modified
+    authorize! :index, Ivy::Chassis
     non_rack_ids = Array(params[:non_rack_ids]).collect(&:to_i)
     timestamp = params[:modified_timestamp]
     suppressAdditions = params[:suppress_additions]

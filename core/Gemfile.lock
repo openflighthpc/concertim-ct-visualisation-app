@@ -275,6 +275,7 @@ PLATFORMS
 
 DEPENDENCIES
   bootsnap
+  cancancan (~> 3.4.0)
   capybara
   cells-erb (~> 0.1.0)
   cells-rails (~> 0.1.5)

@@ -1,5 +1,6 @@
 class Api::ApplicationController < ActionController::API
   include Emma::ControllerConcerns::Authentication
+  include Emma::ControllerConcerns::Authorization
   include ActionController::MimeResponds
   # respond_to :json
 

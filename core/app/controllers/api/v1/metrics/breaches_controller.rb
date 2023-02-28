@@ -1,6 +1,7 @@
 class Api::V1::Metrics::BreachesController < Api::V1::Metrics::BaseController
 
   def index
+    authorize! :index, Meca::Breach
     @chassis = Meca::Breach.breaching_chassis
     @devices = Meca::Breach.breaching_devices
     @sensors = Meca::Breach.breaching_sensors
