@@ -18,6 +18,7 @@ PATH
     uma (0.1.0)
       cancancan (~> 3.4.0)
       devise (~> 4.9.0)
+      pg (~> 1.1)
       rails (>= 7.0.4)
 
 GEM

@@ -4,6 +4,7 @@ PATH
     uma (0.1.0)
       cancancan (~> 3.4.0)
       devise (~> 4.9.0)
+      pg (~> 1.1)
       rails (>= 7.0.4)
 
 GEM
@@ -116,6 +117,7 @@ GEM
     nokogiri (1.14.2-x86_64-linux)
       racc (~> 1.4)
     orm_adapter (0.5.0)
+    pg (1.4.6)
     racc (1.6.2)
     rack (2.2.6.2)
     rack-test (2.0.2)
