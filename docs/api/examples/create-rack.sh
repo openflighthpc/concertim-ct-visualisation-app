@@ -4,19 +4,15 @@ set -e
 set -o pipefail
 # set -x
 
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
 # The base URL against which relative URLs are constructed.
 BASE_URL="https://localhost:9444/--/api/v1"
 # BASE_URL="https://command.concertim.alces-flight.com/mrd"
 
-# Currently the API is not authenticated.  When authentication is added, it
-# will be via a bearer token that will be gained via a HTTP API request.
-# AUTH_TOKEN=$(curl -s -k -X POST "${BASE_URL}/sessions" -d '{}' | jq -r .token)
-AUTH_TOKEN=""
-
-
-####################################
-# Create a rack
-####################################
+# Use the specified AUTH_TOKEN or generate one.  If AUTH_TOKEN is being
+# generated LOGIN and PASSWORD environment variables must be set.
+AUTH_TOKEN=${AUTH_TOKEN:-$("${SCRIPT_DIR}"/get-auth-token.sh)}
 
 # We want slightly different requests depending on if this is the first rack
 # being created or not.
@@ -51,21 +47,21 @@ else
 fi
 
 # Run curl with funky redirection to capture response body and status code.
-exec 3>&1 
-TEMP_FILE=$(mktemp)
+BODY_FILE=$(mktemp)
 HTTP_STATUS=$(
 curl -s -k \
     -w "%{http_code}" \
-    -o >(cat > "${TEMP_FILE}") \
+    -o >(cat > "${BODY_FILE}") \
+    -H "Accept: application/json" \
     -H "Authorization: Bearer ${AUTH_TOKEN}" \
     -X POST "${BASE_URL}/racks" \
     ${EXTRA_ARGS}
 )
 
 if [ "${HTTP_STATUS}" == "200" ] || [ "${HTTP_STATUS}" == "201" ] ; then
-    cat "$TEMP_FILE"
+    cat "$BODY_FILE"
 else
     echo "Rack creation failed" >&2
-    cat "$TEMP_FILE" >&2
+    cat "$BODY_FILE" >&2
     exit 1
 fi

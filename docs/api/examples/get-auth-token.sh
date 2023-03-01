@@ -2,19 +2,19 @@
 
 set -e
 set -o pipefail
-# set -x
 
 # The base URL against which relative URLs are constructed.
 BASE_URL="https://localhost:9444/--/"
 # BASE_URL="https://command.concertim.alces-flight.com/mrd"
 
-# Currently the API is not authenticated.  When authentication is added, it
-# will be via a bearer token that will be gained via a HTTP API request.
-# AUTH_TOKEN=$(curl -s -k -X POST "${BASE_URL}/sessions" -d '{}' | jq -r .token)
-AUTH_TOKEN=""
-
 LOGIN=${LOGIN:-$1}
 PASSWORD=${PASSWORD:-$2}
+
+if [ "${LOGIN}" == "" ] || [ "${PASSWORD}" == "" ] ; then
+  echo "Login or password are not given." >&2
+  echo "Set the LOGIN and PASSWORD environment variables or provide them as arguments to the $(basename $0) script." >&2
+  exit 1
+fi
 
 BODY=$(jq --null-input \
     --arg login "${LOGIN}" \
@@ -44,7 +44,7 @@ curl -s -k \
 )
 
 if [ "${HTTP_STATUS}" == "200" ] || [ "${HTTP_STATUS}" == "201" ] ; then
-    cat "$HEADERS_FILE" | grep '^Authorization: ' | cut -d ' ' -f 3
+    cat "$HEADERS_FILE" | grep '^Authorization: ' | cut -d ' ' -f 3 | tr -d '\r\n'
 else
     echo "Login failed" >&2
     cat "$BODY_FILE" >&2

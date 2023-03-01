@@ -6,6 +6,13 @@ set -o pipefail
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
+# Use the specified AUTH_TOKEN or generate one.  If AUTH_TOKEN is being
+# generated LOGIN and PASSWORD environment variables must be set.
+#
+# Either way, export it so that it is reused by the other scripts.
+AUTH_TOKEN=${AUTH_TOKEN:-$("${SCRIPT_DIR}"/get-auth-token.sh)}
+export AUTH_TOKEN
+
 # Create a rack and capture its ID.
 OUTPUT=$("${SCRIPT_DIR}/create-rack.sh")
 if [ $? -ne 0 ] ; then
