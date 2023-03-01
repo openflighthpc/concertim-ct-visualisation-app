@@ -4,9 +4,15 @@ class Uma::SessionsController < Devise::SessionsController
   # before_action :configure_sign_in_params, only: [:create]
 
   # GET /resource/sign_in
-  # def new
-  #   super
-  # end
+  def new
+    if failed_login?
+      # We're being rendered after a failed login attempt.  Not sure why this
+      # is necessary, devise ought to do this itself. Perhaps something to do
+      # with `Devise::FailureApp#is_flashing_format?` ?
+      flash.now[:alert] = t('devise.failure.invalid', authentication_keys: 'username')
+    end
+    super
+  end
 
   # POST /resource/sign_in
   # def create
@@ -24,4 +30,10 @@ class Uma::SessionsController < Devise::SessionsController
   # def configure_sign_in_params
   #   devise_parameter_sanitizer.permit(:sign_in, keys: [:attribute])
   # end
+
+  private
+
+  def failed_login?
+    params[:action] == 'create' && request.format.html? && !signed_in?
+  end
 end
