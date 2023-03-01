@@ -85,7 +85,6 @@ module Ivy
 
     # Custom Validations
     validate :name_is_unique_within_device_scope
-    # XXX Add validation that U is not already occupied.
     validate :target_u_is_empty, if: :in_rack?
     
 
