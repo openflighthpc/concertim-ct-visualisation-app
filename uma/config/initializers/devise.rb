@@ -312,4 +312,11 @@ Devise.setup do |config|
   # When set to false, does not sign a user in automatically after their password is
   # changed. Defaults to true, so a user is signed in automatically after changing a password.
   # config.sign_in_after_change_password = true
+
+  # Configuration for devise-jwt
+  config.jwt do |jwt|
+    jwt.secret = Uma.config.access_token_secret
+    jwt.request_formats = { user: [:json] }
+    jwt.expiration_time = 1.day
+  end
 end

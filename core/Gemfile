@@ -53,6 +53,8 @@ gem "pg", "~> 1.1"
 #
 ###################################
 # These are included in the uma gem and appear to need to be installed here too?
+gem "devise", "~> 4.9.0"
+gem "devise-jwt", ">= 0.10.0"
 gem "cancancan", "~> 3.4.0"
 
 

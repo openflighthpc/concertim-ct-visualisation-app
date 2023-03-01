@@ -3,6 +3,11 @@
 class Uma::SessionsController < Devise::SessionsController
   # before_action :configure_sign_in_params, only: [:create]
 
+  protect_from_forgery unless: -> { request.format.json? }
+  skip_before_action :verify_authenticity_token, only: [:create]
+
+  respond_to :html, :json
+
   # GET /resource/sign_in
   def new
     if failed_login?
@@ -16,7 +21,7 @@ class Uma::SessionsController < Devise::SessionsController
 
   # POST /resource/sign_in
   # def create
-  #   super
+  #   super { |resource| @resource = resource }
   # end
 
   # DELETE /resource/sign_out
