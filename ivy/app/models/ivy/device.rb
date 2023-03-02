@@ -91,6 +91,19 @@ module Ivy
     delegate :simple?, :complex?,
       to: :chassis, allow_nil: true, prefix: true
 
+    ###########################
+    #
+    # Hooks
+    #
+    ###########################
+
+    after_save :create_or_update_data_source_map
+    # XXX Probably want to also port
+    # :update_modified_timestamp / :update_rack_modified_timestamp
+    # :update_interchange / :destroy_interchange
+    # :remove_metrics
+    # :destroy_breaches
+
     ####################################
     #
     # Class Methods
@@ -139,6 +152,20 @@ module Ivy
       else
         indirect_chassis
       end
+    end
+
+    def cluster
+      return @cluster if defined?(@cluster)
+
+      @cluster = 
+        if !chassis.nil?
+          cluster = chassis.cluster rescue nil
+          cluster.nil? ? Ivy::Cluster.first : cluster
+        elsif slot.nil?
+          Ivy::Cluster.first
+        else
+          slot.cluster
+        end
     end
 
     #
@@ -194,6 +221,26 @@ module Ivy
     ############################
 
     private
+
+    def create_or_update_data_source_map
+      if data_source_map.nil?
+        build_data_source_map(data_source_id: 1, map_to_grid: 'unspecified', map_to_cluster: 'unspecified')
+        data_source_map.save
+      elsif data_source_map.map_to_host != data_source_map.calculate_map_to_host && device_should_have_dsm_updated
+        data_source_map.update_attribute(:map_to_host, data_source_map.calculate_map_to_host)
+      end
+    end
+
+    def device_should_have_dsm_updated
+      # XXX Add Ivy::Device::PowerDistribution and Ivy::Device::PowerFeed if they ever exist.
+      if tagged?
+        false
+      elsif [Ivy::Device::Sensor, Ivy::Device::PowerStrip].include?(self.class)
+        false 
+      else
+        true
+      end
+    end
 
     #
     # name_validator
