@@ -24,20 +24,29 @@ echo "Created empty rack" >&2
 "${SCRIPT_DIR}/show-rack.sh" "${RACK_ID}"
 echo
 
-# Create a device in that empty rack.
-# A real script would need to be more intelligent about name and location.
-OUTPUT=$("${SCRIPT_DIR}/create-device.sh" comp-201 "${RACK_ID}" f 1)
+# Create a badly named and located device in that empty rack.
+OUTPUT=$("${SCRIPT_DIR}/create-device.sh" comp-201 "${RACK_ID}" f 11)
 if [ $? -ne 0 ] ; then
     # Errors will have been sent to stderr.
     exit
 fi
 DEVICE_ID=$(echo "${OUTPUT}" | jq -r .id)
-echo "Added device to rack" >&2
+echo "Added badly named and located device to rack" >&2
 "${SCRIPT_DIR}/show-rack.sh" "${RACK_ID}"
 echo
 
-# Move the device to another U in the same rack.
-OUTPUT=$("${SCRIPT_DIR}/move-device.sh" "${DEVICE_ID}" "${RACK_ID}" f 10)
+# Correct the name of the device.
+OUTPUT=$("${SCRIPT_DIR}/update-device.sh" "${DEVICE_ID}" comp201)
+if [ $? -ne 0 ] ; then
+    # Errors will have been sent to stderr.
+    exit
+fi
+echo "Renamed device" >&2
+"${SCRIPT_DIR}/show-device.sh" "${DEVICE_ID}"
+echo
+
+# Correct the location of the device.
+OUTPUT=$("${SCRIPT_DIR}/move-device.sh" "${DEVICE_ID}" "${RACK_ID}" f 1)
 if [ $? -ne 0 ] ; then
     # Errors will have been sent to stderr.
     exit
@@ -46,30 +55,17 @@ echo "Moved device" >&2
 "${SCRIPT_DIR}/show-device.sh" "${DEVICE_ID}"
 echo
 
-# Change the name of the device.
-OUTPUT=$("${SCRIPT_DIR}/update-device.sh" "${DEVICE_ID}" comp201)
-if [ $? -ne 0 ] ; then
-    # Errors will have been sent to stderr.
-    exit
-fi
+for i in $(seq -w 02 40) ; do
+  OUTPUT=$("${SCRIPT_DIR}/create-device.sh" comp2${i} "${RACK_ID}" f ${i})
+  if [ $? -ne 0 ] ; then
+      # Errors will have been sent to stderr.
+      exit
+  fi
+  echo "Added comp2${i} to rack" >&2
+done
 
-echo "Renamed device" >&2
-"${SCRIPT_DIR}/show-device.sh" "${DEVICE_ID}"
-echo
-
-OUTPUT=$("${SCRIPT_DIR}/create-device.sh" comp202 "${RACK_ID}" f 1)
-if [ $? -ne 0 ] ; then
-    # Errors will have been sent to stderr.
-    exit
-fi
-echo "Added second device to rack" >&2
 "${SCRIPT_DIR}/show-rack.sh" "${RACK_ID}"
 echo
 
-# Delete the rack.
-OUTPUT=$("${SCRIPT_DIR}/delete-rack.sh" "${RACK_ID}")
-if [ $? -ne 0 ] ; then
-    # Errors will have been sent to stderr.
-    exit
-fi
-echo "Deleted rack and device" >&2
+# Perform the memcache dance so that metrics can be added to the devices.
+"${SCRIPT_DIR}/memcache-dance.sh"
