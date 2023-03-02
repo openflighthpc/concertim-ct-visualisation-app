@@ -2,6 +2,11 @@ Rails.application.routes.draw do
   # Engines
   mount Ivy::Engine  => '/', as: :ivy_engine
   mount Meca::Engine => '/', as: :meca_engine
+  mount Uma::Engine  => '/', as: :uma_engine
+
+  # We need to redirect here, otherwise the devise redirections will take us to
+  # the legacy sign up page.
+  root to: redirect('/--/irv')
 
   # API routes
   #

@@ -9,10 +9,9 @@ SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 BASE_URL="https://localhost:9444/--/api/v1"
 # BASE_URL="https://command.concertim.alces-flight.com/mrd"
 
-# Currently the API is not authenticated.  When authentication is added, it
-# will be via a bearer token that will be gained via a HTTP API request.
-# AUTH_TOKEN=$(curl -s -k -X POST "${BASE_URL}/sessions" -d '{}' | jq -r .token)
-AUTH_TOKEN=""
+# Use the specified AUTH_TOKEN or generate one.  If AUTH_TOKEN is being
+# generated LOGIN and PASSWORD environment variables must be set.
+AUTH_TOKEN=${AUTH_TOKEN:-$("${SCRIPT_DIR}"/get-auth-token.sh)}
 
 RACK_ID="${1}"
 
@@ -20,6 +19,6 @@ RACK_ID="${1}"
 # If the `recurse=true` get parameter is not provided, only empty racks will be
 # deleted.
 curl -s -k \
-  -H 'Content-Type: application/json' \
+  -H 'Accept: application/json' \
   -H "Authorization: Bearer ${AUTH_TOKEN}" \
   -X DELETE "${BASE_URL}/racks/${RACK_ID}?recurse=true"

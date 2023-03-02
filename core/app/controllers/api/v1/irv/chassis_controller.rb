@@ -2,14 +2,14 @@ class Api::V1::Irv::ChassisController < Api::V1::Irv::BaseController
 
   def tooltip
     @chassis = Ivy::Chassis.find_by_id(params[:id])
-    # authorize! :read, @chassis 
+    authorize! :read, @chassis 
 
     not_found_error('Chassis') if @chassis.nil?
   end
 
   def update_position
     @chassis = Ivy::Chassis.find_by_id(params[:id])
-    # authorize! :move, @chassis
+    authorize! :move, @chassis
 
     if @chassis.nil?
       not_found_error

@@ -1,0 +1,51 @@
+.pcols.loginPcols {
+  
+  min-width: inherit !important;
+  width: 100%;
+  .pcol {
+    display: block;
+    margin: 0 auto;
+    float: none;
+  }
+
+}
+
+
+.corporateLogo {  
+  width: 130px;
+}
+
+#login_panel {
+
+  position: absolute;
+  width: 350px;
+
+  .corporateLogos {
+    text-align: center;
+
+    &.corporateLogoLeft {
+      float: left;
+    }
+    &.corporateLogoRight {
+      float: right;
+    }
+  }
+
+
+  .button {
+    background-color: $dark-blue !important;
+    color: white !important;
+  }
+
+  h3 {
+    color: $dark-grey !important; 
+  }
+
+  h3.copyrightText {
+    padding-top: 10px;
+    text-align: center;
+    clear: both;
+    color: $dark-blue !important;
+  }
+
+}

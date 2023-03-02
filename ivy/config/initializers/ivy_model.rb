@@ -14,9 +14,7 @@
 # connect to a single SQLite database)
 #
 
-
 module Ivy
-
   class Model < ActiveRecord::Base
 
     #
@@ -46,4 +44,3 @@ module Ivy
   end
 
 end
-

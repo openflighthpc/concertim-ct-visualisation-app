@@ -29,6 +29,7 @@ gem "bootsnap", require: false
 
 gem "ivy",  '0.1.0', :require => "ivy",   :path => "../ivy"
 gem "meca", '0.1.0', :require => "meca",   :path => "../meca"
+gem "uma",  '0.1.0', :require => "uma",   :path => "../uma"
 
 
 ###################################
@@ -44,6 +45,17 @@ gem "pg", "~> 1.1"
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
+
+
+###################################
+#
+# Authorization and Authentication
+#
+###################################
+# These are included in the uma gem and appear to need to be installed here too?
+gem "devise", "~> 4.9.0"
+gem "devise-jwt", ">= 0.10.0"
+gem "cancancan", "~> 3.4.0"
 
 
 ###################################

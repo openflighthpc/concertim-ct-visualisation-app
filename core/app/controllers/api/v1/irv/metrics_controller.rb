@@ -3,6 +3,8 @@ class Api::V1::Irv::MetricsController < Api::V1::Irv::BaseController
   before_action :check_params, :only=>[:index, :show]
 
   def show
+    # XXX Add authorization!  :index metrics/devices/chassis?  Or something
+    # else.  Filter device ids according to which can be read?
     device_ids  = params.delete :device_ids
     device_ids  = JSON.parse(device_ids) if device_ids
     tagged_devices_ids = params.delete :tagged_devices_ids

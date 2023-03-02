@@ -1,0 +1,39 @@
+<% set_title 'Log in' -%>
+
+<div class="pcols loginPcols">
+  <ul class="pcol">
+    <li class="widget box panel" id="login_panel">
+
+      <div class="widgetHeader">
+        <h3>Login</h3>
+      </div>
+
+      <div class="widgetDescription">
+        <div class="corporateLogos">
+          <img src="/-/personalities/ct/images/upper-login.png" title="Alces Concertim Command" class="corporateLogo corporateLogoLeft">
+          <h3>
+            <br>
+            <strong>by</strong>
+          </h3>
+          <img src="/-/personalities/ct/images/lower-login.png" title="Alces Concertim Command" class="corporateLogo corporateLogoRight">
+        </div>
+      </div>
+
+      <div class="widgetBody">
+        <%= form_for(resource, as: resource_name, url: "/--" + session_path(resource_name), html: { class: :no_border }) do |f| %>
+          <%= f.text_field :login, autofocus: true, autocomplete: "off", placeholder: 'Username' %>
+          <%= f.password_field :password, autocomplete: "off", placeholder: 'Password' %>
+
+          <center>
+            <%= f.submit "Login", class: :button, name: :login %>
+            <br>
+            <span style="font-size: 10px">
+              &copy; 2023
+              <%= link_to "Powered by Alces Concertim", "https://alces-flight.com" %>
+            </span>
+          </center>
+        <% end %>
+      </div>
+    </li>
+  </ul>
+</div>

@@ -22,10 +22,7 @@ class Api::V1::Users::UsersController < Api::V1::Users::BaseController
     params[:permissions].each do |rbac_action,rbac_resources|
       result[rbac_action] = {}
       rbac_resources.each do |_, rbac_resource|
-        # XXX Add this back when cancan is added.
-        # result[rbac_action][rbac_resource] = current_user.can?(rbac_action.to_sym, rbac_resource)
-        permitted = rbac_action == 'move'
-        result[rbac_action][rbac_resource] = permitted
+        result[rbac_action][rbac_resource] = current_user.can?(rbac_action.to_sym, rbac_resource)
       end
     end
     render json: result

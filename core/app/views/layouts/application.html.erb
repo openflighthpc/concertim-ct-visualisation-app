@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>CtApp</title>
+    <title>CT Vis<%= ": #{sanitize_title(yield :title)}" if content_for? :title %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -22,6 +22,7 @@
           <%= render partial: 'layouts/shared/title_bar' %>
           <div id="pagePane">
             <div id="pageBox" class="fill box">
+              <%= render :partial => 'layouts/shared/flash_messages' %>
               <div id="pageContent">
                 <%= yield %>
               </div><!--pageContent-->

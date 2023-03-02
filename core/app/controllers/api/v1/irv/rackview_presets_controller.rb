@@ -1,6 +1,9 @@
 class Api::V1::Irv::RackviewPresetsController < Api::V1::Irv::BaseController
 
+  AUTH_FAILURE_MESSAGE = "You are not the owner of this preset. You can make your own version by loading a preset and re-saving."
+
   def index
+    authorize! :index, Meca::RackviewPreset
     @user = current_user
     @presets = Meca::RackviewPreset.all
   end
@@ -31,6 +34,9 @@ class Api::V1::Irv::RackviewPresetsController < Api::V1::Irv::BaseController
       h[:user_id] = current_user.id
     end
     preset = Meca::RackviewPreset.new(permitted_params)
+    if cannot? :create, preset
+      return failure_response(preset, AUTH_FAILURE_MESSAGE)
+    end
 
     preset.save ? success_response(preset) : failure_response(preset)
   end
@@ -51,10 +57,9 @@ class Api::V1::Irv::RackviewPresetsController < Api::V1::Irv::BaseController
       rescue ActiveRecord::RecordNotFound
         return error_for('preset')
       end
-    # XXX Add Auth and auth
-    # if cannot? :manage, preset
-    #   return failure_response(preset, AUTH_FAILURE_MESSAGE)
-    # end
+    if cannot? :manage, preset
+      return failure_response(preset, AUTH_FAILURE_MESSAGE)
+    end
 
     preset.update(permitted_params)
     preset.save ? success_response(preset) : failure_response(preset)
@@ -76,10 +81,9 @@ class Api::V1::Irv::RackviewPresetsController < Api::V1::Irv::BaseController
       rescue ActiveRecord::RecordNotFound
         error_for('preset')
       end
-    # XXX Add Auth and auth
-    # if cannot? :manage, preset
-    #   return failure_response(preset, AUTH_FAILURE_MESSAGE)
-    # end
+    if cannot? :manage, preset
+      return failure_response(preset, AUTH_FAILURE_MESSAGE)
+    end
 
     preset.destroy ? success_response(preset) : failure_response(preset)
   end

@@ -2,6 +2,7 @@ class Api::V1::NodesController < Api::V1::ApplicationController
 
   # create a single node based on a simple chassis template
   def create
+    authorize! :create, Ivy::Device
     res = Ivy::TemplatePersister.persist_one_with_changes(create_params)
     if res[:success]
       device = res[:chassis].slots.reload.first.device

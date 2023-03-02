@@ -1,0 +1,213 @@
+
+/**************************************
+  form styles
+*/
+label { 
+  font-weight: bold; 
+  .inline {
+    margin-bottom: 0px;
+  }
+}
+
+input[type="submit"], .cancel_button, .blue_box_button {
+  @extend .button;
+  @include button-base;
+  @include button-style($bg: $dark-blue, $radius: $button-radius, $disabled: false);
+  margin-right: 5px;
+}
+
+fieldset legend {
+  background-color: transparent;
+  @include header-font-family;
+  font-size: 1.2rem;
+  color: $dark-blue;
+}
+
+
+
+/**************************************
+  form errors
+*/
+.alert-box.alert {
+  h2, p, span, li {
+    font-size: 14px !important;
+    color: white;
+  }
+  h2 {
+    font-weight: bold;
+  }
+  
+  ul {
+    margin-bottom: 0;
+  }
+}
+
+
+
+/**************************************
+  form structure
+*/
+
+form {
+
+  .fieldWithErrors {
+    display: inline;
+  }
+
+  display: block;
+  background-color: $lightest-grey;
+  // @include border-radius(3px);
+  border: 1px solid $light-grey;
+  padding: 5px 10px;
+  
+  &.no_padding { padding: 0; }
+
+  .formItem {
+
+    input { 
+      &.small { width: 70px !important; }
+    }
+
+    margin-bottom: 10px;
+    margin-top: 5px;
+
+    input[type="text"], input[type="password"], input[type="date"], input[type="datetime"], input[type="datetime-local"], input[type="month"], input[type="week"], 
+    input[type="email"], input[type="number"], input[type="search"], input[type="tel"], input[type="time"], input[type="url"], textarea, label, select {
+      width: 300px;
+      &.with-prefix {
+        width: 190px;
+      }
+      &.autowidth { width: auto; }
+    }
+
+    select {
+      &.autowidth {
+        padding-right: rem-calc(24);
+
+        &.minwidth-8 { min-width: 8em; }
+        &.minwidth-300 { min-width: 300px; }
+      }
+    }
+    
+    input[type="checkbox"] {
+      &.ff_main_obj {
+        float: left;
+        margin-right: rem-calc(8);
+      }
+    }
+
+    input.drop_down_box {
+      width: 281px;
+    }
+    .checkbox-label {
+      display: inline-block;
+    }
+    .popup-calendar {
+      input[type="text"] {
+        display: inline-block;
+        width: 281px;
+      }
+    }
+  }
+
+  textarea, textarea[rows] {
+    height: 8em;
+  }
+
+  input[type="file"] {
+    width: auto;
+  }
+
+  .fieldWithErrors input, .fieldWithErrors textarea, .fieldWithErrors select {
+    border: solid 2px $pastel-red;
+  }
+
+  .labelWithErrors label {
+    color: $pastel-red;
+  }
+
+/**************************************
+  short-inline versions
+
+  There are some elements where the nature of the form just calls for things to be
+  "a bit shorter". I don't really agree with doing this!
+*/
+
+  input[type="text"].short-inline-text-field {
+    display: inline-block;
+    width: 100px;  
+  }
+
+  input[type="checkbox"],
+  input[type="file"],
+  input[type="radio"] {
+    &.no_margin { margin: 0; }
+  }
+
+  select.short-inline-select-field {
+    display: inline-block;
+    width: 200px;  
+  }
+
+  label.short-inline-label {
+    display: inline-block;
+    width: 100px;  
+  }
+
+
+  //
+  // All forms should have borders (decision)
+  // Except for some forms (decision)
+  // And those that don't should have a transparent background (consequence)
+  //
+  .no_border {
+    background-color: transparent !important;
+  }
+
+  &.inline_block { display: inline-block; }
+}
+
+/**************************************
+  form group items
+
+  because sometimes there's just "too much real estate!"
+*/
+
+.panelCheck { 
+  font-weight: bold;
+}
+
+.formItemHorizontalGroup{
+  clear:left;
+}
+
+.formItemHorizontalGroup .formGroupItem{
+  clear: none;
+  float: left;
+  margin-right: 5px;
+}
+
+.form_actions {
+  width: 100%;
+  margin-top: 1rem;
+  button, .button {
+    margin-left: rem-calc(10);
+    float: left;
+
+    &:first-child {
+      margin-left: 0;
+    }
+
+    &:last-child {
+      float: none;
+    }
+  }
+
+  &:after {
+    clear: both;
+  }
+}
+
+.inline_form {
+  margin-top: 1rem;
+}
