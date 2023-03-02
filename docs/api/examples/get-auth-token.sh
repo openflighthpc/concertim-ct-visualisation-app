@@ -4,8 +4,8 @@ set -e
 set -o pipefail
 
 # The base URL against which relative URLs are constructed.
-BASE_URL="https://localhost:9444/--/"
-# BASE_URL="https://command.concertim.alces-flight.com/mrd"
+# BASE_URL="https://localhost:9444/--/"
+BASE_URL="https://command.concertim.alces-flight.com/--/"
 
 LOGIN=${LOGIN:-$1}
 PASSWORD=${PASSWORD:-$2}
