@@ -282,7 +282,7 @@
 
 
     <div class="icon-reset" id="reset_filters" title="Reset"></div>
-    <% if current_user.can? :read, Meca::MecaThreshold %>
+    <% if current_ability.can? :read, Meca::MecaThreshold %>
       <div class="div_row">
         <div class="div_cell">
           <div class="fieldInput toolTip" title="Reset filters">
@@ -337,7 +337,7 @@
       </div>
     </div>
 
-    <% if current_user.can? :update, Ivy::Group %>
+    <% if current_ability.can? :update, Ivy::Group %>
       <div class="div_row">
         <div class="div_cell right_col">
           <a href="#" id="update_group">Update group</a>
@@ -345,7 +345,7 @@
       </div>
     <% end %>
 
-    <% if current_user.can? :create, Ivy::Group %>
+    <% if current_ability.can? :create, Ivy::Group %>
       <div class="div_row">
         <div class="div_cell right_col">
           <a href="#" id="create_group">Create group</a>
