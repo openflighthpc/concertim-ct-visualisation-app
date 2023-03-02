@@ -315,7 +315,7 @@ Devise.setup do |config|
 
   # Configuration for devise-jwt
   config.jwt do |jwt|
-    jwt.secret = Uma.config.access_token_secret
+    jwt.secret = Uma.config.jwt_secret
     jwt.request_formats = { user: [:json] }
     jwt.expiration_time = 1.day
   end
