@@ -34,6 +34,7 @@ module Ivy
     #
     # A better solution may be available, but I haven't found it.
     belongs_to :rack, :class_name => "Ivy::HwRack", optional: true
+    has_one :cluster, through: :rack
 
     #
     # Simple chassis relationship (one of everything)

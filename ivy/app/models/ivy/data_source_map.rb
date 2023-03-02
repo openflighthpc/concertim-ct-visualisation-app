@@ -73,17 +73,11 @@ module Ivy
     def calculate_map_to_host    
       if device.respond_to?(:generate_dsm)
         device.generate_dsm        
-      else      
-        if device.name.blank?        
-          ".#{device.cluster.domain}".tr(' ','-')          
-        else        
-          "#{device.name}.#{device.cluster.domain}".tr(' ','-')          
-        end        
+      elsif device.name.blank?        
+        ".#{device.cluster.domain}".tr(' ','-')
+      else        
+        "#{device.name}.#{device.cluster.domain}".tr(' ','-')
       end      
-    rescue    
-      # this deals with fancy forms where a new dsm object is being created but does not yet point to the device      
-      # for example, a misc managed device, where you need to add a dsm as opposed to it being already added            
-      ".#{Ivy::Cluster.first.domain}" rescue nil           
     end
 
 
