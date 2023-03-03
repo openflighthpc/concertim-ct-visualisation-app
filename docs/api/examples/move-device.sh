@@ -7,8 +7,8 @@ set -o pipefail
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 # The base URL against which relative URLs are constructed.
-# BASE_URL="https://localhost:9444/--/api/v1"
-BASE_URL="https://command.concertim.alces-flight.com/--/api/v1"
+CONCERTIM_HOST=${CONCERTIM_HOST:-command.concertim.alces-flight.com}
+BASE_URL="https://${CONCERTIM_HOST}/--/api/v1"
 
 # Use the specified AUTH_TOKEN or generate one.  If AUTH_TOKEN is being
 # generated LOGIN and PASSWORD environment variables must be set.
