@@ -25,5 +25,10 @@ module Uma
     devise :database_authenticatable, :registerable,
       :recoverable, :rememberable, :validatable,
       :jwt_authenticatable, jwt_revocation_strategy: Devise::JWT::RevocationStrategies::Null
+
+    def can?(action, resource)
+      # XXX Is this OK?  Do we want Emma::CanCanAbilityManager back.
+      Ability.new(self).can?(action, resource)
+    end
   end
 end
