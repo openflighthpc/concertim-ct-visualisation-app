@@ -9,6 +9,8 @@ module Phoenix
 
       delegate :on_connection_callback, to: :@heartbeat
 
+      attr_reader :logger
+
       def initialize(address, options={})
         logger = options.delete(:logger)
         @client = Dalli::Client.new(address, options)

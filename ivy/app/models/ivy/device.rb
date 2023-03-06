@@ -2,6 +2,8 @@ module Ivy
   class Device < Ivy::Model
     self.table_name = "devices"
 
+    include Ivy::Concerns::Interchange
+
     # The next 2 attributes are copied across from new-legacy.  They were used
     # there to allow the user to change the template (associated to the
     # chassis) on the device creation form.
@@ -100,7 +102,6 @@ module Ivy
     after_save :create_or_update_data_source_map
     # XXX Probably want to also port
     # :update_modified_timestamp / :update_rack_modified_timestamp
-    # :update_interchange / :destroy_interchange
     # :remove_metrics
     # :destroy_breaches
 
@@ -118,7 +119,6 @@ module Ivy
     #   Ivy::Slot.create_association_for(sub_class)
     #   super
     # end
-
 
     ####################################
     #
@@ -205,13 +205,38 @@ module Ivy
       return cache_get && cache_get[:metrics] || {}
     end
 
-    def memcache_key
-      "hacor:device:#{id}"
+    # XXX Perhaps this should be renamed `to_interchange` and it returns a hash
+    # instead of mutating one?
+    def store_self_in_interchange(d)
+      # Reload on creation, otherwise associations (e.g. chassis) may not work.
+      reload if created_on_changed?
+
+      d[:name] = name
+      # d[:role] = role
+      d[:id] = id
+      d[:type] = type
+      d[:tagged] = tagged
+      d[:hidden] = false
+      d[:useful] = model.nil? || model != 'Blank Panel'
+      d[:map_to_host] = data_source_map ? data_source_map.map_to_host : nil
+      d[:chassis_id] = chassis.nil? ? nil : chassis.id
+      d[:metrics] ||= {}
+      # d[:metrics].delete_if{|k,v| k.match(/ct\.asset\./)} 
+
+      true
     end
 
-    def cache_get
-      MEMCACHE.get(memcache_key)
-    end
+    # def update_interchange
+    #   super
+    #   rack.update_interchange if rack
+    #   chassis.update_interchange if chassis
+    # end
+
+    # def destroy_interchange
+    #   super
+    #   rack.update_interchange if rack
+    #   chassis.update_interchange if chassis
+    # end
 
 
     ############################
