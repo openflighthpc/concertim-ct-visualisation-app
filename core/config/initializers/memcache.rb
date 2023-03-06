@@ -18,10 +18,10 @@ module ForceSerializationHack
       retry
     end
   end
-
-  class Dalli::Protocol::ValueSerializer
-    prepend ForceSerializationHack
-  end
+end
+class Dalli::Protocol::ValueSerializer
+  prepend ForceSerializationHack
 end
 
-MEMCACHE = Emma::MemcacheWrapper.new('localhost:11211', {serializer: Marshal})
+require 'phoenix/cache/wrapper'
+MEMCACHE = Phoenix::Cache::Wrapper.new('localhost:11211', {serializer: Marshal, logger: Rails.logger})
