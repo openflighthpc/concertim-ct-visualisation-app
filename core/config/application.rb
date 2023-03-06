@@ -27,5 +27,7 @@ module CtApp
     config.action_controller.asset_host = Proc.new do |source, request|
       request.nil? ? nil : "#{request.protocol}#{request.host_with_port}/--"
     end
+
+    config.active_job.queue_adapter = :good_job
   end
 end
