@@ -202,28 +202,27 @@ module Ivy
     end
 
     def metrics
-      return cache_get && cache_get[:metrics] || {}
+      interchange_data && interchange_data[:metrics] || {}
     end
 
-    # XXX Perhaps this should be renamed `to_interchange` and it returns a hash
-    # instead of mutating one?
-    def store_self_in_interchange(d)
+    def to_interchange_format(data)
       # Reload on creation, otherwise associations (e.g. chassis) may not work.
       reload if created_on_changed?
 
-      d[:name] = name
-      # d[:role] = role
-      d[:id] = id
-      d[:type] = type
-      d[:tagged] = tagged
-      d[:hidden] = false
-      d[:useful] = model.nil? || model != 'Blank Panel'
-      d[:map_to_host] = data_source_map ? data_source_map.map_to_host : nil
-      d[:chassis_id] = chassis.nil? ? nil : chassis.id
-      d[:metrics] ||= {}
-      # d[:metrics].delete_if{|k,v| k.match(/ct\.asset\./)} 
+      # Overwrite these if already set.
+      data.merge!(
+        name: name,
+        id: id,
+        type: type,
+        tagged: tagged,
+        hidden: false,
+        useful: model.nil? || model != 'Blank Panel',
+        map_to_host: data_source_map.nil? ? nil : data_source_map.map_to_host,
+        chassis_id: chassis.nil? ? nil : chassis.id,
+      )
 
-      true
+      # Set metrics to its default unless already set.
+      data[:metrics] ||= {}
     end
 
     # def update_interchange

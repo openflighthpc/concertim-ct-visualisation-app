@@ -47,10 +47,10 @@ module Ivy
     end
 
     def memcache_facade
-      Ivy::MemcacheGroupFacade.new(memcache_key)
+      Ivy::MemcacheGroupFacade.new(interchange_key)
     end
 
-    def memcache_key
+    def interchange_key
       "hacor:group:#{id}"
     end
 

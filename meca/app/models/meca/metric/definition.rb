@@ -90,18 +90,18 @@ module Meca
       end
 
       def non_tagged_devices_with_metric(metric)
-        fetch_many(device_keys_with_metric(metric) & ids_to_memcache_keys(@selected_device_ids))
+        fetch_many(device_keys_with_metric(metric) & ids_to_interchange_keys(@selected_device_ids))
       end
 
       def tagged_devices_with_metric(metric)
-        fetch_many(device_keys_with_metric(metric) & ids_to_memcache_keys(@selected_tagged_devices_ids))
+        fetch_many(device_keys_with_metric(metric) & ids_to_interchange_keys(@selected_tagged_devices_ids))
       end
 
       def device_keys_with_metric(metric)
         @device_keys_with_metric ||= fetch("meryl:metric:#{metric}")
       end
 
-      def ids_to_memcache_keys(ids_array)
+      def ids_to_interchange_keys(ids_array)
         ids_array.map{|oneId| "hacor:device:#{oneId}"}
       end
 
