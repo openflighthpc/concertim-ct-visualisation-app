@@ -24,4 +24,9 @@ class Dalli::Protocol::ValueSerializer
 end
 
 require 'phoenix/cache/wrapper'
-MEMCACHE = Phoenix::Cache::Wrapper.new('localhost:11211', {serializer: Marshal, logger: Rails.logger})
+MEMCACHE = Phoenix::Cache::Wrapper.new(
+  'localhost:11211', {
+    serializer: Marshal,
+    logger: ::ActiveSupport::Logger.new(Rails.root.join("log/interchange.log")),
+  }
+)
