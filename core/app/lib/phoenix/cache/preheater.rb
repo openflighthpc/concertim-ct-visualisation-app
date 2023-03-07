@@ -6,9 +6,6 @@ module Phoenix
     #
     # Encapsulates preheating memcache.
     #
-    # It waits until all of the models specified as heatables are available
-    # and then preheats memcache.
-    #
     # To use:
     #
     #    class Foo < Phoenix::Cache::Preheater
@@ -18,14 +15,6 @@ module Phoenix
     #    end
     #
     #    Foo.safely_preheat
-    #
-    # If there are models which need to be available before preheating can
-    # take place, but are not themselves heatables they should be specified
-    # thusly:
-    #
-    #   class Foo
-    #     wait_for :MyOtherModel
-    #   end
     #
     class Preheater
       include Singleton
@@ -71,15 +60,6 @@ module Phoenix
           end
         end
 
-        #
-        # Wait for the models specified here to become available before
-        # preheating.
-        #
-        def wait_for(*waits)
-          @waits ||= []
-          @waits += waits
-        end
-
         # Set or retrieve the logger.
         def logger(l=nil)
           return @logger if l.nil?
@@ -100,16 +80,6 @@ module Phoenix
       def safely_preheat(mod = nil)
         begin
           @mod = mod
-          loop do
-            if heatables.keys.all? {|h| obj.const_defined?(h)} &&
-              heatables.all? {|h,m| obj.const_get(h).respond_to?(m)} &&
-              wait_for.all? {|w| obj.const_defined?(w)}
-              break
-            else
-              logger.info "Waiting for preheat_interchange to become available..."
-              sleep 1
-            end
-          end
           cache_wrapper.on_connection_callback do
             heat
           end
@@ -141,10 +111,6 @@ module Phoenix
 
       def heatables
         self.class.heatables
-      end
-
-      def wait_for
-        self.class.wait_for
       end
 
       def cache_wrapper

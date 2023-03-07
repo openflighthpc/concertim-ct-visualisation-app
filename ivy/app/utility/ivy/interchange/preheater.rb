@@ -9,7 +9,6 @@ module Ivy
     # is done when the application starts and when a connection to the
     # interchange is re-established.
     class Preheater < Phoenix::Cache::Preheater
-
       heatables(
         :DataSourceMap,
         :Device,
@@ -17,11 +16,7 @@ module Ivy
         # :HwRack,
         # :ApplianceConfig,
       )
-
-      wait_for()
-
       cache_wrapper MEMCACHE
-
       logger MEMCACHE.logger
     end
   end
