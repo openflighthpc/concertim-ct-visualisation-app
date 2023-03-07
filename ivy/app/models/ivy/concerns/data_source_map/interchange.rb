@@ -14,20 +14,14 @@ module Ivy
           include Phoenix::Cache::Locking
 
           def initialize
-            @forward_map_key = "hacor:data_source_map"
-            @reverse_map_key = "hacor:reverse_data_source_map"
+            @key = "hacor:data_source_map"
           end
 
           # Updates the two maps with the given instances.
           def store_instances(instances)
-            locked_modify(@forward_map_key) do |map|
+            locked_modify(@key) do |map|
               instances.each do |instance|
-                add_instance_to_map(map, instance)
-              end
-            end
-            locked_modify(@reverse_map_key) do |map|
-              instances.each do |instance|
-                add_instance_to_reverse_map(map, instance)
+                add_instance(map, instance)
               end
             end
           end
@@ -35,23 +29,16 @@ module Ivy
           # Update the maps with the given instance.  If the instance has
           # changed, remove the old data from the maps.
           def update_instance(instance)
-            locked_modify(@forward_map_key) do |map|
-              remove_old_instance_from_map(map, instance, instance.previous_changes)
-              add_instance_to_map(map, instance)
-            end
-            locked_modify(@reverse_map_key) do |map|
-              remove_old_instance_from_reverse_map(map, instance)
-              add_instance_to_reverse_map(map, instance)
+            locked_modify(@key) do |map|
+              remove_stale_instance(map, instance)
+              add_instance(map, instance)
             end
           end
 
           # Remove the given instance from the maps.
           def remove_instance(instance)
-            locked_modify(@forward_map_key) do |map|
-              remove_old_instance_from_map(map, instance)
-            end
-            locked_modify(@reverse_map_key) do |map|
-              remove_old_instance_from_reverse_map(map, instance)
+            locked_modify(@key) do |map|
+              remove_stale_instance(map, instance)
             end
           end
 
@@ -61,7 +48,7 @@ module Ivy
             MEMCACHE
           end
 
-          def add_instance_to_map(map, instance, type='device')
+          def add_instance(map, instance, type='device')
             g = instance.map_to_grid
             c = instance.map_to_cluster
             h = instance.map_to_host
@@ -70,21 +57,16 @@ module Ivy
             map[g][c][h] = "hacor:#{type}:#{instance.device_id}" unless h.nil?
           end
 
-          def add_instance_to_reverse_map(map, instance, type='device')
-            key = "hacor:#{type}:#{instance.device_id}"
-            # map[key] = [instance.map_to_grid, instance.map_to_cluster, instance.map_to_host]
-            map[key] = instance.map_to_host
-          end
-
-          # Remove an instance from the interchange map.
+          # Remove stale instance from the interchange map.  Either because the
+          # instance has been updated or because it has been deleted.
           #
           # If the instance has been deleted call without +changes+.  If the
           # instance has been updated call with changes set to
           # +instance.previous_changes+.
-          def remove_old_instance_from_map(map, instance, changes={})
-            g = changes.key?(:map_to_grid) ? changes[:map_to_grid] : instance.map_to_grid
-            c = changes.key?(:map_to_cluster) ? changes[:map_to_cluster] : instance.map_to_cluster
-            h = changes.key?(:map_to_host) ? changes[:map_to_host] : instance.map_to_host
+          def remove_stale_instance(map, instance)
+            g = instance.map_to_grid_previously_was || instance.map_to_grid
+            c = instance.map_to_cluster_previously_was || instance.map_to_cluster
+            h = instance.map_to_host_previously_was || instance.map_to_host
 
             grid = map[g] ||= {}
             cluster = grid[c] ||= {}
@@ -92,12 +74,6 @@ module Ivy
             grid.delete(c) if cluster.empty?
             map.delete(g) if grid.empty?
           end
-
-          def remove_old_instance_from_reverse_map(map, instance, type='device')
-            key = "hacor:#{type}:#{instance.device_id}"
-            map.delete(key)
-          end
-
         end
 
         extend ActiveSupport::Concern
