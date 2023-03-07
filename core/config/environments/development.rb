@@ -70,4 +70,13 @@ Rails.application.configure do
   # config.action_cable.disable_request_forgery_protection = true
 
   config.web_console.permissions = '10.0.2.2/16'
+
+  config.active_job.queue_adapter = :good_job
+  config.good_job.execution_mode = :external
+  if ENV['GOOD_JOB_WORKER'] && ENV['GOOD_JOB_WORKER'] == "true"
+    config.good_job.logger = ::ActiveSupport::Logger.new(STDOUT)
+    # Work around log issues in development.  See
+    # https://github.com/bensheldon/good_job/issues/490
+    $stdout.sync = true
+  end
 end

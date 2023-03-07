@@ -27,7 +27,18 @@ module CtApp
     config.action_controller.asset_host = Proc.new do |source, request|
       request.nil? ? nil : "#{request.protocol}#{request.host_with_port}/--"
     end
+  end
+end
 
-    config.active_job.queue_adapter = :good_job
+CtApp::Application::configure do
+  config.after_initialize do
+
+    #
+    # When the good job worker process starts enqueue a job to preheat the
+    # interchange.
+    #
+    if ENV['GOOD_JOB_WORKER'] && ENV['GOOD_JOB_WORKER'] == "true"
+      Emma::PreheatJob.set(priority: -10).perform_later(Ivy)
+    end
   end
 end
