@@ -3,6 +3,8 @@ module Ivy
 
     self.table_name = "data_source_maps"
 
+    include Ivy::Concerns::DataSourceMap::Interchange
+
     ######################################
     #
     # Validations 

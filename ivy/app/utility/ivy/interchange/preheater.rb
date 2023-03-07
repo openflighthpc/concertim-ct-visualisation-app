@@ -11,7 +11,7 @@ module Ivy
     class Preheater < Phoenix::Cache::Preheater
 
       heatables(
-        # :DataSourceMap,
+        :DataSourceMap,
         :Device,
         # :Chassis,
         # :HwRack,
