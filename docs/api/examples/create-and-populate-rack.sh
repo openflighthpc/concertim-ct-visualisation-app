@@ -66,6 +66,3 @@ done
 
 "${SCRIPT_DIR}/show-rack.sh" "${RACK_ID}"
 echo
-
-# Perform the memcache dance so that metrics can be added to the devices.
-"${SCRIPT_DIR}/memcache-dance.sh"

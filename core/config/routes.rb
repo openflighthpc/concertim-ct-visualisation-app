@@ -17,8 +17,6 @@ Rails.application.routes.draw do
     ['v1'].each do |version|
       namespace version do
 
-        post "hacks/memcache-dance" => "hacks#restart_delayed_job"
-
         resources :racks
 
         resources :nodes, only: [:create]
