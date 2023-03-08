@@ -36,9 +36,9 @@ module Ivy
     class Repo
       include Phoenix::Cache::Locking
 
-      def initialize(klass, cache, logger)
+      def initialize(klass, interchange, logger)
         @klass = klass
-        @cache = cache
+        @interchange = interchange
         @logger = logger
       end
 
@@ -80,27 +80,34 @@ module Ivy
         failed_ids
       end
 
-      # Add the given instance to the interchange list of such instances.
-      #
-      # The following would update the interchange key `hacor:devices` by
-      # appending the new devices interchange key.
-      #
-      #     add_instance_to_list(Ivy::Device.create!())
-      def add_instance_to_list(instance)
-        locked_modify(@klass.interchange_list_key, :default => []) do |list|
-          add_instance_to_list(list, instance)
-        end
+      # Store the instance in the interchange and update the list of such
+      # instances.
+      def update_instance(instance)
+        store_instance(instance)
+        update_list_with_instance(instance)
       end
 
-      def remove_instance_from_list(instance)
-        locked_modify(@klass.interchange_list_key, :default => []) do |list|
-          list.delete(instance.interchange_key)
-        end
+      # Remove the instance from the interchange and from the interchange list
+      # of such instances.
+      def remove_instance(instance)
+        remove_instance_from_list(instance)
+        interchange.delete(instance.interchange_key)
       end
+
+      # Returns the data stored for the given instance in the interchange.
+      def get(instance)
+        interchange.get(instance.interchange_key)
+      end
+
+      private
+
+      def interchange
+        @interchange
+      end
+      # Phoenix::Cache::Locking wants this to be called `cache`.
+      alias_method :cache, :interchange
 
       # Store the given instance in the interchange.
-      #
-      #
       def store_instance(instance)
         locked_modify(instance.interchange_key, :default => {}) do |data|
           to_interchange_format = instance.method(:to_interchange_format)
@@ -112,10 +119,20 @@ module Ivy
         end
       end
 
-      private
+      # Update the interchange list of instances, such that it contains
+      # +instance+'s interchange key.
+      def update_list_with_instance(instance)
+        locked_modify(@klass.interchange_list_key, :default => []) do |list|
+          add_instance_to_list(list, instance)
+        end
+      end
 
-      def cache
-        @cache
+      # Update the interchange list of instances, such that it does not contain
+      # +instance+'s interchange key.
+      def remove_instance_from_list(instance)
+        locked_modify(@klass.interchange_list_key, :default => []) do |list|
+          list.delete(instance.interchange_key)
+        end
       end
 
       def add_instance_to_list(list, instance)

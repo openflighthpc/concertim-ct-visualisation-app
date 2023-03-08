@@ -84,19 +84,26 @@ module Ivy
         end
 
         class_methods do
-          def interchange_repo
-            @_interchange_repo ||= Repo.new
-          end
-
+          # Store all instances in the interchange.
           def preheat_interchange
             interchange_repo.store_instances(all)
           end
+
+          # Return the interchange repo.
+          #
+          # The repo defines how instances are stored in the interchange.
+          def interchange_repo
+            @_interchange_repo ||= Repo.new
+          end
         end
 
+        # +update_interchange+ stores the updated (or new) instance in the
+        # interchange.
         def update_interchange
           self.class.interchange_repo.update_instance(self)
         end
 
+        # +remove_from_interchange+ removes the instance in the interchange.
         def remove_from_interchange
           self.class.interchange_repo.remove_instance(self)
         end

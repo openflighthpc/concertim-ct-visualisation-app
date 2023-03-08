@@ -231,7 +231,7 @@ module Ivy
     #   chassis.update_interchange if chassis
     # end
 
-    # def destroy_interchange
+    # def remove_from_interchange
     #   super
     #   rack.update_interchange if rack
     #   chassis.update_interchange if chassis

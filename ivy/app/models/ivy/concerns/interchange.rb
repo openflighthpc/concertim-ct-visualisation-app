@@ -14,7 +14,7 @@ module Ivy
 
       included do
         after_save :update_interchange
-        after_destroy :destroy_interchange
+        after_destroy :remove_from_interchange
       end
 
       class_methods do
@@ -28,40 +28,34 @@ module Ivy
             .join(':')
         end
 
+        # Store all instances in the interchange.
         def preheat_interchange
           interchange_repo.store_instances
         end
 
-        private
-
-        # Returns the interchange client
-        def interchange
-          MEMCACHE
-        end
-
+        # Return the interchange repo.
+        #
+        # The repo defines how instances are stored in the interchange.
         def interchange_repo
-          ::Ivy::Interchange::Repo.new(self, interchange, interchange.logger)
+          ::Ivy::Interchange::Repo.new(self, MEMCACHE, MEMCACHE.logger)
         end
       end
 
-      # +update_interchange+ stores the instance in the interchange and updates
-      # the interchange list of instances.
+      # +update_interchange+ stores the updated (or new) instance in the
+      # interchange.
       #
       # If any additional bookkeeping is required, override the method and call
       # `super`.
       def update_interchange
-        interchange_repo.store_instance(self)
-        interchange_repo.add_instance_to_list(self)
+        self.class.interchange_repo.update_instance(self)
       end
 
-      # +update_interchange+ removes the instance in the interchange and updates
-      # the interchange list of instances.
+      # +remove_from_interchange+ removes the instance in the interchange.
       #
       # If any additional bookkeeping is required, override the method and call
       # `super`.
-      def destroy_interchange
-        interchange_repo.remove_instance_from_list(self)
-        interchange.delete(interchange_key)
+      def remove_from_interchange
+        self.class.interchange_repo.remove_instance(self)
       end
 
       # Returns the key at which the instances is stored in the interchange e.g.,
@@ -70,19 +64,9 @@ module Ivy
         "#{self.class.interchange_list_key.singularize}:#{id}"
       end
 
-      # Returns the interchange client
-      def interchange
-        self.class.interchange
-      end
-
-      # Returns the interchange heater
-      def interchange_repo
-        self.class.interchange_repo
-      end
-
       # Returns the data stored for the instance in the interchange.
       def interchange_data
-        interchange.get(interchange_key)
+        self.class.interchange_repo.get(self)
       end
     end
   end
