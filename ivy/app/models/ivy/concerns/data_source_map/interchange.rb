@@ -15,15 +15,21 @@ module Ivy
 
           def initialize
             @key = "hacor:data_source_map"
+            @klass = DataSourceMap
+            @logger = cache.logger
           end
 
           # Updates the two maps with the given instances.
           def store_instances(instances)
+            @logger.info("Preheating model #{@klass.to_s}")
+            start = Time.now.to_i
             locked_modify(@key) do |map|
               instances.each do |instance|
                 add_instance(map, instance)
               end
             end
+            time_taken = Time.now.to_i - start
+            @logger.info("Completed model #{@klass.to_s} in #{time_taken} secs")
           end
 
           # Update the maps with the given instance.  If the instance has

@@ -151,7 +151,7 @@ module Ivy
             end
           rescue Exception => e
             # we'll try again next time
-            logger.warn("#{e.message} - #{e.backtrace.inspect}")
+            @logger.warn("#{e.message} - #{e.backtrace.inspect}")
           end
         end
       end
