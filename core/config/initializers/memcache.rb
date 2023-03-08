@@ -28,5 +28,6 @@ MEMCACHE = Phoenix::Cache::Wrapper.new(
   'localhost:11211', {
     serializer: Marshal,
     logger: ::ActiveSupport::Logger.new(Rails.root.join("log/interchange.log")),
+    heartbeat_frequency: 2.seconds,
   }
 )

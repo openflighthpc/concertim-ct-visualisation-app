@@ -13,6 +13,7 @@ module Phoenix
 
       def initialize(address, options={})
         logger = options.delete(:logger)
+        heartbeat_frequency = options.delete(:heartbeat_frequency)
         @client = Dalli::Client.new(address, options)
         if logger.nil?
           require 'logger'
@@ -22,7 +23,7 @@ module Phoenix
         end
 
         @logger.info("CACHE"){"Starting up ..."}
-        @heartbeat = Heartbeat.new(self, @logger)
+        @heartbeat = Heartbeat.new(self, @logger, heartbeat_frequency)
 
         unless @heartbeat.ping?
           @logger.warn("CACHE"){"Unable to ping memcache - is it running?"}

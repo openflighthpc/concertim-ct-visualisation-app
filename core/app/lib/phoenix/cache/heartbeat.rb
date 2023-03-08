@@ -5,9 +5,10 @@ module Phoenix
     class Heartbeat
       # +client+ the memcache client.
       # +logger+ the logger instance to use.
-      def initialize(client, logger)
+      def initialize(client, logger, frequency)
         @client = client
         @logger = logger
+        @frequency = frequency
         @on_connection_callback = ->{}
       end
 
@@ -21,11 +22,11 @@ module Phoenix
               unless ping?
                 reset
               end
-              sleep 5
+              sleep @frequency
             rescue
               @logger.warn("CACHE Heartbeat"){"Encountered an error during cache ping: #{$!}"}
               @logger.warn("CACHE Heartbeat"){$!}
-              sleep 5
+              sleep @frequency
               retry
             end
           end
@@ -102,7 +103,7 @@ module Phoenix
                 break
               end
             else
-              sleep 2
+              sleep @frequency
             end
           end
         end
