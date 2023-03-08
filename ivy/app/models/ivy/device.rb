@@ -2,6 +2,8 @@ module Ivy
   class Device < Ivy::Model
     self.table_name = "devices"
 
+    include Ivy::Concerns::Interchange
+
     # The next 2 attributes are copied across from new-legacy.  They were used
     # there to allow the user to change the template (associated to the
     # chassis) on the device creation form.
@@ -100,7 +102,6 @@ module Ivy
     after_save :create_or_update_data_source_map
     # XXX Probably want to also port
     # :update_modified_timestamp / :update_rack_modified_timestamp
-    # :update_interchange / :destroy_interchange
     # :remove_metrics
     # :destroy_breaches
 
@@ -118,7 +119,6 @@ module Ivy
     #   Ivy::Slot.create_association_for(sub_class)
     #   super
     # end
-
 
     ####################################
     #
@@ -202,15 +202,27 @@ module Ivy
     end
 
     def metrics
-      return cache_get && cache_get[:metrics] || {}
+      interchange_data && interchange_data[:metrics] || {}
     end
 
-    def memcache_key
-      "hacor:device:#{id}"
-    end
+    def to_interchange_format(data)
+      # Reload on creation, otherwise associations (e.g. chassis) may not work.
+      reload if created_on_changed?
 
-    def cache_get
-      MEMCACHE.get(memcache_key)
+      # Overwrite these if already set.
+      data.merge!(
+        name: name,
+        id: id,
+        type: type,
+        tagged: tagged,
+        hidden: false,
+        useful: model.nil? || model != 'Blank Panel',
+        map_to_host: data_source_map.nil? ? nil : data_source_map.map_to_host,
+        chassis_id: chassis.nil? ? nil : chassis.id,
+      )
+
+      # Set metrics to its default unless already set.
+      data[:metrics] ||= {}
     end
 
 

@@ -138,7 +138,7 @@ module Ivy
     # def self.roll_back_ids_and_p_keys(device, persisted_objs)
     #   # If device was new (if we are rolling back a device creation) then delete the memcache entry
     #   if device.was_a_new_record?
-    #     device.destroy_interchange
+    #     device.remove_from_interchange
     #   end
     #
     #   (get_all_associations(device) - persisted_objs).each do |m|

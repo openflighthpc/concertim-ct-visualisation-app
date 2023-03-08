@@ -29,3 +29,16 @@ module CtApp
     end
   end
 end
+
+CtApp::Application::configure do
+  config.after_initialize do
+
+    #
+    # When the good job worker process starts enqueue a job to preheat the
+    # interchange.
+    #
+    if ENV['GOOD_JOB_WORKER'] && ENV['GOOD_JOB_WORKER'] == "true"
+      Emma::PreheatJob.set(priority: -10).perform_later(Ivy)
+    end
+  end
+end

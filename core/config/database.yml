@@ -69,7 +69,7 @@ repo_base: &repo_base
 
 development:
   <<: *pg_base
-  database: emma
+  database: ct-vis
   <<: *repo_base  
 
 # Warning: The database defined as "test" will be erased and
@@ -82,5 +82,5 @@ development:
 
 production:
   <<: *pg_base
-  database: emma
+  database: ct-vis
   <<: *repo_base
