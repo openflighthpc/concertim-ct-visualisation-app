@@ -225,18 +225,6 @@ module Ivy
       data[:metrics] ||= {}
     end
 
-    # def update_interchange
-    #   super
-    #   rack.update_interchange if rack
-    #   chassis.update_interchange if chassis
-    # end
-
-    # def remove_from_interchange
-    #   super
-    #   rack.update_interchange if rack
-    #   chassis.update_interchange if chassis
-    # end
-
 
     ############################
     #
