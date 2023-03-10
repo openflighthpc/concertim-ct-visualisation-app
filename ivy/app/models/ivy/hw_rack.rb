@@ -57,7 +57,13 @@ module Ivy
     #
     ############################
 
-    validates :name, presence: true, uniqueness: { scope: :cluster_id }
+    validates :name,
+      presence: true,
+      uniqueness: { scope: :cluster_id },
+      format: {
+        with: /\A[a-zA-Z0-9\-\_]*\Z/,
+        message: "can contain only alphanumeric characters, hyphens and underscores."
+      }
     validates :cluster_id, presence: true
     validates :u_depth, numericality: { only_integer: true, greater_than: 0 }
     validates :u_height, numericality: { only_integer: true, greater_than: 0, less_than: 73 }

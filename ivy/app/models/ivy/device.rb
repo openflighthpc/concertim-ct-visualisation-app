@@ -64,7 +64,13 @@ module Ivy
     #
     ###########################
 
-    validates :name, presence: true, length: { maximum: 150 }
+    validates :name,
+      presence: true,
+      length: { maximum: 150 },
+      format: {
+        with: /\A[a-zA-Z0-9\-]*\Z/,
+        message: "can contain only alphanumeric characters and hyphens."
+      }
     validates :slot_id, uniqueness: true, allow_nil: true
     validates :slot_id, presence: true, unless: ->{ is_a?(Sensor) || tagged? }
     validate :name_validator
