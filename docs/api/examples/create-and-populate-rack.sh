@@ -20,12 +20,18 @@ if [ $? -ne 0 ] ; then
     exit
 fi
 RACK_ID=$(echo "${OUTPUT}" | jq -r .id)
-echo "Created empty rack" >&2
+RACK_NAME=$(echo "${OUTPUT}" | jq -r .name)
+echo "Created empty rack ${RACK_NAME}" >&2
 "${SCRIPT_DIR}/show-rack.sh" "${RACK_ID}"
 echo
 
+# Prefix nodes in the first rack with `1`, nodes in the second rack with `2`
+# etc..
+NUM_RACKS=$("${SCRIPT_DIR}/list-racks.sh" | jq 'length')
+NAME_PREFIX=${NUM_RACKS}
+
 # Create a badly named and located device in that empty rack.
-OUTPUT=$("${SCRIPT_DIR}/create-device.sh" comp-201 "${RACK_ID}" f 11)
+OUTPUT=$("${SCRIPT_DIR}/create-device.sh" comp-${NAME_PREFIX}01 "${RACK_ID}" f 11)
 if [ $? -ne 0 ] ; then
     # Errors will have been sent to stderr.
     exit
@@ -56,12 +62,14 @@ echo "Moved device" >&2
 echo
 
 for i in $(seq -w 02 40) ; do
-  OUTPUT=$("${SCRIPT_DIR}/create-device.sh" comp2${i} "${RACK_ID}" f ${i})
+  name="comp${NAME_PREFIX}${i}"
+  start_u=${i}
+  OUTPUT=$("${SCRIPT_DIR}/create-device.sh" ${name} "${RACK_ID}" f ${start_u})
   if [ $? -ne 0 ] ; then
       # Errors will have been sent to stderr.
       exit
   fi
-  echo "Added comp2${i} to rack" >&2
+  echo "Added ${name} to rack ${RACK_NAME}" >&2
 done
 
 "${SCRIPT_DIR}/show-rack.sh" "${RACK_ID}"
