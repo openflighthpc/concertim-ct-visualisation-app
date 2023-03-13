@@ -22,7 +22,7 @@ module Ivy
 
     validates :chassis_row, presence: true
     validates :chassis_row_location, numericality: { integer_only: true }, allow_nil: false 
-    validates :chassis_row_location, uniqueness: { scope: :chassis_row_id }
+    validates :chassis_row_location, uniqueness: { scope: :chassis_row_id }, unless: ->(){ chassis_row_id.nil? }
     validate :device_valid?
 
 
@@ -33,33 +33,6 @@ module Ivy
     ####################################
 
     delegate :compatible_with_device?, to: :chassis
-
-
-    ####################################
-    #
-    # Class Methods
-    #
-    ####################################
-
-    # Dynamically create association builders and getters for device types.
-    #
-    # XXX Do we still want these?  Is there anywhere that they do something
-    # other than build_device?
-    Device.types.each do |device_type|
-      prepend(Module.new do
-        extend ActiveSupport::Concern
-        prepended do
-          association_name = device_type.name.demodulize.underscore
-          has_one association_name.to_sym, class_name: device_type.name, dependent: :destroy
-          eval <<-END
-            def build_#{association_name}(*args)
-              instance_eval("def device\n #{association_name}\n end")
-              super
-            end
-          END
-        end
-      end)
-    end
 
 
     ############################

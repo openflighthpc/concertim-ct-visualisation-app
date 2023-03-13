@@ -4,14 +4,6 @@ module Ivy
 
     include Ivy::Concerns::Interchange
 
-    # The next 2 attributes are copied across from new-legacy.  They were used
-    # there to allow the user to change the template (associated to the
-    # chassis) on the device creation form.
-    # This would be much better done with the introduction of form objects
-    # instead.
-    attr_accessor :template_manufacturer
-    attr_accessor :template_id
-
 
     ####################################
     #
@@ -213,7 +205,7 @@ module Ivy
 
     def to_interchange_format(data)
       # Reload on creation, otherwise associations (e.g. chassis) may not work.
-      reload if created_on_changed?
+      reload if created_on_previously_changed? || created_on_changed?
 
       # Overwrite these if already set.
       data.merge!(
