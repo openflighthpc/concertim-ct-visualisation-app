@@ -73,13 +73,15 @@ module Ivy
     #######################
     
     validates :name, presence: true, uniqueness: true
-    validates :slot_population_order, inclusion: { in: VALID_POPULATION_ORDERS }, allow_blank: true
+    validates :slot_population_order,
+      inclusion: { in: VALID_POPULATION_ORDERS, permitted: VALID_POPULATION_ORDERS },
+      allow_blank: true
 
     # These are only relevant if the chassis is in a rack.
     validates :u_height, numericality: { only_integer: true, greater_than: 0 }, if: :in_rack?
     validates :rack_start_u, :rack_end_u, numericality: { only_integer: true, greater_than: 0 } , allow_blank: true, if: :in_rack? 
     validates :u_depth, numericality: { only_integer: true, greater_than: 0 }, if: :in_rack?
-    validates :facing, inclusion: { in: %w( b f ) }, if: :in_rack?
+    validates :facing, inclusion: { in: %w( b f ), permitted: %w( b f ), message: "must be either 'b' or 'f'" }, if: :in_rack?
 
     # Rack ID is not relevant for nonrack chassis.
     validates :rack_id, numericality: { only_integer: true }, unless: :nonrack?
