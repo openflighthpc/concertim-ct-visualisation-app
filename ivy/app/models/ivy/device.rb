@@ -3,6 +3,7 @@ module Ivy
     self.table_name = "devices"
 
     include Ivy::Concerns::Interchange
+    include Ivy::Concerns::LiveUpdate::Device
 
 
     ####################################
@@ -99,9 +100,9 @@ module Ivy
 
     after_save :create_or_update_data_source_map
     # XXX Probably want to also port
-    # :update_modified_timestamp / :update_rack_modified_timestamp
     # :remove_metrics
     # :destroy_breaches
+
 
     ####################################
     #
@@ -286,7 +287,7 @@ module Ivy
       # current -= Ivy::Device.sensors.size #+ Ivy::Device::VirtualServer.all.size
       return if current < (limit_rads + limit_nrads)
       self.errors.add(:base, "The device limit of #{limit_rads+limit_nrads} has been exceeded")
-    end 
+    end
   end
 end
 

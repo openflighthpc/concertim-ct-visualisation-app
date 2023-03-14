@@ -9,7 +9,6 @@ module Ivy
       ####################################
 
       scope :excluding_ids,  ->(ids) { where.not(id: ids) }
-      scope :modified_after, ->(timestamp) { where("modified_timestamp > ?", timestamp.to_i) }
 
 
       ############################

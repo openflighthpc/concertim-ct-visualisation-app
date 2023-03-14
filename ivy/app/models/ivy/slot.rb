@@ -2,6 +2,9 @@ module Ivy
   class Slot < Ivy::Model
     self.table_name = "slots"
 
+    include Ivy::Concerns::LiveUpdate::Slot
+
+
     ####################################
     #
     # Associations

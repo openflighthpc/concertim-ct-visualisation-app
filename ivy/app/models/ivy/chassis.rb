@@ -4,6 +4,7 @@ module Ivy
     self.table_name = "base_chassis"
 
     include Ivy::Concerns::Templateable
+    include Ivy::Concerns::LiveUpdate::Chassis
 
 
     #######################
@@ -110,6 +111,7 @@ module Ivy
 
     before_validation :calculate_rack_end_u
 
+
     #######################
     #
     # Scopes
@@ -123,7 +125,6 @@ module Ivy
           .where("templates.rackable = ?", 1)
       }
     scope :dcrvshowable, -> { where("rack_id is null and show_in_dcrv = true") }
-    scope :modified_after, ->(timestamp) { where("modified_timestamp > ?", timestamp.to_i) }
     scope :for_devices, ->(device_ids) {
       joins(:chassis_rows => {:slots => :device}).where(:devices => {:id => device_ids})
     }
@@ -310,6 +311,5 @@ module Ivy
 
       errors.add(:rack_start_u, 'is occupied')
     end
-
   end
 end
