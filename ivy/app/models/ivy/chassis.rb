@@ -83,6 +83,7 @@ module Ivy
 
     # Rack ID is not relevant for nonrack chassis.
     validates :rack_id, numericality: { only_integer: true }, unless: :nonrack?
+    validates :rack, presence: true, unless: :nonrack?
 
     # Custom Validations
     validate :name_is_unique_within_device_scope
