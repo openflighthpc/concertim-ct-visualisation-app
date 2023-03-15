@@ -2806,7 +2806,7 @@ class IRVController extends CanvasController {
   // But we also need this subscriber here to setMetricLevel when the selected group has been blanked.
   evSwitchGroup(group) {
     if (this.model.noGroupSelected()) {
-      return this.rackSpace.setMetricLevel(this.currentMetricLevel);
+      this.rackSpace.setMetricLevel(this.currentMetricLevel);
     }
   }
 
