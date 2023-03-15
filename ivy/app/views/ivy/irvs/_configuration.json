@@ -547,10 +547,6 @@
             "url"     : "/-/racks/[[rack_id]]/view"
           },
           {
-            "caption" : "Metrics",
-            "url"     : "/-/racks/[[rack_id]]/metrics"
-          },
-          {
             "caption" : "Edit",
             "url"     : "/-/racks/[[rack_id]]/edit",
             "RBAC"    : {"action": "manage", "resource": "Ivy::HwRack"}
@@ -571,26 +567,6 @@
           {
             "caption" : "((Add device at u[[empty_u]]))",
             "url"     : "/-/items/wizard?location_type=rack&facing=[[aspect]]&rack_id=[[rack_id]]&start_u=[[empty_u]]",
-            "RBAC"    : {"action": "manage", "resource": "Ivy::Device"}
-          },
-          {
-            "content": "[[spacer]]<h1>PDUs</h1>"
-          },
-          {
-            "caption" : "[[view_hide_power_strips]]",
-            "url"     : "internal::viewPowerStrips,[[rack_id]]"
-          },
-          {
-            "caption" : "Add PDU",
-            "url"     : "/-/items/wizard?rack_id=[[rack_id]]&type=PowerStrip",
-            "RBAC"    : {"action": "manage", "resource": "Ivy::Device"}
-          },
-          {
-            "content": "[[spacer]]<h1>Zero-U Devices</h1>"
-          },
-          {
-            "caption" : "Add a zero-U device",
-            "url"     : "/-/items/wizard?aspect=[[aspect]]&rack_id=[[rack_id]]&location_type=zerou",
             "RBAC"    : {"action": "manage", "resource": "Ivy::Device"}
           }
         ],
@@ -651,13 +627,6 @@
             "onClick" : "new AjaxPopup('destroy_device', '/-/devices/[[device_id]]/show_destroy_issues', {xpos: function() {return $('rack_container').getWidth()/2}, ypos: function() {return $('rack_container').getHeight()/2}, method:'get', asynchronous:true, evalScripts:true, header:'<h2>Delete [[device_name]]</h2>', jump:'top', onComplete:function(request){manageRedirect(request,'destroy_device','production')}, onLoading:function(request){please_wait('destroy_device')}}); return false;",
             "disableForCommand" : true,
             "RBAC"    : {"action": "manage", "resource": "Ivy::Device"}
-          },
-          {
-            "content" : "(([[spacer]]<span style='display:none;'>[[is_virtual_host]]</span>))"
-          },
-          {
-            "caption" : "((Show virtual machines<span style='display:none;'>[[device_id]]</span><span style='display:none;'>[[is_virtual_host]]</span>))",
-            "url"     : "internal::showVMs,[[device_id]]"
           }
         ],
 
