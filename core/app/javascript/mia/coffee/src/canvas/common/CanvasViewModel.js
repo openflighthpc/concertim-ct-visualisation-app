@@ -15,6 +15,7 @@ class CanvasViewModel {
     this.FACE_FRONT  = 'front';
     this.FACE_REAR   = 'rear';
     this.FACE_BOTH   = 'both';
+    this.FACES  = [this.FACE_FRONT, this.FACE_REAR, this.FACE_BOTH];
   }
 
   constructor() {
@@ -35,6 +36,7 @@ class CanvasViewModel {
   
     // do the racks face forward, backwards or show both
     this.face = ko.observable(CanvasViewModel.INIT_FACE);
+    this.faces = ko.observable(CanvasViewModel.FACES);
 
     // list of images to preload
     this.assetList = ko.observable([]);
