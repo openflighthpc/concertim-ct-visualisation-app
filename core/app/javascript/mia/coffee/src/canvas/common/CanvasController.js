@@ -58,7 +58,6 @@ class CanvasController {
 
   configReceived(config) {
     Configurator.setup(CanvasController, null, config);
-    AssetManager.setup(); 
     CanvasController.NUM_RESOURCES = 1; //Rack structure
     this.model = new CanvasViewModel();
     this.parser   = new CanvasParser(this.model);
@@ -76,7 +75,7 @@ class CanvasController {
       AssetManager.get(CanvasController.PRIMARY_IMAGE_PATH + asset, this.evAssetLoaded, this.evAssetFailed);
     }
 
-    return this.model.assetList(assets);
+    this.model.assetList(assets);
   }
 
   getRackData() {

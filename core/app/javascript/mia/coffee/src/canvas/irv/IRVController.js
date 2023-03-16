@@ -217,7 +217,6 @@ class IRVController extends CanvasController {
   // @param  config  configuration object
   configReceived(config) {
     Configurator.setup(CanvasController, IRVController, config);
-    AssetManager.setup(); 
 
     // grab url params if any and set model values
     let params = String(window.location);
@@ -364,14 +363,19 @@ class IRVController extends CanvasController {
 
   // makes server requests required for initialisation
   getRackData() {
+    this.debug('getting rack data');
     super.getRackData(...arguments);
-    if (this.model.showingFullIrv()) { this.getMetricTemplates(); }
+    if (this.model.showingFullIrv()) {
+      this.debug('getting metric templates');
+      this.getMetricTemplates();
+    }
     if (this.model.showingFullIrv()) { this.getThresholds(); }
     this.testLoadProgress();
     return this.getSystemDateTime();
   }
 
   getPowerStripData() {
+    this.debug('getting power strip data');
     let ps_ids = this.options.powerStripIds.split(",");
     this.model.powerStripsVisible = this.model.powerStripsVisible.concat(ps_ids.map(oneId => parseInt(oneId,10)));
     if (this.options.otherPowerStripIds != null) { ps_ids = ps_ids.concat(this.options.otherPowerStripIds.split(",")); }
@@ -380,6 +384,7 @@ class IRVController extends CanvasController {
   }
 
   getNonrackDeviceData() {
+    this.debug('getting non rack device data');
     return this.getNonrackDeviceDefs();
   }
 
@@ -532,8 +537,10 @@ class IRVController extends CanvasController {
   // requests thresholds definitions from the server
   getThresholds() {
     if ($('threshold_select') != null) {
+      this.debug("getting thresholds");
       return new Request.JSON({url: this.resources.path + this.resources.thresholds + '?' + (new Date()).getTime(), onComplete: this.receivedThresholds, onTimeout: this.retryMetricTemplates}).get();
     } else {
+      this.debug("skip getting thresholds");
       return ++this.resourceCount; // Otherwise the page will not proceed to load :/
     }
   }
@@ -542,6 +549,7 @@ class IRVController extends CanvasController {
   // here as this forms part of the initialisation data
   // @param  thresholds  object representing the threshold definitions
   receivedThresholds(thresholds) {
+    this.debug("received thresholds");
     const parsed = this.parser.parseThresholds(thresholds);
     this.model.thresholdsByMetric(parsed.byMetric);
     this.model.thresholdsById(parsed.byId);
@@ -1418,6 +1426,7 @@ class IRVController extends CanvasController {
   // invoked when the server returns the metric definitions, parses and stores them in the model
   // @param  metric_templates  the metric definitions as returned by the server
   receivedMetricTemplates(metric_templates) {
+    this.debug("received metric templates");
     this.metrics = $('metrics');
     const templates = this.parser.parseMetricTemplates(metric_templates);
     this.model.metricTemplates(templates);
@@ -1524,7 +1533,7 @@ class IRVController extends CanvasController {
   // the data centre. Actions the data accordingly
   // @param  rack_defs the rack definitions as returned by the server
   receivedRackDefs(rack_defs) {
-    console.log("receivedRackDefs:");
+    this.debug("received rack defs");
 
     const defs = this.parser.parseRackDefs(rack_defs);
 
@@ -1556,8 +1565,7 @@ class IRVController extends CanvasController {
   }
 
   recievedPowerStripDefs(power_strip_defs) {
-
-    console.log("recievedPowerStripDefs:");
+    this.debug("received power strip defs");
     const defs = this.parser.parsePowerStripDefs(power_strip_defs);
 
     if (this.initialised) {
@@ -1574,18 +1582,18 @@ class IRVController extends CanvasController {
   }
 
   recievedNonrackDeviceDefs(nonrack_device_defs) {
-    console.log("recievedNonrackDeviceDefs:");
+    this.debug("received non rack device defs");
     if (this.initialised) {
       ++this.resourceCount;
       this.model.assetList(nonrack_device_defs.assetList);
       this.model.modifiedDcrvShowableNonRackChassis(nonrack_device_defs.dcrvShowableNonRackChassis);
       if (this.model.assetList().length === 0) {
-        return this.testLoadProgress();
+        this.testLoadProgress();
       } else {
-        return this.synchroniseChanges();
+        this.synchroniseChanges();
       }
     } else {
-      return this.initialiseNonRackDeviceDefs(nonrack_device_defs);
+      this.initialiseNonRackDeviceDefs(nonrack_device_defs);
     }
   }
 
@@ -1627,6 +1635,7 @@ class IRVController extends CanvasController {
 
 
   initialisePowerStripDefs(defs) {
+    this.debug("received power strip defs");
     ++this.resourceCount;
 
     const allAssets = [];
@@ -1668,7 +1677,8 @@ class IRVController extends CanvasController {
     }
 
     this.model.dcrvShowableNonRackChassis(nonRackChassisToShow);
-    return this.recievedRacksAndChassis('chassis');
+    this.testLoadProgress();
+    this.recievedRacksAndChassis('chassis');
   }
 
   // called whenever a resource finishes loading during initialisation process or when new racks definitions are received following
@@ -1682,7 +1692,7 @@ class IRVController extends CanvasController {
       progress   = this.calculateProgress(num_assets);
       //XXX We have loaded everything now, this is where we action any rebuilding and redrawing
       //
-      //console.log "testLoadProgress::::",@resourceCount,CanvasController.NUM_RESOURCES,"---",@assetCount,num_assets,"=========",progress
+      this.debug(`load progress: resources:${this.resourceCount}/${CanvasController.NUM_RESOURCES} assets:${this.assetCount}/${num_assets} progress:${progress}`);
       if ((this.resourceCount === CanvasController.NUM_RESOURCES) && (this.assetCount === num_assets)) {
         this.assetCount = 0;
         if (this.initialised) {
@@ -2478,7 +2488,7 @@ class IRVController extends CanvasController {
       AssetManager.get(CanvasController.PRIMARY_IMAGE_PATH + asset, this.evAssetLoaded, this.evAssetFailed);
     }
 
-    return this.model.assetList(assets);
+    this.model.assetList(assets);
   }
 
 
@@ -2813,6 +2823,10 @@ class IRVController extends CanvasController {
     }
 
     return this.model.metricData(metrics);
+  }
+
+  debug(...msg) {
+    console.debug('IRVController:', ...msg);
   }
 };
 
