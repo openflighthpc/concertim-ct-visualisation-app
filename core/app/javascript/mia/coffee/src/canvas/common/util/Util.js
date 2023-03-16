@@ -148,13 +148,6 @@ const Util = {
   getElementDimensions(element) {
     const dims = element.getSize();
     return { width: dims.x, height: dims.y };
-    let width  = this.getStyle(element, 'width');
-    width  = Number(width.substr(0, width.length - 2));
-    let height = this.getStyle(element, 'height');
-    height = Number(height.substr(0, height.length - 2));
-    width  = this.getStyleNumeric(element, 'width') + this.getStyleNumeric(element, 'paddingLeft') + this.getStyleNumeric(element, 'paddingRight');
-    height = this.getStyleNumeric(element, 'height') + this.getStyleNumeric(element, 'paddingTop') + this.getStyleNumeric(element, 'paddingBottom');
-    return { width, height };
   },
 
 

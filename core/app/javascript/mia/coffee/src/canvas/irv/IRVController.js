@@ -1004,7 +1004,7 @@ class IRVController extends CanvasController {
   // exit to plan view event handler. Stores relevant display settings if any so they may be picked up by the plan view
   // @param  ev  the event object which invoked execution
   exitToDCPV(ev) {
-    return this.saveSettings('dcpv');
+    this.saveSettings('dcpv');
   }
 
   saveSettings(going_to) {
@@ -1043,7 +1043,7 @@ class IRVController extends CanvasController {
       settings.focusOn = "racks,"+this.options.rackIds;
     }
 
-    return CrossAppSettings.set(going_to, settings);
+    CrossAppSettings.set(going_to, settings);
   }
     
 
