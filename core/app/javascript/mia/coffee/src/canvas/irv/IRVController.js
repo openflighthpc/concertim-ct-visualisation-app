@@ -19,6 +19,7 @@ import Configurator from 'canvas/irv/util/Configurator';
 import Events from 'canvas/common/util/Events';
 import Util from 'canvas/common/util/Util';
 import AssetManager from 'canvas/irv/util/AssetManager';
+import ResourceLoader from 'canvas/irv/util/ResourceLoader';
 import Hint from 'canvas/irv/view/Hint';
 import ThumbHint from 'canvas/irv/view/ThumbHint';
 import RackSpace from 'canvas/irv/view/RackSpace';
@@ -86,24 +87,16 @@ class IRVController extends CanvasController {
     this.getUserRoles = this.getUserRoles.bind(this);
     this.configReceived = this.configReceived.bind(this);
     this.evShowHideScrollBars = this.evShowHideScrollBars.bind(this);
-    this.getNonrackDeviceDefs = this.getNonrackDeviceDefs.bind(this);
     this.visibleRackIds = this.visibleRackIds.bind(this);
     this.visibleNonRackIds = this.visibleNonRackIds.bind(this);
     this.idsAsParams = this.idsAsParams.bind(this);
     this.enableShowHoldingAreaCheckBox = this.enableShowHoldingAreaCheckBox.bind(this);
     this.getModifiedRacksTimestamp = this.getModifiedRacksTimestamp.bind(this);
     this.setModifiedRacksTimestamp = this.setModifiedRacksTimestamp.bind(this);
-    this.getSystemDateTime = this.getSystemDateTime.bind(this);
     this.getModifiedRackIds = this.getModifiedRackIds.bind(this);
-    this.getMetricTemplates = this.getMetricTemplates.bind(this);
-    this.getThresholds = this.getThresholds.bind(this);
-    this.receivedThresholds = this.receivedThresholds.bind(this);
     this.metricTemplatesPoller = this.metricTemplatesPoller.bind(this);
     this.refreshMetricTemplates = this.refreshMetricTemplates.bind(this);
-    this.retryMetricTemplates = this.retryMetricTemplates.bind(this);
     this.retryRackDefs = this.retryRackDefs.bind(this);
-    this.retryNonrackDeviceDefs = this.retryNonrackDeviceDefs.bind(this);
-    this.retrySystemDateTime = this.retrySystemDateTime.bind(this);
     this.scrollPanelUp = this.scrollPanelUp.bind(this);
     this.evClearDeselected = this.evClearDeselected.bind(this);
     this.evReset = this.evReset.bind(this);
@@ -123,12 +116,10 @@ class IRVController extends CanvasController {
     this.showHideExportDataOption = this.showHideExportDataOption.bind(this);
     this.switchMetric = this.switchMetric.bind(this);
     this.switchMetricLevel = this.switchMetricLevel.bind(this);
-    this.receivedMetricTemplates = this.receivedMetricTemplates.bind(this);
     this.refreshedMetricTemplates = this.refreshedMetricTemplates.bind(this);
     this.receivedModifiedRackIds = this.receivedModifiedRackIds.bind(this);
     this.receivedModifiedNonRackIds = this.receivedModifiedNonRackIds.bind(this);
     this.receivedRackDefs = this.receivedRackDefs.bind(this);
-    this.recievedNonrackDeviceDefs = this.recievedNonrackDeviceDefs.bind(this);
     this.loadMetrics = this.loadMetrics.bind(this);
     this.receivedMetrics = this.receivedMetrics.bind(this);
     this.displayMetrics = this.displayMetrics.bind(this);
@@ -245,19 +236,24 @@ class IRVController extends CanvasController {
       this.model.showingRackThumbnail(true);
     }
 
-    this.evLoadRackAssets();
+    ResourceLoader.setup(this.resources, IRVController.API_RETRY_DELAY);
+    this.resourceLoader = new ResourceLoader(this);
+    this.preloadAssets();
 
     if (this.model.showingFullIrv() || this.model.showingRacks()) {
       CanvasController.NUM_RESOURCES += 1;
-      this.getNonrackDeviceData();
+      this.resourceLoader.getNonrackDeviceData();
     }
 
     if (this.model.showingRacks()) {
       CanvasController.NUM_RESOURCES += 1;
+      this.resourceLoader.getRackData();
+
       if (this.model.showingFullIrv()) {
-        CanvasController.NUM_RESOURCES += 2; // metricstemplates and thresholds
+        CanvasController.NUM_RESOURCES += 2;
+        this.resourceLoader.getMetricTemplates();
+        this.resourceLoader.getThresholds();
       }
-      this.getRackData();
     }
 
     //if @model.showingFullIrv()
@@ -325,45 +321,6 @@ class IRVController extends CanvasController {
     }
   }
 
-  // makes server requests required for initialisation
-  getRackData() {
-    this.debug('getting rack data');
-    super.getRackData(...arguments);
-    if (this.model.showingFullIrv()) {
-      this.debug('getting metric templates');
-      this.getMetricTemplates();
-    }
-    if (this.model.showingFullIrv()) { this.getThresholds(); }
-    this.testLoadProgress();
-    return this.getSystemDateTime();
-  }
-
-  getNonrackDeviceData() {
-    this.debug('getting non rack device data');
-    return this.getNonrackDeviceDefs();
-  }
-
-  getNonrackDeviceDefs(holding_area_ids, non_rack_ids) {
-    let query_holding = '';
-    if (holding_area_ids != null) { 
-      if (holding_area_ids.length > 0) {
-        query_holding = this.idsAsParams(holding_area_ids,'rackable_non_rack_ids');
-      } else {
-        query_holding = '&rackable_non_rack_ids[]=';
-      }
-    }
-    let query_str = '';
-    if (non_rack_ids != null) {
-      if (non_rack_ids.length > 0) {
-        query_str = this.idsAsParams(non_rack_ids,'non_rack_ids');
-      } else {
-        query_str = '&non_rack_ids[]=';
-      }
-    }
-
-    return new Request.JSON({url: this.resources.path + this.resources.nonrackDeviceDefinitions + '?' + (new Date()).getTime() + query_holding + query_str, onComplete: this.recievedNonrackDeviceDefs, onTimeout: this.retryNonrackDeviceDefs}).get();
-  }
-
   // collates an array of rack ids based on what is currently on display
   visibleRackIds() {
     const arr = [];
@@ -417,11 +374,6 @@ class IRVController extends CanvasController {
     }
   }
 
-  // sends a request to the server for the current time
-  getSystemDateTime() {
-    return new Request({url: this.resources.systemDateTime + '?' + (new Date()).getTime(), onComplete: this.setModifiedRacksTimestamp, onTimeout: this.retrySystemDateTime}).get();
-  }
-
   // requests a change set from the server, passing with the list of racks to report changes for and wether or not to 
   // suppress notifications of added racks
   getModifiedRackIds() {
@@ -431,56 +383,26 @@ class IRVController extends CanvasController {
     }
   }
 
-  // requests metric definitions from the server
-  getMetricTemplates() {
-    return new Request.JSON({url: this.resources.path + this.resources.metricTemplates + '?' + (new Date()).getTime(), onComplete: this.receivedMetricTemplates, onTimeout: this.retryMetricTemplates}).get();
-  }
-
-
-  // requests thresholds definitions from the server
-  getThresholds() {
-    if ($('threshold_select') != null) {
-      this.debug("getting thresholds");
-      return new Request.JSON({url: this.resources.path + this.resources.thresholds + '?' + (new Date()).getTime(), onComplete: this.receivedThresholds, onTimeout: this.retryMetricTemplates}).get();
-    } else {
-      this.debug("skip getting thresholds");
-      return ++this.resourceCount; // Otherwise the page will not proceed to load :/
-    }
-  }
-
-  // called when threshold definitions are returned from the server, parses them and stores in the model. Load progress is also tested
-  // here as this forms part of the initialisation data
-  // @param  thresholds  object representing the threshold definitions
-  receivedThresholds(thresholds) {
-    this.debug("received thresholds");
-    const parsed = this.parser.parseThresholds(thresholds);
-    this.model.thresholdsByMetric(parsed.byMetric);
-    this.model.thresholdsById(parsed.byId);
-    ++this.resourceCount;
-    return this.testLoadProgress();
-  }
-
   // Function to call the metric templates API.
   // The resourceCount needs to be decreased, since once the api call response is received,
   // then the resourceCount will be increased by 1, and only when the resources loaded are equal to the 
   // amount of total resources, is when rack space will be synchronised.
   metricTemplatesPoller() {
     --this.resourceCount;
-    return this.getMetricTemplates();
+    this.resourceLoader.getMetricTemplates();
   }
 
 
   // requests metric definitions from the server, this is triggered when interacting with the metric combo box to always provide
   // an up-to-date list of metrics
   refreshMetricTemplates() {
-    return new Request.JSON({url: this.resources.path + this.resources.metricTemplates + '?' + (new Date()).getTime(), onComplete: this.refreshedMetricTemplates, onTimeout: this.retryMetricTemplates}).get();
-  }
-
-
-  // called should the metric definition response fail, re-submits the request. !! possibly untested, possibly redundant
-  retryMetricTemplates() {
-    Profiler.trace(Profiler.CRITICAL, 'Failed to load metric templates, retrying in ' + IRVController.API_RETRY_DELAY + 'ms');
-    return setTimeout(this.getMetricTemplates, IRVController.API_RETRY_DELAY);
+    new Request.JSON({
+      url: this.resources.path + this.resources.metricTemplates + '?' + (new Date()).getTime(),
+      onComplete: this.refreshedMetricTemplates,
+      // XXX Not sure that the below retry is correct.  Gong to disable it as
+      // I've moved the function to ResourceLoader.
+      // onTimeout: this.retryMetricTemplates,
+    }).get();
   }
 
 
@@ -488,17 +410,6 @@ class IRVController extends CanvasController {
   retryRackDefs() {
     Profiler.trace(Profiler.CRITICAL, 'Failed to load rack definitions, retrying in ' + IRVController.API_RETRY_DELAY + 'ms');
     return setTimeout(this.getRackDefs, IRVController.API_RETRY_DELAY);
-  }
-
-  retryNonrackDeviceDefs() {
-    Profiler.trace(Profiler.CRITICAL, 'Failed to load nonrack device definitions, retrying in ' + IRVController.API_RETRY_DELAY + 'ms');
-    return setTimeout(this.getNonrackDeviceDefs, IRVController.API_RETRY_DELAY);
-  }
-
-  // called should the system time response fail, re-submits the request. !! possibly untested, possibly redundant
-  retrySystemDateTime() {
-    Profiler.trace(Profiler.CRITICAL, 'Failed to load system date time, retrying in ' + IRVController.API_RETRY_DELAY + 'ms');
-    return setTimeout(this.getSystemDateTime, IRVController.API_RETRY_DELAY);
   }
 
   // triggered when all initialisation data and rack images have loaded. Sets up everything, instanciates class instances, starts
@@ -1084,7 +995,7 @@ class IRVController extends CanvasController {
   // @param  ev  the event object which invoked execution
   evFocusMetricSelect(ev) {
     if (this.refreshingMetrics) { return; }
-    return this.refreshMetricTemplates();
+    this.refreshMetricTemplates();
   }
 
 
@@ -1283,25 +1194,6 @@ class IRVController extends CanvasController {
   }
 
 
-  // invoked when the server returns the metric definitions, parses and stores them in the model
-  // @param  metric_templates  the metric definitions as returned by the server
-  receivedMetricTemplates(metric_templates) {
-    this.debug("received metric templates");
-    this.metrics = $('metrics');
-    const templates = this.parser.parseMetricTemplates(metric_templates);
-    this.model.metricTemplates(templates);
-
-    let metrics_available = false;
-    for (var i in templates) {
-      metrics_available = true;
-      break;
-    }
-
-    //@metrics.value = 'Select a metric' if metrics_available and @metrics? and @noMetricSelected(@metrics.value)
-    ++this.resourceCount;
-    return this.testLoadProgress();
-  }
-
   // invoked when the server returns the metric definition after initialisation. Parses them and updates the model but only if changes
   // have occurred
   // @param  metric_templates  the metric definitions as returned by the server
@@ -1368,27 +1260,34 @@ class IRVController extends CanvasController {
     }
   }
 
-  // triggered when the server responds with rack definitions. This can be during the initialise process or as a result of changes to
-  // the data centre. Actions the data accordingly
-  // @param  rack_defs the rack definitions as returned by the server
-  receivedRackDefs(rack_defs) {
-    this.debug("received rack defs");
+  processRackDefs(defs) {
+    // Processing only needed for full IRV.
+    if (! (this.model.showingRacks() || this.model.showingFullIrv())) { return ; }
 
-    const defs = this.parser.parseRackDefs(rack_defs);
+    // Processing only needed if we have some data.
+    if (defs.racks == null) { return ; }
+    if (defs.racks.length <= 0) { return ; }
+    if (this.model.racks() == null) { return ; }
+    if (this.model.racks().length <= 0) { return ; }
 
-    if ((this.model.showingRacks() || this.model.showingFullIrv()) && (defs.racks != null) && (defs.racks.length > 0) && (this.model.racks() != null) && (this.model.racks().length > 0) && (this.model.racks()[this.model.racks().length-1].id === defs.racks[defs.racks.length-1].id)) {
+    if (this.model.racks()[this.model.racks().length-1].id === defs.racks[defs.racks.length-1].id) {
       defs.racks[defs.racks.length-1].nextRackId = null;
     }
+  }
 
+  // called during the initialisation process this stores relevent values in the model
+  initialiseRackDefs(defs) {
     if (this.initialised) {
+      // We've already been initialised.  We only want to load in the new
+      // asests.  We reimplement much of the superclass method here to avoid
+      // loading all assets again.
+      //
+      // XXX This is probably not neeeded as AssetManager should be
+      // sufficiently performant/efficient.
+      //
+      // We also set the new racks against `model.modifiedRackDefs` instead of
+      // `model.racks`.  That bit we do want to keep.
       ++this.resourceCount;
-      //XXX We only want to load in the new assets, the whole loading assets/redrawing is rather inefficient
-      // so just replicate it here until someone has the time and energy to rewrite it
-      //
-      //XXX is this need any more as its now in the synchroniseChanges function
-      //
-      // for asset in defs.assetList # deal with loading the images
-      // AssetManager.get(IRVController.PRIMARY_IMAGE_PATH + asset, @evAssetLoaded, @evAssetFailed)
       this.model.assetList(defs.assetList);
       this.model.modifiedRackDefs(defs.racks);
       if (this.model.assetList().length === 0) {
@@ -1399,24 +1298,14 @@ class IRVController extends CanvasController {
         return this.synchroniseChanges();
       }
     } else {
-      return this.initialiseRackDefs(defs);
+      super.initialiseRackDefs(...arguments);
     }
-  }
 
-  recievedNonrackDeviceDefs(nonrack_device_defs) {
-    this.debug("received non rack device defs");
-    if (this.initialised) {
-      ++this.resourceCount;
-      this.model.assetList(nonrack_device_defs.assetList);
-      this.model.modifiedDcrvShowableNonRackChassis(nonrack_device_defs.dcrvShowableNonRackChassis);
-      if (this.model.assetList().length === 0) {
-        this.testLoadProgress();
-      } else {
-        this.synchroniseChanges();
-      }
-    } else {
-      this.initialiseNonRackDeviceDefs(nonrack_device_defs);
+    if (this.options && this.options.rackIds) {
+      this.model.displayingAllRacks(false);
     }
+  
+    return this.recievedRacksAndChassis('racks');
   }
 
   createPresetManager() {
@@ -1428,17 +1317,6 @@ class IRVController extends CanvasController {
     //console.log "@@@ DCRV @@@ Contructing presset mananger"
     this.model.loadingAPreset.subscribe(this.resetMetricPoller);
     return this.presets = new PresetManager(this.model, (this.crossAppSettings.selectedMetric != null) && ((this.options != null) && (this.options.applyfilter === "true")));
-  }
-
-  // called during the initialisation process this stores relevent values in the model
-  initialiseRackDefs(defs) {
-    super.initialiseRackDefs(...arguments);
-
-    if ((this.options != null ? this.options.rackIds : undefined) != null) { 
-      this.model.displayingAllRacks(false);
-    }
-  
-    return this.recievedRacksAndChassis('racks');
   }
 
   recievedRacksAndChassis(got_what){
@@ -1453,36 +1331,6 @@ class IRVController extends CanvasController {
       this.setAPIFilter();
       if (this.model.showingFullIrv()) { return this.createPresetManager(); }
     }
-  }
-
-  initialiseNonRackDeviceDefs(defs) {
-    ++this.resourceCount;
-
-    const allAssets = [];
-    for (var oneNonrackAsset of Array.from(defs.assetList)) { allAssets.push(oneNonrackAsset); }
-    if (this.model.assetList() != null) {
-      for (var previousAsset of Array.from(this.model.assetList())) { allAssets.push(previousAsset); }
-    }
-    this.model.assetList(allAssets);
-    this.synchroniseChanges(defs.assetList);
-
-    this.model.nonrackDevices(defs.rackableNonRackChassis);
-
-    let nonRackChassisToShow = defs.dcrvShowableNonRackChassis;
-    if (this.crossAppSettings.selectedNonRackChassis != null) {
-      nonRackChassisToShow = [];
-      for (var oneN in this.crossAppSettings.selectedNonRackChassis) {
-        for (var oneD of Array.from(defs.dcrvShowableNonRackChassis)) {
-          if (oneD.id === parseInt(oneN)) {
-            nonRackChassisToShow.push(oneD);
-          }
-        }
-      }
-    }
-
-    this.model.dcrvShowableNonRackChassis(nonRackChassisToShow);
-    this.testLoadProgress();
-    this.recievedRacksAndChassis('chassis');
   }
 
   // called whenever a resource finishes loading during initialisation process or when new racks definitions are received following
@@ -2418,7 +2266,7 @@ class IRVController extends CanvasController {
   }
 
   debug(...msg) {
-    console.debug('IRVController:', ...msg);
+    console.debug(`${this.constructor.name}:`, ...msg);
   }
 };
 
