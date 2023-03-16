@@ -4,6 +4,7 @@ module Ivy
     self.table_name = "base_chassis"
 
     include Ivy::Concerns::Templateable
+    include Ivy::Concerns::LiveUpdate::Chassis
 
 
     #######################
@@ -73,16 +74,19 @@ module Ivy
     #######################
     
     validates :name, presence: true, uniqueness: true
-    validates :slot_population_order, inclusion: { in: VALID_POPULATION_ORDERS }, allow_blank: true
+    validates :slot_population_order,
+      inclusion: { in: VALID_POPULATION_ORDERS, permitted: VALID_POPULATION_ORDERS },
+      allow_blank: true
 
     # These are only relevant if the chassis is in a rack.
     validates :u_height, numericality: { only_integer: true, greater_than: 0 }, if: :in_rack?
     validates :rack_start_u, :rack_end_u, numericality: { only_integer: true, greater_than: 0 } , allow_blank: true, if: :in_rack? 
     validates :u_depth, numericality: { only_integer: true, greater_than: 0 }, if: :in_rack?
-    validates :facing, inclusion: { in: %w( b f ) }, if: :in_rack?
+    validates :facing, inclusion: { in: %w( b f ), permitted: %w( b f ), message: "must be either 'b' or 'f'" }, if: :in_rack?
 
     # Rack ID is not relevant for nonrack chassis.
     validates :rack_id, numericality: { only_integer: true }, unless: :nonrack?
+    validates :rack, presence: true, unless: :nonrack?
 
     # Custom Validations
     validate :name_is_unique_within_device_scope
@@ -107,6 +111,7 @@ module Ivy
 
     before_validation :calculate_rack_end_u
 
+
     #######################
     #
     # Scopes
@@ -120,7 +125,6 @@ module Ivy
           .where("templates.rackable = ?", 1)
       }
     scope :dcrvshowable, -> { where("rack_id is null and show_in_dcrv = true") }
-    scope :modified_after, ->(timestamp) { where("modified_timestamp > ?", timestamp.to_i) }
     scope :for_devices, ->(device_ids) {
       joins(:chassis_rows => {:slots => :device}).where(:devices => {:id => device_ids})
     }
@@ -307,6 +311,5 @@ module Ivy
 
       errors.add(:rack_start_u, 'is occupied')
     end
-
   end
 end

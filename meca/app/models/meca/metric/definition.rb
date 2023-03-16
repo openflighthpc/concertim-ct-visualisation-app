@@ -19,7 +19,8 @@ module Meca
       def values_for_devices_with_metric(metric)
         [].tap do |el|
           non_tagged_devices_with_metric(metric).each do |key, device|
-            next if device[:mtime].nil? || (Time.now - device[:mtime]) > 90 || device[:metrics].nil? || device[:metrics][metric].nil?
+            next if device_stale?(device)
+            next if device[:metrics].nil? || device[:metrics][metric].nil?
             value = device[:metrics][metric][:value]
             el << MetricValue.new(id: device[:id], value: value) if value
           end
@@ -39,9 +40,7 @@ module Meca
       def metric_definitions
         parser = URI::Parser.new
         fetch_many(device_keys).each do |_, device|
-          # only consider devices for which we've had a metric update within the last 90s
-          # devices older than this should be considered stale
-          next if device[:mtime].nil? || (Time.now - device[:mtime]) > 90
+          next if device_stale?(device)
           next if device[:metrics].nil?
           device[:metrics].values.each do |metric|
             next if metric[:nature] != 'volatile'
@@ -65,6 +64,15 @@ module Meca
       end
 
       private
+
+      # Return true if the device is considered stale.
+      #
+      # +device+ is a hash of the device data stored in the interchange.
+      #
+      # A device is only considered to be stale if it has not yet been processed by meryl.
+      def device_stale?(device)
+        device[:mtime].nil?
+      end
 
       def fetch(key)
         self.class.fetch(key)

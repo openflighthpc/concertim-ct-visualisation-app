@@ -11,7 +11,7 @@ module Ivy
 
 
     #VALIDATIONS
-    validates :dstype, inclusion: { in: SUPPORTED_DATA_SOURCES }
+    validates :dstype, inclusion: { in: SUPPORTED_DATA_SOURCES, permitted: SUPPORTED_DATA_SOURCES }
     validates :ip, :cluster_id, :port, presence: true
     validates :ip, uniqueness: { scope: :port }
     validate  :valid_ip_address?

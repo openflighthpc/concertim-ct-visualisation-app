@@ -8,6 +8,7 @@ module Ivy
     include Ivy::Concerns::Taggable
     include Ivy::Concerns::Templateable
     include Ivy::HwRack::Occupation
+    include Ivy::Concerns::LiveUpdate::HwRack
 
 
     #############################
@@ -50,6 +51,7 @@ module Ivy
       class_name: "Ivy::Group::RuleBasedGroup",
       foreign_key: :ref_text,
       primary_key: :name
+
 
     ############################
     #
@@ -118,7 +120,6 @@ module Ivy
     ####################################
 
     scope :excluding_ids,  ->(ids) { where.not(id: ids) }
-    scope :modified_after, ->(timestamp) { where("modified_timestamp > ?", timestamp.to_i) }
 
 
     ############################
@@ -169,6 +170,5 @@ module Ivy
     def device_joins
       {:slot => {:chassis_row => :chassis}}
     end
-
   end
 end

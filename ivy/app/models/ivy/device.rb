@@ -3,14 +3,7 @@ module Ivy
     self.table_name = "devices"
 
     include Ivy::Concerns::Interchange
-
-    # The next 2 attributes are copied across from new-legacy.  They were used
-    # there to allow the user to change the template (associated to the
-    # chassis) on the device creation form.
-    # This would be much better done with the introduction of form objects
-    # instead.
-    attr_accessor :template_manufacturer
-    attr_accessor :template_id
+    include Ivy::Concerns::LiveUpdate::Device
 
 
     ####################################
@@ -107,9 +100,9 @@ module Ivy
 
     after_save :create_or_update_data_source_map
     # XXX Probably want to also port
-    # :update_modified_timestamp / :update_rack_modified_timestamp
     # :remove_metrics
     # :destroy_breaches
+
 
     ####################################
     #
@@ -213,7 +206,7 @@ module Ivy
 
     def to_interchange_format(data)
       # Reload on creation, otherwise associations (e.g. chassis) may not work.
-      reload if created_on_changed?
+      reload if created_on_previously_changed? || created_on_changed?
 
       # Overwrite these if already set.
       data.merge!(
@@ -294,7 +287,7 @@ module Ivy
       # current -= Ivy::Device.sensors.size #+ Ivy::Device::VirtualServer.all.size
       return if current < (limit_rads + limit_nrads)
       self.errors.add(:base, "The device limit of #{limit_rads+limit_nrads} has been exceeded")
-    end 
+    end
   end
 end
 
