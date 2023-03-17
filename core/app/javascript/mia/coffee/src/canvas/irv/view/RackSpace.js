@@ -30,8 +30,6 @@ import RackHint from 'canvas/irv/view/RackHint';
 import ContextMenu from 'canvas/irv/view/ContextMenu';
 import VMDialogue from 'canvas/irv/view/VMDialogue';
 import ViewModel from 'canvas/irv/ViewModel';
-import PowerStrip from 'canvas/irv/view/PowerStrip';
-import Socket from 'canvas/irv/view/Socket';
 import Link from 'canvas/irv/view/Link';
 import ImageLink from 'canvas/irv/view/ImageLink';
 import HoldingArea from 'canvas/irv/view/HoldingArea';
@@ -70,7 +68,6 @@ class RackSpace extends CanvasSpace {
     this.FLIP_DURATION             = 500;
     this.FLIP_DELAY                = 200;
     this.CANVAS_MAX_DIMENSION      = 1000;
-    this.SOCKETS_POWER_DATA_POLL_RATE       = 60000;
 
     // hardcoded and run-time assigned statics
     this.MIN_ZOOM  = null;
@@ -81,10 +78,6 @@ class RackSpace extends CanvasSpace {
   constructor(rackEl, chartEl, model, rackParent) {
     super(...arguments);
     let left;
-    this.createSocketPowerDataRequest = this.createSocketPowerDataRequest.bind(this);
-    this.getPowerStripRequest = this.getPowerStripRequest.bind(this);
-    this.cancelRequest = this.cancelRequest.bind(this);
-    this.sendConfirmation = this.sendConfirmation.bind(this);
     this.setLayout = this.setLayout.bind(this);
     this.highlightDevice = this.highlightDevice.bind(this);
     this.showSelection = this.showSelection.bind(this);
@@ -96,7 +89,6 @@ class RackSpace extends CanvasSpace {
     this.evFlipped = this.evFlipped.bind(this);
     this.evFlipComplete = this.evFlipComplete.bind(this);
     this.evZoomReady = this.evZoomReady.bind(this);
-    this.evPowerStripsZoomComplete = this.evPowerStripsZoomComplete.bind(this);
     this.evHoldingAreaZoomComplete = this.evHoldingAreaZoomComplete.bind(this);
     this.evRackZoomComplete = this.evRackZoomComplete.bind(this);
     this.evZoomComplete = this.evZoomComplete.bind(this);
@@ -106,7 +98,6 @@ class RackSpace extends CanvasSpace {
     this.stopDraggingDeviceFromMenu = this.stopDraggingDeviceFromMenu.bind(this);
     this.evCloseVM = this.evCloseVM.bind(this);
     this.evRedrawComplete = this.evRedrawComplete.bind(this);
-    this.evPSRedrawComplete = this.evPSRedrawComplete.bind(this);
     this.switchView = this.switchView.bind(this);
     this.setMetricLevel = this.setMetricLevel.bind(this);
     this.rackEl = rackEl;
@@ -114,7 +105,6 @@ class RackSpace extends CanvasSpace {
     this.model = model;
     this.rackParent = rackParent;
     Profiler.begin(Profiler.DEBUG);
-    if (this.model.showingPowerStrips() || (this.model.showingRacks() && !this.model.showingFullIrv())) { PowerStrip.initialise(); }
     this.zooming     = false;
     this.flipping    = false;
     this.highlighted = [];
@@ -132,7 +122,6 @@ class RackSpace extends CanvasSpace {
     RackObject.INFO_GFX  = this.infoGfx;
     RackObject.RACK_INFO_GFX  = this.rackInfoGfx;
     RackObject.ALERT_GFX = this.alertGfx;
-    RackObject.POWER_STRIP_GFX = this.powerStripsGfx;
 
     RackObject.HOLDING_AREA_GFX = this.holdingAreaGfx;
     RackObject.HOLDING_AREA_INFO_GFX = this.holdingAreaInfoGfx;
@@ -147,11 +136,6 @@ class RackSpace extends CanvasSpace {
     // makes position and size information accessible to the controller
     this.coordReferenceEl = this.alertGfx.cvs;
 
-    this.powerStrips = [];
-    if (this.model.showingPowerStrips()) {
-      this.setUpPowerStrips();
-    }
-
     this.zoomIdx = 0;
     if (this.model.showingFullIrv() || this.model.showingRacks()) {
       this.holdingAreaConfig = this.holdingAreaConfig();
@@ -161,24 +145,6 @@ class RackSpace extends CanvasSpace {
 
     if (this.model.showingRacks()) {
       this.setUpRacks();
-    } else if (this.model.showingPowerStrips()) {
-      this.racksWidth  = (RackSpace.POWER_STRIP_PADDING * 2) + (this.powerStrips.length * (this.powerStrips[0].width + PowerStrip.POWERSTRIP_H_SPACING)) + PowerStrip.INFO_TABLE_WIDTH;
-      this.racksHeight = (RackSpace.POWER_STRIP_PADDING * 2) + this.tallestPowerStrip;
-      this.rowHeight   = this.racksHeight;
-      this.rackGfx.setDims(this.racksWidth, this.racksHeight);
-      this.rackInfoGfx.setDims(this.racksWidth, this.racksHeight);
-      this.infoGfx.setDims(this.racksWidth, this.racksHeight);
-      this.alertGfx.setDims(this.racksWidth, this.racksHeight);
-    }
-    
-
-    if (this.model.showingPowerStrips()) {
-      this.initialRacksWidth = this.racksWidth;
-      this.placePowerStrips();
-      if (this.atLeastOneManagedPowerStrip === true) {
-        this.createSocketPowerDataRequest();
-        this.socketsPowerDataRequestTmr = setInterval(this.createSocketPowerDataRequest, RackSpace.SOCKETS_POWER_DATA_POLL_RATE);
-      }
     }
     
     // init scale
@@ -189,7 +155,6 @@ class RackSpace extends CanvasSpace {
     this.rackInfoGfx.setScale(this.scale);
     this.infoGfx.setScale(this.scale);
     this.alertGfx.setScale(this.scale);
-    this.powerStripsGfx.setScale(this.scale);
 
     if (this.model.showingFullIrv() || this.model.showingRacks()) {
       this.holdingAreaBackGroundGfx.setScale(this.scale);
@@ -221,7 +186,6 @@ class RackSpace extends CanvasSpace {
     if (this.model.showingRacks() && !this.model.showingFullIrv()) {
       this.model.face(ViewModel.FACE_BOTH);
       this.centreRacks();
-      this.placePowerStrips(); 
       this.model.activeSelection(true);
       for (var oneRack of Array.from(this.racks)) {
         for (var oneInstance of Array.from(this.model.deviceLookup().racks[oneRack.id].instances)) {
@@ -242,7 +206,6 @@ class RackSpace extends CanvasSpace {
 
     super.createGfx(...arguments);
 
-    this.powerStripsGfx = this.createGfxLayer(this.rackEl, 0, 0, 1, 1, 1);   // PowerStrips
     this.rackInfoGfx  = this.createGfxLayer(this.rackEl, 0, 0, 1, 1, 1);   // middle layer, draws the empty spaces for racks
     this.infoGfx  = this.createGfxLayer(this.rackEl, 0, 0, 1, 1, 1);   // middle layer, draws metric bars and textual labels
     this.alertGfx = this.createGfxLayer(this.rackEl, 0, 0, 1, 1, 1);   // top layer, draws highlights and breach boxes
@@ -284,77 +247,6 @@ class RackSpace extends CanvasSpace {
     return Util.setStyle(this.holdingAreaAlertGfx.cvs,       'top',  new_y + 'px');
   }
 
-  createSocketPowerDataRequest() {
-    if (this.powerStrips.length > 0) {
-      for (var onePowerStrip of Array.from(this.powerStrips)) { onePowerStrip.waiting(true); }
-      const power_strip_ids = this.powerStrips.map(onePs => onePs.id);
-      return this.getPowerStripRequest({action:'socket_statuses', data:{id:null,extraData:{powerStripIds:power_strip_ids}}});
-    }
-  }
-
-  showPowerStripLayer() {
-    PowerStrip.initialise();
-    this.setUpPowerStrips();
-    this.initialRacksWidth = this.racksWidth;
-    this.initialTallestRack = this.tallestRack;
-    if (this.tallestPowerStrip > this.tallestRack) {
-      this.tallestRack = this.tallestPowerStrip;
-      this.setZoomPresets();
-      this.scale = this.zoomPresets[this.zoomIdx];
-      this.model.scale(this.scale);
-      this.setScaleInLayers();
-    }
-    if (this.powerStrips.length > 0) {
-      this.racksWidth += PowerStrip.POWERSTRIP_H_PADDING+((this.powerStrips[0].width+PowerStrip.POWERSTRIP_H_SPACING)*this.powerStrips.length);
-    }
-    this.rackGfx.setDims(this.racksWidth, this.racksHeight);
-    this.rackInfoGfx.setDims(this.racksWidth, this.racksHeight);
-    this.infoGfx.setDims(this.racksWidth, this.racksHeight);
-    this.alertGfx.setDims(this.racksWidth, this.racksHeight);
-    this.powerStripsGfx.setDims(this.racksWidth, this.racksHeight);
-
-    this.arrangeRacks();
-    this.centreRacks();
-    this.placePowerStrips();
-    this.arrangePowerStrips();
-    if (this.atLeastOneManagedPowerStrip === true) {
-      this.createSocketPowerDataRequest(); 
-      this.socketsPowerDataRequestTmr = setInterval(this.createSocketPowerDataRequest, RackSpace.SOCKETS_POWER_DATA_POLL_RATE);
-    }
-
-    this.updateUrl(true,"power_strips");
-    return this.draw();
-  }
-
-  hidePowerStripLayer() {
-    for (var power_strip of Array.from(this.powerStrips)) { power_strip.destroy(); }
-    this.powerStrips = [];
-    clearInterval(this.socketsPowerDataRequestTmr);
-
-    if (this.initialTallestRack < this.tallestRack) {
-      this.tallestRack = this.initialTallestRack;
-      this.setZoomPresets();
-      this.scale = this.zoomPresets[this.zoomIdx];
-      this.model.scale(this.scale);
-      this.setScaleInLayers();
-    }
-
-
-    this.racksWidth = this.initialRacksWidth; 
-    this.rackGfx.setDims(this.racksWidth, this.racksHeight);
-    this.rackInfoGfx.setDims(this.racksWidth, this.racksHeight);
-    this.infoGfx.setDims(this.racksWidth, this.racksHeight);
-    this.alertGfx.setDims(this.racksWidth, this.racksHeight);
-    this.powerStripsGfx.setDims(this.racksWidth, this.racksHeight);
-
-    this.arrangeRacks();
-    this.centreRacks();
-    this.model.powerStripImage(null);
-  
-    this.updateUrl(false,"power_strips");
-    return this.draw();
-  }
-  
   updateUrl(adding, extraPath){
     let document_url = document.URL;
     if (adding) {
@@ -394,11 +286,6 @@ class RackSpace extends CanvasSpace {
       this.setUpDcrvShowableNonRackChassis();
     }
 
-    if (this.tallestPowerStrip > this.tallestRack) {
-      this.initialTallestRack = this.tallestRack;
-      this.tallestRack = this.tallestPowerStrip;
-    }
-    
     if (this.tallestNonRackChassis > this.tallestRack) {
       this.tallestRack = this.tallestNonRackChassis;
     }
@@ -411,41 +298,6 @@ class RackSpace extends CanvasSpace {
 
     this.arrangeRacks();
     return this.synchroniseZoomIdx();
-  }
-
-
-  // instanciates PowerStrips using the list of definitions in the model
-  setUpPowerStrips() {
-    if ((this.powerStrips != null) && (this.powerStrips.length > 0)) {
-      for (var onePS of Array.from(this.powerStrips)) { onePS.destroy(); }
-    }
-    this.powerStrips = [];
-    this.tallestPowerStrip = 0;
-    const powerStrips = this.model.powerStrips();
-    powerStrips.sort(function(a, b) { 
-      if (a.name.toUpperCase() > b.name.toUpperCase()) { return -1; } else { if (a.name.toUpperCase() < b.name.toUpperCase()) { return 1; } else { return 0; } }
-    });
-
-    if (this.model.showingPowerStrips() === true) {
-      return (() => {
-        const result = [];
-        for (var powerStrip of Array.from(powerStrips)) {
-          var new_power_strip = new PowerStrip(powerStrip);
-          if ((this.model.showingRacks() === true) && (this.model.deviceLookup().racks[powerStrip.rack_id] == null)) {
-            continue;
-          }
-          this.showing_info_table = !this.model.showingRacks();
-          new_power_strip.showInfoTable = this.showing_info_table;
-          new_power_strip.showing_racks = this.model.showingRacks();
-          if (new_power_strip.height > this.tallestPowerStrip) { this.tallestPowerStrip = new_power_strip.height; }
-          this.powerStrips.push(new_power_strip);
-          if (new_power_strip.managed === true) { result.push(this.atLeastOneManagedPowerStrip = true); } else {
-            result.push(undefined);
-          }
-        }
-        return result;
-      })();
-    }
   }
 
 
@@ -496,63 +348,6 @@ class RackSpace extends CanvasSpace {
     })();
   }
 
-  getPowerStripRequest(conf) {
-    this.psrequest_action = conf.action;
-    return this.psrequest = new Request.JSON({
-      url: '/-/api/v1/irv/power_strips/'+conf.data.id+'/'+conf.action,
-      method: 'POST',
-      headers    : { 'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content') },
-      onSuccess: this.sendConfirmation,
-      onFail: this.cancelRequest,
-      onError: this.cancelRequest,
-      onTimeout: this.cancelRequest,
-      timeout: 15000,
-      data: conf.data.extraData
-    }).send();
-  }
-
-  cancelRequest() {
-    this.psrequest.cancel();
-    this.psrequest = null;
-    if (this.psrequest_action === 'socket_statuses') {
-      this.blankAllPowerData();
-    }
-    return this.psrequest_action = null;
-  }
-
-  sendConfirmation(config) {
-    this.processAllPowerData(config);
-    return this.psrequest_action = null;
-  }
-
-  processAllPowerData(dataHash) {
-    return (() => {
-      const result = [];
-      for (var powerStrip of Array.from(this.powerStrips)) {
-        if (dataHash[powerStrip.id]) {
-          powerStrip.processPowerData(dataHash[powerStrip.id]);
-        } else if (this.psrequest_action === 'socket_statuses') {
-          powerStrip.blankPowerData();
-        }
-        powerStrip.powerStatusColected = true;
-        result.push(powerStrip.waiting(false));
-      }
-      return result;
-    })();
-  }
-
-  blankAllPowerData() {
-    return (() => {
-      const result = [];
-      for (var powerStrip of Array.from(this.powerStrips)) {
-        powerStrip.blankPowerData();
-        powerStrip.powerStatusColected = true;
-        result.push(powerStrip.waiting(false));
-      }
-      return result;
-    })();
-  }
-
   // public method, called whenver div dimensions change, actions update on a timeout to prevent overloading
   updateLayout() {
     // throttle the number of updates being executed using a timeout
@@ -585,7 +380,6 @@ class RackSpace extends CanvasSpace {
     this.rackInfoGfx.setScale(this.scale);
     this.infoGfx.setScale(this.scale);
     this.alertGfx.setScale(this.scale);
-    this.powerStripsGfx.setScale(this.scale);
     if (this.model.showingFullIrv() || this.model.showingRacks()) {
       this.holdingAreaBackGroundGfx.setScale(this.scale);
       this.holdingAreaGfx.setScale(this.scale*this.holdingArea.factor);
@@ -623,10 +417,6 @@ class RackSpace extends CanvasSpace {
       show_all = scale_x > scale_y ? scale_y : scale_x;
       if (!(show_all > RackSpace.MAX_ZOOM)) { this.zoomPresets.push(show_all); }
       this.zoomPresets.push(RackSpace.MAX_ZOOM);
-
-    // Zoom presets for single power strip view
-    } else if (this.model.showingPowerStrips()) {
-      this.zoomPresets.push(PowerStrip.MAX_ZOOM);
     }
 
     return RackSpace.MIN_ZOOM = this.zoomPresets[0];
@@ -643,9 +433,6 @@ class RackSpace extends CanvasSpace {
     y /= this.scale;
 
     let device = this.getDeviceAt(x, y);
-
-    //move the all the dragging to the ViewModel
-    if (this.model.dragging() && this.selection instanceof Socket && (device != null) && (device instanceof Machine || device instanceof Chassis) && (device.getAvailablePowerSupplies().length === 0)) { return; }
 
     if (device instanceof Rack) {
       device = null;
@@ -671,8 +458,7 @@ class RackSpace extends CanvasSpace {
     this.removeHighlights();
 
     for (var device of Array.from(highlighted)) {
-      if (this.model.showingRacks() && this.model.showingPowerStrips()) { this.highlightConnections(device); }
-      if (!device.isHighlighted() && !(device instanceof PowerStrip)) { device.select(); }
+      if (!device.isHighlighted()) { device.select(); }
     }
 
     return this.highlighted = highlighted;
@@ -682,74 +468,9 @@ class RackSpace extends CanvasSpace {
   // removes highlighting from currently highlighted devices
   removeHighlights() {
     for (var device of Array.from(this.highlighted)) { 
-      this.removeHighlightedConnections(device); 
-      if (!(device instanceof PowerStrip)) { device.deselect(); }
+      device.deselect();
     }
     return this.highlighted = [];
-  }
-
-  highlightConnections(device) {
-    if (device instanceof Socket) {
-      this.deviceConnectedTo = device.busy() ? device.getDeviceConnectedTo() : null;
-      if (this.deviceConnectedTo != null) { 
-        return Array.from(this.deviceConnectedTo.instances).map((oneInstance) => oneInstance.select());
-      }
-    } else if (device instanceof Machine || device instanceof Chassis) {
-      this.socketsConnectedTo = device.getSocketsConnectedTo();
-      if (device.type === "PowerStrip") {
-        const onePowerStrip = this.model.deviceLookup().powerStrips[device.id];
-        if (onePowerStrip != null) { onePowerStrip.instances[0].selectSelf(); }
-      }
-      return (() => {
-        const result = [];
-        for (var key in this.socketsConnectedTo) {
-          var value = this.socketsConnectedTo[key];
-          this.deviceConnectedTo = this.model.deviceLookup().powerStrips[key];
-          if ((this.deviceConnectedTo != null) && (this.model.deviceLookup().racks[this.deviceConnectedTo.rack_id] != null)) { result.push(this.deviceConnectedTo.instances[0].select(value)); } else {
-            result.push(undefined);
-          }
-        }
-        return result;
-      })();
-    } else if (device instanceof PowerStrip) {
-      this.oneRackPowerStrip = this.model.deviceLookup().devices[device.id];
-      if (this.oneRackPowerStrip != null) { return this.oneRackPowerStrip.instances[0].select(); }
-    }
-  }
-    
-  removeHighlightedConnections(device) {
-    let oneInstance;
-    if (device instanceof Socket) {
-      if (this.deviceConnectedTo != null) { 
-        for (oneInstance of Array.from(this.deviceConnectedTo.instances)) { oneInstance.deselect(); }
-        return delete this.deviceConnectedTo;
-      }
-    } else if (device instanceof Machine || device instanceof Chassis) {
-      if (device.type === "PowerStrip") {
-        const onePowerStrip = this.model.deviceLookup().powerStrips[device.id];
-        if (onePowerStrip != null) {
-          for (oneInstance of Array.from(onePowerStrip.instances)) { oneInstance.deselectSelf(); }
-        }
-      }
-      if (this.socketsConnectedTo != null) {
-        return (() => {
-          const result = [];
-          for (var key in this.socketsConnectedTo) {
-            var value = this.socketsConnectedTo[key];
-            this.deviceConnectedTo = this.model.deviceLookup().powerStrips[key];
-            if ((this.deviceConnectedTo != null) && (this.model.deviceLookup().racks[this.deviceConnectedTo.rack_id] != null)) { result.push(this.deviceConnectedTo.instances[0].deselect()); } else {
-              result.push(undefined);
-            }
-          }
-          return result;
-        })();
-      }
-    } else if (device instanceof PowerStrip) {
-      if (this.oneRackPowerStrip != null) {
-        this.oneRackPowerStrip.instances[0].deselect();
-        return delete this.oneRackPowerStrip;
-      }
-    }
   }
 
   // public method, clears all highlighted devices via the model
@@ -775,12 +496,6 @@ class RackSpace extends CanvasSpace {
     if (this.model.showingRacks()) {
       for (var rack of Array.from(this.racks)) { rack.draw(show_u_labels, show_name_label); }
       this.updateRackImage();
-    }
-    if (this.model.showingPowerStrips()) {
-      for (var powerStrip of Array.from(this.powerStrips)) {
-        powerStrip.draw();
-      }
-      this.updatePowerStripImage();
     }
     if (this.model.showHoldingArea()) {
       this.holdingArea.draw();
@@ -959,102 +674,7 @@ class RackSpace extends CanvasSpace {
       this.setUpRacks();
     }
 
-    const current_power_data = {};
-    for (var power_strip of Array.from(this.powerStrips)) {
-      current_power_data[power_strip.id] = power_strip.getCurrentPowerData();
-      power_strip.destroy();
-    }
-    this.powerStrips = [];
-    this.setUpPowerStrips();
-    this.placePowerStrips();
-    this.arrangePowerStrips();
-    this.processAllPowerData(current_power_data);
-    if (this.atLeastOneManagedPowerStrip === true) {
-      this.createSocketPowerDataRequest();
-    }
-
-
     return this.draw();
-  }
-
-
-  // refreshes POWER-STRIPS current view with any changes as notified by the server
-  // @param  power_strip_defs   new PowerStrip definitions for any modified or added PowerStrips
-  // @param  change_set         object with properties 'deleted', 'added' and 'modified'; each an array of PowerStrip ids
-  synchronisePowerStrips(power_strip_defs, change_set) {
-    let idx, power_strip;
-    if (((change_set == null) || !(change_set.deleted.length > 0)) && ((power_strip_defs == null) || !(power_strip_defs.length > 0))) { return; }
-    const device_lookup = this.model.deviceLookup();
-    const power_strips  = this.model.powerStrips();
-
-    for (var deleted_id of Array.from(change_set.deleted)) {
-      for (idx = 0; idx < power_strips.length; idx++) {
-        power_strip = power_strips[idx];
-        if (power_strip.id === deleted_id) {
-          power_strips.splice(idx, 1);
-          break;
-        }
-      }
-
-      deleted_id = String(deleted_id);
-      delete device_lookup.powerStrips[deleted_id];
-    }
-
-    return (() => {
-      const result = [];
-      for (var power_strip_def of Array.from(power_strip_defs)) {
-      // See if the PowerStrip exists in our PowerStrips array, if so delete 
-      // and insert new PowerStrips at its position
-        if (device_lookup.powerStrips[power_strip_def.id] != null) {
-          for (idx = 0; idx < power_strips.length; idx++) {
-            // to maintain the selected rack across the resynch set the 'selected'
-            // parameter if present
-            //
-            power_strip = power_strips[idx];
-            power_strip_def.focused = power_strip.focused;
-
-            // We have found the existing PowerStrip we are modifiying, so delete it
-            // as its name may have changed, thus meaning it has a new position
-            // in the array
-            if (power_strip.id === power_strip_def.id) {
-              power_strips.splice(idx, 1);
-              break;
-            }
-          }
-
-          //Re insert the modified PowerStrips in name order
-          var readded = false;
-          for (idx = 0; idx < power_strips.length; idx++) {
-            // We have located the 'next-power-strip-id' which is the power_strip we
-            // need to put the modified power_strip in to (before)
-            power_strip = power_strips[idx];
-            if (power_strip.name > power_strip_def.name) {
-              power_strips.splice(idx, 0, power_strip_def);
-              readded = true;
-              break;
-            }
-          }
-          if (!readded) { power_strips.push(power_strip_def); }
-        } else {
-          // It must be a new rack as we didn't match it in our rack array
-          //
-          if (device_lookup.powerStrips[power_strip_def.nextPowerStripId] != null) {
-            for (idx = 0; idx < power_strips.length; idx++) {
-              power_strip = power_strips[idx];
-              if (power_strip.id === power_strip_def.nextPowerStripId) {
-                power_strips.splice(idx, 0, power_strip_def);
-                break;
-              }
-            }
-          } else {
-            power_strips.push(power_strip_def);
-          }
-        }
-      
-        result.push(device_lookup.powerStrips[power_strip_def.id] = power_strip_def);
-      }
-      return result;
-    })();
   }
 
 
@@ -1566,7 +1186,6 @@ class RackSpace extends CanvasSpace {
             rack.showFreeSpacesForChassis(selection_height,chassis_id,this.selection.depth());
           }
         }
-        this.highlightFreeSockets();
       }
 
       return this.selection.showDrag();
@@ -1580,32 +1199,15 @@ class RackSpace extends CanvasSpace {
     }
   }
 
-  highlightFreeSockets() {
-    return (() => {
-      const result = [];
-      for (var ps of Array.from(this.powerStrips)) {
-        if (true) { //device has available power supplies
-          result.push(ps.showFreeSockets());
-        } else {
-          result.push(undefined);
-        }
-      }
-      return result;
-    })();
-  }
-
-
   canIMoveThisItem() {
     return this.draggableItem() && this.doIHavePermissionToMoveOrDrag() && (this.selection.face === 'front');
   }
 
   draggableItem() {
-    if (this.selection instanceof Chassis || this.selection instanceof Machine || this.selection instanceof Socket) {
+    if (this.selection instanceof Chassis || this.selection instanceof Machine) {
       if (this.selection instanceof Chassis && (this.selection.template.rackable === 1)) {
         return true;
       } else if (this.selection instanceof Machine && (this.selection.parent().template.rackable === 1)) {
-        return true;
-      } else if (this.selection instanceof Socket) {
         return true;
       } else {
         return false;
@@ -1616,7 +1218,7 @@ class RackSpace extends CanvasSpace {
   }
 
   doIHavePermissionToMoveOrDrag() {
-    return ((this.selection instanceof Chassis || this.selection instanceof Machine) && this.model.RBAC.can_i_move_devices()) || ((this.selection instanceof Socket) && this.model.RBAC.can_i_manage_devices());
+    return ((this.selection instanceof Chassis || this.selection instanceof Machine) && this.model.RBAC.can_i_move_devices());
   }
 
   // public method, updates dragging of a selection box or device
@@ -1635,7 +1237,7 @@ class RackSpace extends CanvasSpace {
       const nearest = slots[0];
 
       if (this.rectangleNearest != null) { this.fx.remove(this.rectangleNearest); }
-      if ((!(this.selection instanceof Socket)) && (nearest != null) && (((nearest.dist * this.scale) <= Math.pow(RackSpace.DRAG_SNAP_RANGE / this.scale, 2)) || ((x > nearest.left) && (x < nearest.right) && (y > nearest.top) && (y < nearest.bottom)))) {
+      if ((nearest != null) && (((nearest.dist * this.scale) <= Math.pow(RackSpace.DRAG_SNAP_RANGE / this.scale, 2)) || ((x > nearest.left) && (x < nearest.right) && (y > nearest.top) && (y < nearest.bottom)))) {
         this.fx.setAttributes(this.dragImg, { alpha: 1 });
         this.fx.setAttributes(this.dragImg, { x: (this.dragImgOffset.x + nearest.left + ((nearest.right - nearest.left) / 2)) - (this.fx.getAttribute(this.dragImg, 'width') / 2), y: nearest.top });
         this.rectangleNearest = this.fx.addRect({ x: this.fx.getAttribute(this.dragImg, 'x'), y: this.fx.getAttribute(this.dragImg, 'y'), width: this.fx.getAttribute(this.dragImg, 'width'), height: this.fx.getAttribute(this.dragImg, 'height'), stroke: '#ff00ff', strokeWidth:RackSpace.MOVING_DEVICE_STROKE_WIDTH});
@@ -1688,9 +1290,6 @@ class RackSpace extends CanvasSpace {
       for (var rack of Array.from(this.racks)) {
         rack.hideSpaces();
       }
-      for (var ps of Array.from(this.powerStrips)) {
-        ps.hideSpaces();
-      }
       this.fx.destroy();
       this.selection.hideDrag();
       this.deviceToConect = null;
@@ -1703,8 +1302,6 @@ class RackSpace extends CanvasSpace {
         if (this.selection instanceof Chassis || (this.selection instanceof Machine && (this.selection.parent().complex === false))) {
           this.moveDeviceToHoldingArea();
         }
-      } else if (this.getDeviceAt(x,y) instanceof Socket || this.selection instanceof Socket) {
-        this.deviceToConect = this.getDeviceAt(x,y);
       } else if (this.nearest != null) {
         const x_coord = this.nearest.left+((this.nearest.right-this.nearest.left)/2);
         const y_coord = (this.nearest.bottom-(RackObject.U_PX_HEIGHT/2));
@@ -1716,9 +1313,7 @@ class RackSpace extends CanvasSpace {
       }
 
       if (this.deviceToConect != null) {
-        if (this.deviceToConect instanceof Socket || this.selection instanceof Socket) {
-          this.connectDeviceToPower();
-        } else if (this.nearest != null) {
+        if (this.nearest != null) {
           if (this.moving_a_blade && this.deviceToConect instanceof Chassis) {
             this.moveBladeBeingDragged();
           } else if (this.deviceToConect instanceof Rack) {
@@ -1794,54 +1389,6 @@ class RackSpace extends CanvasSpace {
     return this.clearAllRacksAsFocused();
   }
 
-  connectDeviceToPower() {
-    if ((this.selection instanceof Machine || this.selection instanceof Chassis) && this.deviceToConect instanceof Socket) {
-      this.machine_to_be_plugged = this.selection;
-      this.socket_to_be_used = this.deviceToConect;
-    }
-    if (this.selection instanceof Socket && (this.deviceToConect instanceof Machine || this.deviceToConect instanceof Chassis)) {
-      this.machine_to_be_plugged = this.deviceToConect;
-      this.socket_to_be_used = this.selection;
-    }
-
-    if ((this.machine_to_be_plugged != null) && (this.socket_to_be_used != null)) {
-      if (this.socket_to_be_used.busy()) {
-        const device_name = (this.socket_to_be_used.getDeviceConnectedTo() != null) ? this.socket_to_be_used.getDeviceConnectedTo().name : "";
-        return this.messageHint.show([["Socket " + this.socket_to_be_used.id  + " is already connected to "+device_name, 0]]);
-      } else if (this.machine_to_be_plugged.getAvailablePowerSupplies().length === 0) {
-        return this.messageHint.show([["Device has no available power supplies!", 0]]);
-      } else if ((this.machine_to_be_plugged.type === "PowerStrip") && (parseInt(this.machine_to_be_plugged.id,10) === this.socket_to_be_used.parent.id)) {
-        return this.messageHint.show([["Cannot connect a PDU to itself!", 0]]);
-      } else if ((this.machine_to_be_plugged.getAvailablePowerSupplies().length > 1) && (this.powerSupplyId == null)) {
-        const rack_coords = this.rackEl.getCoordinates();
-        const pop_up_content = this.machine_to_be_plugged.getPowerSuppliesSelectionList(
-          {socket:this.socket_to_be_used,
-          action:'connect'});
-        return this.messageHint.showPopUp(
-          {header:'Select Power Supply',
-          container_id:'select_power_supply',
-          content: pop_up_content,
-          x:(rack_coords.width/2),
-          y:(rack_coords.height/2)});
-      } else { 
-        let thePowerSupply;
-        if (this.powerSupplyId != null) {
-          thePowerSupply = this.machine_to_be_plugged.getPowerSupply(this.powerSupplyId);
-        } else {
-          thePowerSupply = this.machine_to_be_plugged.getAvailablePowerSupplies()[0];
-        }
-        let another_connected = false;
-        if (this.machine_to_be_plugged.hasAPowerSupplyConectedToPowerStrip(this.socket_to_be_used.parent.id)) {
-          another_connected = true;
-        }
-        return thePowerSupply.update(
-          {socket:this.socket_to_be_used,
-          another_socket_connected: another_connected,
-          action:'connect'});
-      }
-    }
-  }
-  
   moveDeviceFromHoldingArea() {
     if (this.selection instanceof Machine || this.selection instanceof Chassis) {
       const chassisToBeUpdated = this.selection instanceof Chassis ? this.selection : this.selection.parent();
@@ -2133,12 +1680,6 @@ class RackSpace extends CanvasSpace {
     this.fx2     = this.createGfxLayer(this.rackEl, 0, 0, dims.width, dims.height);
     const info_img = this.fx2.addImg({ img: this.infoGfx.cvs, x: current_offset_x - this.scrollOffset.x, y: current_offset_y - this.scrollOffset.y });
 
-    // clone PowerStrips canvas
-    if (this.model.showingPowerStrips() && (this.powerStrips.length > 0)) {
-      this.fx3     = this.createGfxLayer(this.rackEl, 0, 0, dims.width, dims.height);
-      this.power_strips_img = this.fx3.addImg({ img: this.powerStripsGfx.cvs, x: current_offset_x - this.scrollOffset.x, y: current_offset_y - this.scrollOffset.y });
-    }
-
     // commence info fade animation
     this.fx2.animate(info_img, { alpha: 0 }, RackSpace.INFO_FADE_DURATION, Easing.Quad.easeOut, this.evZoomReady);
 
@@ -2148,7 +1689,6 @@ class RackSpace extends CanvasSpace {
     this.rackInfoGfx.pauseAnims();
     this.infoGfx.pauseAnims();
     this.alertGfx.pauseAnims();
-    if (this.model.showingPowerStrips() && (this.powerStrips.length > 0)) { this.powerStripsGfx.pauseAnims(); }
 
     // hide existing canvas layers
     this.rackEl.removeChild(this.rackGfx.cvs);
@@ -2156,7 +1696,6 @@ class RackSpace extends CanvasSpace {
     this.rackEl.removeChild(this.holdingAreaInfoGfx.cvs);
     this.rackEl.removeChild(this.holdingAreaAlertGfx.cvs);
     this.rackEl.removeChild(this.holdingAreaBackGroundGfx.cvs);
-    this.rackEl.removeChild(this.powerStripsGfx.cvs);
     this.rackEl.removeChild(this.rackInfoGfx.cvs);
     this.rackEl.removeChild(this.infoGfx.cvs);
     this.rackEl.removeChild(this.alertGfx.cvs);
@@ -2164,7 +1703,6 @@ class RackSpace extends CanvasSpace {
     // force immediate draw or we'll have a blank image for one frame
     if (this.model.showingRacks()) { this.fx.redraw(); }
     //@fxHoldingArea.redraw() if @model.showHoldingArea()
-    if (this.model.showingPowerStrips() && (this.powerStrips.length > 0)) { this.fx3.redraw(); }
     return this.fx2.redraw();
   }
 
@@ -2191,12 +1729,6 @@ class RackSpace extends CanvasSpace {
       }
     }
 
-    if (this.model.showingPowerStrips()) {
-      for (var onePowerStrip of Array.from(this.powerStrips)) {
-        onePowerStrip.showNameLink(false);
-      }
-    }
-  
     if (this.model.showingRacks()) { this.fx.animate(this.rackImg, {
       x      : -this.targetOffset.x,
       y      : -this.targetOffset.y,
@@ -2218,28 +1750,8 @@ class RackSpace extends CanvasSpace {
     //  width  : @holdingAreaBackGroundGfx.cvs.width * relative_scale
     //  height : @holdingAreaBackGroundGfx.cvs.height * relative_scale
     //, RackSpace.ZOOM_DURATION, Easing.Quad.easeInOut, @evHoldingAreaZoomComplete) if @model.showHoldingArea()
-
-    // commence PowerStrips fade animation
-    if (this.model.showingPowerStrips() && (this.powerStrips.length > 0)) { return this.fx3.animate(this.power_strips_img, {
-      x      : -this.targetOffset.x,
-      y      : -this.targetOffset.y,
-      width  : this.powerStripsGfx.cvs.width * relative_scale,
-      height : this.powerStripsGfx.cvs.height * relative_scale
-    }
-    , RackSpace.ZOOM_DURATION, Easing.Quad.easeInOut, this.evPowerStripsZoomComplete); }
   }
 
-  evPowerStripsZoomComplete() {
-    return (() => {
-      const result = [];
-      for (var onePowerStrip of Array.from(this.powerStrips)) {
-        onePowerStrip.showNameLink(true, this.targetScale);
-        result.push(onePowerStrip.showSocketLabels());
-      }
-      return result;
-    })();
-  }
-  
   evHoldingAreaZoomComplete() {
     return console.log("Holding Area Zoom Completes");
   }
@@ -2259,10 +1771,8 @@ class RackSpace extends CanvasSpace {
     //@fxHoldingArea.destroy() if @model.showHoldingArea()
     //@fxHoldingAreaBackGround.destroy() if @model.showHoldingArea()
     this.fx2.destroy();
-    if (this.model.showingPowerStrips() && (this.powerStrips.length > 0)) { this.fx3.destroy(); }
 
     this.rackGfx.setScale(this.targetScale);
-    this.powerStripsGfx.setScale(this.targetScale);
     if (this.model.showingFullIrv() || this.model.showingRacks()) {
       this.holdingAreaGfx.setScale(this.targetScale*this.holdingArea.factor);
       this.holdingAreaInfoGfx.setScale(this.targetScale*this.holdingArea.factor);
@@ -2275,7 +1785,6 @@ class RackSpace extends CanvasSpace {
     this.rackEl.appendChild(this.holdingAreaInfoGfx.cvs);
     this.rackEl.appendChild(this.holdingAreaAlertGfx.cvs);
     this.rackEl.appendChild(this.rackGfx.cvs);
-    this.rackEl.appendChild(this.powerStripsGfx.cvs);
     this.rackEl.appendChild(this.rackInfoGfx.cvs);
     this.rackEl.appendChild(this.infoGfx.cvs);
     this.rackEl.appendChild(this.alertGfx.cvs);
@@ -2295,7 +1804,6 @@ class RackSpace extends CanvasSpace {
     this.rackInfoGfx.resumeAnims();
     this.infoGfx.resumeAnims();
     this.alertGfx.resumeAnims();
-    this.powerStripsGfx.resumeAnims();
 
     this.scale = this.targetScale;
     this.model.scale(this.scale);
@@ -2303,8 +1811,6 @@ class RackSpace extends CanvasSpace {
     this.synchroniseZoomIdx();
     if (this.model.showingRacks()) { this.centreRacks(); }
     this.placeHoldingArea(this.targetScale);
-
-    if (this.model.showingPowerStrips()) { this.arrangePowerStrips(); }
 
     return Events.dispatchEvent(this.rackEl, 'rackSpaceZoomComplete');
   }
@@ -2329,86 +1835,11 @@ class RackSpace extends CanvasSpace {
     Util.setStyle(this.rackInfoGfx.cvs, 'left', centre_x);
     Util.setStyle(this.infoGfx.cvs, 'left', centre_x);
     Util.setStyle(this.alertGfx.cvs, 'left', centre_x);
-    Util.setStyle(this.powerStripsGfx.cvs, 'left', centre_x);
 
     Util.setStyle(this.rackGfx.cvs, 'top', centre_y);
     Util.setStyle(this.rackInfoGfx.cvs, 'top', centre_y);
     Util.setStyle(this.infoGfx.cvs, 'top', centre_y);
     Util.setStyle(this.alertGfx.cvs, 'top', centre_y);
-    return Util.setStyle(this.powerStripsGfx.cvs, 'top', centre_y);
-  }
-
-  // this visually place the PowerStrips next to the rack
-  placePowerStrips() {
-    // set PowerStrips coordinates 
-    let racks_width;
-    if (this.model.showingRacks()) {
-      racks_width = 0;
-      for (var oneRack of Array.from(this.racks)) { racks_width += oneRack.width; }
-      racks_width += (this.racks.length - 1) * RackSpace.RACK_H_SPACING;
-    }
-
-    for (let count = 0; count < this.powerStrips.length; count++) {
-      var pow_new_x, pow_new_y;
-      var powerStrip = this.powerStrips[count];
-      if (this.model.showingRacks()) {
-        if ((count%2) === 0) { //even
-          pow_new_x = this.racks[0].x + racks_width + PowerStrip.POWERSTRIP_H_PADDING + ((powerStrip.width + PowerStrip.POWERSTRIP_H_SPACING) * (count/2));
-        } else {            //odd
-          pow_new_x = this.racks[0].x - PowerStrip.POWERSTRIP_H_PADDING - powerStrip.width - ((powerStrip.width + PowerStrip.POWERSTRIP_H_SPACING) * ((count-1)/2));
-        }
-        pow_new_y = (RackSpace.PADDING + this.tallestRack) - powerStrip.height;
-      } else {
-        pow_new_x = PowerStrip.POWERSTRIP_H_PADDING + ((powerStrip.width + PowerStrip.POWERSTRIP_H_SPACING) * count);
-        pow_new_y = ((RackSpace.POWER_STRIP_PADDING + this.tallestPowerStrip) - powerStrip.height) + powerStrip.images.btm.height;
-      }
-
-      powerStrip.setCoords(pow_new_x, pow_new_y);
-    }
-  
-    return this.powerStripsGfx.setDims(this.racksWidth, this.racksHeight);
-  }
-
-  arrangePowerStrips() {
-    const top_of_the_rack = RackSpace.PADDING; 
-    return (() => {
-      const result = [];
-      for (let count = 0; count < this.powerStrips.length; count++) {
-        var bottom_of_the_area, used_padding;
-        var powerStrip = this.powerStrips[count];
-        if (this.model.showingRacks()) {
-          used_padding = RackSpace.PADDING;
-          bottom_of_the_area = ((used_padding + this.tallestRack) - powerStrip.height - this.racks[0].getImage(this.model.face()).btm.height) + powerStrip.images.btm.height;
-        } else if (this.model.showingPowerStrips()) {
-          used_padding = RackSpace.POWER_STRIP_PADDING;
-          bottom_of_the_area = (used_padding + this.tallestPowerStrip) - powerStrip.height; 
-        }
-
-        var pow_new_x = powerStrip.x; 
-        var pow_new_y = powerStrip.y;
-
-        if (this.model.showingRacks()) {
-          var single_rack_div = $('single_rack_view');
-          var scroll_adition = single_rack_div.scrollTop < used_padding ? 0 : single_rack_div.scrollTop - used_padding;
-          if (this.scale === RackSpace.MAX_ZOOM) { 
-            if (scroll_adition > 0) {   // Meaning the very top of the rack cannot be seen
-              if (bottom_of_the_area < (top_of_the_rack + scroll_adition)) { 
-                pow_new_y = bottom_of_the_area;
-              } else { 
-                pow_new_y = top_of_the_rack + scroll_adition;
-              }
-            } else {
-              pow_new_y = top_of_the_rack + single_rack_div.scrollTop;
-            }
-          } else {
-            pow_new_y = bottom_of_the_area;
-          }
-        }
-
-        result.push(powerStrip.setCoords(pow_new_x, pow_new_y));
-      }
-      return result;
-    })();
   }
 
   getRackAt(x, y) {
@@ -2428,34 +1859,13 @@ class RackSpace extends CanvasSpace {
   // @param  y   the y coordinate relative to the rack canvas layer and scale adjusted
   // @return     a reference to the device instance at the specified coordinates or null if none is found
   getDeviceAt(x, y) {
-
-    let device, powerStrip;
+    let device;
     if (this.model.showingRacks()) {
       for (var rack of Array.from(this.racks)) {
         // only query the rack if the coordinates lie within it's boundaries
         if ((x > rack.x) && (x < (rack.x + rack.width)) && (y > rack.y) && (y < (rack.y + rack.height))) {
           device = rack.getDeviceAt(x, y);
           if (device != null) { return device; } else { return rack; }
-        }
-      }
-    }
-
-    if (this.model.showingPowerStrips()) {
-      for (powerStrip of Array.from(this.powerStrips)) {
-        // only query the powerStrip if the coordinates lie within it's boundaries
-        if ((x > powerStrip.x) && (x < (powerStrip.x + powerStrip.width)) && (y > powerStrip.y) && (y < (powerStrip.y + powerStrip.height))) {
-          var socket = powerStrip.getSocketAt(x, y);
-          if (socket != null) { return socket; } else { return powerStrip; }
-        }
-      }
-    }
-
-    if (this.showing_info_table) {
-      for (powerStrip of Array.from(this.powerStrips)) {
-        // only query the powerStrip if the coordinates lie within it's boundaries
-        if ((x > powerStrip.infoTable.x) && (x < (powerStrip.infoTable.x + powerStrip.infoTable.width)) && (y > powerStrip.infoTable.y) && (y < (powerStrip.infoTable.y + powerStrip.infoTable.height))) {
-          var oneLink = powerStrip.infoTable.getLinkAt(x, y);
-          if (oneLink != null) { return oneLink; }
         }
       }
     }
@@ -2527,8 +1937,8 @@ class RackSpace extends CanvasSpace {
         if (selection instanceof Chassis) {
           this.device_to_drag_coords = original_coord;
         }
-      } else if (selection instanceof Socket || selection instanceof Machine) {
-        if ((selection instanceof Machine) && (!selection.placedInCurrentView())) {
+      } else if (selection instanceof Machine) {
+        if (!selection.placedInCurrentView()) {
           selection = selection.parent().parent();
           available_slot = selection.getSlot(rel_coords.x, rel_coords.y);
           available_slot.type = 'rack';
@@ -2559,62 +1969,13 @@ class RackSpace extends CanvasSpace {
         CrossAppSettings.clear('irv');
         return window.location = "/irv";
       case 'startDraggingDevice':
-        return this.startDraggingDevice(params);
-      case 'disconnectPowerSupplyAndSocket':
-        return this.disconnectPowerSupplyAndSocket(params);
+        return this.startDraggingDevice();
       case 'showVMs':
         return this.showVMs(params[1]);
-      case 'powerSocketOnAndOff':
-        return this.powerSocketOnAndOff(params);
-      case 'viewPowerStrips':
-        if (this.model.showingFullIrv()) {
-          return window.location = "/-/racks/"+params[1]+"/view/power_strips";
-        } else if (this.model.showingRacks()) {
-          if (this.model.showingPowerStrips()) {
-            this.model.showingPowerStrips(false);
-            return this.hidePowerStripLayer();
-          } else {
-            this.model.showingPowerStrips(true);
-            return this.showPowerStripLayer();
-          }
-        }
-        break;
     }
   }
 
-  powerSocketOnAndOff(params) {
-    //turn off socket while power cycling
-    if (params[1] === "powercycle") {
-      for (var onePowerStrip of Array.from(this.powerStrips)) {
-        if (onePowerStrip.id === parseInt(params[2])) {
-          onePowerStrip.getSocket(parseInt(params[3])).on = false;
-          onePowerStrip.draw();
-        }
-      }
-    }
-    const thePowerStrip = this.model.deviceLookup().powerStrips[params[2]].instances[0];
-    thePowerStrip.waiting(true);
-    thePowerStrip.powerStatusColected = false;
-    return this.getPowerStripRequest(
-      {
-       action:'power',
-       data:{id:params[2],extraData:{socket_id:params[3],power_action:params[1]}},
-      });
-  }
-
-  disconnectPowerSupplyAndSocket(params) {
-    const x = this.device_to_drag_coords.x / this.scale;
-    const y = this.device_to_drag_coords.y / this.scale;
-    this.selection = this.getDeviceAt(x, y);
-    if (this.selection instanceof Machine || this.selection instanceof Chassis) {
-      return this.selection.getPowerSupply(params[1]).update({action:'disconnect'});
-    } else if (this.selection instanceof Socket) {
-      return this.selection.disconnect();
-    }
-  }
-  
-  startDraggingDevice(params) {
-    this.powerSupplyId = (params[1] != null) ? params[1] : null;
+  startDraggingDevice() {
     this.dragDeviceFromMenu();
     Events.addEventListener(this.rackEl, 'mousemove', this.dragDeviceFromMenu);
     return Events.addEventListener(this.rackEl, 'mouseup', this.stopDraggingDeviceFromMenu);
@@ -2645,7 +2006,6 @@ class RackSpace extends CanvasSpace {
       this.stopDrag(coords.x, coords.y);
       this.clickAssigned = true;
       this.dragging      = false;
-      return this.powerSupplyId = null;
     }
   }
 
@@ -2810,10 +2170,6 @@ class RackSpace extends CanvasSpace {
     return this.alertGfx.setDims(this.racksWidth, this.racksHeight);
   }
 
-  updatePowerStripImage() {
-    return this.powerStripsGfx.drawComplete = this.evPSRedrawComplete;
-  }
-
   // sets a call back on rackGfx draw frame completion
   updateRackImage() {
     // delay setting the image for one frame to give the renderer time to redraw
@@ -2826,11 +2182,6 @@ class RackSpace extends CanvasSpace {
   evRedrawComplete() {
     this.rackGfx.drawComplete = null;
     return this.model.rackImage(this.rackGfx.cvs);
-  }
-
-  evPSRedrawComplete() {
-    this.powerStripsGfx.drawComplete = null;
-    return this.model.powerStripImage(this.powerStripsGfx.cvs);
   }
 
   // viewMode model value subscriber, redraws rack view to reflect new view mode

@@ -73,23 +73,6 @@ class Parser extends CanvasParser {
     return { filtered, assetList: asset_list, racks: rack_defs, deviceLookup: device_lookup };
   }
 
-  parsePowerStripDefs(power_strip_defs) {
-    const assets = power_strip_defs.Assets;
-    power_strip_defs = power_strip_defs.PowerStrips;
-    if (!(power_strip_defs instanceof Array)) { power_strip_defs = [power_strip_defs]; }
-  
-    const device_lookup = { powerStrips: {} };
-
-    for (var one_power_strip of Array.from(power_strip_defs)) {
-      if ((one_power_strip != null) && (one_power_strip.id != null)) {
-        device_lookup.powerStrips[one_power_strip.id] = one_power_strip;
-        one_power_strip.instances = [];
-      }
-    }
-
-    return { assetList: assets, powerStrips: power_strip_defs, deviceLookup: device_lookup };
-  }
-
   parseMetrics(metrics) {
     let group;
     Profiler.begin(Profiler.CRITICAL);

@@ -104,16 +104,13 @@ class ViewModel extends CanvasViewModel {
     this.highlighted = ko.observable([]);
 
     // id groups, both group and id are required to identify an individual device
-    this.groups = ko.observable(['racks', 'chassis', 'devices', 'vms', 'powerStrips']);
+    this.groups = ko.observable(['racks', 'chassis', 'devices', 'vms']);
 
     // temporary storage of device definitions (used in synchronising changes to devices)
     this.modifiedRackDefs = ko.observable();
 
     // temporary storage of dcrvShowableNonRackChassis
     this.modifiedDcrvShowableNonRackChassis = ko.observable();
-
-    // temporary storage of device definitions (used in synchronising changes to PowerStrips)
-    this.modifiedPowerStripDefs = ko.observable();
 
     // arrays of thresholds grouped by their associated metric using metric id as the key 
     this.thresholdsByMetric = ko.observable();
@@ -261,21 +258,12 @@ class ViewModel extends CanvasViewModel {
     // object, parsed metric data pushed from server. Values are contained in 'values' object
     this.metricData = ko.observable({ values: blank });
 
-    // array, stores the parsed PowerStrips definition JSON
-    this.powerStrips = ko.observable([]);
-
-    // array of ids of the visible power strips
-    this.powerStripsVisible = [];
-
     // array, stores the parsed nonrack devices definition JSON
     this.nonrackDevices = ko.observable([]);
     this.dcrvShowableNonRackChassis = ko.observable([]);
 
     // canvas, a snapshot of the rack view used by the thumb navigation
     this.rackImage = ko.observable();
-
-    // canvas, a snapshot of the PowerStrips view used by the thumb navigation
-    this.powerStripImage = ko.observable();
 
     blank        = {};
     for (group of Array.from(groups)) { blank[group] = {}; }

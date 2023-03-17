@@ -13,7 +13,6 @@ import RackObject from 'canvas/irv/view/RackObject';
 import Rack from 'canvas/irv/view/Rack';
 import Chassis from 'canvas/irv/view/Chassis';
 import Machine from 'canvas/irv/view/Machine';
-import PowerStrip from 'canvas/irv/view/PowerStrip';
 import ViewModel from 'canvas/irv/ViewModel';
 import Profiler from 'Profiler'
 
@@ -22,7 +21,6 @@ class CanvasSpace {
     // statics overwritten by config
     this.PADDING              = 100;
     this.H_PADDING            = 100;
-    this.POWER_STRIP_PADDING  = 50;
     this.RACK_H_SPACING       = 50;
     this.RACK_V_SPACING       = 100;
     this.FPS                  = 24;
@@ -164,10 +162,6 @@ class CanvasSpace {
     let actual_height = (num_rows * this.tallestRack) + ((num_rows - 1) * CanvasSpace.RACK_V_SPACING);
     actual_width  += CanvasSpace.PADDING * 2;
     actual_height += CanvasSpace.PADDING * 2;
-
-    if (this.model.showingPowerStrips() && (this.powerStrips.length > 0)) {
-      actual_width += (PowerStrip.POWERSTRIP_H_PADDING*2)+((this.powerStrips[0].width+PowerStrip.POWERSTRIP_H_SPACING)*this.powerStrips.length);
-    }
 
     //Adding extra padding when showing DCRV, so the user has more space in the top, to start a selection rubber band.
     if (this.model.showingFullIrv()) {

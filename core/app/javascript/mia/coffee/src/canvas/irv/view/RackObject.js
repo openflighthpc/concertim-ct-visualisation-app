@@ -15,7 +15,6 @@ import Util from 'canvas/common/util/Util';
 import Events from 'canvas/common/util/Events';
 import Easing from 'canvas/common/gfx/Easing';
 import RackSpaceObject from 'canvas/irv/view/RackSpaceObject';
-import PowerSupply from 'canvas/irv/view/PowerSupply';
 import ViewModel from 'canvas/irv/ViewModel';
 import Profiler from 'Profiler'
 
@@ -35,7 +34,6 @@ class RackObject extends RackSpaceObject {
     this.RACK_INFO_GFX   = null;
     this.ALERT_GFX  = null;
     this.MODEL      = null;
-    this.POWER_STRIP_GFX   = null;
     this.HOLDING_AREA_GFX  = null;
 
     this.NAME_LBL_OFFSET_MAX_WIDTH  = 0;
@@ -97,19 +95,6 @@ class RackObject extends RackSpaceObject {
     }
 
     RackObject.MODEL.deviceLookup()[this.group][this.id].instances.push(this);
-
-    this.powerSupplies = [];
-    const powerSuppliess = def.powerSupplies; 
-    if ((typeof powerSuppliess !== "undefined") && (powerSuppliess !== null)) {
-      if (powerSuppliess instanceof Array) {
-        for (var onePower of Array.from(powerSuppliess)) {
-          this.powerSupplies.push(new PowerSupply(onePower.id,onePower.name,onePower.power_strip_id,onePower.socket_id, this));
-        }
-      } else { 
-        this.powerSupplies.push(new PowerSupply(powerSuppliess.id,powerSuppliess.name,powerSuppliess.power_strip_id,powerSuppliess.socket_id, this));
-      }
-    }
-    Util.sortByProperty(this.powerSupplies,'name',true);
   }
 
   // Function to validate if this device is viewable from the current_face of the rack.
@@ -274,23 +259,6 @@ class RackObject extends RackSpaceObject {
     }
 
     return nearest;
-  }
-
-  hasAnyPowerSupplyConnected() {
-    let power_supplies = [];
-    if (this.powerSupplies.length > 0) {
-      power_supplies = this.powerSupplies;
-    } else {
-      for (var oneChild of Array.from(this.children)) {
-        power_supplies = power_supplies.concat(oneChild.powerSupplies);
-      }
-    }
-    for (var onePowerSupply of Array.from(power_supplies)) {
-      if (onePowerSupply.busy()) {
-        return true;
-      }
-    }
-    return false;
   }
 
   selectOtherInstances() {
@@ -538,127 +506,6 @@ class RackObject extends RackSpaceObject {
 
   isHighlighted() {
     return (this.highlight != null);
-  }
-
-  getSocketsConnectedTo() {
-    const sockets_hash = {};
-    for (var powerSupply of Array.from(this.powerSupplies)) { 
-      if (sockets_hash[powerSupply.power_strip_id] == null) { sockets_hash[powerSupply.power_strip_id] = []; }
-      sockets_hash[powerSupply.power_strip_id].push(powerSupply.socket_id);
-    }
-    return sockets_hash;
-  }
-
-  getAvailablePowerSupplies() {
-    const availablePowerSupplies = [];
-    for (var powerSupply of Array.from(this.powerSupplies)) { 
-      if (!powerSupply.busy()) { availablePowerSupplies.push(powerSupply); }
-    }
-    return availablePowerSupplies;
-  }
-
-  getPowerSupply(id_to_search) {
-    id_to_search = parseInt( id_to_search, 10 );
-    for (var powerSupply of Array.from(this.powerSupplies)) { 
-      if (powerSupply.id === id_to_search) {
-        return powerSupply;
-      }
-    }
-  }
-
-  getPowerSupplyConnectedToSocket(socket_id) {
-    for (var powerSupply of Array.from(this.powerSupplies)) { 
-      if (powerSupply.socket_id === socket_id) {
-        return powerSupply;
-      }
-    }
-  }
-
-  hasAPowerSupplyConectedToPowerStrip(powerStripId){
-    return (this.getSocketsConnectedTo()[powerStripId] != null); 
-  }
-
-  getPowerSuppliesSelectionList(conf){
-    const table = new Element('table');
-    let oneTr = new Element('tr'); 
-    let oneTd = new Element('td');
-    oneTd.innerHTML = 'Which power supply do you want to connect to this socket?';
-    oneTr.appendChild(oneTd);
-    table.appendChild(oneTr);
-    table.appendChild(new Element('tr'));
-    for (var onePowerSupply of Array.from(this.getAvailablePowerSupplies())) {
-      oneTr = new Element('tr'); 
-      oneTd = new Element('td');
-      oneTd.appendChild(onePowerSupply.getUpdateLink(conf));
-      oneTr.appendChild(oneTd);
-      table.appendChild(oneTr);
-    }
-    return table;
-  }
-
-  getPowerSuppliesContextMenuOptions() {
-    this.extraOptions = [];
-    if (this.powerSupplies.length > 0) {
-      this.extraOptions.push({content:"<h1>Power Supplies</h1>",RBAC: {"action": "manage", "resource": "Ivy::Device"}});
-      for (var onePowerSupply of Array.from(this.powerSupplies)) {
-        var oneHash = {};
-        if (onePowerSupply.busy()) {
-          var ps_name, this_class;
-          if (onePowerSupply.powerStripConnectedToIsInCurrentRack()) {
-            this_class = "";
-            ps_name = onePowerSupply.getPowerStripConnectedTo().name;
-          } else {
-            this_class = "redText"; 
-            if ((onePowerSupply.getPowerStripConnectedTo() == null)) {
-              ps_name = "Power strip deleted";
-            } else {
-              ps_name = onePowerSupply.getPowerStripConnectedTo().name;
-            }
-          }
-          oneHash.class   = this_class;
-          oneHash.caption = onePowerSupply.name + ", Disconnect from PDU "+ps_name+", Socket: "+onePowerSupply.socket_id; 
-          oneHash.url     = "internal::disconnectPowerSupplyAndSocket,"+onePowerSupply.id; 
-          oneHash.RBAC    = {"action": "manage", "resource": "Ivy::Device"};
-        } else {
-          oneHash.caption = onePowerSupply.name + ", Connect ";
-          oneHash.url     = "internal::startDraggingDevice,"+onePowerSupply.id; 
-          oneHash.RBAC    = {"action": "manage", "resource": "Ivy::Device"};
-        }
-        this.extraOptions.push(oneHash);
-      }
-    }
-    return this.extraOptions;
-  }
-
-  getPowerSuppliesToolTipData() {
-    this.extraOptions = "";
-    if (this.powerSupplies.length > 0) {
-      for (var onePowerSupply of Array.from(this.powerSupplies)) {
-        if (onePowerSupply.busy()) {
-          var ps_name, this_class;
-          if (onePowerSupply.powerStripConnectedToIsInCurrentRack()) {
-            this_class = "";
-            ps_name = onePowerSupply.getPowerStripConnectedTo().name;
-          } else {
-            this_class = "redText"; 
-            if ((onePowerSupply.getPowerStripConnectedTo() == null)) {
-              ps_name = "Power strip deleted";
-            } else {
-              ps_name = onePowerSupply.getPowerStripConnectedTo().name;
-            }
-          }
-
-          this.extraOptions += "<br><span class='"+this_class+"'>&nbsp;&nbsp;&nbsp;&nbsp;" + onePowerSupply.name + ", ";
-          this.extraOptions += "connected to PDU: "+ps_name+", Socket: "+onePowerSupply.socket_id;
-          this.extraOptions += "</span>";
-        } else {
-          this.extraOptions += "<br>&nbsp;&nbsp;&nbsp;&nbsp;" + onePowerSupply.name + ", ";
-          this.extraOptions += "free";
-        }
-      }
-      this.extraOptions += "<br>";
-    }
-    return this.extraOptions;
   }
 
   getInstances() {
