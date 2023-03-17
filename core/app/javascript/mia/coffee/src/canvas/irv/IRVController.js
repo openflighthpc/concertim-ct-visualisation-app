@@ -132,7 +132,6 @@ class IRVController extends CanvasController {
     this.loadMetrics = this.loadMetrics.bind(this);
     this.receivedMetrics = this.receivedMetrics.bind(this);
     this.displayMetrics = this.displayMetrics.bind(this);
-    this.displayVHMetrics = this.displayVHMetrics.bind(this);
     this.evMouseWheelRack = this.evMouseWheelRack.bind(this);
     this.evMouseWheelThumb = this.evMouseWheelThumb.bind(this);
     this.evKeyDown = this.evKeyDown.bind(this);
@@ -179,10 +178,6 @@ class IRVController extends CanvasController {
     this.evSwitchStat = this.evSwitchStat.bind(this);
     this.evSwitchGroup = this.evSwitchGroup.bind(this);
     this.evSwitchGraphOrder = this.evSwitchGraphOrder.bind(this);
-    this.evShowVMs = this.evShowVMs.bind(this);
-    this.evHideVMs = this.evHideVMs.bind(this);
-    this.loadVMMetrics = this.loadVMMetrics.bind(this);
-    this.receivedVMMetrics = this.receivedVMMetrics.bind(this);
     if (options == null) { options = {}; }
     this.options = options;
     this.config_file = '/irv/configuration';
@@ -552,8 +547,6 @@ class IRVController extends CanvasController {
     Events.addEventListener(this.rackEl, 'rackSpaceFlipComplete', this.evFlipComplete);
     Events.addEventListener(this.rackEl, 'rackSpaceReset', this.evReset);
     Events.addEventListener(this.rackEl, 'rackSpaceClearDeselected', this.evClearDeselected);
-    Events.addEventListener(this.rackEl, 'rackSpaceShowVMs', this.evShowVMs);
-    Events.addEventListener(this.rackEl, 'rackSpaceCloseVMs', this.evHideVMs);
     Events.addEventListener(this.rackParent, 'scroll', this.evScrollRacks);
     Events.addEventListener(this.rackEl, 'redrawRackSpace', this.evRedrawRackSpace);
     Events.addEventListener(this.rackEl, 'getModifiedRackIds', this.getModifiedRackIds);
@@ -1210,14 +1203,9 @@ class IRVController extends CanvasController {
     // the observable loadingAPreset will call this function again.
     if (this.model.loadingAPreset() === true) { return; }
     clearInterval(this.metricTmr);
-    clearInterval(this.vmMetricTmr);
     if ((this.model.metricPollRate() !== 0) && !this.noMetricSelected(this.model.selectedMetric())) {
       this.loadMetrics();
       this.metricTmr   = setInterval(this.loadMetrics, this.model.metricPollRate());
-      if (this.showingVMs) {
-        this.loadVMMetrics();
-        return this.vmMetricTmr = setInterval(this.loadVMMetrics, this.model.metricPollRate(), this.vHostId);
-      }
     }
   }
 
@@ -1273,21 +1261,18 @@ class IRVController extends CanvasController {
   }
 
 
-  // metricLevel model property subscriber. Resets poller; switching between polling the metrics and the vm group metrics or fetching all
+  // metricLevel model property subscriber. Resets poller; switching between polling the metrics or fetching all
   // as necessary
   switchMetricLevel(metric_level) {
-    const switch_to_vms   = (this.currentMetricLevel !== ViewModel.METRIC_LEVEL_VHOSTS) && (metric_level === ViewModel.METRIC_LEVEL_VHOSTS);
-    const switch_from_vms = (this.currentMetricLevel === ViewModel.METRIC_LEVEL_VHOSTS) && (metric_level !== ViewModel.METRIC_LEVEL_VHOSTS);
     const switch_to_all   = (this.currentMetricLevel !== ViewModel.METRIC_LEVEL_ALL) && (metric_level === ViewModel.METRIC_LEVEL_ALL);
     const switch_from_all = (this.currentMetricLevel === ViewModel.METRIC_LEVEL_ALL) && (metric_level !== ViewModel.METRIC_LEVEL_ALL);
 
-    // when switching to or from VMs clear metric data, change sort order options and reset metric poller
-    if (switch_to_vms || switch_from_vms || switch_to_all || switch_from_all) {
+    if (switch_to_all || switch_from_all) {
       const groups      = this.model.groups();
       const vals        = {};
       for (var group of Array.from(groups)) { vals[group] = {}; }
       this.model.metricData({ values: vals });
-      this.model.graphOrders(switch_to_vms ? ViewModel.VHOST_CHART_ORDERS : ViewModel.NORMAL_CHART_ORDERS);
+      this.model.graphOrders(ViewModel.NORMAL_CHART_ORDERS);
       this.resetMetricPoller();
     }
 
@@ -1551,7 +1536,7 @@ class IRVController extends CanvasController {
     const selected_metric = this.model.selectedMetric();
     if (this.noMetricSelected(selected_metric)) { return; }
 
-    const metric_api = this.model.metricLevel() === ViewModel.METRIC_LEVEL_VHOSTS ? this.resources.vhMetricData : this.resources.metricData;
+    const metric_api = this.resources.metricData;
 
     new Request.JSON({
       url        : this.resources.path + metric_api.replace(/\[\[metric_id\]\]/g, selected_metric) + '?' + (new Date()).getTime(),
@@ -1559,12 +1544,6 @@ class IRVController extends CanvasController {
       headers    : {'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content')},
       data       : this.apiFilter
     }).send();
-
-    // also grab vms if viewing all
-    if (this.model.metricLevel() === ViewModel.METRIC_LEVEL_ALL) {
-      this.vHostId = null;
-      return this.loadVMMetrics();
-    }
   }
 
 
@@ -1594,20 +1573,13 @@ class IRVController extends CanvasController {
   // Avoids the issue when metrics arrives before full irv is rendered, and fails to draw some elements.
   displayTheMetrics(metrics) {
     this.pieCountdown.reStart(this.model.metricPollRate()/1000);
-    return this.dispTmr = setTimeout((this.model.metricLevel() === ViewModel.METRIC_LEVEL_VHOSTS ? this.displayVHMetrics : this.displayMetrics), 50, metrics);
+    return this.dispTmr = setTimeout(this.displayMetrics, 50, metrics);
   }
 
   // parses metric data, dertermines max/min if no colour map exists for the selected metric and updates filtered devices where necessary
   // @param  metrics metric data as received from the server
   displayMetrics(metrics) {
-    // VM metrics arrive in a separate request so maintain any existing VM metric data
-    const old_metrics = this.model.metricData();
-    const {
-      vms
-    } = old_metrics.values;
-
     metrics = this.parser.parseMetrics(metrics);
-    metrics.values.vms = vms;
 
     const filters  = this.model.filters();
     const filter   = filters[metrics.metricId];
@@ -1680,78 +1652,6 @@ class IRVController extends CanvasController {
 
   // parses metric data, dertermines max/min if no colour map exists for the selected metric and updates filtered devices where necessary
   // @param  metrics metric data as received from the server
-  displayVHMetrics(metrics) {
-    // VM metrics arrive in a separate request so maintain any existing VM metric data
-    const old_metrics = this.model.metricData();
-    const {
-      vms
-    } = old_metrics.values;
-
-    metrics = this.parser.parseVHMetrics(metrics);
-    metrics.values.vms = vms;
-
-    const filters  = this.model.filters();
-    const filter   = filters[metrics.metricId];
-    const col_maps = this.model.colourMaps();
-    const col_map  = col_maps[metrics.metricId];
-
-    if (col_map != null) {
-      if ((col_map.original_low == null) || (col_map.original_high == null)) {
-        col_map.original_low = col_map.low;
-        col_map.original_high = col_map.high;
-        col_maps[metrics.metricId] = col_map;
-        this.model.colourMaps(col_maps);
-      }
-      this.model.metricData(metrics);
-      if ((filter.max !== col_map.high) || (filter.min !== col_map.low)) { this.applyFilter(); }
-    } else {
-      // no default colour map or filter defined, calculate now
-      let range;
-      if (filters[metrics.metricId] == null) {
-        filters[metrics.metricId] = {};
-        this.model.filters(filters);
-      }
-
-      // determin min max
-      const group_vals = metrics.values[this.model.metricLevel()];
-      let min        = Number.MAX_VALUE;
-      let max        = -Number.MAX_VALUE;
-      for (var id in group_vals) {
-        var val = Number(group_vals[id]);
-        if (val.min < min) { ({
-          min
-        } = val); }
-        if (val.max > max) { ({
-          max
-        } = val); }
-      }
-
-      // If the min and max are equal (in the not very probable scenario where every device has the same value for the selectedMetric), 
-      // then separate them by the IRVController.RANGE_EXPANSION_FACTOR
-      if (min === max) {
-        min -= min*IRVController.RANGE_EXPANSION_FACTOR;
-        max += max*IRVController.RANGE_EXPANSION_FACTOR;
-      }
-
-      if (min === Number.MAX_VALUE) {
-        // no metrics to determin min/max so set to zero. The small range value prevents
-        // division by zero errors elsewhere
-        range = 1e-100;
-        min   = 0;
-        max   = 0;
-      } else {
-        range = max - min;
-      }
-
-      col_maps[metrics.metricId] = { low: min, high: max, range, inverted: false, original_low: min, original_high: max };
-
-      this.model.colourMaps(col_maps);
-      this.model.metricData(metrics);
-    }
-
-    if (this.model.showingFullIrv()) { return this.hideUpdateMsg(); }
-  }
-
   toggleViewIfNecessary(metrics) {
     const devicesMetrics = Object.keys(metrics.selection.devices).length;
     const chassisMetrics = Object.keys(metrics.selection.chassis).length;
@@ -2515,56 +2415,6 @@ class IRVController extends CanvasController {
       default:
         if (this.model.selectedMetricStat() !== null) { return this.model.selectedMetricStat(IRVController.DEFAULT_METRIC_STAT); }
     }
-  }
-
-
-  // rack view show VM event handler, starts VM metric poller and displays VM popup
-  // @param  ev  the event object which invoked execution
-  evShowVMs(ev) {
-    this.vHostId     = ev.data;
-    this.showingVMs  = true;
-
-    if ((this.model.selectedMetric() == null) || (this.model.metricPollRate() === 0)) { return; }
-
-    this.vmMetricTmr = setInterval(this.loadVMMetrics, this.model.metricPollRate());
-    return this.loadVMMetrics();
-  }
-
-
-  // rack view hide VM event handler, stops VM metric poller
-  // @param  ev  the event object which invoked execution
-  evHideVMs(ev) {
-    this.showingVMs = false;
-    return clearInterval(this.vmMetricTmr);
-  }
-
-
-  // sends request for VM metrics to the server
-  loadVMMetrics() {
-    return new Request.JSON({
-      url        : this.resources.path + this.resources.vmMetricData.replace(/\[\[metric_id\]\]/g, this.model.selectedMetric()) + '?' + (new Date()).getTime(),
-      method     : 'post',
-      onComplete : this.receivedVMMetrics,
-      headers    : { 'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content') },
-      data       : { host_id: this.vHostId }
-    }).send();
-  }
-
-
-  // called when the server responds with VM metrics, updates model with new metric data
-  receivedVMMetrics(vm_metrics) {
-    const metrics     = this.parser.parseVMMetrics(vm_metrics);
-    const old_metrics = this.model.metricData();
-    const groups      = this.model.groups();
-
-    // all other metrics arrive in a separate request so preserve any metric data
-    // for those groups
-    for (var group of Array.from(groups)) {
-      if (group === 'vms') { continue; }
-      metrics.values[group] = old_metrics.values[group];
-    }
-
-    return this.model.metricData(metrics);
   }
 
   debug(...msg) {

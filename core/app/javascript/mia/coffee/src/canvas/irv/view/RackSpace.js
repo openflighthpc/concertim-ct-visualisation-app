@@ -28,7 +28,6 @@ import Chart from 'canvas/irv/view/IRVChart';
 import MessageHint from 'canvas/irv/view/MessageHint';
 import RackHint from 'canvas/irv/view/RackHint';
 import ContextMenu from 'canvas/irv/view/ContextMenu';
-import VMDialogue from 'canvas/irv/view/VMDialogue';
 import ViewModel from 'canvas/irv/ViewModel';
 import Link from 'canvas/irv/view/Link';
 import ImageLink from 'canvas/irv/view/ImageLink';
@@ -96,7 +95,6 @@ class RackSpace extends CanvasSpace {
     this.evContextClick = this.evContextClick.bind(this);
     this.dragDeviceFromMenu = this.dragDeviceFromMenu.bind(this);
     this.stopDraggingDeviceFromMenu = this.stopDraggingDeviceFromMenu.bind(this);
-    this.evCloseVM = this.evCloseVM.bind(this);
     this.evRedrawComplete = this.evRedrawComplete.bind(this);
     this.switchView = this.switchView.bind(this);
     this.setMetricLevel = this.setMetricLevel.bind(this);
@@ -360,7 +358,6 @@ class RackSpace extends CanvasSpace {
   setLayout() {
     const showing_all = this.scale === RackSpace.MIN_ZOOM;
   
-    if (this.vmDialogue != null) { this.vmDialogue.updateLayout(); }
     if (this.chart != null) { this.chart.updateLayout(); }
     if (this.model.showingRacks()) { this.arrangeRacks(); }
     this.setZoomPresets();
@@ -1970,8 +1967,6 @@ class RackSpace extends CanvasSpace {
         return window.location = "/irv";
       case 'startDraggingDevice':
         return this.startDraggingDevice();
-      case 'showVMs':
-        return this.showVMs(params[1]);
     }
   }
 
@@ -2007,25 +2002,6 @@ class RackSpace extends CanvasSpace {
       this.clickAssigned = true;
       this.dragging      = false;
     }
-  }
-
-  // opens the VM popup for a particular host and dispatches show VMs custom event
-  // @param  vh_device_id  the device id of the host; note this is different from the host id
-  showVMs(vh_device_id) {
-    if (this.vmDialogue != null) { return; }
-    this.vmDialogue = new VMDialogue(vh_device_id, (this.rackEl.parentElement != null ? this.rackEl.parentElement : this.rackEl.parentNode), this.model);
-    Events.addEventListener((this.rackEl.parentElement != null ? this.rackEl.parentElement : this.rackEl.parentNode), 'vmdialogueclose', this.evCloseVM);
-    return Events.dispatchEvent(this.rackEl, 'rackSpaceShowVMs', vh_device_id);
-  }
-
-
-  // vm popup close event handler, destroys the popup and dispatches close VMs custom event 
-  // @param  ev  the event object which invoked execution
-  evCloseVM(ev) {
-    ev.stopPropagation();
-    Events.removeEventListener((this.rackEl.parentElement != null ? this.rackEl.parentElement : this.rackEl.parentNode), 'vmdialogueclose', this.evCloseVM);
-    this.vmDialogue = null;
-    return Events.dispatchEvent(this.rackEl, 'rackSpaceCloseVMs');
   }
 
 
@@ -2194,8 +2170,7 @@ class RackSpace extends CanvasSpace {
     return this.draw();
   }
 
-  // metricLevel model subscriber, creates a selection of relevant devices when changing metric level, i.e. selects only virtual hosts
-  // when switching to virtual host metrics
+  // metricLevel model subscriber, creates a selection of relevant devices when changing metric level.
   // @param  metric_level  the new value of metric level
   setMetricLevel(metric_level) {
     let device, group, group_members, id;
@@ -2237,15 +2212,6 @@ class RackSpace extends CanvasSpace {
         selection[device.instances[0].group][device.instances[0].id] = true;
       }
     }
-
-    //VIRTUAL HOSTS
-    if (metric_level === ViewModel.METRIC_LEVEL_VHOSTS) {
-        for (id in device_lookup.devices) {
-          device = device_lookup.devices[id];
-          if (this.groupAndNotInGroup(group_selected, id, group_members != null ? group_members.deviceIds : undefined) || this.selectionAndNotSelected(device) || this.noHoldingAndInHolding(device)) { continue; }
-          if (device.instances[0].virtualHost) { selection[device.instances[0].group][device.instances[0].id] = true; }
-        }
-      }
 
     this.model.activeSelection(true);
     return this.model.selectedDevices(selection);

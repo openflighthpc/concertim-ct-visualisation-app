@@ -31,14 +31,12 @@ class ViewModel extends CanvasViewModel {
 
     this.METRIC_LEVEL_DEVICES  = 'devices';
     this.METRIC_LEVEL_CHASSIS  = 'chassis';
-    this.METRIC_LEVEL_VHOSTS   = 'vhosts';
     this.METRIC_LEVEL_ALL      = 'all';
     this.METRIC_NO_VALUE       = 'No metric selected';
     this.GROUP_NO_VALUE        = 'No group selected';
     this.METRIC_NOT_VALID      = 'Metric not valid';
 
     this.NORMAL_CHART_ORDERS  = [ 'ascending', 'descending', 'physical position', 'name' ];
-    this.VHOST_CHART_ORDERS   = [ 'maximum', 'minimum', 'average', 'physical position', 'name' ];
 
     this.EXCLUDED_METRICS     = ['ct.capacity.rack','ct.sensor'];
 
@@ -65,7 +63,7 @@ class ViewModel extends CanvasViewModel {
     this.viewMode  = ko.observable(ViewModel.INIT_VIEW_MODE);
     this.viewModes = ko.observable([ViewModel.VIEW_MODE_IMAGES, ViewModel.VIEW_MODE_METRICS, ViewModel.VIEW_MODE_BOTH]);
 
-    // string, metric level determines wether to display chassis, device or virtual host level metrics
+    // string, metric level determines wether to display chassis or device level metrics.
     this.metricLevel = ko.observable(ViewModel.INIT_METRIC_LEVEL);
 
     // string, chart sort order
@@ -104,7 +102,7 @@ class ViewModel extends CanvasViewModel {
     this.highlighted = ko.observable([]);
 
     // id groups, both group and id are required to identify an individual device
-    this.groups = ko.observable(['racks', 'chassis', 'devices', 'vms']);
+    this.groups = ko.observable(['racks', 'chassis', 'devices']);
 
     // temporary storage of device definitions (used in synchronising changes to devices)
     this.modifiedRackDefs = ko.observable();

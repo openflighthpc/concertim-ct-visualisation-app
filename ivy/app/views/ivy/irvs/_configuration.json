@@ -127,9 +127,7 @@
         "metricData"      : "/api/v1/irv/metrics/[[metric_id]]",
         "hintData"        : "/api/v1/irv/[[group]]/[[device_id]]/tooltip",
         "thresholds"      : "/api/v1/irv/thresholds",
-        "breaches"        : "/api/v1/metrics/breaches",
-        "vhMetricData"    : "/-/api/v1/groups/vshosts/[[metric_id]]",
-        "vmMetricData"    : "/-/api/v1/metrics/virtual_server/[[metric_id]]"
+        "breaches"        : "/api/v1/metrics/breaches"
       },
 
       "*COMMENT*" : "Location of dummy responses for offline mode",
@@ -140,9 +138,7 @@
         "rackDefinitions" : "racks",
         "metricData"      : "[[metric_id]]",
         "hintData"        : "racks/[[device_id]]/tooltip",
-        "thresholds"      : "thresholds",
-        "vhMetricData"    : "groups/vshosts/[[metric_id]]",
-        "vmMetricData"    : "metrics/virtual_server/[[metric_id]]"
+        "thresholds"      : "thresholds"
       }
     }
   },
@@ -464,8 +460,7 @@
         "ManagedDevice"       : "managed",
         "MiscellaneousDevice" : "misc",
         "Switch"              : "switch",
-        "Server"              : "server",
-        "VirtualHost"         : "virtual_host"
+        "Server"              : "server"
       },
 
       "options":
@@ -812,15 +807,6 @@
         "stroke"      : "#000000",
         "strokeWidth" : 2,
         "alpha"       : 0.5
-      },
-
-      "VMDIALOGUE":
-      {
-        "width"        : 0.5,
-        "height"       : 0.5,
-        "noMetricsMsg" : "No metric data to display",
-        "msgFont"      : "12px Verdana",
-        "msgFill"      : "#0"
       },
 
       "IRVCHART":

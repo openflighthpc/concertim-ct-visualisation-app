@@ -496,6 +496,9 @@ class LBC {
         var datum = this.data[idx];
 
         // a datum won't necessarily have an associated device, in the case of a VM
+        //
+        // We no longer have VMs.  I have no idea if we still need this section
+        // of code.
         if ((datum.instances != null) && (datum.instances.length > 0)) {
           var device = datum.instances[0];
           selection[device.group][device.id != null ? device.id : device.itemId] = true;

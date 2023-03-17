@@ -33,7 +33,6 @@ import FilterBar from 'canvas/common/widgets/FilterBar';
 import CanvasViewModel from 'canvas/common/CanvasViewModel';
 import ViewModel from 'canvas/irv/ViewModel';
 import StaticGroupManager from 'canvas/common/util/StaticGroupManager';
-import VMDialogue from 'canvas/irv/view/VMDialogue';
 import IRVChart from 'canvas/irv/view/IRVChart';
 import Profiler from 'Profiler';
 
@@ -361,13 +360,6 @@ class Configurator {
                 FilterBar.DEFAULT_ALIGN = FilterBar.ALIGN_BOTTOM;
     }
  
-    const vm_dialogue_config        = config.RACKSPACE.LBC.VMDIALOGUE;
-    VMDialogue.WIDTH          = vm_dialogue_config.width;
-    VMDialogue.HEIGHT         = vm_dialogue_config.height;
-    VMDialogue.NO_METRICS_MSG = vm_dialogue_config.noMetricsMsg;
-    VMDialogue.MSG_FONT       = vm_dialogue_config.msgFont;
-    VMDialogue.MSG_FILL       = vm_dialogue_config.msgFill;
-
     return config = null;
   }
  

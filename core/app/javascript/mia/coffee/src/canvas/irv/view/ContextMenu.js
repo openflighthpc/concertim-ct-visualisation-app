@@ -41,7 +41,7 @@ class ContextMenu {
 
 
   show(device, x, y, available_slot) {
-    let aspect, chassis_id, chassis_name, child, device_id, device_name, device_type, empty_column, empty_row, empty_u, is_virtual_host, rack_id, rack_name, slot_id, vh_group_id;
+    let aspect, chassis_id, chassis_name, child, device_id, device_name, device_type, empty_column, empty_row, empty_u, rack_id, rack_name, slot_id;
     this.visible    = true;
     const option_keys = ['common'];
 
@@ -60,10 +60,6 @@ class ContextMenu {
         case 'devices':
           device_id   = child.id;
           device_name = child.name != null ? child.name : child.id;
-
-          var metric_data = this.model.metricData();
-          vh_group_id = (metric_data.values.devices[device_id] != null) ? metric_data.values.devices[device_id].groupId : null;
-          is_virtual_host = this.model.showingFullIrv() && (device.type === 'VirtualHost') ? true : null;
           break;
         case 'chassis':
           chassis_id   = child.id;
@@ -131,8 +127,6 @@ class ContextMenu {
           var on_click   = disabled ? null : option.onClick;
 
           piece = Util.substitutePhrase(piece, 'view_devices', view_devices);
-          piece = Util.substitutePhrase(piece, 'is_virtual_host', is_virtual_host);
-          piece = Util.substitutePhrase(piece, 'vh_group_id', vh_group_id);
           piece = Util.substitutePhrase(piece, 'device_id', device_id);
           piece = Util.substitutePhrase(piece, 'device_name', device_name);
           piece = Util.substitutePhrase(piece, 'device_type', device_type);
@@ -151,8 +145,6 @@ class ContextMenu {
 
           if (!disabled) {
             if (option_url != null) {
-              option_url = Util.substitutePhrase(option_url, 'is_virtual_host', is_virtual_host);
-              option_url = Util.substitutePhrase(option_url, 'vh_group_id', vh_group_id);
               option_url = Util.substitutePhrase(option_url, 'device_id', device_id);
               option_url = Util.substitutePhrase(option_url, 'device_name', device_name);
               option_url = Util.substitutePhrase(option_url, 'device_type', device_type);
@@ -170,8 +162,6 @@ class ContextMenu {
             }
 
             if (on_click != null) {
-              on_click = Util.substitutePhrase(on_click, 'is_virtual_host', is_virtual_host);
-              on_click = Util.substitutePhrase(on_click, 'vh_group_id', vh_group_id);
               on_click = Util.substitutePhrase(on_click, 'device_id', device_id);
               on_click = Util.substitutePhrase(on_click, 'device_name', device_name);
               on_click = Util.substitutePhrase(on_click, 'device_type', device_type);
