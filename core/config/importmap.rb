@@ -1,5 +1,6 @@
 # Pin npm packages by running ./bin/importmap
 
+pin "application", to: "application.js"
 pin "IRV", to: "IRV.js"
 pin "Profiler", to: "mia/javascript/irv/NullProfiler.js"
 pin "util/ComboBox", to: "mia/javascript/util/ComboBox.js"

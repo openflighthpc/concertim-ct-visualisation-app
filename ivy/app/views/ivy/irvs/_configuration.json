@@ -98,7 +98,7 @@
       "*COMMENT*" : "Filename given to exported data",
       "filename"  : "[[metric_name]]_[[day]]-[[month]]-[[year]]_[[hours]]-[[minutes]]-[[seconds]].csv",
       "*COMMENT*" : "Outputted data header",
-      "header"    : "Metric Name,[[metric_name]]\nUnits,[[metric_units]]\nDevice Name,Metric Value",
+      "header"    : "Metric Name,[[metric_name]]\nUnits,[[metric_units]]\nDevice Name,Metric Value\n",
       "*COMMENT*" : "Format of each outputted metric",
       "record"    : "[[device_name]],[[value]]"
     },
