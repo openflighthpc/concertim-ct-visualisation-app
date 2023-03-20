@@ -1,0 +1,20 @@
+---
+device:
+  type: HwRack
+  description: Rack
+:metadata:
+  managed: false
+  images:
+    rack_repeat_1: misc_rack_600_repeat_1.png
+    rack_front_top: misc_rack_600_front_top.png
+    rack_rear_top: misc_rack_600_rear_top.png
+    rack_front_bottom: misc_rack_600_front_bottom.png
+    rack_rear_bottom: misc_rack_600_rear_bottom.png
+template_id: 1
+depth: 2
+height: 42
+
+# Rackable 3 means this template is nonrackable.  We ought to remove this.
+rackable: 3
+
+# version: 1

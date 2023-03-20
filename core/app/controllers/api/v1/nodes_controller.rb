@@ -21,7 +21,7 @@ class Api::V1::NodesController < Api::V1::ApplicationController
 
   def find_template
     # XXX Remove hardcoding here.  What do templates mean in the new cloud world?
-    template_id = 613
+    template_id = 2
     Ivy::Template.find(template_id)
   end
 
