@@ -18,9 +18,8 @@ Rails.application.routes.draw do
       namespace version do
 
         resources :racks
-
+        resources :templates, only: [:index]
         resources :nodes, only: [:create]
-
         resources :devices, only: [:index, :show, :update, :destroy]
 
         namespace :irv do

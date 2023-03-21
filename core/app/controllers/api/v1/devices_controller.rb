@@ -8,6 +8,7 @@ class Api::V1::DevicesController < Api::V1::ApplicationController
 
   def show
     @device = Api::V1::DevicePresenter.new(@device)
+    @include_template_details = true
     render
   end
 

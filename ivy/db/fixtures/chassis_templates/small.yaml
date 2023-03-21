@@ -1,0 +1,27 @@
+device:
+  description: "m1.small: 1 VCPU; 2GB RAM; 10GB Disk"
+height: 1
+depth: 2
+:metadata:
+  padding:
+    left: 0
+    bottom: 0
+    right: 1
+    top: 0
+  images:
+    front: small-front.png
+    rear: small-rear.png
+
+# XXX For now we continue to use `template_id` as the primary key.  Would seem
+# a much better idea to change this to ID.
+template_id: 2
+
+# XXX Probably wanted/needed.
+# schema_version: 1
+# version: 1
+
+# XXX Something like this will need to be added.  Need to consider how the
+# flavour_id is determined.
+# openstack:
+#   flavour_id: 5caeaa46-40b3-4cf9-a0ff-5f6caea4b8ac
+#   flavour_name: m1.small

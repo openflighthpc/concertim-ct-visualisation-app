@@ -109,7 +109,7 @@
       "*COMMENT*"          : "Flag used to switch to and from offline mode",
       "live"               : true,
       "*COMMENT*"          : "First place to look for device images",
-      "primaryImagePath"   : "/images/irv/concurrent-thinking/",
+      "primaryImagePath"   : "/images/irv/concertim/",
       "*COMMENT*"          : "Second place to look for device images should primary location return a 404",
       "secondaryImagePath" : "/images/irv/customer/",
       "*COMMENT*"          : "Number of server requests made during initialisation",
@@ -454,7 +454,7 @@
       "*COMMENT*" : "e.g. for a rack and chassis options will also be displayed for a device",
       "verbose"           : false,
       "urlInternalPrefix" : "internal::",
-      "spacer"            : "<img src='/images/irv/concurrent-thinking/spacer.gif'>",
+      "spacer"            : "<img src='/images/irv/concertim/spacer.gif'>",
       "commandModel"      : "Command",
 
       "aspectMap":

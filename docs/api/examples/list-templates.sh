@@ -13,19 +13,7 @@ BASE_URL="https://${CONCERTIM_HOST}/--/api/v1"
 # generated LOGIN and PASSWORD environment variables must be set.
 AUTH_TOKEN=${AUTH_TOKEN:-$("${SCRIPT_DIR}"/get-auth-token.sh)}
 
-RACK_ID="${1}"
-RECURSE="${2}"
-
-if [ "${RECURSE}" == "recurse" ] ; then
-  PARAMS="?recurse=true"
-else
-  PARAMS=""
-fi
-
-# Delete the rack and all of its devices.
-# If the `recurse=true` get parameter is not provided, only empty racks will be
-# deleted.
 curl -s -k \
-  -H 'Accept: application/json' \
+  -H "Accept: application/json" \
   -H "Authorization: Bearer ${AUTH_TOKEN}" \
-  -X DELETE "${BASE_URL}/racks/${RACK_ID}${PARAMS}"
+  -X GET "${BASE_URL}/templates"

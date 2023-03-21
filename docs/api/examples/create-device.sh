@@ -18,6 +18,7 @@ NAME=${1}
 RACK_ID=${2}
 FACING=${3}
 START_U=${4}
+TEMPLATE_ID=${5}
 
 BODY=$(jq --null-input \
     --arg name "${NAME}" \
@@ -25,8 +26,10 @@ BODY=$(jq --null-input \
     --arg facing "${FACING}" \
     --arg start_u "${START_U}" \
     --arg rack_id "${RACK_ID}" \
+    --arg template_id "${TEMPLATE_ID}" \
     '
 {
+    "template_id": $template_id,
     "device": {
         "name": $name,
         "description": $description,
