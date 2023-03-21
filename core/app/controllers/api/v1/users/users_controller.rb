@@ -1,7 +1,7 @@
 class Api::V1::Users::UsersController < Api::V1::Users::BaseController
 
   #
-  # GET /--/api/v1/users/users/can_i
+  # GET /api/v1/users/users/can_i
   #
   # Endpoint for cancan check - this just passes the "can" request on to the
   # cancan ability checker - used to check yourself and your own abilities.

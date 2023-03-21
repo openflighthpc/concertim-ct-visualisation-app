@@ -6,7 +6,7 @@ Rails.application.routes.draw do
 
   # We need to redirect here, otherwise the devise redirections will take us to
   # the legacy sign up page.
-  root to: redirect('/--/irv')
+  root to: redirect('/irv')
 
   # API routes
   #

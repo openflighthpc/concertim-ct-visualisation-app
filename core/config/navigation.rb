@@ -7,7 +7,7 @@ SimpleNavigation::Configuration.run do |navigation|
       primary.item :youraccount, "#{current_user.firstname} #{current_user.surname}", '#',
         align: :right,
         icon: :youraccount,
-        highlights_on: /--\/users/ do |acc|
+        highlights_on: /\/users/ do |acc|
           acc.item :acc_logout, 'Log out', uma_engine.destroy_user_session_path, :icon => :logout, :link => {:class => 'logout'}
         end
 
@@ -24,7 +24,7 @@ SimpleNavigation::Configuration.run do |navigation|
       primary.item :login, 'Log in', uma_engine.new_user_session_path,
         icon: :login,
         align: :right,
-        highlights_on: /--\/users\/sign_in/
+        highlights_on: /\/users\/sign_in/
     end
   end
 end

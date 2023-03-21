@@ -44,7 +44,7 @@ class Api::V1::Irv::RackviewPresetsController < Api::V1::Irv::BaseController
   # Example JS request to create a new preset
   #
   # var myRequest = new Request({
-  #   url: '/--/api/irv/rackview_presets/26',
+  #   url: '/api/irv/rackview_presets/26',
   #   method: 'post'
   # }); 
   #
@@ -68,7 +68,7 @@ class Api::V1::Irv::RackviewPresetsController < Api::V1::Irv::BaseController
   # Example JS request to delete a preset
   #
   # var myRequest = new Request({
-  #   url: '/--/api/irv/rackview_presets/23',
+  #   url: '/api/irv/rackview_presets/23',
   #   method: 'post'
   # });
   #

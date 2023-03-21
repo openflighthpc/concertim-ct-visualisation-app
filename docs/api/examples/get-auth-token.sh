@@ -6,7 +6,7 @@ set -o pipefail
 
 # The base URL against which relative URLs are constructed.
 CONCERTIM_HOST=${CONCERTIM_HOST:-command.concertim.alces-flight.com}
-BASE_URL="https://${CONCERTIM_HOST}/--"
+BASE_URL="https://${CONCERTIM_HOST}"
 
 LOGIN=${LOGIN:-$1}
 PASSWORD=${PASSWORD:-$2}
