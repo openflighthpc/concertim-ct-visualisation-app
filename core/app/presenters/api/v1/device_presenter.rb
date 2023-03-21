@@ -53,5 +53,10 @@ module Api::V1
         nil
       end
     end
+
+    def template
+      # XXX Consider using a presenter here too.
+      o.template
+    end
   end
 end
