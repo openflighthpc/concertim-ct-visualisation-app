@@ -20,13 +20,12 @@ class Api::V1::NodesController < Api::V1::ApplicationController
   private
 
   def find_template
-    # XXX Remove hardcoding here.  What do templates mean in the new cloud world?
-    template_id = 2
+    template_id = params.require(:template_id)
     Ivy::Template.find(template_id)
   end
 
   def device_params
-    permitted_params.except(:location)
+    permitted_params.except(:location, :template_id)
   end
 
   def chassis_params

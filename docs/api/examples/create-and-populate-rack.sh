@@ -31,7 +31,8 @@ NUM_RACKS=$("${SCRIPT_DIR}/list-racks.sh" | jq 'length')
 NAME_PREFIX=${NUM_RACKS}
 
 # Create a badly named and located device in that empty rack.
-OUTPUT=$("${SCRIPT_DIR}/create-device.sh" comp-${NAME_PREFIX}01 "${RACK_ID}" f 11)
+LARGE_TEMPLATE_ID=4
+OUTPUT=$("${SCRIPT_DIR}/create-device.sh" comp-${NAME_PREFIX}01 "${RACK_ID}" f 11 "${LARGE_TEMPLATE_ID}")
 if [ $? -ne 0 ] ; then
     # Errors will have been sent to stderr.
     exit
@@ -61,10 +62,13 @@ echo "Moved device" >&2
 "${SCRIPT_DIR}/show-device.sh" "${DEVICE_ID}"
 echo
 
-for i in $(seq -w 02 40) ; do
+SMALL_TEMPLATE_ID=2
+# The offset caused by using a large template for the first node.
+OFFSET=2
+for i in $(seq -w 02 38) ; do
   name="comp${NAME_PREFIX}${i}"
-  start_u=${i}
-  OUTPUT=$("${SCRIPT_DIR}/create-device.sh" ${name} "${RACK_ID}" f ${start_u})
+  start_u=$(( 10#${i} + ${OFFSET} ))
+  OUTPUT=$("${SCRIPT_DIR}/create-device.sh" ${name} "${RACK_ID}" f ${start_u} "${SMALL_TEMPLATE_ID}")
   if [ $? -ne 0 ] ; then
       # Errors will have been sent to stderr.
       exit
