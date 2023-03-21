@@ -11,11 +11,7 @@ input.drop_down_button {
   margin-left: -5px;
   margin-top: -2px;
   vertical-align: middle;
-  // XXX This doesn't work.  It needs to load the asset
-  // `/assets/arrows/hollow/blue/down-99f2a3ee77fd8484babcae5550fd065ea485d563bc877cedca51b66541121954.gif`
-  // Either get that asset embedded in here somehow or skip the asset pipeline
-  // for it.
-  background-image: url(/images/arrows/hollow/blue/down.gif) !important;
+  background-image: url(arrows/hollow/blue/down.gif) !important;
   background-repeat: no-repeat;
   background-position: center center !important;
   background-size: 7px 6px;
