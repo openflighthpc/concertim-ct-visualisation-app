@@ -1,5 +1,5 @@
 device:
-  description: "m1.small flavour: 1 VCPU; 2GB RAM; 10GB Disk"
+  description: "m1.small: 1 VCPU; 2GB RAM; 10GB Disk"
 height: 1
 depth: 2
 :metadata:

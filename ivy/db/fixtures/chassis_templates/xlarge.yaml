@@ -1,5 +1,5 @@
 device:
-  description: "m1.xlarge flavour: 8 VCPUs; 16GB RAM; 30GB Disk"
+  description: "m1.xlarge: 8 VCPUs; 16GB RAM; 30GB Disk"
 height: 4
 depth: 2
 :metadata:
