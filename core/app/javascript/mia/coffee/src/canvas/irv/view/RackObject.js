@@ -343,7 +343,7 @@ class RackObject extends RackSpaceObject {
   create_request(ev) {
     return new Request.JSON({
       headers    : {'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content')},
-      url: '/--/api/v1/irv/'+this.group+'/'+this.id+'/'+this.conf.action+'/',
+      url: '/api/v1/irv/'+this.group+'/'+this.id+'/'+this.conf.action+'/',
       onSuccess: this.sendConfirmation,
       onFail: this.loadError,
       onError: this.loadError,
