@@ -11,8 +11,6 @@ import ViewModel from 'canvas/irv/ViewModel';
 import  Rack from 'canvas/irv/view/Rack';
 import  Chassis from 'canvas/irv/view/Chassis';
 import  Machine from 'canvas/irv/view/Machine';
-import  PowerStrip from 'canvas/irv/view/PowerStrip';
-import  Socket from 'canvas/irv/view/Socket';
 import  Util from 'canvas/common/util/Util';
 import  Events from 'canvas/common/util/Events';
 import  Profiler from 'Profiler';
@@ -43,7 +41,7 @@ class ContextMenu {
 
 
   show(device, x, y, available_slot) {
-    let aspect, chassis_id, chassis_name, child, device_id, device_name, device_type, empty_column, empty_row, empty_u, is_virtual_host, rack_id, rack_name, slot_id, vh_group_id;
+    let aspect, chassis_id, chassis_name, child, device_id, device_name, device_type, empty_column, empty_row, empty_u, rack_id, rack_name, slot_id;
     this.visible    = true;
     const option_keys = ['common'];
 
@@ -52,14 +50,6 @@ class ContextMenu {
       device_name = device.name;
       device_type = (device.type != null) ? ContextMenu.DEVICE_TYPE_URL_MAP[device.type] : undefined;
       child       = device;
-
-      if (device instanceof Socket) {
-        option_keys.push('sockets');
-      }
-      if (device instanceof PowerStrip) {
-        option_keys.push('powerStrips');
-      }
-
     } else {
       option_keys.push('global');
     }
@@ -70,10 +60,6 @@ class ContextMenu {
         case 'devices':
           device_id   = child.id;
           device_name = child.name != null ? child.name : child.id;
-
-          var metric_data = this.model.metricData();
-          vh_group_id = (metric_data.values.devices[device_id] != null) ? metric_data.values.devices[device_id].groupId : null;
-          is_virtual_host = this.model.showingFullIrv() && (device.type === 'VirtualHost') ? true : null;
           break;
         case 'chassis':
           chassis_id   = child.id;
@@ -114,30 +100,15 @@ class ContextMenu {
     let total_clickable_options_added = 0;
     for (var option_set in ContextMenu.OPTIONS) {
       if (option_keys.indexOf(option_set) !== -1) {
-        var view_devices, view_hide_power_strips;
+        var view_devices;
         var idx = parsed.length;
         parsed.push([]);
 
         var total_options = [].concat(ContextMenu.OPTIONS[option_set]);
 
-        if ((option_set === "devices") || (option_set === "chassis")) {
-          if (this.model.showingRacks() && !this.model.showingFullIrv() && this.model.showingPowerStrips()) {
-            total_options = total_options.concat(device.getPowerSuppliesContextMenuOptions());
-          }
-        } else if (option_set === "sockets") {
-          total_options = total_options.concat(device.getContextMenuOption());
-        }
-
         if (option_set === "racks") { 
           if (device.children.length > 0) {
             view_devices = "View devices";
-          }
-          if (this.model.powerStrips().length > 0) {
-            if (this.model.showingPowerStrips()) {
-              view_hide_power_strips = "Hide PDUs";
-            } else {
-              view_hide_power_strips = "View PDUs";
-            }
           }
         }
 
@@ -156,9 +127,6 @@ class ContextMenu {
           var on_click   = disabled ? null : option.onClick;
 
           piece = Util.substitutePhrase(piece, 'view_devices', view_devices);
-          piece = Util.substitutePhrase(piece, 'view_hide_power_strips', view_hide_power_strips);
-          piece = Util.substitutePhrase(piece, 'is_virtual_host', is_virtual_host);
-          piece = Util.substitutePhrase(piece, 'vh_group_id', vh_group_id);
           piece = Util.substitutePhrase(piece, 'device_id', device_id);
           piece = Util.substitutePhrase(piece, 'device_name', device_name);
           piece = Util.substitutePhrase(piece, 'device_type', device_type);
@@ -177,8 +145,6 @@ class ContextMenu {
 
           if (!disabled) {
             if (option_url != null) {
-              option_url = Util.substitutePhrase(option_url, 'is_virtual_host', is_virtual_host);
-              option_url = Util.substitutePhrase(option_url, 'vh_group_id', vh_group_id);
               option_url = Util.substitutePhrase(option_url, 'device_id', device_id);
               option_url = Util.substitutePhrase(option_url, 'device_name', device_name);
               option_url = Util.substitutePhrase(option_url, 'device_type', device_type);
@@ -196,8 +162,6 @@ class ContextMenu {
             }
 
             if (on_click != null) {
-              on_click = Util.substitutePhrase(on_click, 'is_virtual_host', is_virtual_host);
-              on_click = Util.substitutePhrase(on_click, 'vh_group_id', vh_group_id);
               on_click = Util.substitutePhrase(on_click, 'device_id', device_id);
               on_click = Util.substitutePhrase(on_click, 'device_name', device_name);
               on_click = Util.substitutePhrase(on_click, 'device_type', device_type);

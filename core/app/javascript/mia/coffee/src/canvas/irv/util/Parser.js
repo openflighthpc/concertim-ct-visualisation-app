@@ -73,23 +73,6 @@ class Parser extends CanvasParser {
     return { filtered, assetList: asset_list, racks: rack_defs, deviceLookup: device_lookup };
   }
 
-  parsePowerStripDefs(power_strip_defs) {
-    const assets = power_strip_defs.Assets;
-    power_strip_defs = power_strip_defs.PowerStrips;
-    if (!(power_strip_defs instanceof Array)) { power_strip_defs = [power_strip_defs]; }
-  
-    const device_lookup = { powerStrips: {} };
-
-    for (var one_power_strip of Array.from(power_strip_defs)) {
-      if ((one_power_strip != null) && (one_power_strip.id != null)) {
-        device_lookup.powerStrips[one_power_strip.id] = one_power_strip;
-        one_power_strip.instances = [];
-      }
-    }
-
-    return { assetList: assets, powerStrips: power_strip_defs, deviceLookup: device_lookup };
-  }
-
   parseMetrics(metrics) {
     let group;
     Profiler.begin(Profiler.CRITICAL);
@@ -132,70 +115,6 @@ class Parser extends CanvasParser {
 
     Profiler.end(Profiler.CRITICAL);
     return metrics;
-  }
-
-
-  parseVHMetrics(metrics) {
-    console.log('Parser.parseVHMetrics');
-    Profiler.begin(Profiler.CRITICAL);
-    const parsed          = {};// name: '', values: {} } unless metrics?
-    parsed.metricId = this.model.selectedMetric();
-    parsed.values   = {};
-    const device_lookup   = this.model.deviceLookup();
-    const groups          = this.model.groups();
-
-    if (metrics == null) { return parsed; }
-
-    if (device_lookup.byGroup == null) { device_lookup.byGroup = {}; }
-    for (var group of Array.from(groups)) { parsed.values[group] = {}; }
-
-    // turn array into an object indexed by id for fast access
-    for (var vhost of Array.from(metrics)) {
-      // ignore unrecognised metrics, may be present due to zero U devices
-      if ((device_lookup.devices[vhost.id] == null) || (vhost.metrics == null)) { continue; }
-
-      var group_id = vhost.groupId;
-      for (var key in vhost.metrics) {
-        var value = vhost.metrics[key];
-        if ((value != null) && !isNaN(value)) { vhost.metrics[key] = Util.formatValue(value); }
-      }
-    
-      vhost.metrics.groupId           = group_id;
-      parsed.values.devices[vhost.id] = vhost.metrics;
-      device_lookup.byGroup[group_id] = [];
-    }
-
-      // VM's aren't defined in the rack def request, because of their dynamic nature we'll
-      // synchronise device lookup with each VM metric poll so it is as up to date as it
-      // can be. This is done silently (knockout subscribers will not be notified) since
-      // vm's have no visual representation it is *probably* safe to sidestep any redraw
-      // or processing overheads associated with notifying any device lookup subscribers
-      //for vm in vhost.devices
-      //  parsed.values.vms[vm.id] = vm.metric
-      //  device_lookup.vms[vm.id] = { name: vm.name, groupId: group_id, id: vm.id }
-      //  device_lookup.byGroup[group_id].push(device_lookup.vms[vm.id])
-
-    Profiler.end(Profiler.CRITICAL);
-    return parsed;
-  }
-
-
-  parseVMMetrics(metrics) {
-    const parsed          = {};// name: '', values: {} } unless metrics?
-    parsed.metricId = this.model.selectedMetric();
-    parsed.values   = {};
-    const groups          = this.model.groups();
-    const device_lookup   = this.model.deviceLookup();
-
-    for (var group of Array.from(groups)) { parsed.values[group] = {}; }
-
-    for (var vm of Array.from(metrics)) {
-      parsed.values.vms[vm.id] = Util.formatValue(Number(vm.metric));
-      device_lookup.vms[vm.id] = { name: vm.name, id: vm.id };
-    }
-      //device_lookup.byGroup[group_id].push(device_lookup.vms[vm.id])
-
-    return parsed;
   }
 
 

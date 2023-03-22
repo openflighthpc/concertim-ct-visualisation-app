@@ -33,7 +33,6 @@ class StaticGroupManager {
     this.MSG_CONFIRM_UPDATE     = 'Aaaaw, really?';
 
     this.METRIC_LEVEL_ALL       = "all";
-    this.METRIC_LEVEL_VHOSTS    = "vhosts";
 
     // constants and run-time assigned statics
     this.GROUP_ID_MAP = { chassis: 'chassisIds', devices: 'deviceIds', sensors: 'sensorIds', racks: 'rackIds' };
@@ -199,16 +198,11 @@ class StaticGroupManager {
       var accessor = StaticGroupManager.GROUP_ID_MAP[group];
       if ((new_sel[group] == null) || (static_group.memberIds[accessor] == null)) { continue; }
 
-      if (metric_level && (metric_level !== StaticGroupManager.METRIC_LEVEL_ALL) && (metric_level !== StaticGroupManager.METRIC_LEVEL_VHOSTS)) {
+      if (metric_level && (metric_level !== StaticGroupManager.METRIC_LEVEL_ALL)) {
         if (group !== metric_level) { continue; }
       }
 
       for (var id of Array.from(static_group.memberIds[accessor])) {
-        if (metric_level === StaticGroupManager.METRIC_LEVEL_VHOSTS) {
-          var current_device = device_lookup.devices[parseInt(id)];
-          if (!current_device || !current_device.instances[0].virtualHost) { continue; }
-        }
-
         new_sel[group][id] = true;
       }
     }

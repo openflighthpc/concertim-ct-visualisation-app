@@ -21,7 +21,6 @@ class CanvasViewModel {
   constructor() {
     this.showingFullIrv = ko.observable(false);
     this.showingRacks = ko.observable(false);
-    this.showingPowerStrips = ko.observable(false);
     this.showingRackThumbnail = ko.observable(false);
 
     // object, stores each device JSON object with an additional property 'instances', an array of references to the class instances

@@ -20,8 +20,6 @@ import RackObject from 'canvas/irv/view/RackObject';
 import Rack from 'canvas/irv/view/Rack';
 import Chassis from 'canvas/irv/view/Chassis';
 import Machine from 'canvas/irv/view/Machine';
-import PowerStrip from 'canvas/irv/view/PowerStrip';
-import Socket from 'canvas/irv/view/Socket';
 import Highlight from 'canvas/irv/view/Highlight';
 import Metric from 'canvas/irv/view/Metric';
 import Primitives from 'canvas/common/gfx/Primitives';
@@ -35,7 +33,6 @@ import FilterBar from 'canvas/common/widgets/FilterBar';
 import CanvasViewModel from 'canvas/common/CanvasViewModel';
 import ViewModel from 'canvas/irv/ViewModel';
 import StaticGroupManager from 'canvas/common/util/StaticGroupManager';
-import VMDialogue from 'canvas/irv/view/VMDialogue';
 import IRVChart from 'canvas/irv/view/IRVChart';
 import Profiler from 'Profiler';
 
@@ -98,7 +95,6 @@ class Configurator {
       IRVController.INVALID_POLL_COLOUR         = controller_config.invalidPollColour;
       IRVController.DEFAULT_METRIC_STAT         = controller_config.defaultMetricStat;
       IRVController.MODIFIED_RACK_POLL_RATE     = controller_config.modifiedRackPollRate;
-      IRVController.MODIFIED_POWER_STRIPS_POLL_RATE     = controller_config.modifiedPowerStripsPollRate;
     }
  
     const parser_config                  = config.PARSER;
@@ -229,25 +225,6 @@ class Configurator {
     Chassis.DEPTH_SHADE_FILL      = chassis_config.depthShadeFill;
     Chassis.DEPTH_SHADE_MAX_ALPHA = chassis_config.depthShadeMaxAlpha;
 
-    const power_strip_config           = config.RACKSPACE.POWERSTRIP;
-    PowerStrip.BACK_GROUND_COLOR = power_strip_config.backBroundColor;
-    PowerStrip.U_PX_HEIGHT       = power_strip_config.uPxHeight;
-    PowerStrip.IMG_TOP           = power_strip_config.images.top;
-    PowerStrip.IMG_BTM           = power_strip_config.images.bottom;
-    PowerStrip.IMG_REPEAT        = power_strip_config.images.repeat;
-    PowerStrip.NAME_LBL_SIZE     = power_strip_config.nameLbl.size;
-    PowerStrip.NAME_LBL_FONT     = power_strip_config.nameLbl.font;
-    PowerStrip.NAME_LBL_COLOUR   = power_strip_config.nameLbl.colour;
-    PowerStrip.NAME_LBL_ALIGN    = power_strip_config.nameLbl.align;
-
-    const socket_config                      = power_strip_config.SOCKET;
-    Socket.IMG_SOCKET_FRONT_GREY       = socket_config.images.front_grey;
-    Socket.IMG_SOCKET_FRONT_GREY_BUSY  = socket_config.images.front_grey_busy;
-    Socket.IMG_SOCKET_FRONT_RED        = socket_config.images.front_red;
-    Socket.IMG_SOCKET_FRONT_RED_BUSY   = socket_config.images.front_red_busy;
-    Socket.IMG_SOCKET_FRONT_GREEN      = socket_config.images.front_green;
-    Socket.IMG_SOCKET_FRONT_GREEN_BUSY = socket_config.images.front_green_busy;
-
     if (IRVController !== null) {
       const highlight_config                 = config.RACKSPACE.HIGHLIGHT;
       Highlight.SELECTED_FILL          = highlight_config.selected.fill;
@@ -327,8 +304,6 @@ class Configurator {
     RackHint.CHASSIS_TEXT    = rack_hint_config.chassisText;
     RackHint.DEVICE_TEXT     = rack_hint_config.deviceText;
     RackHint.MORE_INFO_DELAY = rack_hint_config.moreInfoDelay;
-    RackHint.POWER_STRIP_TEXT= rack_hint_config.powerStripText;
-    RackHint.SOCKET_TEXT     = rack_hint_config.socketText;
  
     const thumb_hint_config = config.RACKSPACE.HINT.THUMBHINT;
     ThumbHint.CAPTION = thumb_hint_config.caption;
@@ -385,13 +360,6 @@ class Configurator {
                 FilterBar.DEFAULT_ALIGN = FilterBar.ALIGN_BOTTOM;
     }
  
-    const vm_dialogue_config        = config.RACKSPACE.LBC.VMDIALOGUE;
-    VMDialogue.WIDTH          = vm_dialogue_config.width;
-    VMDialogue.HEIGHT         = vm_dialogue_config.height;
-    VMDialogue.NO_METRICS_MSG = vm_dialogue_config.noMetricsMsg;
-    VMDialogue.MSG_FONT       = vm_dialogue_config.msgFont;
-    VMDialogue.MSG_FILL       = vm_dialogue_config.msgFill;
-
     return config = null;
   }
  

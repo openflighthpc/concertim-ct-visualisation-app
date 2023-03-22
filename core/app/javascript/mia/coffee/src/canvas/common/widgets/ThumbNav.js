@@ -23,7 +23,7 @@ class ThumbNav {
     this.BREACH_FILL      = '#ff0000';
     this.BREACH_ALPHA     = 1;
 
-    this.MODEL_DEPENDENCIES  = { dataCentreImage: 'dcImage', rackImage: 'rackImage', powerStripImage: 'powerStripImage', breachZones: 'breachZones', scale: 'scale', groups: 'groups' };
+    this.MODEL_DEPENDENCIES  = { dataCentreImage: 'dcImage', rackImage: 'rackImage', breachZones: 'breachZones', scale: 'scale', groups: 'groups' };
   }
 
 
@@ -32,7 +32,6 @@ class ThumbNav {
     let left;
     this.setDataCentreImage = this.setDataCentreImage.bind(this);
     this.setRackImage = this.setRackImage.bind(this);
-    this.setPowerStripImage = this.setPowerStripImage.bind(this);
     this.setImg = this.setImg.bind(this);
     this.setBreaches = this.setBreaches.bind(this);
     this.updateBreaches = this.updateBreaches.bind(this);
@@ -64,13 +63,11 @@ class ThumbNav {
     this.area.bottom = this.area.top + this.area.height;
     if (ThumbNav.MODEL_DEPENDENCIES.dataCentreImage) { this.model[ThumbNav.MODEL_DEPENDENCIES.dataCentreImage].subscribe(this.setDataCentreImage); }
     if (ThumbNav.MODEL_DEPENDENCIES.rackImage) { this.model[ThumbNav.MODEL_DEPENDENCIES.rackImage].subscribe(this.setRackImage); }
-    if (ThumbNav.MODEL_DEPENDENCIES.powerStripImage) { this.model[ThumbNav.MODEL_DEPENDENCIES.powerStripImage].subscribe(this.setPowerStripImage); }
     this.model[ThumbNav.MODEL_DEPENDENCIES.breachZones].subscribe(this.setBreaches);
 
     this.images = {};
     this.images.dataCentre = {};
     this.images.rack = {};
-    this.images.powerStrip = {};
 
     this.biggestWidth = 0;
     this.biggestHeight = 0;
@@ -95,15 +92,6 @@ class ThumbNav {
 
   setRackImage(img) {
     return this.setImg(img,'rack');
-  }
-
-  setPowerStripImage(img) {
-    if (img === null) {
-      this.images.powerStrip = {};
-      return this.update();
-    } else {
-      return this.setImg(img,'powerStrip');
-    }
   }
 
   setImg(img, imageKey) {

@@ -23,8 +23,6 @@ import Hint from 'canvas/irv/view/Hint';
 import ThumbHint from 'canvas/irv/view/ThumbHint';
 import RackSpace from 'canvas/irv/view/RackSpace';
 import Rack from 'canvas/irv/view/Rack';
-import PowerStrip from 'canvas/irv/view/PowerStrip';
-import Socket from 'canvas/irv/view/Socket';
 import ThumbNav from 'canvas/common/widgets/ThumbNav';
 import FilterBar from 'canvas/common/widgets/FilterBar';
 import ViewModel from 'canvas/irv/ViewModel';
@@ -75,7 +73,6 @@ class IRVController extends CanvasController {
     this.INVALID_POLL_COLOUR           = '#f99';
     this.DEFAULT_METRIC_STAT           = 'max';
     this.MODIFIED_RACK_POLL_RATE       = 60000;
-    this.MODIFIED_POWER_STRIPS_POLL_RATE       = 60000;
     this.RANGE_EXPANSION_FACTOR        = 0.05;
 
     this.MAIN_PAGE_CONTENT_ID          = 'pageContent';
@@ -89,21 +86,15 @@ class IRVController extends CanvasController {
     this.getUserRoles = this.getUserRoles.bind(this);
     this.configReceived = this.configReceived.bind(this);
     this.evShowHideScrollBars = this.evShowHideScrollBars.bind(this);
-    this.getPowerStripDefs = this.getPowerStripDefs.bind(this);
     this.getNonrackDeviceDefs = this.getNonrackDeviceDefs.bind(this);
     this.visibleRackIds = this.visibleRackIds.bind(this);
     this.visibleNonRackIds = this.visibleNonRackIds.bind(this);
-    this.visiblePowerStripIds = this.visiblePowerStripIds.bind(this);
     this.idsAsParams = this.idsAsParams.bind(this);
     this.enableShowHoldingAreaCheckBox = this.enableShowHoldingAreaCheckBox.bind(this);
     this.getModifiedRacksTimestamp = this.getModifiedRacksTimestamp.bind(this);
-    this.getModifiedPowerStripsTimestamp = this.getModifiedPowerStripsTimestamp.bind(this);
     this.setModifiedRacksTimestamp = this.setModifiedRacksTimestamp.bind(this);
-    this.setModifiedPowerStripsTimestamp = this.setModifiedPowerStripsTimestamp.bind(this);
     this.getSystemDateTime = this.getSystemDateTime.bind(this);
-    this.getSystemDateTimeForPowerStrip = this.getSystemDateTimeForPowerStrip.bind(this);
     this.getModifiedRackIds = this.getModifiedRackIds.bind(this);
-    this.getModifiedPowerStripIds = this.getModifiedPowerStripIds.bind(this);
     this.getMetricTemplates = this.getMetricTemplates.bind(this);
     this.getThresholds = this.getThresholds.bind(this);
     this.receivedThresholds = this.receivedThresholds.bind(this);
@@ -111,7 +102,6 @@ class IRVController extends CanvasController {
     this.refreshMetricTemplates = this.refreshMetricTemplates.bind(this);
     this.retryMetricTemplates = this.retryMetricTemplates.bind(this);
     this.retryRackDefs = this.retryRackDefs.bind(this);
-    this.retryPowerStripDefs = this.retryPowerStripDefs.bind(this);
     this.retryNonrackDeviceDefs = this.retryNonrackDeviceDefs.bind(this);
     this.retrySystemDateTime = this.retrySystemDateTime.bind(this);
     this.scrollPanelUp = this.scrollPanelUp.bind(this);
@@ -137,14 +127,11 @@ class IRVController extends CanvasController {
     this.refreshedMetricTemplates = this.refreshedMetricTemplates.bind(this);
     this.receivedModifiedRackIds = this.receivedModifiedRackIds.bind(this);
     this.receivedModifiedNonRackIds = this.receivedModifiedNonRackIds.bind(this);
-    this.receivedModifiedPowerStripIds = this.receivedModifiedPowerStripIds.bind(this);
     this.receivedRackDefs = this.receivedRackDefs.bind(this);
-    this.recievedPowerStripDefs = this.recievedPowerStripDefs.bind(this);
     this.recievedNonrackDeviceDefs = this.recievedNonrackDeviceDefs.bind(this);
     this.loadMetrics = this.loadMetrics.bind(this);
     this.receivedMetrics = this.receivedMetrics.bind(this);
     this.displayMetrics = this.displayMetrics.bind(this);
-    this.displayVHMetrics = this.displayVHMetrics.bind(this);
     this.evMouseWheelRack = this.evMouseWheelRack.bind(this);
     this.evMouseWheelThumb = this.evMouseWheelThumb.bind(this);
     this.evKeyDown = this.evKeyDown.bind(this);
@@ -169,14 +156,11 @@ class IRVController extends CanvasController {
     this.applyFilter = this.applyFilter.bind(this);
     this.evScrollRacks = this.evScrollRacks.bind(this);
     this.evRedrawRackSpace = this.evRedrawRackSpace.bind(this);
-    this.evLoadRackAssets = this.evLoadRackAssets.bind(this);
     this.evMouseDownThumb = this.evMouseDownThumb.bind(this);
     this.evMouseUpThumb = this.evMouseUpThumb.bind(this);
     this.evDoubleClickThumb = this.evDoubleClickThumb.bind(this);
     this.thumbScroll = this.thumbScroll.bind(this);
     this.switchFace = this.switchFace.bind(this);
-    this.showOrHidePowerStripLayer = this.showOrHidePowerStripLayer.bind(this);
-    this.updateShowOrHidePowerStripsLink = this.updateShowOrHidePowerStripsLink.bind(this);
     this.evMouseDownFilter = this.evMouseDownFilter.bind(this);
     this.evMouseOutFilter = this.evMouseOutFilter.bind(this);
     this.evMouseUpFilter = this.evMouseUpFilter.bind(this);
@@ -194,10 +178,6 @@ class IRVController extends CanvasController {
     this.evSwitchStat = this.evSwitchStat.bind(this);
     this.evSwitchGroup = this.evSwitchGroup.bind(this);
     this.evSwitchGraphOrder = this.evSwitchGraphOrder.bind(this);
-    this.evShowVMs = this.evShowVMs.bind(this);
-    this.evHideVMs = this.evHideVMs.bind(this);
-    this.loadVMMetrics = this.loadVMMetrics.bind(this);
-    this.receivedVMMetrics = this.receivedVMMetrics.bind(this);
     if (options == null) { options = {}; }
     this.options = options;
     this.config_file = '/irv/configuration';
@@ -265,10 +245,6 @@ class IRVController extends CanvasController {
       this.model.showingRackThumbnail(true);
     }
 
-    if (((this.options != null ? this.options.show : undefined) != null) && Array.from(this.options_show).includes("power_strips") && (this.options.powerStripIds != null)) {
-      this.model.showingPowerStrips(true);
-    }
-
     this.evLoadRackAssets();
 
     if (this.model.showingFullIrv() || this.model.showingRacks()) {
@@ -282,11 +258,6 @@ class IRVController extends CanvasController {
         CanvasController.NUM_RESOURCES += 2; // metricstemplates and thresholds
       }
       this.getRackData();
-    }
-
-    if (this.model.showingPowerStrips() || (this.model.showingRacks() && !this.model.showingFullIrv() && (this.options.powerStripIds != null))) {
-      CanvasController.NUM_RESOURCES += 1;
-      this.getPowerStripData();
     }
 
     //if @model.showingFullIrv()
@@ -327,19 +298,12 @@ class IRVController extends CanvasController {
 
   showHideScrollBars(zoomIndex) {
     const rv = $(this.options.parent_div_id);
-    if (this.model.showingPowerStrips() && !this.model.showingRacks()) {
+    if ((zoomIndex === 0) && (this.model.showHoldingArea() === false)) {
       Util.setStyle(rv, 'overflow-x', 'hidden');
-      Util.setStyle(rv, 'overflow-y', 'hidden');
-      Util.setStyle($('device_overview_div'), 'overflow-x', 'auto');
-      return Util.setStyle($('device_overview_div'), 'overflow-y', 'auto');
+      return Util.setStyle(rv, 'overflow-y', 'hidden');
     } else {
-      if ((zoomIndex === 0) && (this.model.showHoldingArea() === false)) {
-        Util.setStyle(rv, 'overflow-x', 'hidden');
-        return Util.setStyle(rv, 'overflow-y', 'hidden');
-      } else {
-        Util.setStyle(rv, 'overflow-x', 'auto');
-        return Util.setStyle(rv, 'overflow-y', 'auto');
-      }
+      Util.setStyle(rv, 'overflow-x', 'auto');
+      return Util.setStyle(rv, 'overflow-y', 'auto');
     }
   }
 
@@ -374,26 +338,9 @@ class IRVController extends CanvasController {
     return this.getSystemDateTime();
   }
 
-  getPowerStripData() {
-    this.debug('getting power strip data');
-    let ps_ids = this.options.powerStripIds.split(",");
-    this.model.powerStripsVisible = this.model.powerStripsVisible.concat(ps_ids.map(oneId => parseInt(oneId,10)));
-    if (this.options.otherPowerStripIds != null) { ps_ids = ps_ids.concat(this.options.otherPowerStripIds.split(",")); }
-    this.getPowerStripDefs(ps_ids);
-    return this.getSystemDateTimeForPowerStrip();
-  }
-
   getNonrackDeviceData() {
     this.debug('getting non rack device data');
     return this.getNonrackDeviceDefs();
-  }
-
-  // load PowerStrip definitions
-  // @param  power_strips_ids  option array of PowerStrip ids to fetch
-  getPowerStripDefs(power_strip_ids) {
-    const query_str = (power_strip_ids != null) ? this.idsAsParams(power_strip_ids,'power_strip_ids') : '';
-
-    return new Request.JSON({url: this.resources.path + this.resources.powerStripDefinitions + '?' + (new Date()).getTime() + query_str, onComplete: this.recievedPowerStripDefs, onTimeout: this.retryPowerStripDefs}).get();
   }
 
   getNonrackDeviceDefs(holding_area_ids, non_rack_ids) {
@@ -436,15 +383,6 @@ class IRVController extends CanvasController {
     return arr;
   }
 
-  visiblePowerStripIds() {
-    const arr = [];
-    for (var powerStrip of Array.from(this.model.powerStrips())) {
-      arr.push(powerStrip.id);
-    }
-
-    return arr;
-  }
-
   idsAsParams(non_rack_ids, array_name) {
     let params = "";
     for (var non_rack_id of Array.from(non_rack_ids)) {
@@ -467,12 +405,6 @@ class IRVController extends CanvasController {
     return this.modifiedRacksTimestamp || (this.modifiedRacksTimestamp = Math.round(+new Date()/1000));
   }
 
-  // returns the value stored in @modifiedPowerStripsTimestamp, initialising it with the current timestamp if null 
-  getModifiedPowerStripsTimestamp() {
-    return this.modifiedPowerStripsTimestamp || (this.modifiedPowerStripsTimestamp = Math.round(+new Date()/1000));
-  }
-
-
   // called when receiving time from server, extracts time in milliseconds and stores it
   // @param  timestamp string representation of current time from server
   setModifiedRacksTimestamp(timestamp) {
@@ -485,29 +417,10 @@ class IRVController extends CanvasController {
     }
   }
 
-  // called when receiving time from server, extracts time in milliseconds and stores it
-  // @param  timestamp string representation of current time from server
-  setModifiedPowerStripsTimestamp(timestamp) {
-    //XXX Split method is used for when we load the servers time, as it comes back in the following format: '1380642828661 3600 BST 2013-10-01 16:53:48'
-    timestamp = String(timestamp);
-    if (timestamp.length >= 13) { // we have a timestamp in milliseconds
-      return this.modifiedPowerStripsTimestamp = Math.round(timestamp.match(/.{1,13}/g)[0] / 1000);
-    } else {
-      return this.modifiedPowerStripsTimestamp = timestamp;
-    }
-  }
-
-
   // sends a request to the server for the current time
   getSystemDateTime() {
     return new Request({url: this.resources.systemDateTime + '?' + (new Date()).getTime(), onComplete: this.setModifiedRacksTimestamp, onTimeout: this.retrySystemDateTime}).get();
   }
-
-  // sends a request to the server for the current time
-  getSystemDateTimeForPowerStrip() {
-    return new Request({url: this.resources.systemDateTime + '?' + (new Date()).getTime(), onComplete: this.setModifiedPowerStripsTimestamp, onTimeout: this.retrySystemDateTime}).get();
-  }
-
 
   // requests a change set from the server, passing with the list of racks to report changes for and wether or not to 
   // suppress notifications of added racks
@@ -516,16 +429,6 @@ class IRVController extends CanvasController {
     if (this.model.showingFullIrv()) {
       return new Request.JSON({url: this.resources.path + this.resources.modifiedNonRackIds + '?' + (new Date()).getTime() + '&modified_timestamp=' + this.getModifiedRacksTimestamp() + this.idsAsParams(this.visibleNonRackIds(),'non_rack_ids') + '&suppress_additions=' + !this.model.displayingAllRacks(), onComplete: this.receivedModifiedNonRackIds, onTimeout: this.retryModifiedNonRackIds}).get();
     }
-  }
-
-  // requests a change set from the server, passing with the list of PowerStrips to report changes for and wether or not to 
-  // suppress notifications of added PowerStrips
-  getModifiedPowerStripIds() {
-    let extra_param;
-    if (this.model.showingRacks()) {
-      extra_param = 'rack_id=' + this.model.racks()[0].id;
-    }
-    return new Request.JSON({url: this.resources.path + this.resources.modifiedPowerStripIds + '?' + (new Date()).getTime() + '&modified_timestamp=' + this.getModifiedPowerStripsTimestamp() + this.idsAsParams(this.visiblePowerStripIds(),'power_strip_ids') + '&suppress_additions=' + !this.model.showingRacks() + '&'+extra_param, onComplete: this.receivedModifiedPowerStripIds, onTimeout: this.retryModifiedPowerStripIds}).get();
   }
 
   // requests metric definitions from the server
@@ -587,12 +490,6 @@ class IRVController extends CanvasController {
     return setTimeout(this.getRackDefs, IRVController.API_RETRY_DELAY);
   }
 
-  // called should the PowerStrip definition response fail, re-submits the request. !! possibly untested, possibly redundant
-  retryPowerStripDefs() {
-    Profiler.trace(Profiler.CRITICAL, 'Failed to load PowerStrip definitions, retrying in ' + IRVController.API_RETRY_DELAY + 'ms');
-    return setTimeout(this.getPowerStripDefs, IRVController.API_RETRY_DELAY);
-  }
-
   retryNonrackDeviceDefs() {
     Profiler.trace(Profiler.CRITICAL, 'Failed to load nonrack device definitions, retrying in ' + IRVController.API_RETRY_DELAY + 'ms');
     return setTimeout(this.getNonrackDeviceDefs, IRVController.API_RETRY_DELAY);
@@ -650,8 +547,6 @@ class IRVController extends CanvasController {
     Events.addEventListener(this.rackEl, 'rackSpaceFlipComplete', this.evFlipComplete);
     Events.addEventListener(this.rackEl, 'rackSpaceReset', this.evReset);
     Events.addEventListener(this.rackEl, 'rackSpaceClearDeselected', this.evClearDeselected);
-    Events.addEventListener(this.rackEl, 'rackSpaceShowVMs', this.evShowVMs);
-    Events.addEventListener(this.rackEl, 'rackSpaceCloseVMs', this.evHideVMs);
     Events.addEventListener(this.rackParent, 'scroll', this.evScrollRacks);
     Events.addEventListener(this.rackEl, 'redrawRackSpace', this.evRedrawRackSpace);
     Events.addEventListener(this.rackEl, 'getModifiedRackIds', this.getModifiedRackIds);
@@ -683,20 +578,12 @@ class IRVController extends CanvasController {
     this.model.selectedMetric.subscribe(this.updateLayout);
     this.model.face.subscribe(this.switchFace);
     this.model.showHoldingArea.subscribe(this.evShowHideScrollBars);
-
-    if (this.model.showingRacks() && !this.model.showingFullIrv()) {
-      this.showPowerStripsLink = $('power_strips_show');
-      if (this.showPowerStripsLink != null) { Events.addEventListener(this.showPowerStripsLink, 'click', this.showOrHidePowerStripLayer); }
-    }
-
     this.model.filters.subscribe(this.applyFilter);
     this.model.metricLevel.subscribe(this.switchMetricLevel);
     this.model.selectedMetricStat.subscribe(this.evSwitchStat);
     this.model.graphOrder.subscribe(this.evSwitchGraphOrder);
     this.model.selectedGroup.subscribe(this.evSwitchGroup);
     this.pollSub = this.model.metricPollRate.subscribe(this.setMetricPollInput);
-
-    this.model.showingPowerStrips.subscribe(this.updateShowOrHidePowerStripsLink);
 
     // Rack Space
     this.rackSpace = new RackSpace(this.rackEl, this.chartEl, this.model, this.rackParent);
@@ -753,15 +640,6 @@ class IRVController extends CanvasController {
       this.modifiedRackDefinitionTmr = setInterval(this.getModifiedRackIds, IRVController.MODIFIED_RACK_POLL_RATE);
     }
 
-    if (this.model.showingPowerStrips() || (this.model.showingRacks() && !this.model.showingFullIrv())) {
-      this.modifiedPowerStripDefinitionTmr = setInterval(this.getModifiedPowerStripIds, IRVController.MODIFIED_POWER_STRIPS_POLL_RATE);
-    }
-
-    if (this.model.showingPowerStrips() && !this.model.showingRacks()) {
-      Util.setStyle(this.rackParent, 'height', this.rackSpace.rackGfx.cvs.height  + 'px');
-      Util.setStyle(this.rackParent, 'width', this.rackSpace.rackGfx.cvs.width  + 'px');
-    }
-  
     this._callback_store = {};
   
     this.initialised = true;
@@ -1059,30 +937,25 @@ class IRVController extends CanvasController {
   printScreen() {
     let layer_chart, old_width;
     const layer_racks = this.rackSpace.rackGfx.cvs;
-    const layer_power = this.rackSpace.powerStripsGfx.cvs;
     const layer_alert = this.rackSpace.alertGfx.cvs;
     const layer_info  = this.rackSpace.infoGfx.cvs;
   
     // storing the original values
-    const left_values = [layer_racks.style.left,layer_power.style.left,layer_alert.style.left,layer_info.style.left];
-    const width_values = [layer_racks.style.width,layer_power.style.width,layer_alert.style.width,layer_info.style.width];
+    const left_values = [layer_racks.style.left,layer_alert.style.left,layer_info.style.left];
+    const width_values = [layer_racks.style.width,layer_alert.style.width,layer_info.style.width];
 
     // setting left to 0 to avoid white space in the print
     layer_racks.style.left = '0px';
-    layer_power.style.left = '0px';
     layer_alert.style.left = '0px';
     layer_info.style.left = '0px';
 
     const print_width = this.model.showingFullIrv() ? '800px' : '700px';
 
     layer_racks.style.width = print_width;
-    layer_power.style.width = print_width;
     layer_alert.style.width = print_width;
     layer_info.style.width  = print_width;
 
     let html = '<div style="height: 650px;">' + layer_racks.outerHTML;
-  
-    if (this.model.showingPowerStrips()) { html += layer_power.outerHTML; }
   
     html += layer_alert.outerHTML + layer_info.outerHTML + '</div>';
     if (this.model.showChart()) {
@@ -1095,14 +968,12 @@ class IRVController extends CanvasController {
 
     // returning the original values
     layer_racks.style.left = left_values[0];
-    layer_power.style.left = left_values[1];
-    layer_alert.style.left = left_values[2];
-    layer_info.style.left = left_values[3];
+    layer_alert.style.left = left_values[1];
+    layer_info.style.left = left_values[2];
 
     layer_racks.style.width = width_values[0];
-    layer_power.style.width = width_values[1];
-    layer_alert.style.width = width_values[2];
-    layer_info.style.width = width_values[3];
+    layer_alert.style.width = width_values[1];
+    layer_info.style.width = width_values[2];
 
     if (this.model.showChart()) {
       return layer_chart.style.width = old_width+'px';
@@ -1204,9 +1075,6 @@ class IRVController extends CanvasController {
     ctx.drawImage(this.rackSpace.rackGfx.cvs, 0, 0);
     ctx.drawImage(this.rackSpace.infoGfx.cvs, 0, 0);
     ctx.drawImage(this.rackSpace.alertGfx.cvs, 0, 0);
-    if (this.model.showingPowerStrips()) {
-      ctx.drawImage(this.rackSpace.powerStripsGfx.cvs, 0, 0);
-    }
 
     return cvs.toDataURL();
   }
@@ -1335,14 +1203,9 @@ class IRVController extends CanvasController {
     // the observable loadingAPreset will call this function again.
     if (this.model.loadingAPreset() === true) { return; }
     clearInterval(this.metricTmr);
-    clearInterval(this.vmMetricTmr);
     if ((this.model.metricPollRate() !== 0) && !this.noMetricSelected(this.model.selectedMetric())) {
       this.loadMetrics();
       this.metricTmr   = setInterval(this.loadMetrics, this.model.metricPollRate());
-      if (this.showingVMs) {
-        this.loadVMMetrics();
-        return this.vmMetricTmr = setInterval(this.loadVMMetrics, this.model.metricPollRate(), this.vHostId);
-      }
     }
   }
 
@@ -1398,21 +1261,18 @@ class IRVController extends CanvasController {
   }
 
 
-  // metricLevel model property subscriber. Resets poller; switching between polling the metrics and the vm group metrics or fetching all
+  // metricLevel model property subscriber. Resets poller; switching between polling the metrics or fetching all
   // as necessary
   switchMetricLevel(metric_level) {
-    const switch_to_vms   = (this.currentMetricLevel !== ViewModel.METRIC_LEVEL_VHOSTS) && (metric_level === ViewModel.METRIC_LEVEL_VHOSTS);
-    const switch_from_vms = (this.currentMetricLevel === ViewModel.METRIC_LEVEL_VHOSTS) && (metric_level !== ViewModel.METRIC_LEVEL_VHOSTS);
     const switch_to_all   = (this.currentMetricLevel !== ViewModel.METRIC_LEVEL_ALL) && (metric_level === ViewModel.METRIC_LEVEL_ALL);
     const switch_from_all = (this.currentMetricLevel === ViewModel.METRIC_LEVEL_ALL) && (metric_level !== ViewModel.METRIC_LEVEL_ALL);
 
-    // when switching to or from VMs clear metric data, change sort order options and reset metric poller
-    if (switch_to_vms || switch_from_vms || switch_to_all || switch_from_all) {
+    if (switch_to_all || switch_from_all) {
       const groups      = this.model.groups();
       const vals        = {};
       for (var group of Array.from(groups)) { vals[group] = {}; }
       this.model.metricData({ values: vals });
-      this.model.graphOrders(switch_to_vms ? ViewModel.VHOST_CHART_ORDERS : ViewModel.NORMAL_CHART_ORDERS);
+      this.model.graphOrders(ViewModel.NORMAL_CHART_ORDERS);
       this.resetMetricPoller();
     }
 
@@ -1508,27 +1368,6 @@ class IRVController extends CanvasController {
     }
   }
 
-  // called on receiving change set from the server. Triggers request for updated PowerStrip definitions necessary to synchronise the changes
-  // @param  power_strip_data array of PowerStrip definition objects
-  receivedModifiedPowerStripIds(power_strip_data) {
-    if (!this.dragging) {
-      this.setModifiedPowerStripsTimestamp(String(power_strip_data.timestamp));
-      const power_strip_ids = power_strip_data.added.concat(power_strip_data.modified);
-
-      this.model.powerStripsVisible = this.model.powerStripsVisible.concat(power_strip_ids.map(oneId => parseInt(oneId,10)));
-      this.changeSetPowerStrip = power_strip_data;
-      if (power_strip_ids.length > 0) {
-        return this.getPowerStripDefs(power_strip_ids); // we have new and modified PowerStrip present, and possibly deleted, the else handles
-                                            // the situation where we only have deleted PowerStrips
-      } else if (power_strip_data.deleted.length > 0) {
-        this.model.modifiedPowerStripDefs([]); // we have only deleted power stirps in this request so empy the PowerStrip defs array
-        return this.synchroniseChanges();
-      }
-    }
-  }
-
-
-
   // triggered when the server responds with rack definitions. This can be during the initialise process or as a result of changes to
   // the data centre. Actions the data accordingly
   // @param  rack_defs the rack definitions as returned by the server
@@ -1561,23 +1400,6 @@ class IRVController extends CanvasController {
       }
     } else {
       return this.initialiseRackDefs(defs);
-    }
-  }
-
-  recievedPowerStripDefs(power_strip_defs) {
-    this.debug("received power strip defs");
-    const defs = this.parser.parsePowerStripDefs(power_strip_defs);
-
-    if (this.initialised) {
-      this.model.assetList(defs.assetList);
-      this.model.modifiedPowerStripDefs(defs.powerStrips);
-      if (this.model.assetList().length === 0) {
-        return this.testLoadProgress();
-      } else {
-        return this.synchroniseChanges();
-      }
-    } else {
-      return this.initialisePowerStripDefs(defs);
     }
   }
 
@@ -1633,24 +1455,6 @@ class IRVController extends CanvasController {
     }
   }
 
-
-  initialisePowerStripDefs(defs) {
-    this.debug("received power strip defs");
-    ++this.resourceCount;
-
-    const allAssets = [];
-    for (var powerStripAsset of Array.from(defs.assetList)) { allAssets.push(powerStripAsset); }
-    if (this.model.assetList() != null) {
-      for (var rackAsset of Array.from(this.model.assetList())) { allAssets.push(rackAsset); }
-    }
-    this.model.assetList(allAssets);
-    this.synchroniseChanges(defs.assetList);
-
-    this.model.powerStrips(defs.powerStrips);
-    this.model.deviceLookup().powerStrips = defs.deviceLookup.powerStrips;
-    return this.testLoadProgress();
-  }
-
   initialiseNonRackDeviceDefs(defs) {
     ++this.resourceCount;
 
@@ -1698,13 +1502,11 @@ class IRVController extends CanvasController {
         if (this.initialised) {
           this.rackSpace.synchroniseNonRackDevices(this.model.modifiedDcrvShowableNonRackChassis(), this.changeSetNonRacks);
           this.rackSpace.synchroniseRacks(this.model.modifiedRackDefs(), this.changeSetRacks);
-          this.rackSpace.synchronisePowerStrips(this.model.modifiedPowerStripDefs(), this.changeSetPowerStrip);
           this.rackSpace.resetRackSpace();
           this.setAPIFilter();
           if (this.rackSpace.chart != null) { this.rackSpace.chart.update(); }
           this.model.modifiedDcrvShowableNonRackChassis([]); // Clear memory
           this.model.modifiedRackDefs([]); // Clear memory
-          this.model.modifiedPowerStripDefs([]); // Clear memory for PowerStrips
         } else {
           this.init() && !this.initialised;
         }
@@ -1734,7 +1536,7 @@ class IRVController extends CanvasController {
     const selected_metric = this.model.selectedMetric();
     if (this.noMetricSelected(selected_metric)) { return; }
 
-    const metric_api = this.model.metricLevel() === ViewModel.METRIC_LEVEL_VHOSTS ? this.resources.vhMetricData : this.resources.metricData;
+    const metric_api = this.resources.metricData;
 
     new Request.JSON({
       url        : this.resources.path + metric_api.replace(/\[\[metric_id\]\]/g, selected_metric) + '?' + (new Date()).getTime(),
@@ -1742,12 +1544,6 @@ class IRVController extends CanvasController {
       headers    : {'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content')},
       data       : this.apiFilter
     }).send();
-
-    // also grab vms if viewing all
-    if (this.model.metricLevel() === ViewModel.METRIC_LEVEL_ALL) {
-      this.vHostId = null;
-      return this.loadVMMetrics();
-    }
   }
 
 
@@ -1777,20 +1573,13 @@ class IRVController extends CanvasController {
   // Avoids the issue when metrics arrives before full irv is rendered, and fails to draw some elements.
   displayTheMetrics(metrics) {
     this.pieCountdown.reStart(this.model.metricPollRate()/1000);
-    return this.dispTmr = setTimeout((this.model.metricLevel() === ViewModel.METRIC_LEVEL_VHOSTS ? this.displayVHMetrics : this.displayMetrics), 50, metrics);
+    return this.dispTmr = setTimeout(this.displayMetrics, 50, metrics);
   }
 
   // parses metric data, dertermines max/min if no colour map exists for the selected metric and updates filtered devices where necessary
   // @param  metrics metric data as received from the server
   displayMetrics(metrics) {
-    // VM metrics arrive in a separate request so maintain any existing VM metric data
-    const old_metrics = this.model.metricData();
-    const {
-      vms
-    } = old_metrics.values;
-
     metrics = this.parser.parseMetrics(metrics);
-    metrics.values.vms = vms;
 
     const filters  = this.model.filters();
     const filter   = filters[metrics.metricId];
@@ -1863,78 +1652,6 @@ class IRVController extends CanvasController {
 
   // parses metric data, dertermines max/min if no colour map exists for the selected metric and updates filtered devices where necessary
   // @param  metrics metric data as received from the server
-  displayVHMetrics(metrics) {
-    // VM metrics arrive in a separate request so maintain any existing VM metric data
-    const old_metrics = this.model.metricData();
-    const {
-      vms
-    } = old_metrics.values;
-
-    metrics = this.parser.parseVHMetrics(metrics);
-    metrics.values.vms = vms;
-
-    const filters  = this.model.filters();
-    const filter   = filters[metrics.metricId];
-    const col_maps = this.model.colourMaps();
-    const col_map  = col_maps[metrics.metricId];
-
-    if (col_map != null) {
-      if ((col_map.original_low == null) || (col_map.original_high == null)) {
-        col_map.original_low = col_map.low;
-        col_map.original_high = col_map.high;
-        col_maps[metrics.metricId] = col_map;
-        this.model.colourMaps(col_maps);
-      }
-      this.model.metricData(metrics);
-      if ((filter.max !== col_map.high) || (filter.min !== col_map.low)) { this.applyFilter(); }
-    } else {
-      // no default colour map or filter defined, calculate now
-      let range;
-      if (filters[metrics.metricId] == null) {
-        filters[metrics.metricId] = {};
-        this.model.filters(filters);
-      }
-
-      // determin min max
-      const group_vals = metrics.values[this.model.metricLevel()];
-      let min        = Number.MAX_VALUE;
-      let max        = -Number.MAX_VALUE;
-      for (var id in group_vals) {
-        var val = Number(group_vals[id]);
-        if (val.min < min) { ({
-          min
-        } = val); }
-        if (val.max > max) { ({
-          max
-        } = val); }
-      }
-
-      // If the min and max are equal (in the not very probable scenario where every device has the same value for the selectedMetric), 
-      // then separate them by the IRVController.RANGE_EXPANSION_FACTOR
-      if (min === max) {
-        min -= min*IRVController.RANGE_EXPANSION_FACTOR;
-        max += max*IRVController.RANGE_EXPANSION_FACTOR;
-      }
-
-      if (min === Number.MAX_VALUE) {
-        // no metrics to determin min/max so set to zero. The small range value prevents
-        // division by zero errors elsewhere
-        range = 1e-100;
-        min   = 0;
-        max   = 0;
-      } else {
-        range = max - min;
-      }
-
-      col_maps[metrics.metricId] = { low: min, high: max, range, inverted: false, original_low: min, original_high: max };
-
-      this.model.colourMaps(col_maps);
-      this.model.metricData(metrics);
-    }
-
-    if (this.model.showingFullIrv()) { return this.hideUpdateMsg(); }
-  }
-
   toggleViewIfNecessary(metrics) {
     const devicesMetrics = Object.keys(metrics.selection.devices).length;
     const chassisMetrics = Object.keys(metrics.selection.chassis).length;
@@ -1958,41 +1675,8 @@ class IRVController extends CanvasController {
   // rack view mouse wheel event handler
   // @param  ev  the event object which invoked execution
   evMouseWheelRack(ev) {
-
-    // get device at the present coordinates to determine if it is a PowerStrip
-    const coords      = Util.resolveMouseCoords(this.rackSpace.coordReferenceEl, ev);
-    coords.x /= this.rackSpace.scale;
-    coords.y /= this.rackSpace.scale;
-    let device_bellow = this.rackSpace.getDeviceAt(coords.x, coords.y);
-    if (device_bellow instanceof Socket) {
-      device_bellow = device_bellow.parent;
-    }
-
-    if (device_bellow instanceof PowerStrip && (this.rackSpace.scale === RackSpace.MAX_ZOOM)) { 
-      ev.preventDefault();
-      ev.stopPropagation();
-
-      const mouseDeltaY = this.getDeltaMouseY(ev);
-      // power strip scrolled down
-      if (mouseDeltaY > 0) {
-        if (device_bellow.y < this.rackSpace.rackParent.scrollTop) {
-          device_bellow.setCoords(device_bellow.x,(device_bellow.y + mouseDeltaY));
-        }
-      }
-
-      // power strip scrolled up
-      if (mouseDeltaY < 0) {
-        if ((device_bellow.y + device_bellow.height) >  (this.rackSpace.rackParent.scrollTop + this.rackSpace.rackParent.clientHeight)) {
-          device_bellow.setCoords(device_bellow.x,(device_bellow.y + mouseDeltaY));
-        }
-      }
-
-    } else {
-      this.rackSpace.arrangePowerStrips();
-      this.evStepZoom(ev);
-    }
-
-    return this.highlightRackSpace(ev);
+    this.evStepZoom(ev);
+    this.highlightRackSpace(ev);
   }
 
   // Function to get the mouse wheel Y delta, normalized between browsers.
@@ -2470,28 +2154,6 @@ class IRVController extends CanvasController {
     return this.rackSpace.redraw();
   }
 
-  // assetList model value subscriber, commences loading of rack images
-  evLoadRackAssets() {
-    this.assetCount = 0;
-    const assets      = this.model.assetList();
-
-    const powerStripAssets = [PowerStrip.IMG_TOP, PowerStrip.IMG_REPEAT, PowerStrip.IMG_BTM, PowerStrip.IMG_WAIT, Socket.IMG_SOCKET_FRONT_GREY, Socket.IMG_SOCKET_FRONT_GREY_BUSY, Socket.IMG_SOCKET_FRONT_RED, Socket.IMG_SOCKET_FRONT_RED_BUSY, Socket.IMG_SOCKET_FRONT_GREEN, Socket.IMG_SOCKET_FRONT_GREEN_BUSY];
-  
-    // PowerStrip mandatory images (borders and socket)
-    if (this.model.showingPowerStrips() || (this.model.showingRacks() && !this.model.showingFullIrv())) {
-      for (var onePSAsset of Array.from(powerStripAssets)) {
-        if (!Array.from(assets).includes(onePSAsset)) { assets.push(onePSAsset); }
-      }
-    }
-
-    for (var asset of Array.from(assets)) {
-      AssetManager.get(CanvasController.PRIMARY_IMAGE_PATH + asset, this.evAssetLoaded, this.evAssetFailed);
-    }
-
-    this.model.assetList(assets);
-  }
-
-
   // thumb navigation mouse down event handler, initialises drag handling
   // @param  ev  the event object which invoked execution
   evMouseDownThumb(ev) {
@@ -2529,7 +2191,6 @@ class IRVController extends CanvasController {
   // navigation mouse coordinates
   // @param  ev  the event object which invoked execution
   thumbScroll(ev) {
-    this.rackSpace.arrangePowerStrips();
     const coords    = Util.resolveMouseCoords(this.thumbEl, ev);
 
     this.rackParent.scrollLeft = ((coords.x / this.thumb.width) * this.rackSpace.coordReferenceEl.width) - (this.rackElDims.width / 2);
@@ -2545,25 +2206,6 @@ class IRVController extends CanvasController {
     }
 
     return this.currentFace = face;
-  }
-
-  // face model value subscriber, shows updating message
-  showOrHidePowerStripLayer() {
-    if (this.model.showingPowerStrips() === false) {
-      this.model.showingPowerStrips(true);
-      return this.rackSpace.showPowerStripLayer();
-    } else {
-      this.model.showingPowerStrips(false);
-      return this.rackSpace.hidePowerStripLayer();
-    }
-  }
-
-  updateShowOrHidePowerStripsLink() {
-    if (this.model.showingPowerStrips()) {
-      return (this.showPowerStripsLink != null ? this.showPowerStripsLink.innerHTML = "Hide PDUs" : undefined);
-    } else {
-      return (this.showPowerStripsLink != null ? this.showPowerStripsLink.innerHTML = "View PDUs" : undefined);
-    }
   }
 
   // filter bar mouse down event hander, initialises drag handling
@@ -2773,56 +2415,6 @@ class IRVController extends CanvasController {
       default:
         if (this.model.selectedMetricStat() !== null) { return this.model.selectedMetricStat(IRVController.DEFAULT_METRIC_STAT); }
     }
-  }
-
-
-  // rack view show VM event handler, starts VM metric poller and displays VM popup
-  // @param  ev  the event object which invoked execution
-  evShowVMs(ev) {
-    this.vHostId     = ev.data;
-    this.showingVMs  = true;
-
-    if ((this.model.selectedMetric() == null) || (this.model.metricPollRate() === 0)) { return; }
-
-    this.vmMetricTmr = setInterval(this.loadVMMetrics, this.model.metricPollRate());
-    return this.loadVMMetrics();
-  }
-
-
-  // rack view hide VM event handler, stops VM metric poller
-  // @param  ev  the event object which invoked execution
-  evHideVMs(ev) {
-    this.showingVMs = false;
-    return clearInterval(this.vmMetricTmr);
-  }
-
-
-  // sends request for VM metrics to the server
-  loadVMMetrics() {
-    return new Request.JSON({
-      url        : this.resources.path + this.resources.vmMetricData.replace(/\[\[metric_id\]\]/g, this.model.selectedMetric()) + '?' + (new Date()).getTime(),
-      method     : 'post',
-      onComplete : this.receivedVMMetrics,
-      headers    : { 'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content') },
-      data       : { host_id: this.vHostId }
-    }).send();
-  }
-
-
-  // called when the server responds with VM metrics, updates model with new metric data
-  receivedVMMetrics(vm_metrics) {
-    const metrics     = this.parser.parseVMMetrics(vm_metrics);
-    const old_metrics = this.model.metricData();
-    const groups      = this.model.groups();
-
-    // all other metrics arrive in a separate request so preserve any metric data
-    // for those groups
-    for (var group of Array.from(groups)) {
-      if (group === 'vms') { continue; }
-      metrics.values[group] = old_metrics.values[group];
-    }
-
-    return this.model.metricData(metrics);
   }
 
   debug(...msg) {
