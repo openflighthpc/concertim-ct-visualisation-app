@@ -30,7 +30,6 @@ class CanvasController {
   constructor(options) {
     this.getConfig = this.getConfig.bind(this);
     this.configReceived = this.configReceived.bind(this);
-    this.evLoadRackAssets = this.evLoadRackAssets.bind(this);
     this.rackIdsAsParams = this.rackIdsAsParams.bind(this);
     this.getRackDefs = this.getRackDefs.bind(this);
     this.receivedRackDefs = this.receivedRackDefs.bind(this);
@@ -62,45 +61,84 @@ class CanvasController {
     this.model = new CanvasViewModel();
     this.parser   = new CanvasParser(this.model);
     this.setResources();
-    this.evLoadRackAssets();
+    this.preloadAssets();
     return this.getRackData();
   }
 
-  // assetList model value subscriber, commences loading of rack images
-  evLoadRackAssets() {
+  // Preload rack (and possibly other) assets.
+  preloadAssets() {
     this.assetCount = 0;
-    const assets      = this.model.assetList();
+    const assets = this.model.assetList();
 
-    for (var asset of Array.from(assets)) {
+    this.additionalPreloadAssets().forEach(asset => {
+      assets.push(asset);
+    });
+
+    for (var asset of assets) {
       AssetManager.get(CanvasController.PRIMARY_IMAGE_PATH + asset, this.evAssetLoaded, this.evAssetFailed);
     }
 
+    // Not sure why we do this.  There is no subscriber to `assetList`.  It is
+    // used in a number of places e.g., to check on asset loading progress.
     this.model.assetList(assets);
   }
 
-  getRackData() {
-    let rack__ids;
-    if ((this.options != null ? this.options.rackIds : undefined) != null) {
-      rack__ids = this.rackIdsAsParams(this.options.rackIds);
-    } else if ((this.crossAppSettings != null) && (this.crossAppSettings.selectedRacks != null)) {
-      this.model.displayingAllRacks(false);
-      if (Object.keys(this.crossAppSettings.selectedRacks).length === 0) {
-        rack__ids = 'none';
-      } else if (((this.options != null) && (this.options.applyfilter === "true")) || ($(options.parent_div_id).get('data-filter') != null) || ($(this.options.parent_div_id).get('data-focus') != null)) {
-        rack__ids = this.rackIdsAsParams(Object.keys(this.crossAppSettings.selectedRacks));
-      } else {
-        rack__ids = null;
-      }
-    } else { 
-      rack__ids = null;
+  // Return an array of any additional image assets that should be preloaded.
+  additionalPreloadAssets() {
+    return [];
+  }
+
+  // Return a list of rack ids that we are going to display, or `null` to display all racks.
+  getRackIds() {
+    // If we've explicitly been given the rack ids, use them.
+    if (this.options && this.options.rackIds) {
+      return this.options.rackIds;
     }
 
-    // If no racks to search, then skip the getRackDefs function, 
-    // and send an empty hash to the receivedRackDefs function
-    if (rack__ids === 'none') {
-      return this.receivedRackDefs({});
+    // We may have been given the rack ids via our crossAppSettings
+    // communication mechanism.
+    if (this.crossAppSettings && this.crossAppSettings.selectedRacks) {
+      // Toggle the setting that we're not displaying all racks.  This doesn't
+      // need to be done in the above case, as it is handled elsewhere; see
+      // initialiseRackDefs and filterCrossAppSettings.
+      this.model.displayingAllRacks(false);
+
+      if (Object.keys(this.crossAppSettings.selectedRacks).length === 0) {
+        // We've been told, via the crossAppSettings mechanism, to display no racks. :shrug:.
+        return [];
+      }
+
+      // We've been told, via the crossAppSettings mechanism, to display
+      // specific racks.  But before we do so, we also check that there is a
+      // second mechanism informing us to filter the racks.
+      if (this.options != null) {
+        const applyingFilter = this.options.applyfilter === "true";
+        const haveDataFilter = $(this.options.parent_div_id).get('data-filter') != null;
+        const haveDataFocus = $(this.options.parent_div_id).get('data-focus') != null;
+
+        if (applyingFilter || haveDataFilter || haveDataFocus) {
+          return Object.keys(this.crossAppSettings.selectedRacks);
+        }
+      }
+    }
+
+    // If we get here, the list of racks to display has not been restricted.
+    // Return `null` to display them all.
+    return null;
+  }
+
+  getRackData() {
+    const rackIds = this.getRackIds();
+    if (rackIds == null) {
+      // We're displaying all racks.
+      this.getRackDefs();
+    } else if (rackIds.length === 0) {
+      // We're displaying no racks.  Skip the getRackDefs function and send an
+      // empty hash to the receivedRackDefs function.
+      this.receivedRackDefs({});
     } else {
-      return this.getRackDefs(rack__ids);
+      // We've been given a list of rack ids to display.
+      this.getRackDefs(this.rackIdsAsParams(rackIds));
     }
   }
 
@@ -129,10 +167,15 @@ class CanvasController {
   // the data centre. Actions the data accordingly
   // @param  rack_defs the rack definitions as returned by the server
   receivedRackDefs(rack_defs) {
+    this.debug("received rack defs");
     const defs = this.parser.parseRackDefs(rack_defs);
-
+    this.processRackDefs(defs);
     return this.initialiseRackDefs(defs);
   }
+
+  // Process received rack definitions.  Subclasses may override this if they
+  // have special processing requirements.
+  processRackDefs(defs) { }
 
   initialiseRackDefs(defs) {
     let rackAsset;
@@ -260,6 +303,10 @@ class CanvasController {
   showFinishedTime() {
     const time_finised = new Date();
     return console.log("======== END CANVAS =====",time_finised,"(", time_finised - this.time_started, ") miliseconds");
+  }
+
+  debug(...msg) {
+    console.debug(`${this.constructor.name}:`, ...msg);
   }
 };
 
