@@ -498,37 +498,6 @@
           {
             "caption" : "Focus",
             "url"     : "internal::focusOn,racks,[[rack_id]]"
-          },
-          {
-            "caption" : "Show",
-            "url"     : "/-/racks/[[rack_id]]"
-          },
-          {
-            "caption" : "View",
-            "url"     : "/-/racks/[[rack_id]]/view"
-          },
-          {
-            "caption" : "Edit",
-            "url"     : "/-/racks/[[rack_id]]/edit",
-            "RBAC"    : {"action": "manage", "resource": "Ivy::HwRack"}
-          },
-          {
-            "caption" : "Delete",
-            "url"     : "/-/racks/[[rack_id]]/show_destroy_issues?return=IRV",
-            "onClick" : "new AjaxPopup('destroy_ajax_list', '/-/racks/[[rack_id]]/show_destroy_issues', {xpos: function() {return $('rack_container').getWidth()/2}, ypos: function() {return $('rack_container').getHeight()/2}, method:'get', asynchronous:true, evalScripts:true, header:'<h2>Delete Rack</h2>', jump:'top', onComplete:function(request){manageRedirect(request,'destroy_ajax_list','production')}, onLoading:function(request){please_wait('destroy_ajax_list')}}); return false;",
-            "RBAC"    : {"action": "manage", "resource": "Ivy::HwRack"}
-          },
-          {
-            "content": "[[spacer]]<h1>Devices</h1>"
-          },
-          {
-            "caption" : "[[view_devices]]",
-            "url"     : "/-/racks/[[rack_id]]/devices"
-          },
-          {
-            "caption" : "((Add device at u[[empty_u]]))",
-            "url"     : "/-/items/wizard?location_type=rack&facing=[[aspect]]&rack_id=[[rack_id]]&start_u=[[empty_u]]",
-            "RBAC"    : {"action": "manage", "resource": "Ivy::Device"}
           }
         ],
 
@@ -540,27 +509,6 @@
           {
             "caption" : "Focus",
             "url"     : "internal::focusOn,chassis,[[chassis_id]]"
-          },
-          {
-            "caption" : "Show",
-            "url"     : "/-/chassis/[[chassis_id]]"
-          },
-          {
-            "caption" : "Edit",
-            "url"     : "/-/chassis/[[chassis_id]]/edit",
-            "RBAC"    : {"action": "manage", "resource": "Ivy::Chassis"}
-          },
-          {
-            "caption" : "Delete",
-            "url"     : "/-/chassis/[[chassis_id]]/show_destroy_issues?return=IRV",
-            "onClick" : "new AjaxPopup('destroy_chassis', '/-/chassis/[[chassis_id]]/show_destroy_issues', {xpos: function() {return $('rack_container').getWidth()/2}, ypos: function() {return $('rack_container').getHeight()/2}, method:'get', asynchronous:true, evalScripts:true, header:'<h2>Delete Chassis</h2>', jump:'top', onComplete:function(request){manageRedirect(request,'destroy_chassis','production')}, onLoading:function(request){please_wait('destroy_chassis')}}); return false;",
-            "disableForCommand" : true,
-            "RBAC"    : {"action": "manage", "resource": "Ivy::Chassis"}
-          },
-          {
-            "caption" : "((Add blade to column [[empty_col]], row [[empty_row]]))",
-            "url"     : "/-/chassis/[[chassis_id]]/devices/new?slot_id=[[slot_id]]",
-            "RBAC"    : {"action": "manage", "resource": "Ivy::Device"}
           }
         ],
 
@@ -572,22 +520,6 @@
           {
             "caption" : "Focus",
             "url"     : "internal::focusOn,devices,[[device_id]]"
-          },
-          {
-            "caption" : "Show",
-            "url"     : "/-/devices/[[device_id]]"
-          },
-          {
-            "caption" : "Edit",
-            "url"     : "/-/devices/[[device_id]]/edit",
-            "RBAC"    : {"action": "manage", "resource": "Ivy::Device"}
-          },
-          {
-            "caption" : "Delete",
-            "url"     : "/-/devices/[[device_id]]/show_destroy_issues?return=IRV",
-            "onClick" : "new AjaxPopup('destroy_device', '/-/devices/[[device_id]]/show_destroy_issues', {xpos: function() {return $('rack_container').getWidth()/2}, ypos: function() {return $('rack_container').getHeight()/2}, method:'get', asynchronous:true, evalScripts:true, header:'<h2>Delete [[device_name]]</h2>', jump:'top', onComplete:function(request){manageRedirect(request,'destroy_device','production')}, onLoading:function(request){please_wait('destroy_device')}}); return false;",
-            "disableForCommand" : true,
-            "RBAC"    : {"action": "manage", "resource": "Ivy::Device"}
           }
         ],
 
