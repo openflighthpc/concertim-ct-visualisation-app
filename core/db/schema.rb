@@ -10,10 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_06_144934) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_23_142113) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
+
+  connection.execute "CREATE SCHEMA IF NOT EXISTS public"
+  connection.execute "CREATE SCHEMA IF NOT EXISTS uma"
+
+  connection.schema_search_path = "public,uma"
 
   create_table "good_job_batches", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -72,6 +77,28 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_06_144934) do
     t.index ["priority", "created_at"], name: "index_good_jobs_jobs_on_priority_created_at_when_unfinished", order: { priority: "DESC NULLS LAST" }, where: "(finished_at IS NULL)"
     t.index ["queue_name", "scheduled_at"], name: "index_good_jobs_on_queue_name_and_scheduled_at", where: "(finished_at IS NULL)"
     t.index ["scheduled_at"], name: "index_good_jobs_on_scheduled_at", where: "(finished_at IS NULL)"
+  end
+
+  create_table "uma.users", id: :bigint, default: -> { "nextval('users_id_seq'::regclass)" }, force: :cascade do |t|
+    t.string "login", limit: 80, null: false
+    t.string "firstname", limit: 56, null: false
+    t.string "surname", limit: 56, null: false
+    t.text "email", default: "", null: false
+    t.string "encrypted_password", limit: 128, default: "", null: false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.inet "current_sign_in_ip"
+    t.inet "last_sign_in_ip"
+    t.integer "sign_in_count", default: 0, null: false
+    t.text "authentication_token"
+    t.datetime "remember_created_at"
+    t.string "reset_password_token", limit: 255
+    t.datetime "reset_password_sent_at"
+    t.boolean "root", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_uma.users_on_email", unique: true
+    t.index ["login"], name: "index_uma.users_on_login", unique: true
   end
 
 end
