@@ -1214,7 +1214,12 @@ class IRVController extends CanvasController {
   }
 
   showHideExportDataOption(metric) {
-    return $('export_link').className = this.noMetricSelected(metric) ? "hide" : "";
+    const link = document.querySelector('#export_link a');
+    if (this.noMetricSelected(metric)) {
+      link.addClass("disabled");
+    } else {
+      link.removeClass("disabled");
+    }
   }
 
   // selectedMetric model property subscriber. Resets selected preset drop-down, clears existing metric data, resets filter and restarts
