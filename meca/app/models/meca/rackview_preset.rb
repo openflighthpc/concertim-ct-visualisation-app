@@ -16,23 +16,6 @@ module Meca
     validates :default, inclusion: [true, false]
     validates :values, presence: true
 
-
-    ####################################
-    #
-    # Instance Methods
-    #
-    ####################################
-
-    def values=(v)
-      super(YAML.dump(v))
-    end
-
-    def values
-      YAML.load(super)
-    rescue
-      {}
-    end
-
   end
 end
 
