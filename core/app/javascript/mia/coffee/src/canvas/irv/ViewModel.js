@@ -309,7 +309,7 @@ class ViewModel extends CanvasViewModel {
       for (var metric in metrics) {
         if (!this.isInExcludedMetrics(metrics[metric].name)) { metric_ids.push(metrics[metric].id); }
       }
-      metric_ids = [ViewModel.METRIC_NO_VALUE, ViewModel.METRIC_NOT_VALID].concat(metric_ids);
+      metric_ids = [ViewModel.METRIC_NO_VALUE].concat(metric_ids);
       return metric_ids;
     }
     , this);
