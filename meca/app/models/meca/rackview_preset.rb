@@ -1,7 +1,7 @@
 require 'yaml'
 
 module Meca
-  class RackviewPreset < Meca::Model
+  class RackviewPreset < ApplicationRecord
 
     self.table_name = 'rackview_presets'
 
