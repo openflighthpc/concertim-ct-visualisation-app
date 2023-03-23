@@ -25,7 +25,8 @@ meca: &meca
 
 uma: &uma
   <<: *pg_base
-  database: uma
+  database: ct-vis
+  schema_search_path: uma
 
 repo_base: &repo_base
   repositories:
@@ -70,6 +71,7 @@ repo_base: &repo_base
 development:
   <<: *pg_base
   database: ct-vis
+  schema_search_path: public,uma
   <<: *repo_base  
 
 # Warning: The database defined as "test" will be erased and
@@ -83,4 +85,5 @@ development:
 production:
   <<: *pg_base
   database: ct-vis
+  schema_search_path: public,uma
   <<: *repo_base
