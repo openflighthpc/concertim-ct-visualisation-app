@@ -79,4 +79,7 @@ Rails.application.configure do
     # https://github.com/bensheldon/good_job/issues/490
     $stdout.sync = true
   end
+
+  # Allow all hosts in dev mode, e.g., `concertim1.dev.alces-flight.com`.
+  config.hosts.clear
 end
