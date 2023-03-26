@@ -5,7 +5,7 @@
 %>
 
 <h4 id="rack_actions">Rack actions</h4>
-<div id="side_bar" class="main_pane">
+<div id="side_bar" class="main_pane irv_side_bar">
   <div id="thumb_nav" class="thumb_nav"></div>
   <div id="zoom_container" class="div_table" >
     <div class="div_row div_row_header">
@@ -57,18 +57,10 @@
       </div>
     </div>
     <div class="div_row">
-      <div class="div_cell right_col">
-        <a href="#" id="reload_preset" data-bind="click: document.IRV.switchPreset">Reload preset</a>
-      </div>
-    </div>
-    <div class="div_row">
-      <div class="div_cell right_col">
-        <a href="#" id="update_preset">Update preset</a>
-      </div>
-    </div>
-    <div class="div_row">
-      <div class="div_cell right_col">
-	    	<a href="#" id="create_preset">Create preset</a>
+      <div class="div_cell right_col preset_controls">
+        <a href="#" id="reload_preset" data-bind="click: document.IRV.switchPreset">Reload</a>
+        <a href="#" id="update_preset">Update</a>
+        <a href="#" id="create_preset">Create</a>
       </div>
     </div>
   </div>
