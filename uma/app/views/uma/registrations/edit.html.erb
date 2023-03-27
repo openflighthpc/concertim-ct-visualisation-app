@@ -1,0 +1,33 @@
+<% set_title 'Account details' -%>
+
+<%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: :no_border }) do |f| %>
+  <%# render_form_errors_for resource %>
+  <%= devise_error_messages! %>
+
+  <div class="formItem">
+    <%= f.label :first_name, "First name", :class => 'required_field' %>
+    <%= f.text_field :firstname, :autocomplete => :off %>
+  </div>
+
+  <div class="formItem">
+    <%= f.label :last_name, "Last name", :class => 'required_field' %>
+    <%= f.text_field :surname, :autocomplete => :off %>
+  </div>
+
+  <div class="formItem">
+    <%= f.label :password %> <i>(leave blank if you don't want to change it)</i>
+    <%= f.password_field :password %>
+  </div>
+
+  <div class="formItem">
+    <%= f.label :password_confirmation %>
+    <%= f.password_field :password_confirmation %>
+  </div>
+
+  <div class="formItem">
+    <%= f.label :current_password %>
+    <%= f.password_field :current_password %>
+  </div>
+
+  <%= f.submit "Update" %>
+<% end %>

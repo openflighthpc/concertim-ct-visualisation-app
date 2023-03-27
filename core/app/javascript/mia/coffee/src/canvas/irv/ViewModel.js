@@ -187,17 +187,15 @@ class ViewModel extends CanvasViewModel {
     , this);
 
     // object, preset definitions using id as the key
-    this.presetsById = ko.observable([]);
+    this.presetsById = ko.observable({});
 
     // string, the name of the currently selected preset
     this.selectedPreset = ko.observable();
 
     // array, a list of available preset names
     this.presetNames    = ko.dependentObservable(function() {
-      const presets      = this.presetsById();
-      const preset_names = [];
-      for (var i in presets) { preset_names.push(presets[i].name); }
-      return Util.sortCaseInsensitive(preset_names);
+      const presetNames = Object.values(this.presetsById()).map(p => p.name);
+      return Util.sortCaseInsensitive(presetNames);
     }
     , this);
 
