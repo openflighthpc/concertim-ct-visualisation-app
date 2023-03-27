@@ -31,7 +31,6 @@ Rails.application.routes.draw do
               get :modified
             end
           end
-          resources :thresholds, :constraints => { :id => /.*/ }, only: [:index]
           resources :nonrack_devices, only: [:index] do
             collection do
               get :modified
@@ -65,7 +64,6 @@ Rails.application.routes.draw do
           resources :metrics, :constraints => { :id => /.*/ }, only: [] do
             get :structure, :on => :collection
           end
-          resources :breaches
         end
 
         namespace :users do

@@ -392,7 +392,6 @@ class RackObject extends RackSpaceObject {
   }
 
   hide() {
-    if (this.breach != null) { this.breach.destroy(); }
     this.hideMetric();
     this.visible = false;
     for (var asset of Array.from(this.assets)) { this.gfx.remove(asset); }

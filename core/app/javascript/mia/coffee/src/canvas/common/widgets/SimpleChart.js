@@ -455,14 +455,6 @@ class SimpleChart {
       }
     }
 
-    if (this.thresholdValue) {
-      if (this.thresholdValue > max_y) {
-        max_y = this.thresholdValue;
-      } else if (this.thresholdValue < min_y) {
-        min_y = this.thresholdValue;
-      }
-    }
-
     // calculate suitable y-axis range to encapsulate min and max
     const y_range  = this.getAxisRange(max_y, min_y);
     // calculate the value of a single pixel in y units

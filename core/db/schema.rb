@@ -10,15 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_23_142113) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_23_153343) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
   connection.execute "CREATE SCHEMA IF NOT EXISTS public"
   connection.execute "CREATE SCHEMA IF NOT EXISTS uma"
+  connection.execute "CREATE SCHEMA IF NOT EXISTS meca"
 
-  connection.schema_search_path = "public,uma"
+  connection.schema_search_path = "public,uma,meca"
+
+  create_table "meca.rackview_presets", id: :bigint, default: -> { "nextval('rackview_presets_id_seq'::regclass)" }, force: :cascade do |t|
+    t.string "name", limit: 255, null: false
+    t.boolean "default", default: false, null: false
+    t.jsonb "values"
+    t.integer "user_id"
+    t.boolean "global", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "good_job_batches", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false

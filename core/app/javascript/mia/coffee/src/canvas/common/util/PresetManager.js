@@ -30,8 +30,6 @@ class PresetManager {
     this.ERR_DUPLICATE_NAME     = 'Choose another';
     this.ERR_CAPTION            = 'Failed: [[error_message]]';
     this.ERR_WHITE_NAME         = 'Failed: [[error_message]]';
-    this.WARN_THRESHOLD         = 'No threshold has been associated with your chosen preset.';
-    this.MESSAGE_HOLD_DURATION  = 1;
     this.METRIC_NOT_VALID       = 'Metric not valid';
 
     this.EMPTY_PRESET           = {values: {selectedMetric: '"No metric selected"', gradientLBCMetric: 'false', face: '"front"', viewMode: '"Images and bars"', graphOrder: '"descending"', scaleMetrics: 'true', showChart: 'true', metricPollRate: 60000} };
@@ -154,7 +152,7 @@ class PresetManager {
     if (this.presetExists(page_preset_default, Object.keys(presets_by_id))) { default_preset = presets_by_id[page_preset_default].name; }
 
     // select the default preset, if defined
-    if ((default_preset != null) && (this.model.locatingBreachingNodes === false)) {
+    if (default_preset != null) {
       return this.modelRefs.selectedPreset(default_preset);
     }
   }
@@ -209,9 +207,7 @@ class PresetManager {
         if (new_val === 'false') { new_val = false; }
         if (new_val === "") { new_val = null; }
 
-        if ((val_name === 'selectedThresholdId') && ((new_val == null) || (this.model.thresholdsById()[new_val] == null))) {
-          MessageSlider.instance.display(PresetManager.WARN_THRESHOLD, PresetManager.WARN_THRESHOLD, PresetManager.MESSAGE_HOLD_DURATION, new Date());
-        } else if (current !== new_val) {
+        if (current !== new_val) {
           if (key != null) {
             var obj      = this.model[val_name]();
             obj[key] = new_val;

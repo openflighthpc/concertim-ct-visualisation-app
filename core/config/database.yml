@@ -21,7 +21,8 @@ ivy: &ivy
 
 meca: &meca
   <<: *pg_base
-  database: meca
+  database: ct-vis
+  schema_search_path: meca
 
 uma: &uma
   <<: *pg_base
@@ -71,7 +72,7 @@ repo_base: &repo_base
 development:
   <<: *pg_base
   database: ct-vis
-  schema_search_path: public,uma
+  schema_search_path: public,uma,meca
   <<: *repo_base  
 
 # Warning: The database defined as "test" will be erased and
@@ -85,5 +86,5 @@ development:
 production:
   <<: *pg_base
   database: ct-vis
-  schema_search_path: public,uma
+  schema_search_path: public,uma,meca
   <<: *repo_base

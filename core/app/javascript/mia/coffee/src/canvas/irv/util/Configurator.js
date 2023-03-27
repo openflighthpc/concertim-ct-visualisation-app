@@ -27,7 +27,6 @@ import LBC from 'canvas/common/widgets/LBC';
 import RackHint from 'canvas/irv/view/RackHint';
 import ThumbHint from 'canvas/irv/view/ThumbHint';
 import ContextMenu from 'canvas/irv/view/ContextMenu';
-import Breacher from 'canvas/irv/view/Breacher';
 import ThumbNav from 'canvas/common/widgets/ThumbNav';
 import FilterBar from 'canvas/common/widgets/FilterBar';
 import CanvasViewModel from 'canvas/common/CanvasViewModel';
@@ -59,8 +58,6 @@ class Configurator {
     ViewModel.INIT_METRIC_LEVEL        = view_model_config.startUp.metricLevel;
     ViewModel.INIT_GRAPH_ORDER         = view_model_config.startUp.graphOrder;
     ViewModel.INIT_METRIC_POLL_RATE    = view_model_config.startUp.metricPollRate;
-    ViewModel.NO_THRESHOLDS_CAPTION    = view_model_config.noThresholdsCaption;
-    ViewModel.SELECT_THRESHOLD_CAPTION = view_model_config.selectThresholdCaption;
 
     const util_config     = config.IRVUTIL;
     Util.SIG_FIG = util_config.sigFig;
@@ -89,7 +86,6 @@ class Configurator {
       IRVController.EXPORT_HEADER               = controller_config.export.header;
       IRVController.EXPORT_RECORD               = controller_config.export.record;
       IRVController.EXPORT_MESSAGE              = controller_config.export.message;
-      IRVController.BREACH_POLL_RATE            = controller_config.breachPollRate;
       IRVController.MIN_METRIC_POLL_RATE        = controller_config.minMetricPollRate;
       IRVController.METRIC_POLL_EDIT_DELAY      = controller_config.metricPollEditDelay;
       IRVController.INVALID_POLL_COLOUR         = controller_config.invalidPollColour;
@@ -113,8 +109,6 @@ class Configurator {
       PresetManager.ERR_WHITE_NAME        = preset_config.errors.whiteName;
       PresetManager.ERR_DUPLICATE_NAME    = preset_config.errors.duplicateName;
       PresetManager.ERR_NOT_OWNED         = preset_config.errors.notOwned;
-      PresetManager.WARN_THRESHOLD        = preset_config.warnThreshold;
-      PresetManager.MESSAGE_HOLD_DURATION = preset_config.msgHoldDuration;
       PresetManager.MODEL_DEPENDENCIES    = preset_config.modelDependencies;
       PresetManager.DOM_DEPENDENCIES      = preset_config.domDependencies;
       PresetManager.MSG_CONFIRM_UPDATE    = preset_config.msgConfirmUpdate;
@@ -144,8 +138,6 @@ class Configurator {
     ThumbNav.MASK_FILL_ALPHA    = thumb_nav_config.maskFillAlpha;
     ThumbNav.SHADE_FILL         = thumb_nav_config.shadeFill;
     ThumbNav.SHADE_ALPHA        = thumb_nav_config.shadeAlpha;
-    ThumbNav.BREACH_FILL        = thumb_nav_config.breachFill;
-    ThumbNav.BREACH_ALPHA       = thumb_nav_config.breachAlpha;
     ThumbNav.MODEL_DEPENDENCIES = thumb_nav_config.modelDependencies;
 
     const update_msg_config = config.UPDATEMSG;
@@ -236,13 +228,6 @@ class Configurator {
       Highlight.DRAGGED_MAX_ALPHA      = highlight_config.dragged.maxAlpha;
       Highlight.DRAGGED_MIN_ALPHA      = highlight_config.dragged.minAlpha;
  
-      const breacher_config        = config.RACKSPACE.BREACHER;
-      Breacher.STROKE        = breacher_config.stroke;
-      Breacher.STROKE_WIDTH  = breacher_config.strokeWidth;
-      Breacher.ALPHA_MAX     = breacher_config.maxAlpha;
-      Breacher.ALPHA_MIN     = breacher_config.minAlpha;
-      Breacher.ANIM_DURATION = breacher_config.animDuration;
-      
       const metric_config        = config.RACKSPACE.METRIC;
       Metric.ALPHA         = metric_config.alpha;
       Metric.FADE_DURATION = metric_config.fadeDuration;
@@ -266,7 +251,6 @@ class Configurator {
     LBC.SELECT_BOX_STROKE              = lbc_config.selectBox.stroke;
     LBC.SELECT_BOX_STROKE_WIDTH        = lbc_config.selectBox.strokeWidth;
     LBC.SELECT_BOX_ALPHA               = lbc_config.selectBox.alpha;
-    LBC.THRESHOLD_ALPHA                = lbc_config.thresholdAlpha;
     LBC.MODEL_DEPENDENCIES             = lbc_config.modelDependencies;
     LBC.BAR_CHART_MIN_DATUM_WIDTH      = lbc_config.barChartMinDatumWidth;
     LBC.FILL_SINGLE_SERIES_LINE_CHARTS = lbc_config.fillSingleSeriesLineCharts;
