@@ -14,7 +14,6 @@ module Ivy
     belongs_to :chassis_row, class_name: 'Ivy::ChassisRow'
     has_one :device, dependent: :destroy
     has_one :chassis, through: :chassis_row
-    has_one :cluster, through: :chassis
 
 
     ###############################

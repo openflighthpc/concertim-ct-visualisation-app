@@ -28,7 +28,6 @@ import FilterBar from 'canvas/common/widgets/FilterBar';
 import ViewModel from 'canvas/irv/ViewModel';
 import Parser from 'canvas/irv/util/Parser';
 import PresetManager from 'canvas/common/util/PresetManager';
-import StaticGroupManager from 'canvas/common/util/StaticGroupManager'
 import Profiler from 'Profiler';
 import ComboBox from 'util/ComboBox';
 import Tooltip from 'canvas/irv/view/Tooltip';
@@ -226,8 +225,6 @@ class IRVController extends CanvasController {
       this.model.showChart(false);
       FilterBar.THICKNESS = 0;
     }
-
-    if (this.model.showingFullIrv()) { this.groups = new StaticGroupManager(this.model, this.crossAppSettings.selectedGroup); }
 
     this.parser   = new Parser(this.model);
     this.setResources();

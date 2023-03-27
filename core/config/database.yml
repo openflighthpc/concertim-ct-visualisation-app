@@ -17,7 +17,9 @@ pg_base: &pg_base
 
 ivy: &ivy
   <<: *pg_base
-  database: hacor
+  # database: hacor
+  database: ct-vis
+  schema_search_path: ivy
 
 meca: &meca
   <<: *pg_base
@@ -72,7 +74,7 @@ repo_base: &repo_base
 development:
   <<: *pg_base
   database: ct-vis
-  schema_search_path: public,uma,meca
+  schema_search_path: public,uma,meca,ivy
   <<: *repo_base  
 
 # Warning: The database defined as "test" will be erased and
@@ -86,5 +88,5 @@ development:
 production:
   <<: *pg_base
   database: ct-vis
-  schema_search_path: public,uma,meca
+  schema_search_path: public,uma,meca,ivy
   <<: *repo_base

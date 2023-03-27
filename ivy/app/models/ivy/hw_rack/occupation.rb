@@ -55,10 +55,6 @@ module Ivy
         u_height
       end
 
-      def contains_mia?
-        !mia.nil?
-      end
-
     end
   end
 end

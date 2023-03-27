@@ -11,9 +11,11 @@ module Ivy
     #
     ######################################
 
-    validates :map_to_host, uniqueness: { scope: :data_source_id, message: ' should be one per data_source_id'}
-    validates :data_source_id, :map_to_host, :device_id, presence: true
-    validates :map_to_host, length: { maximum: 150, allow_blank: false, message: "Data source host reference cannot be greater than 150 characters" }
+    validates :map_to_host,
+      presence: true,
+      uniqueness: true,
+      length: { maximum: 150, allow_blank: false, message: "Data source host reference cannot be greater than 150 characters" }
+    validates :device_id, presence: true
 
 
     ######################################
@@ -22,7 +24,6 @@ module Ivy
     #
     ######################################
 
-    belongs_to :data_source
     belongs_to :device
 
 
@@ -33,12 +34,8 @@ module Ivy
     ######################################
 
     def set_defaults
-      #MMM defensive code added during migration
-      if default_data_source
-        self.map_to_grid     ||= default_data_source.default_grid_map   
-        self.map_to_cluster  ||= default_data_source.default_cluster_map
-        self.data_source_id  ||= default_data_source.id     
-      end
+      self.map_to_grid ||= 'unspecified'
+      self.map_to_cluster ||= 'unspecified'
       self.map_to_host     ||= calculate_map_to_host
     end
 
@@ -75,10 +72,8 @@ module Ivy
     def calculate_map_to_host    
       if device.respond_to?(:generate_dsm)
         device.generate_dsm        
-      elsif device.name.blank?        
-        ".#{device.cluster.domain}".tr(' ','-')
       else        
-        "#{device.name}.#{device.cluster.domain}".tr(' ','-')
+        device.name.tr(' ','-')
       end      
     end
 
@@ -90,15 +85,6 @@ module Ivy
     ######################################
 
     private
-
-    def default_data_source
-      Ivy::DataSource.first
-      # if device.nil?
-      #   Ivy::DataSource.first
-      # else
-      #   device.available_data_sources.first       
-      # end
-    end
 
     def assign_map_to_host   
       if map_to_host.nil? || map_to_host.strip.empty?      

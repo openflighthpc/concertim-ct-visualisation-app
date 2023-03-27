@@ -12,8 +12,9 @@ class Api::V1::Irv::RacksController < Api::V1::Irv::BaseController
     #
     # Uncomment the bellow to use the new ultra fast query method!
     #
-    irv_rack_structure = Ivy::Irv.get_structure(params[:rack_ids])
-    render :json => Crack::XML.parse(irv_rack_structure).to_json
+    irv_rack_structure = Crack::XML.parse(Ivy::Irv.get_structure(params[:rack_ids]))
+    fix_structure(irv_rack_structure)
+    render :json => irv_rack_structure.to_json
 
     # If you want XML uncomment the below
     #
@@ -40,5 +41,52 @@ class Api::V1::Irv::RacksController < Api::V1::Irv::BaseController
     authorize! :read, Ivy::HwRack
 
     error_for('Rack') if @rack.nil?
+  end
+
+  private
+
+  def fix_structure(structure)
+    # Parsing XML is a pain.
+    #
+    #   <Racks></Racks>
+    #   <Racks><Rack></Rack></Racks>
+    #   <Racks><Rack></Rack><Rack></Rack></Racks>
+    #
+    # The above doesn't parse consistently.  `Racks['Rack']` might be `nil`, a
+    # single object, or an array of objects. We fix that here and also fix an
+    # image serialization issue.
+
+    if structure['Racks'].nil?
+      # When we have no racks defined.
+      structure['Racks'] = {'Rack': []}
+      return
+
+    elsif structure['Racks']['Rack'].is_a?(Array)
+      # When we have two or more racks defined.
+      structure['Racks']['Rack'].each { |s| fix_images(s) }
+      return
+
+    else
+
+      # We have a single rack defined.
+      fix_images(structure['Racks']['Rack'])
+    end
+  end
+
+  def fix_images(structure)
+    # Convert images from a JSON string to a YAML string.
+    # XXX Update model to serialize this column.
+    # XXX Update JS to accept a JSON object for these attributes.
+    template = structure['template']
+    template['images'] = JSON.parse(template['images']).symbolize_keys.to_yaml
+
+    case structure['Chassis']
+    when nil
+      # Nothing to do.
+    when Array
+      structure['Chassis'].each { |c| fix_images(c) }
+    else
+      fix_images(structure['Chassis'])
+    end
   end
 end

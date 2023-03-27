@@ -152,20 +152,6 @@ module Ivy
       end
     end
 
-    def cluster
-      return @cluster if defined?(@cluster)
-
-      @cluster = 
-        if !chassis.nil?
-          cluster = chassis.cluster rescue nil
-          cluster.nil? ? Ivy::Cluster.first : cluster
-        elsif slot.nil?
-          Ivy::Cluster.first
-        else
-          slot.cluster
-        end
-    end
-
     #
     # for tagged devices, because they don't have their own template
     #
@@ -191,21 +177,13 @@ module Ivy
       end
     end
 
-    def mia?
-      role == 'mia'
-    end
-
-    def isla?
-      role == 'isla'
-    end
-
     def metrics
       interchange_data && interchange_data[:metrics] || {}
     end
 
     def to_interchange_format(data)
       # Reload on creation, otherwise associations (e.g. chassis) may not work.
-      reload if created_on_previously_changed? || created_on_changed?
+      reload if created_at_previously_changed? || created_at_changed?
 
       # Overwrite these if already set.
       data.merge!(
@@ -234,7 +212,7 @@ module Ivy
 
     def create_or_update_data_source_map
       if data_source_map.nil?
-        build_data_source_map(data_source_id: 1, map_to_grid: 'unspecified', map_to_cluster: 'unspecified')
+        build_data_source_map
         data_source_map.save
       elsif data_source_map.map_to_host != data_source_map.calculate_map_to_host && device_should_have_dsm_updated
         data_source_map.update_attribute(:map_to_host, data_source_map.calculate_map_to_host)

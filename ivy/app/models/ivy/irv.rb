@@ -76,10 +76,6 @@ SELECT
                                                                                                                                  T.images,T.height,T.rows,T.columns,T.rack_repeat_ratio,T.depth,
                                                                                                                                  T.padding_left,T.padding_right,T.padding_top,T.padding_bottom,T.simple
                                                                                                                                  ))) from templates T where T.template_id = C.template_id limit 1 ),
-                                                                    ( select XmlAgg( XmlElement( name "powerSupplies", 
-                                                                                                XmlAttributes( ps.name as "name", ps.id as "id", 
-                                                                                                               ps.power_strip_id as "power_strip_id", ps.power_strip_socket_id as "socket_id"  ))) 
-                                                                      from power_supplies ps where ps.base_chassis_id = C.id) ,
 					  			    ( select XmlAgg(
                                                                               XmlElement( name "Slots",
                                                                                           XmlAttributes( S.id as "id",
@@ -88,13 +84,8 @@ SELECT
                                                                                           ( select XmlAgg( 
                                                                                                    XmlElement( name "Machine",
                                                                                                                 XmlAttributes( D.id as "id",
-                                                                                                                               case when (D.hypervisor is not null and D.hypervisor <> '') then 'VirtualHost' else D.type end as "type",
-                                                                                                                               D.name as "name" ),
-                                                                                                               ( select XmlAgg( XmlElement( name "powerSupplies", 
-                                                                                                                                           XmlAttributes( ps.name as "name", ps.id as "id", 
-                                                                                                                                                          ps.power_strip_id as "power_strip_id", 
-                                                                                                                                                          ps.power_strip_socket_id as "socket_id"  ))) 
-                                                                                                                 from power_supplies ps where ps.slot_id = D.slot_id) 
+                                                                                                                               D.type as "type",
+                                                                                                                               D.name as "name" )
                                                                                                    )) from devices D where D.slot_id = S.id
                                                                                           )
                                                                               )

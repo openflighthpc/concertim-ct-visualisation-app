@@ -31,7 +31,6 @@ module Ivy
     #
     ############################
 
-    belongs_to :cluster
     has_many :chassis, ->{ order(rack_start_u: :desc) },
       class_name: 'Ivy::Chassis',
       foreign_key: :rack_id,
@@ -61,12 +60,11 @@ module Ivy
 
     validates :name,
       presence: true,
-      uniqueness: { scope: :cluster_id },
+      uniqueness: true,
       format: {
         with: /\A[a-zA-Z0-9\-\_]*\Z/,
         message: "can contain only alphanumeric characters, hyphens and underscores."
       }
-    validates :cluster_id, presence: true
     validates :u_depth, numericality: { only_integer: true, greater_than: 0 }
     validates :u_height, numericality: { only_integer: true, greater_than: 0, less_than: 73 }
     validate :u_height_greater_than_highest_occupied_u?, unless: :new_record?
@@ -99,7 +97,7 @@ module Ivy
 
       # The remaining defaults take their value from that given to the last
       # rack.
-      last_rack = ( cluster || Ivy::Cluster.first ).racks.order(:created_on).last rescue nil
+      last_rack = Ivy::HwRack.all.order(:created_at).last
 
       self.u_height ||= last_rack.nil? ? 42 : last_rack.u_height
       self.name ||=
@@ -130,32 +128,6 @@ module Ivy
 
     def self.get_canvas_config
       JSON.parse(File.read(Engine.root.join("app/views/ivy/racks/_configuration.json")))
-    end
-
-    # XXX Do we still want this?
-    #
-    # Currently it's only here so that we can make sure that the device
-    # representing the MIA isn't deleted as part of a rack deletion.
-    #
-    # Perhaps it would be best to just not have a device representing a MIA;
-    # have someother mechanism to handle this.
-    Ivy::Device::ManagedDevice::MANAGEMENT_APPLIANCE_TYPES.each do |type|
-      type = type.to_s
-      define_method(type) do
-        iv = instance_variable_get("@#{type.pluralize}")
-        if iv.nil?
-          instance_variable_set(
-            "@#{type.pluralize}",
-            Ivy::Device::ManagedDevice
-              .joins(device_joins)
-              .where(['base_chassis.rack_id = ? and role = ?', id, type])
-              .order('"devices"."index"')
-              .first
-          )
-        else
-          iv
-        end
-      end
     end
 
 
