@@ -1,28 +1,31 @@
 <%
   nav = render_navigation({:level => 2..3, :expand_all => true, :skip_if_empty => true})
-  unless nav.nil? || nav.empty?
+  side_content = yield :side_content
+  if nav.present? || side_content.present?
 %>
 <div id="side" class="fill">
-  <h2 class="icon-<%= active_navigation_item_key(:level => 1) %>">
-    <%
-        title =
-          if user_signed_in?
-            is_account_settings_page = active_navigation_item_name(:level => 1) == "#{current_user.firstname} #{current_user.surname}"
-            if is_account_settings_page
-              "Account settings"
+  <% if nav.present? -%>
+    <h2 class="icon-<%= active_navigation_item_key(:level => 1) %>">
+      <%
+          title =
+            if user_signed_in?
+              is_account_settings_page = active_navigation_item_name(:level => 1) == "#{current_user.firstname} #{current_user.surname}"
+              if is_account_settings_page
+                "Account settings"
+              else
+                active_navigation_item_name(:level => 1).strip.humanize
+              end
             else
               active_navigation_item_name(:level => 1).strip.humanize
             end
-          else
-            active_navigation_item_name(:level => 1).strip.humanize
-          end
-    %>
-    <%= title %>
-  </h2>
+      %>
+      <%= title %>
+    </h2>
+  <% end -%>
 
-  <div id="sidemenu" class="fill">
+  <div id="sidemenu" class="fill <%= nav.present? ? '' : 'sidemenu-no-nav' %>">
     <%= nav %>
-    <%= yield :side_content %>
+    <%= side_content %>
   </div>
 </div><!--side-->
 <div title="Click to toggle the display of the side pane." id="hideSideContent"></div>

@@ -51,6 +51,10 @@ a img{border:none;}
     top: 41px;
     width: 195px;
     padding-left: 5px;
+
+    &.sidemenu-no-nav {
+      top: 0;
+    }
 }
 
 #hideSideContent { 

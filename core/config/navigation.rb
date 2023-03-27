@@ -12,15 +12,8 @@ SimpleNavigation::Configuration.run do |navigation|
           acc.item :acc_logout, 'Log out', uma_engine.destroy_user_session_path, :icon => :logout, :link => {:class => 'logout'}
         end
 
-      primary.item :hardware, 'Assets', ivy_engine.irv_path, icon: :hardware do |hw|
-        hw.item :hw_racks, 'Racks', ivy_engine.irv_path,
-          class: 'menuL2',
-          icon: :infra_racks,
-          link: {class: 'infra_racks'},
-          highlights_on: %r(/irv|/racks) do |rack|
-            rack.item :infra_racks_list, 'Rack view', ivy_engine.irv_path, :link => {:class => 'infra_racks'}
-          end
-      end
+      primary.item :infra_racks_list, 'Rack view', ivy_engine.irv_path, icon: :infra_racks, :link => {class: 'infra_racks'}
+
     else
       primary.item :login, 'Log in', uma_engine.new_user_session_path,
         icon: :login,

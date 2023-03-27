@@ -653,10 +653,10 @@ class IRVController extends CanvasController {
   }
 
   scrollPanelUp() {
-    const container = $("sidemenu");
-    const scrollTo = $("rack_actions");
-    if (!scrollTo || !container) { return; }
-    return container.scrollTop = scrollTo.offsetTop + container.scrollTop;
+    const sidemenu = $("sidemenu");
+    const rackActions = $("rack_actions");
+    if (!rackActions || !sidemenu) { return; }
+    sidemenu.scrollTo(rackActions);
   }
 
   // actions settings carried over from other apps, e.g. DCPV
