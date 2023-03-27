@@ -16,7 +16,6 @@ import AssetManager from 'canvas/irv/util/AssetManager';
 import ViewModel from 'canvas/irv/ViewModel';
 import RackObject from 'canvas/irv/view/RackObject';
 import Machine from 'canvas/irv/view/Machine';
-import Breacher from 'canvas/irv/view/Breacher';
 import Highlight from 'canvas/irv/view/Highlight';
 import Profiler from 'Profiler';
 
@@ -36,7 +35,6 @@ class Chassis extends RackObject {
     let face;
     super(def, 'chassis', parent);
     this.setMetricVisibility = this.setMetricVisibility.bind(this);
-    this.setBreaching = this.setBreaching.bind(this);
     this.uHeight      = def.template.height;
     this.manufacturer = def.template.manufacturer;
     this.model        = def.template.model;
@@ -112,10 +110,8 @@ class Chassis extends RackObject {
 
     if (RackObject.MODEL.metricLevel !== undefined) {
       this.subscriptions.push(RackObject.MODEL.metricLevel.subscribe(this.setMetricVisibility));
-      this.subscriptions.push(RackObject.MODEL.breaches.subscribe(this.setBreaching));
 
       this.metric = new BarMetric(this.group, this.id, this, 0, 0, max_width, max_height, RackObject.MODEL);
-      this.setBreaching(RackObject.MODEL.breaches());
       this.setIncluded();
     } else {
       this.included = true;
@@ -125,7 +121,6 @@ class Chassis extends RackObject {
   }
 
   destroy() {
-    if (this.breach != null) { this.breach.destroy(); }
     if (this.highlight != null) { this.highlight.destroy(); }
     this.metric.destroy();
     super.destroy();
@@ -192,11 +187,6 @@ class Chassis extends RackObject {
     this.assets = [];
     this.showNameLabel(show_name_label);
 
-    if (this.breach != null) {
-      this.breach.destroy();
-      this.breach = null;
-    }
-
     // @facing is the real aspect of the device
     // @face is the face that will be currently shown for the current rack
 
@@ -250,8 +240,6 @@ class Chassis extends RackObject {
       this.visible = false;
     }
 
-    if (this.breaching) { this.breach = new Breacher(this.group, this.id, this.alertGfx, this.x, this.y, this.width, this.height, RackObject.MODEL, !this.placedInHoldingArea()); }
-
     this.alignMachines();
     super.draw();
     return Profiler.end(Profiler.DEBUG);
@@ -261,13 +249,7 @@ class Chassis extends RackObject {
   select() {
     if (this.highlight == null) {
       const highlight_border = RackObject.MODEL.showingFullIrv() && RackObject.MODEL.overLBC();
-      if (this.breaching) {
-        const offset = Breacher.STROKE_WIDTH;
-        const double_off = offset * 2;
-        this.highlight = new Highlight(Highlight.MODE_SELECT, this.x + offset, this.y + offset, this.width - double_off, this.height - double_off, this.alertGfx, 'rect', {}, highlight_border);
-      } else {
-        this.highlight = new Highlight(Highlight.MODE_SELECT, this.x, this.y, this.width, this.height, this.alertGfx, 'rect', {}, highlight_border);
-      }
+      this.highlight = new Highlight(Highlight.MODE_SELECT, this.x, this.y, this.width, this.height, this.alertGfx, 'rect', {}, highlight_border);
       if (this.fullDepth() || this.noDeviceBlocking()) {
         return this.selectOtherInstances();
       }
@@ -491,21 +473,6 @@ class Chassis extends RackObject {
 
   addBlade(blade) {
     return this.children.push(blade);
-  }
-
-  setBreaching(breaches) {
-    if ((breaches[this.group] != null) && breaches[this.group][this.id]) {
-      if (!this.breaching) {
-        this.breaching = true;
-        if (this.visible) { return this.breach = new Breacher(this.group, this.id, this.alertGfx, this.x, this.y, this.width, this.height, RackObject.MODEL, !this.placedInHoldingArea()); }
-      }
-    } else {
-      this.breaching = false;
-      if (this.breach != null) {
-        this.breach.destroy();
-        return this.breach = null;
-      }
-    }
   }
 };
 Chassis.initClass();

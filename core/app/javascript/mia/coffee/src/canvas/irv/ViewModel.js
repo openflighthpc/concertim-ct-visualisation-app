@@ -20,7 +20,6 @@ class ViewModel extends CanvasViewModel {
     this.INIT_METRIC_LEVEL   = 'machine';
     this.INIT_GRAPH_ORDER    = 'ascending';
     this.INIT_SCALE_METRICS  = true;
-    this.INIT_SHOW_BREACHES  = true;
     this.INIT_SHOW_CHART     = true;
     this.INIT_SHOW_FILTER_BAR     = true;
     this.INIT_METRIC         = null;
@@ -73,9 +72,6 @@ class ViewModel extends CanvasViewModel {
     // boolean, do metric bars on devices scale to reflect their value or just show a colour
     this.scaleMetrics = ko.observable(ViewModel.INIT_SCALE_METRICS);
 
-    // boolean, whether breaches should be highlighted or not.
-    this.showBreaches = ko.observable(ViewModel.INIT_SHOW_BREACHES);
-
     // set chart visibility
     this.showChart = ko.observable(ViewModel.INIT_SHOW_CHART);
 
@@ -86,8 +82,6 @@ class ViewModel extends CanvasViewModel {
 
     // string, id of currently selected metric
     this.selectedMetric = ko.observable(ViewModel.INIT_METRIC);
-
-    this.locatingBreachingNodes = false;
 
     // int, poll rate period in ms
     this.metricPollRate = ko.observable(ViewModel.INIT_METRIC_POLL_RATE);//.extend({ ignoreNull: true })
@@ -266,9 +260,6 @@ class ViewModel extends CanvasViewModel {
     // object, defines the physical dimensions of the breaching devices. Used to draw red boxes in thumb navigation. Uses group as
     // the top-level key, then id
     this.breachZones = ko.observable(blank);
-
-    // object, stores breaching devices pushed from the server, uses group as top-level key, then id
-    this.breaches = ko.observable({});
 
     // float, the current zoom level of the rack view 1 represents 100% where all images will be drawn at their natural size
     this.scale = ko.observable();

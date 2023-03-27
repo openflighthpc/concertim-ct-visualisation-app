@@ -16,7 +16,6 @@ import ViewModel from 'canvas/irv/ViewModel';
 
 import RackObject from 'canvas/irv/view/RackObject';
 import Chassis from 'canvas/irv/view/Chassis';
-import Breacher from 'canvas/irv/view/Breacher';
 import ImageLink from 'canvas/irv/view/ImageLink';
 import Profiler from 'Profiler'
 
@@ -102,7 +101,6 @@ class Rack extends RackObject {
     Profiler.begin(Profiler.DEBUG);
     super(def, 'racks');
     this.evSpaceHidden = this.evSpaceHidden.bind(this);
-    this.setBreaching = this.setBreaching.bind(this);
     if (Rack.IMAGES_BY_TEMPLATE[this.template.id] == null) { this.setImages(); }
     this.uHeight = def.uHeight;
 
@@ -149,8 +147,6 @@ class Rack extends RackObject {
     if (RackObject.MODEL.metricLevel !== undefined) {
       this.setIncluded();
 
-      this.subscriptions.push(RackObject.MODEL.breaches.subscribe(this.setBreaching));
-      this.setBreaching(RackObject.MODEL.breaches());
     } else {
       this.included = true;
     }
@@ -207,7 +203,6 @@ class Rack extends RackObject {
   // rack.destroy()
   //
   destroy() {
-    if (this.breach != null) { this.breach.destroy(); }
     super.destroy();
     this.showULabels(false);
     return this.showNameLabel(false);
@@ -326,11 +321,6 @@ class Rack extends RackObject {
     this.face = RackObject.MODEL.face();
     if (this.face === ViewModel.FACE_BOTH) { this.face = this.bothView; }
 
-    if (this.breach != null) {
-      this.breach.destroy();
-      this.breach = null;
-    }
-
     // rack image
     this.assets.push(RackObject.RACK_GFX.addImg({
       img   : Rack.IMAGE_CACHE_BY_U_HEIGHT[this.uHeight][this.template.id][this.face],
@@ -343,8 +333,6 @@ class Rack extends RackObject {
     if ((RackObject.MODEL.viewMode !== undefined) && (RackObject.MODEL.viewMode() === ViewModel.VIEW_MODE_METRICS) && Rack.FADE_IN_METRIC_MODE) {
       this.assets.push(RackObject.RACK_GFX.addRect({ fx: 'source-atop', x: this.x, y: this.y, width: this.width, height: this.height, fill: RackObject.METRIC_FADE_FILL, alpha: RackObject.METRIC_FADE_ALPHA })); 
     }
-
-    if (this.breaching) { this.breach = new Breacher(this.group, this.id, RackObject.ALERT_GFX, this.x, this.y, this.width, this.height, RackObject.MODEL); }
 
     // determine draw order according to current view
     this.children = this.face === ViewModel.FACE_FRONT ? this.rearFirst : this.frontFirst;
@@ -628,23 +616,7 @@ class Rack extends RackObject {
     const selection = this.selectWithin(this.coordinates(), true);
     return model.selectedDevices(selection);
   }
-  
 
-
-  setBreaching(breaches) {
-    if ((breaches[this.group] != null) && breaches[this.group][this.id]) {
-      if (!this.breaching) {
-        this.breaching = true;
-        return this.breach = new Breacher(this.group, this.id, RackObject.ALERT_GFX, this.x, this.y, this.width, this.height, RackObject.MODEL);
-      }
-    } else {
-      this.breaching = false;
-      if (this.breach != null) {
-        this.breach.destroy();
-        return this.breach = null;
-      }
-    }
-  }
 };
 Rack.initClass();
 export default Rack;

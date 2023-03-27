@@ -20,8 +20,6 @@ class ThumbNav {
     this.SHADE_ALPHA      = .5;
     this.MASK_FILL        = '#333377';
     this.MASK_FILL_ALPHA  = .5;
-    this.BREACH_FILL      = '#ff0000';
-    this.BREACH_ALPHA     = 1;
 
     this.MODEL_DEPENDENCIES  = { dataCentreImage: 'dcImage', rackImage: 'rackImage', breachZones: 'breachZones', scale: 'scale', groups: 'groups' };
   }
@@ -33,8 +31,6 @@ class ThumbNav {
     this.setDataCentreImage = this.setDataCentreImage.bind(this);
     this.setRackImage = this.setRackImage.bind(this);
     this.setImg = this.setImg.bind(this);
-    this.setBreaches = this.setBreaches.bind(this);
-    this.updateBreaches = this.updateBreaches.bind(this);
     this.update = this.update.bind(this);
     this.containerEl = containerEl;
     this.maxWidth = maxWidth;
@@ -63,7 +59,6 @@ class ThumbNav {
     this.area.bottom = this.area.top + this.area.height;
     if (ThumbNav.MODEL_DEPENDENCIES.dataCentreImage) { this.model[ThumbNav.MODEL_DEPENDENCIES.dataCentreImage].subscribe(this.setDataCentreImage); }
     if (ThumbNav.MODEL_DEPENDENCIES.rackImage) { this.model[ThumbNav.MODEL_DEPENDENCIES.rackImage].subscribe(this.setRackImage); }
-    this.model[ThumbNav.MODEL_DEPENDENCIES.breachZones].subscribe(this.setBreaches);
 
     this.images = {};
     this.images.dataCentre = {};
@@ -121,7 +116,6 @@ class ThumbNav {
     // resize and update breaches
     this.gfx.setDims(this.images[imageKey].width, this.images[imageKey].height);
     this.breachGfx.setDims(this.images[imageKey].width, this.images[imageKey].height);
-    this.setBreaches();
 
     // resize model image to fit
     const cvs        = document.createElement('canvas');
@@ -136,70 +130,6 @@ class ThumbNav {
     this.width = this.biggestWidth;
     this.height = this.biggestHeight;
     return this.update();
-  }
-
-
-  setBreaches() {
-    // we're likely to get mutliple breach updates at once (when metric
-    // data is pushed). Use of setTimeout here pools these together to
-    // prevent multiple redundant updates
-    clearTimeout(this.breachTmr);
-    return this.breachTmr = setTimeout(this.updateBreaches, 100);
-  }
-
-
-  updateBreaches() {
-    let group, id, multi_instance, zone;
-    this.breachGfx.removeAll();
-    const combined_scale = this.scale * this.model[ThumbNav.MODEL_DEPENDENCIES.scale]();
-
-    const zones  = this.model[ThumbNav.MODEL_DEPENDENCIES.breachZones]();
-    const groups = this.model[ThumbNav.MODEL_DEPENDENCIES.groups]();
-
-    for (group of Array.from(groups)) {
-      for (id in zones[group]) {
-        multi_instance = Object.prototype.toString.call(zones[group][id]) === '[object Array]';
-        break;
-      }
-
-      if (multi_instance != null) { break; }
-    }
-
-    if (multi_instance) {
-      for (group of Array.from(groups)) {
-        for (id in zones[group]) {
-          zone = zones[group][id];
-          for (var region of Array.from(zone)) {
-            this.breachGfx.addRect({
-              fill   : ThumbNav.BREACH_FILL,
-              alpha  : ThumbNav.BREACH_ALPHA,
-              x      : region.x * combined_scale,
-              y      : region.y * combined_scale,
-              width  : region.width * combined_scale,
-              height : region.height * combined_scale
-            });
-          }
-        }
-      }
-    
-    } else {
-      for (group of Array.from(groups)) {
-        for (id in zones[group]) {
-          zone = zones[group][id];
-          this.breachGfx.addRect({
-            fill   : ThumbNav.BREACH_FILL,
-            alpha  : ThumbNav.BREACH_ALPHA,
-            x      : zone.x * combined_scale,
-            y      : zone.y * combined_scale,
-            width  : zone.width * combined_scale,
-            height : zone.height * combined_scale
-          });
-        }
-      }
-    }
-
-    // force immediate draw
-    return this.breachGfx.redraw();
   }
 
 

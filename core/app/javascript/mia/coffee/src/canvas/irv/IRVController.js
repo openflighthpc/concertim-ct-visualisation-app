@@ -34,7 +34,6 @@ import ComboBox from 'util/ComboBox';
 import Tooltip from 'canvas/irv/view/Tooltip';
 import PieCountdown from 'canvas/common/widgets/PieCountdown';
 import RBAC from 'canvas/common/util/RBAC';
-import BreachesManager from 'canvas/common/util/BreachesManager';
 import Dialog from 'util/Dialog';
 
 // These are all expected to provide global objects.
@@ -66,7 +65,6 @@ class IRVController extends CanvasController {
     this.EXPORT_MESSAGE                = 'Saving IRV image, please wait...';
     this.NAV_HIDE_LAYOUT_UPDATE_DELAY  = 1000;
     this.EXPORT_IMAGE_URL              = '/-/api/v1/irv/racks/export_image';
-    this.BREACH_POLL_RATE              = 60000;
     this.METRIC_POLL_EDIT_DELAY        = 2000;
     this.METRIC_TEMPLATES_POLL_RATE     = 113000;
     this.MIN_METRIC_POLL_RATE          = 600;
@@ -624,15 +622,6 @@ class IRVController extends CanvasController {
     }
 
     this.tooltip = new Tooltip();
-
-    if (this.model.showingFullIrv()) {
-      this.breachesManager = new BreachesManager(
-        this.model,
-        this.resources.path + this.resources.breaches,
-        IRVController.BREACH_POLL_RATE,
-      );
-      this.breachesManager.setup();
-    }
 
     if ((this.options != null) && (this.options.applyfilter === "true")) { this.applyCrossAppSettings(); }
 

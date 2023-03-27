@@ -12,7 +12,6 @@ import AssetManager from 'canvas/irv/util/AssetManager';
 import Events from 'canvas/common/util/Events';
 import BarMetric from 'canvas/common/widgets/BarMetric';
 import Highlight from 'canvas/irv/view/Highlight';
-import Breacher from 'canvas/irv/view/Breacher';
 import ViewModel from 'canvas/irv/ViewModel';
 import Profiler from 'Profiler';
 
@@ -22,7 +21,6 @@ class Machine extends RackObject {
     let dim_image, natural_ratio, rotated_ratio;
     this.draw = this.draw.bind(this);
     this.setMetricVisibility = this.setMetricVisibility.bind(this);
-    this.setBreaching = this.setBreaching.bind(this);
     
     this.images       = {};
     if (def.template.images.front != null) { this.images.front = AssetManager.CACHE[RackObject.IMAGE_PATH + def.template.images.front]; }
@@ -73,9 +71,7 @@ class Machine extends RackObject {
       this.metric   = new BarMetric(this.group, this.id, this, this.x, this.y, this.width, this.height, RackObject.MODEL);
       
       if (RackObject.MODEL.showingFullIrv()) { this.subscriptions.push(RackObject.MODEL.metricLevel.subscribe(this.setMetricVisibility)); }
-      this.subscriptions.push(RackObject.MODEL.breaches.subscribe(this.setBreaching));
 
-      this.setBreaching(RackObject.MODEL.breaches());
       this.setIncluded();
     } else {
       this.included = true;
@@ -85,7 +81,6 @@ class Machine extends RackObject {
   }
 
   destroy() {
-    if (this.breach != null) { this.breach.destroy(); }
     if (this.highlight != null) { this.highlight.destroy(); }
     if (this.metric != null) { this.metric.destroy(); }
     return super.destroy();
@@ -146,13 +141,7 @@ class Machine extends RackObject {
   select() {
     if ((this.highlight == null) && !!this.visible) {
       const highlight_border = RackObject.MODEL.showingFullIrv() && RackObject.MODEL.overLBC();
-      if (this.breaching) {
-        const offset     = Breacher.STROKE_WIDTH;
-        const double_off = offset * 2;
-        this.highlight = new Highlight(Highlight.MODE_SELECT, this.x + offset, this.y + offset, this.width - double_off, this.height - double_off, this.alertGfx, 'rect', {}, highlight_border);
-      } else {
-        this.highlight = new Highlight(Highlight.MODE_SELECT, this.x, this.y, this.width, this.height, this.alertGfx, 'rect', {}, highlight_border);
-      }
+      this.highlight = new Highlight(Highlight.MODE_SELECT, this.x, this.y, this.width, this.height, this.alertGfx, 'rect', {}, highlight_border);
       if (this.fullDepth() || this.noDeviceBlocking()) {
         return this.selectOtherInstances();
       }
@@ -174,11 +163,6 @@ class Machine extends RackObject {
     for (var asset of Array.from(this.assets)) { this.gfx.remove(asset); }
     this.assets = [];
 
-    if (this.breach != null) {
-      this.breach.destroy();
-      this.breach = null;
-    }
-
     this.face = this.parent().face;
 
     this.img = this.images[this.face];
@@ -192,7 +176,6 @@ class Machine extends RackObject {
       }
     }
 
-    if (this.breaching) { this.breach = new Breacher(this.group, this.id, this.alertGfx, this.x, this.y, this.width, this.height, RackObject.MODEL, !this.placedInHoldingArea()); }
     return Profiler.end(Profiler.DEBUG);
   }
 
@@ -227,20 +210,6 @@ class Machine extends RackObject {
     return this.metric.setActive(visible);
   }
 
-  setBreaching(breaches) {
-    if ((breaches[this.group] != null) && breaches[this.group][this.id]) {
-      if (!this.breaching) {
-        this.breaching = true;
-        if (this.visible) { return this.breach    = new Breacher(this.group, this.id, this.alertGfx, this.x, this.y, this.width, this.height, RackObject.MODEL, !this.placedInHoldingArea()); }
-      }
-    } else {
-      this.breaching = false;
-      if (this.breach != null) {
-        this.breach.destroy();
-        return this.breach = null;
-      }
-    }
-  }
 };
 
 export default Machine;

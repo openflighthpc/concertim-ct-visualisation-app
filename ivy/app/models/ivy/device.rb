@@ -101,7 +101,6 @@ module Ivy
     after_save :create_or_update_data_source_map
     # XXX Probably want to also port
     # :remove_metrics
-    # :destroy_breaches
 
 
     ####################################

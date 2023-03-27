@@ -67,8 +67,6 @@
     "doubleClickTimeout"       : 250,
     "*COMMENT*"                : "The px distance threshold an drag action needs to exceed to be interpreted as dragging",
     "dragActivationDist"       : 8,
-    "*COMMENT*"                : "How often to poll for breaches (ms)",
-    "breachPollRate"           : 60000,
     "*COMMENT*"                : "What proportion of the height of the page is used for the racks, the remainder being used for the chart and filter bar",
     "rackPageHeightProportion" : 0.70,
     "*COMMENT*"                : "ASCII value of the key used in step-zooming",
@@ -126,8 +124,7 @@
         "systemDateTime"  : "/sys/date",
         "metricData"      : "/api/v1/irv/metrics/[[metric_id]]",
         "hintData"        : "/api/v1/irv/[[group]]/[[device_id]]/tooltip",
-        "thresholds"      : "/api/v1/irv/thresholds",
-        "breaches"        : "/api/v1/metrics/breaches"
+        "thresholds"      : "/api/v1/irv/thresholds"
       },
 
       "*COMMENT*" : "Location of dummy responses for offline mode",
@@ -400,8 +397,6 @@
     "shadeAlpha"    : 0.2,
     "maskFill"      : "#999999",
     "maskFillAlpha" : 1,
-    "breachFill"    : "#ff0000",
-    "breachAlpha"   : 1,
 
     "modelDependencies":
     {
@@ -602,15 +597,6 @@
         "depthShadeFill"     : "#000000",
         "depthShadeMaxAlpha" : 0.5
       }
-    },
-
-    "BREACHER":
-    {
-      "stroke"       : "#ff0000",
-      "strokeWidth"  : 20,
-      "maxAlpha"     : 1,
-      "minAlpha"     : 0.3,
-      "animDuration" : 500
     },
 
     "HIGHLIGHT": 

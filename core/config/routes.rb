@@ -65,7 +65,6 @@ Rails.application.routes.draw do
           resources :metrics, :constraints => { :id => /.*/ }, only: [] do
             get :structure, :on => :collection
           end
-          resources :breaches
         end
 
         namespace :users do

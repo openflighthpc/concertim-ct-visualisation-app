@@ -154,7 +154,7 @@ class PresetManager {
     if (this.presetExists(page_preset_default, Object.keys(presets_by_id))) { default_preset = presets_by_id[page_preset_default].name; }
 
     // select the default preset, if defined
-    if ((default_preset != null) && (this.model.locatingBreachingNodes === false)) {
+    if (default_preset != null) {
       return this.modelRefs.selectedPreset(default_preset);
     }
   }

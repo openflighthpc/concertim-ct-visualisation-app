@@ -27,7 +27,6 @@ import LBC from 'canvas/common/widgets/LBC';
 import RackHint from 'canvas/irv/view/RackHint';
 import ThumbHint from 'canvas/irv/view/ThumbHint';
 import ContextMenu from 'canvas/irv/view/ContextMenu';
-import Breacher from 'canvas/irv/view/Breacher';
 import ThumbNav from 'canvas/common/widgets/ThumbNav';
 import FilterBar from 'canvas/common/widgets/FilterBar';
 import CanvasViewModel from 'canvas/common/CanvasViewModel';
@@ -89,7 +88,6 @@ class Configurator {
       IRVController.EXPORT_HEADER               = controller_config.export.header;
       IRVController.EXPORT_RECORD               = controller_config.export.record;
       IRVController.EXPORT_MESSAGE              = controller_config.export.message;
-      IRVController.BREACH_POLL_RATE            = controller_config.breachPollRate;
       IRVController.MIN_METRIC_POLL_RATE        = controller_config.minMetricPollRate;
       IRVController.METRIC_POLL_EDIT_DELAY      = controller_config.metricPollEditDelay;
       IRVController.INVALID_POLL_COLOUR         = controller_config.invalidPollColour;
@@ -144,8 +142,6 @@ class Configurator {
     ThumbNav.MASK_FILL_ALPHA    = thumb_nav_config.maskFillAlpha;
     ThumbNav.SHADE_FILL         = thumb_nav_config.shadeFill;
     ThumbNav.SHADE_ALPHA        = thumb_nav_config.shadeAlpha;
-    ThumbNav.BREACH_FILL        = thumb_nav_config.breachFill;
-    ThumbNav.BREACH_ALPHA       = thumb_nav_config.breachAlpha;
     ThumbNav.MODEL_DEPENDENCIES = thumb_nav_config.modelDependencies;
 
     const update_msg_config = config.UPDATEMSG;
@@ -236,13 +232,6 @@ class Configurator {
       Highlight.DRAGGED_MAX_ALPHA      = highlight_config.dragged.maxAlpha;
       Highlight.DRAGGED_MIN_ALPHA      = highlight_config.dragged.minAlpha;
  
-      const breacher_config        = config.RACKSPACE.BREACHER;
-      Breacher.STROKE        = breacher_config.stroke;
-      Breacher.STROKE_WIDTH  = breacher_config.strokeWidth;
-      Breacher.ALPHA_MAX     = breacher_config.maxAlpha;
-      Breacher.ALPHA_MIN     = breacher_config.minAlpha;
-      Breacher.ANIM_DURATION = breacher_config.animDuration;
-      
       const metric_config        = config.RACKSPACE.METRIC;
       Metric.ALPHA         = metric_config.alpha;
       Metric.FADE_DURATION = metric_config.fadeDuration;
