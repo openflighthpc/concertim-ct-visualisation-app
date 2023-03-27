@@ -39,9 +39,6 @@ class ViewModel extends CanvasViewModel {
 
     this.EXCLUDED_METRICS     = ['ct.capacity.rack','ct.sensor'];
 
-    this.SELECT_THRESHOLD_CAPTION  = 'Select a threshold to display';
-    this.NO_THRESHOLDS_CAPTION     = 'No thresholds available';
-
     // statics overwritten by config
     this.COLOUR_SCALE = [{ pos: 0, col: '#000000' }, { pos: 1, col: '#ffffff' }];
   }
@@ -103,82 +100,6 @@ class ViewModel extends CanvasViewModel {
 
     // temporary storage of dcrvShowableNonRackChassis
     this.modifiedDcrvShowableNonRackChassis = ko.observable();
-
-    // arrays of thresholds grouped by their associated metric using metric id as the key 
-    this.thresholdsByMetric = ko.observable();
-
-    // object containing all thresholds using id as the key
-    this.thresholdsById = ko.observable({});
-
-    // array of strings, populates the threshold drop-down with threshold names relating to the currently selected
-    // metric. Dependencies: thresholdsByMetric, selectedMetric
-    this.availableThresholds = ko.dependentObservable(function() {
-      const thresholds = [];
-      const t_by_m     = this.thresholdsByMetric();
-      const metric     = this.selectedMetric();
-
-      if (t_by_m == null) { return []; }
-
-      const list = t_by_m[metric];
-
-      if (list == null) { return []; }
-
-      for (var threshold of Array.from(list)) { thresholds.push(threshold.name); }
-      return thresholds;
-    }
-    , this);
-
-    // boolean, are thresholds available? Dependencies: availableThresholds
-    this.enableThresholdSelection = ko.dependentObservable(() => {
-      const thresholds = this.availableThresholds();
-      return (thresholds != null) && (thresholds.length > 0);
-    }
-    , this);
-
-    // string, default caption displayed in threshold drop-down. Dependencies: enableThresholdSelection
-    this.thresholdSelectCaption = ko.dependentObservable(() => {
-      if (this.enableThresholdSelection()) { return ViewModel.SELECT_THRESHOLD_CAPTION; } else { return ViewModel.NO_THRESHOLDS_CAPTION; }
-    }
-    , this);
-
-    // string, name of the selected threshold, set when clicked in the drop-down 
-    this.selectedThresholdName = ko.observable();
-
-    // int, the id of the selected threshold. Dependencies: thresholdsByMetric, selectedMetric, selectedThresholdName
-    this.selectedThresholdId   = ko.dependentObservable({
-      read: () => {
-        const t_by_m = this.thresholdsByMetric();
-        const metric = this.selectedMetric();
-        const t_name = this.selectedThresholdName();
-
-        if (t_by_m == null) { return; }
-
-        const list = t_by_m[metric];
-
-        if (list == null) { return; }
-
-        for (var threshold of Array.from(list)) {
-          if (threshold.name === t_name) { return threshold.id; }
-        }
-      },
-
-      write: val => {
-        const thold = this.thresholdsById()[val];
-        if (thold != null) {
-          this.selectedThresholdName(thold.name);
-          return thold.id;
-        } else {
-          return null;
-        }
-      }
-    }
-    , this);
-
-    // object, the selected threshold definition 
-    this.selectedThreshold = ko.dependentObservable(() => {
-      return this.thresholdsById()[this.selectedThresholdId()];
-    }
-    , this);
 
     // object, preset definitions using id as the key
     this.presetsById = ko.observable({});

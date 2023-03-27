@@ -50,11 +50,7 @@
         "pos" : 1,
         "col" : "#b40000"
       }
-    ],
-
-    "*COMMENT*"              : "The threshold drop-down caption is programmatically managed, these are the captions",
-    "noThresholdsCaption"    : "No thresholds available",
-    "selectThresholdCaption" : "Select threshold"
+    ]
   },
 
   "CONTROLLER":
@@ -123,8 +119,7 @@
         "modifiedNonRackIds" : "/api/v1/irv/nonrack_devices/modified",
         "systemDateTime"  : "/sys/date",
         "metricData"      : "/api/v1/irv/metrics/[[metric_id]]",
-        "hintData"        : "/api/v1/irv/[[group]]/[[device_id]]/tooltip",
-        "thresholds"      : "/api/v1/irv/thresholds"
+        "hintData"        : "/api/v1/irv/[[group]]/[[device_id]]/tooltip"
       },
 
       "*COMMENT*" : "Location of dummy responses for offline mode",
@@ -134,8 +129,7 @@
         "metricTemplates" : "structure",
         "rackDefinitions" : "racks",
         "metricData"      : "[[metric_id]]",
-        "hintData"        : "racks/[[device_id]]/tooltip",
-        "thresholds"      : "thresholds"
+        "hintData"        : "racks/[[device_id]]/tooltip"
       }
     }
   },
@@ -150,10 +144,6 @@
     "new"              : "/api/v1/irv/rackview_presets",
     "*COMMENT*"        : "Updaate preset server API",
     "update"           : "/api/v1/irv/rackview_presets/[[preset_id]]",
-    "*COMMENT*"        : "Warning message to display when no threshold is associated with the newly selected preset",
-    "warnThreshold"    : "No threshold has been associated with your chosen preset.",
-    "*COMMENT*"        : "How long the threshold warning message persists for, in seconds",
-    "msgHoldDuration"  : 5,
     "*COMMENT*"        : "Preset update warning message",
     "msgConfirmUpdate" : "Are you sure you wish to overwrite the preset [[selected_preset]] with the current display settings?",
 
@@ -255,10 +245,6 @@
       },
       {
         "name" : "selectedGroup",
-        "type" : "simple"
-      },
-      {
-        "name" : "selectedThresholdId",
         "type" : "simple"
       },
       {
@@ -681,7 +667,6 @@
       "titleCaption"               : "[[metric_name]](( [[metric_units]] )) [[[num_metrics]] of [[total_metrics]]] (current selection: min=[[min_val]], av=[[av_val]], max=[[max_val]])",
       "pointerOffsetX"             : -4,
       "pointerOffsetY"             : 10,
-      "thresholdAlpha"             : 0.2,
       "barChartMinDatumWidth"      : 2,
       "fillSingleSeriesLineCharts" : true,
       "linePointerColour"          : "#0",
@@ -698,7 +683,6 @@
         "graphOrder"        : "graphOrder",
         "racks"             : "racks",
         "highlighted"       : "highlighted",
-        "selectedThreshold" : "selectedThreshold",
         "metricLevel"       : "metricLevel",
         "metricTemplates"   : "metricTemplates",
         "selectedMetric"    : "selectedMetric",

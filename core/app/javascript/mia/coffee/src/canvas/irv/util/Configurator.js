@@ -58,8 +58,6 @@ class Configurator {
     ViewModel.INIT_METRIC_LEVEL        = view_model_config.startUp.metricLevel;
     ViewModel.INIT_GRAPH_ORDER         = view_model_config.startUp.graphOrder;
     ViewModel.INIT_METRIC_POLL_RATE    = view_model_config.startUp.metricPollRate;
-    ViewModel.NO_THRESHOLDS_CAPTION    = view_model_config.noThresholdsCaption;
-    ViewModel.SELECT_THRESHOLD_CAPTION = view_model_config.selectThresholdCaption;
 
     const util_config     = config.IRVUTIL;
     Util.SIG_FIG = util_config.sigFig;
@@ -111,8 +109,6 @@ class Configurator {
       PresetManager.ERR_WHITE_NAME        = preset_config.errors.whiteName;
       PresetManager.ERR_DUPLICATE_NAME    = preset_config.errors.duplicateName;
       PresetManager.ERR_NOT_OWNED         = preset_config.errors.notOwned;
-      PresetManager.WARN_THRESHOLD        = preset_config.warnThreshold;
-      PresetManager.MESSAGE_HOLD_DURATION = preset_config.msgHoldDuration;
       PresetManager.MODEL_DEPENDENCIES    = preset_config.modelDependencies;
       PresetManager.DOM_DEPENDENCIES      = preset_config.domDependencies;
       PresetManager.MSG_CONFIRM_UPDATE    = preset_config.msgConfirmUpdate;
@@ -255,7 +251,6 @@ class Configurator {
     LBC.SELECT_BOX_STROKE              = lbc_config.selectBox.stroke;
     LBC.SELECT_BOX_STROKE_WIDTH        = lbc_config.selectBox.strokeWidth;
     LBC.SELECT_BOX_ALPHA               = lbc_config.selectBox.alpha;
-    LBC.THRESHOLD_ALPHA                = lbc_config.thresholdAlpha;
     LBC.MODEL_DEPENDENCIES             = lbc_config.modelDependencies;
     LBC.BAR_CHART_MIN_DATUM_WIDTH      = lbc_config.barChartMinDatumWidth;
     LBC.FILL_SINGLE_SERIES_LINE_CHARTS = lbc_config.fillSingleSeriesLineCharts;

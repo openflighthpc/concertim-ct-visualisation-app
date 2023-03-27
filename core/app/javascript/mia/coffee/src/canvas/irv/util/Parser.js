@@ -23,9 +23,7 @@ class Parser extends CanvasParser {
 
   constructor(model) {
     super(...arguments);
-    // !! dummy thresholds
     this.model = model;
-    this.thresholds = {};
   }
 
 
@@ -126,51 +124,6 @@ class Parser extends CanvasParser {
     return metric_obj;
   }
 
-
-  parseThresholds(thresholds) {
-    Profiler.begin(Profiler.CRITICAL);
-    const tholds_by_metric = {};
-    const tholds_by_id     = {};
-
-    for (var thold in thresholds) {
-      if (thresholds.hasOwnProperty(thold)) {
-        var raw_thold = thresholds[thold];
-        var {
-          metric
-        } = raw_thold;
-        var thold_obj = { id: raw_thold.id, name: raw_thold.name, colours: [], values: [] };
-
-        if (raw_thold.breach_value != null) {
-          thold_obj.colours.push('#ff0000');
-          thold_obj.values.push(Number(raw_thold.breach_value));
-        } else {
-          var range;
-          var {
-            ranges
-          } = raw_thold;
-
-          for (range of Array.from(ranges)) {
-            if (range.upper_bound == null) { range.upper_bound = Number.MAX_VALUE; }
-          }
-
-          ranges = Util.sortByProperty(ranges, 'upper_bound', true);
-
-          for (range of Array.from(ranges)) {
-            thold_obj.colours.push(range.colour);
-            thold_obj.values.push(range.upper_bound);
-          }
-        }
-
-        if (tholds_by_metric[metric] == null) { tholds_by_metric[metric] = []; }
-        tholds_by_metric[metric].push(thold_obj);
-
-        tholds_by_id[thold_obj.id] = thold_obj;
-      }
-    }
-
-    Profiler.end(Profiler.CRITICAL);
-    return { byMetric: tholds_by_metric, byId: tholds_by_id };
-  }
 };
 Parser.initClass();
 export default Parser;

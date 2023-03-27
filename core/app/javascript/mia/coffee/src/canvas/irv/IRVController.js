@@ -94,8 +94,6 @@ class IRVController extends CanvasController {
     this.getSystemDateTime = this.getSystemDateTime.bind(this);
     this.getModifiedRackIds = this.getModifiedRackIds.bind(this);
     this.getMetricTemplates = this.getMetricTemplates.bind(this);
-    this.getThresholds = this.getThresholds.bind(this);
-    this.receivedThresholds = this.receivedThresholds.bind(this);
     this.metricTemplatesPoller = this.metricTemplatesPoller.bind(this);
     this.refreshMetricTemplates = this.refreshMetricTemplates.bind(this);
     this.retryMetricTemplates = this.retryMetricTemplates.bind(this);
@@ -253,7 +251,7 @@ class IRVController extends CanvasController {
     if (this.model.showingRacks()) {
       CanvasController.NUM_RESOURCES += 1;
       if (this.model.showingFullIrv()) {
-        CanvasController.NUM_RESOURCES += 2; // metricstemplates and thresholds
+        CanvasController.NUM_RESOURCES += 1; // metricstemplates
       }
       this.getRackData();
     }
@@ -331,7 +329,6 @@ class IRVController extends CanvasController {
       this.debug('getting metric templates');
       this.getMetricTemplates();
     }
-    if (this.model.showingFullIrv()) { this.getThresholds(); }
     this.testLoadProgress();
     return this.getSystemDateTime();
   }
@@ -434,29 +431,6 @@ class IRVController extends CanvasController {
     return new Request.JSON({url: this.resources.path + this.resources.metricTemplates + '?' + (new Date()).getTime(), onComplete: this.receivedMetricTemplates, onTimeout: this.retryMetricTemplates}).get();
   }
 
-
-  // requests thresholds definitions from the server
-  getThresholds() {
-    if ($('threshold_select') != null) {
-      this.debug("getting thresholds");
-      return new Request.JSON({url: this.resources.path + this.resources.thresholds + '?' + (new Date()).getTime(), onComplete: this.receivedThresholds, onTimeout: this.retryMetricTemplates}).get();
-    } else {
-      this.debug("skip getting thresholds");
-      return ++this.resourceCount; // Otherwise the page will not proceed to load :/
-    }
-  }
-
-  // called when threshold definitions are returned from the server, parses them and stores in the model. Load progress is also tested
-  // here as this forms part of the initialisation data
-  // @param  thresholds  object representing the threshold definitions
-  receivedThresholds(thresholds) {
-    this.debug("received thresholds");
-    const parsed = this.parser.parseThresholds(thresholds);
-    this.model.thresholdsByMetric(parsed.byMetric);
-    this.model.thresholdsById(parsed.byId);
-    ++this.resourceCount;
-    return this.testLoadProgress();
-  }
 
   // Function to call the metric templates API.
   // The resourceCount needs to be decreased, since once the api call response is received,

@@ -31,7 +31,6 @@ Rails.application.routes.draw do
               get :modified
             end
           end
-          resources :thresholds, :constraints => { :id => /.*/ }, only: [:index]
           resources :nonrack_devices, only: [:index] do
             collection do
               get :modified

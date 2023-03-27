@@ -33,7 +33,6 @@ class LBC {
     this.SELECT_BOX_STROKE_WIDTH  = 2;
     this.SELECT_BOX_ALPHA         = 0.8;
 
-    this.THRESHOLD_ALPHA            = 0.1;
     this.BAR_CHART_MIN_DATUM_WIDTH  = 2;
 
     this.FILL_SINGLE_SERIES_LINE_CHARTS  = true;
@@ -41,7 +40,7 @@ class LBC {
     this.LINE_POINTER_COLOUR  = '#0';
     this.LINE_POINTER_WIDTH   = 1;
 
-    this.MODEL_DEPENDENCIES = { showChart: 'showChart', selectedDevices: 'selectedDevices', filteredDevices: 'filteredDevices', metricData: 'metricData', colourMaps: 'colourMaps', colourScale: 'colourScale', graphOrder: 'chartSortOrder', racks: 'racks', highlighted: 'highlighted', selectedThreshold: 'selectedThreshold', metricLevel: 'metricLevel', metricTemplates: 'metricTemplates', selectedMetric: 'selectedMetric', deviceLookup: 'deviceLookup', groups: 'groups', activeSelection: 'activeSelection', activeFilter: 'activeFilter' };
+    this.MODEL_DEPENDENCIES = { showChart: 'showChart', selectedDevices: 'selectedDevices', filteredDevices: 'filteredDevices', metricData: 'metricData', colourMaps: 'colourMaps', colourScale: 'colourScale', graphOrder: 'chartSortOrder', racks: 'racks', highlighted: 'highlighted', metricLevel: 'metricLevel', metricTemplates: 'metricTemplates', selectedMetric: 'selectedMetric', deviceLookup: 'deviceLookup', groups: 'groups', activeSelection: 'activeSelection', activeFilter: 'activeFilter' };
 
 
     // constants and run-time assigned statics
@@ -57,7 +56,6 @@ class LBC {
     this.clear = this.clear.bind(this);
     this.highlightDatum = this.highlightDatum.bind(this);
     this.makePositionLookup = this.makePositionLookup.bind(this);
-    this.setThreshold = this.setThreshold.bind(this);
     this.evShowHint = this.evShowHint.bind(this);
     this.evHideHint = this.evHideHint.bind(this);
     this.containerEl = containerEl;
@@ -119,7 +117,6 @@ class LBC {
       if (this.modelRefs.colourMaps != null) { this.subscriptions.push(this.modelRefs.colourMaps.subscribe(this.update)); }
       if (this.modelRefs.graphOrder != null) { this.subscriptions.push(this.modelRefs.graphOrder.subscribe(this.update)); }
       if (this.modelRefs.highlighted != null) { this.subscriptions.push(this.modelRefs.highlighted.subscribe(this.highlightDatum)); }
-      if (this.modelRefs.selectedThreshold != null) { this.subscriptions.push(this.modelRefs.selectedThreshold.subscribe(this.update)); }
       if (this.modelRefs.metricLevel != null) { this.subscriptions.push(this.modelRefs.metricLevel.subscribe(this.update)); }
       if (this.modelRefs.gradientLBCMetric != null) { return this.subscriptions.push(this.modelRefs.gradientLBCMetric.subscribe(this.update)); }
     } else {
@@ -273,8 +270,6 @@ class LBC {
       this.chart.setTitle(title);
       this.chart.addEventListener('onshowtooltip', this.evShowHint);
       this.chart.addEventListener('onhidetooltip', this.evHideHint);
-
-      return this.setThreshold();
     }
   }
 
@@ -649,42 +644,6 @@ class LBC {
       }
       return result;
     })();
-  }
-
-
-  setThreshold() {
-    const threshold = this.modelRefs.selectedThreshold();
-    const regions   = [];
-
-    if ((threshold == null) || (this.chart == null)) { return; }
-      //@chart.Set('chart.background.hbars', regions) if @chart?
-      //return
-
-    const hex_to_rgba = hex => `rgba(${Number('0x' + hex.substr(1, 2))},${Number('0x' + hex.substr(3, 2))},${Number('0x' + hex.substr(5, 2))},${LBC.THRESHOLD_ALPHA})`;
-
-    let count = 0;
-    const len   = threshold.colours.length;
-    if (len === 1) {
-      // simple threshold, draw a line at it's value
-      if ((this.chart.yAxis != null) && ( (threshold.values[0] < this.chart.yAxis.range.low) || (threshold.values[0] > this.chart.yAxis.range.high) )) {
-        this.chart.thresholdValue = threshold.values[0];
-        this.chart.drawBar(this.dataToRender, this.chartConfig);
-        this.chart.setTitle(this.title);
-      }
-      return this.chart.drawFGLine(threshold.values[0], hex_to_rgba(threshold.colours[0]), 2);
-    } else {
-      // complex threshold, add coloured regions
-      let bottom_val = this.chart.yAxis.range.low;//Get('chart.ymin')
-      return (() => {
-        const result = [];
-        while (count < len) {
-          this.chart.drawBGRect((threshold.values[count] != null ? threshold.values[count] : this.chart.yAxis.range.high), bottom_val, hex_to_rgba(threshold.colours[count]));
-          bottom_val = threshold.values[count];
-          result.push(++count);
-        }
-        return result;
-      })();
-    }
   }
 
 
