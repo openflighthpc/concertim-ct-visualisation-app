@@ -14,7 +14,7 @@ module Ivy
       def get_structure(racks=nil)
         sql = generate_sql(racks)
         begin
-          xml = Ivy::Model.connection.exec_query(sql).rows.join
+          xml = ApplicationRecord.connection.exec_query(sql).rows.join
         rescue
           Rails.logger.debug("An exception occured whilst generating IRV structure")
           Rails.logger.debug($!.class)

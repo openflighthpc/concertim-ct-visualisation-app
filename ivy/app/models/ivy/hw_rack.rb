@@ -1,5 +1,5 @@
 module Ivy
-  class HwRack < Ivy::Model
+  class HwRack < ApplicationRecord
 
     self.table_name = "racks"
 

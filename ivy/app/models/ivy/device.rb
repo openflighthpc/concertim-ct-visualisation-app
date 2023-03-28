@@ -1,5 +1,5 @@
 module Ivy
-  class Device < Ivy::Model
+  class Device < ApplicationRecord
     self.table_name = "devices"
 
     include Ivy::Concerns::Interchange

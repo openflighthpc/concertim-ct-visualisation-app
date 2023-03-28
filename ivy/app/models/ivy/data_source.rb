@@ -1,5 +1,5 @@
 module Ivy
-  class DataSource < Ivy::Model
+  class DataSource < ApplicationRecord
 
     self.table_name = "data_sources"
 

@@ -1,5 +1,5 @@
 module Ivy
-  class Template < Ivy::Model
+  class Template < ApplicationRecord
     self.primary_key = "template_id"
     self.table_name = "templates"
 

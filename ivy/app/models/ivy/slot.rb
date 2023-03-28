@@ -1,5 +1,5 @@
 module Ivy
-  class Slot < Ivy::Model
+  class Slot < ApplicationRecord
     self.table_name = "slots"
 
     include Ivy::Concerns::LiveUpdate::Slot

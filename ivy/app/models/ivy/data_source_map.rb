@@ -1,5 +1,5 @@
 module Ivy
-  class DataSourceMap < Ivy::Model
+  class DataSourceMap < ApplicationRecord
 
     self.table_name = "data_source_maps"
 

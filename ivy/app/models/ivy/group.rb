@@ -1,5 +1,5 @@
 module Ivy
-  class Group < Ivy::Model
+  class Group < ApplicationRecord
     self.table_name = "groups"
 
     ########################

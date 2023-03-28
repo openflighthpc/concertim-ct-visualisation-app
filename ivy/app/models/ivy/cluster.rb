@@ -1,6 +1,6 @@
 
 module Ivy
-  class Cluster < Ivy::Model
+  class Cluster < ApplicationRecord
     self.table_name = "clusters"
 
 

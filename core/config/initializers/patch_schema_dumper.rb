@@ -21,6 +21,8 @@
 # reading this because it's stopped working, perhaps its time to reconsider
 # having separate postgresql schemas.
 
+require 'active_record/connection_adapters/postgresql_adapter'
+
 class ActiveRecord::ConnectionAdapters::PostgreSQL::SchemaDumper
   # Overridden in order to call new method "schemas".
   def dump(stream)

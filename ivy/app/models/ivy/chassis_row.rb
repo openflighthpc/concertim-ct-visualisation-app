@@ -1,5 +1,5 @@
 module Ivy
-  class ChassisRow < Ivy::Model
+  class ChassisRow < ApplicationRecord
 
     self.table_name = 'chassis_rows'
 
