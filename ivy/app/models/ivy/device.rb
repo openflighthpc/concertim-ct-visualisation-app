@@ -86,7 +86,7 @@ module Ivy
     #
     ####################################
 
-    delegate :manufacturer, :model,
+    delegate :model,
       to: :template, allow_nil: true
 
     delegate :simple?, :complex?,

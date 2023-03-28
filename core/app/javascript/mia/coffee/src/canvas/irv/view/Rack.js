@@ -155,6 +155,16 @@ class Rack extends RackObject {
   }
 
   addImageLink() {
+    // This doesn't work.
+    //
+    // ImageLink isn't given all of the attributes it needs.  In particular gfx
+    // and image.  Not sure how this was supposed to work.
+    //
+    // Also template no longer has a URL attribute.
+    //
+    // XXX Either decide that this is to be removed and remove it.  Or decide
+    // that it is to be fixed and fix it.  I doubt it makes any sense for
+    // racks.  Perhaps it does for machines?  A link to the openstack flavour?
     if (this.template.url) {
       return this.imageLink = new ImageLink({
         x       : this.x,

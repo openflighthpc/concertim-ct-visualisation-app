@@ -1,28 +1,22 @@
-# The primary key of the template.  This is used to allow us to reference
-# default templates.  E.g., the default rack template.
-# XXX Replace this with a ref_text instead.
 id: 2
 
-device:
-  description: "m1.small: 1 VCPU; 2GB RAM; 10GB Disk"
+name: Small
+description: "m1.small: 1 VCPU; 2GB RAM; 10GB Disk"
 height: 1
 depth: 2
-:metadata:
-  padding:
-    left: 0
-    bottom: 0
-    right: 1
-    top: 0
-  images:
-    front: small-front.png
-    rear: small-rear.png
 
-# XXX Probably wanted/needed.
-# schema_version: 1
-# version: 1
+images:
+  front: small-front.png
+  rear: small-rear.png
+padding:
+  left: 0
+  bottom: 0
+  right: 1
+  top: 0
 
-# XXX Something like this will need to be added.  Need to consider how the
-# flavour_id is determined.
-# openstack:
-#   flavour_id: 5caeaa46-40b3-4cf9-a0ff-5f6caea4b8ac
-#   flavour_name: m1.small
+# The template version.  If changes are being made to the template data, this
+# needs to be incremented.
+version: 1
+
+# The schema version.
+schema_version: 1

@@ -3,29 +3,29 @@
 # XXX Replace this with a ref_text instead.
 id: 4
 
-device:
-  description: "m1.large: 4 VCPUs; 8GB RAM; 10GB Disk"
+name: Large
+description: "m1.large: 4 VCPUs; 8GB RAM; 10GB Disk"
 height: 3
 depth: 2
-:metadata:
-  padding:
-    left: 0
-    bottom: 0
-    right: 1
-    top: 0
-  images:
-    front: large-front.png
-    rear: large-rear.png
 
+images:
+  front: large-front.png
+  rear: large-rear.png
+padding:
+  left: 0
+  bottom: 0
+  right: 1
+  top: 0
 
-# XXX Probably wanted/needed.
-# schema_version: 1
-# version: 1
+# The template version.  If changes are being made to the template data, this
+# needs to be incremented.
+version: 1
+
+# The schema version.
+schema_version: 1
 
 # XXX Something like this will need to be added.  Need to consider how the
 # flavour_id is determined.
 # openstack:
 #   flavour_id: 5caeaa46-40b3-4cf9-a0ff-5f6caea4b8ac
 #   flavour_name: m1.small
-
-

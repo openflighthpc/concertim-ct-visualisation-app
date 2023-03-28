@@ -36,7 +36,6 @@ class Chassis extends RackObject {
     super(def, 'chassis', parent);
     this.setMetricVisibility = this.setMetricVisibility.bind(this);
     this.uHeight      = def.template.height;
-    this.manufacturer = def.template.manufacturer;
     this.model        = def.template.model;
 
     // max image dimensions are used to define the metric dims

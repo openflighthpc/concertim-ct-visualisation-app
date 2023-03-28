@@ -258,7 +258,8 @@ module Ivy
     #
     def compatible_with_device?(device)
       if complex?
-        device.manufacturer == manufacturer && device.model == model
+        # device.manufacturer == manufacturer && device.model == model
+        false
       else
         false
       end
@@ -286,19 +287,14 @@ module Ivy
     # if available and a unique number is added.
     def get_default_name
       unique_num = Time.now.to_f
-      base_name =
-        if template.nil?
-          self.class.name
-        else
-          "#{template.manufacturer}-#{template.model}" rescue template.name 
-        end
+      base_name = template.nil? ? self.class.name : template.name
 
       name = base_name
       name += "-#{rack.name}" if has_rack?
       name += "-#{unique_num}"
       name.gsub!(' ','-')
       name.delete!("^a-zA-Z0-9\-")
-      name.split("-").select{|e| e!=""}.join("-")
+      name.split("-").reject(&:blank?).join("-")
 
       name
     end

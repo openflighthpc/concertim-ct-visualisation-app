@@ -95,26 +95,22 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_28_104555) do
   end
 
   create_table "ivy.templates", id: :bigint, default: -> { "nextval('templates_id_seq'::regclass)" }, force: :cascade do |t|
-    t.string "template_name", limit: 255, default: "", null: false
+    t.string "name", limit: 255, default: "", null: false
     t.integer "height", null: false
     t.integer "depth", null: false
     t.integer "version", default: 1, null: false
     t.string "chassis_type", limit: 255, null: false
-    t.integer "template_id", null: false
     t.integer "rackable", default: 1, null: false
     t.boolean "simple", default: true, null: false
     t.string "description", limit: 255
-    t.jsonb "images"
-    t.integer "rows", default: 1, null: false
-    t.integer "columns", default: 1, null: false
+    t.jsonb "images", default: {}, null: false
+    t.integer "rows"
+    t.integer "columns"
     t.integer "padding_left", default: 0, null: false
     t.integer "padding_bottom", default: 0, null: false
     t.integer "padding_right", default: 0, null: false
     t.integer "padding_top", default: 0, null: false
-    t.string "name", limit: 255
-    t.string "manufacturer", limit: 255
     t.string "model", limit: 255
-    t.string "product_url", limit: 255
     t.string "rack_repeat_ratio", limit: 255
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

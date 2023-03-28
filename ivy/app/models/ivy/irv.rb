@@ -56,10 +56,10 @@ SELECT
                                R.name as "name",
                                R.u_height as "uHeight" ,
                                ( SELECT id from sorted_racks offset (select row_num from (select id,row_number() over () as row_num from sorted_racks) t where id=R.id) limit 1) as "nextRackId"),
-                               ( select XmlAgg( XmlElement( name "template", XmlAttributes (T.template_id as "id",T.name,T.manufacturer,T.model,T.rackable,T.product_url as "url",
+                               ( select XmlAgg( XmlElement( name "template", XmlAttributes (T.id,T.name,T.model,T.rackable,
                                                                                             T.images,T.height,T.rows,T.columns,T.rack_repeat_ratio,T.depth,
                                                                                             T.padding_left,T.padding_right,T.padding_top,T.padding_bottom,T.simple
-                                                                                            ))) from templates T where T.template_id = R.template_id limit 1 ),
+                                                                                            ))) from templates T where T.id = R.template_id limit 1 ),
                                ( SELECT XmlAgg( 
                                          XmlElement( name "Chassis", 
                                                      XmlAttributes( C.id,
@@ -72,10 +72,10 @@ SELECT
                                                                     C.rack_start_u as "uStart",
                                                                     C.rack_end_u as "uEnd",
                                                                     ( select DD.id from devices DD where DD.base_chassis_id = C.id and DD.tagged = true) as "tagged_device_id"),
-                                                                    ( select XmlAgg( XmlElement( name "template", XmlAttributes (T.template_id as "id",T.name,T.manufacturer,T.model,T.rackable,
+                                                                    ( select XmlAgg( XmlElement( name "template", XmlAttributes (T.id,T.name,T.model,T.rackable,
                                                                                                                                  T.images,T.height,T.rows,T.columns,T.rack_repeat_ratio,T.depth,
                                                                                                                                  T.padding_left,T.padding_right,T.padding_top,T.padding_bottom,T.simple
-                                                                                                                                 ))) from templates T where T.template_id = C.template_id limit 1 ),
+                                                                                                                                 ))) from templates T where T.id = C.template_id limit 1 ),
 					  			    ( select XmlAgg(
                                                                               XmlElement( name "Slots",
                                                                                           XmlAttributes( S.id as "id",
