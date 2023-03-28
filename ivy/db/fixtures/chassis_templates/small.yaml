@@ -1,3 +1,8 @@
+# The primary key of the template.  This is used to allow us to reference
+# default templates.  E.g., the default rack template.
+# XXX Replace this with a ref_text instead.
+id: 2
+
 device:
   description: "m1.small: 1 VCPU; 2GB RAM; 10GB Disk"
 height: 1
@@ -11,10 +16,6 @@ depth: 2
   images:
     front: small-front.png
     rear: small-rear.png
-
-# XXX For now we continue to use `template_id` as the primary key.  Would seem
-# a much better idea to change this to ID.
-template_id: 2
 
 # XXX Probably wanted/needed.
 # schema_version: 1

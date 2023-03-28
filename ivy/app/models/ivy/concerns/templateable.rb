@@ -14,7 +14,7 @@ module Ivy
       extend ActiveSupport::Concern
       
       included do
-        belongs_to :template, :foreign_key => 'template_id'
+        belongs_to :template
 
         delegate :manufacturer, :model,
           to: :template, allow_nil: true
