@@ -1,5 +1,5 @@
 module Ivy
-  class Group < Ivy::Model
+  class Group < ApplicationRecord
     self.table_name = "groups"
 
     ########################
@@ -24,10 +24,6 @@ module Ivy
     ########################
 
     public
-
-    def group_sensors
-      Ivy::Device::Sensor.where(:id => member_ids)
-    end
 
     def group_devices
       Ivy::Device.where(:id => member_ids, :tagged => false)

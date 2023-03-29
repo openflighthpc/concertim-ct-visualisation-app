@@ -1,5 +1,5 @@
 module Ivy
-  class Device < Ivy::Model
+  class Device < ApplicationRecord
     self.table_name = "devices"
 
     include Ivy::Concerns::Interchange
@@ -65,7 +65,7 @@ module Ivy
         message: "can contain only alphanumeric characters and hyphens."
       }
     validates :slot_id, uniqueness: true, allow_nil: true
-    validates :slot_id, presence: true, unless: ->{ is_a?(Sensor) || tagged? }
+    validates :slot_id, presence: true, unless: ->{ tagged? }
     validate :name_validator
     validate :device_limit, if: :new_record? 
 
@@ -86,7 +86,7 @@ module Ivy
     #
     ####################################
 
-    delegate :manufacturer, :model,
+    delegate :model,
       to: :template, allow_nil: true
 
     delegate :simple?, :complex?,
@@ -152,20 +152,6 @@ module Ivy
       end
     end
 
-    def cluster
-      return @cluster if defined?(@cluster)
-
-      @cluster = 
-        if !chassis.nil?
-          cluster = chassis.cluster rescue nil
-          cluster.nil? ? Ivy::Cluster.first : cluster
-        elsif slot.nil?
-          Ivy::Cluster.first
-        else
-          slot.cluster
-        end
-    end
-
     #
     # for tagged devices, because they don't have their own template
     #
@@ -191,21 +177,13 @@ module Ivy
       end
     end
 
-    def mia?
-      role == 'mia'
-    end
-
-    def isla?
-      role == 'isla'
-    end
-
     def metrics
       interchange_data && interchange_data[:metrics] || {}
     end
 
     def to_interchange_format(data)
       # Reload on creation, otherwise associations (e.g. chassis) may not work.
-      reload if created_on_previously_changed? || created_on_changed?
+      reload if created_at_previously_changed? || created_at_changed?
 
       # Overwrite these if already set.
       data.merge!(
@@ -234,7 +212,7 @@ module Ivy
 
     def create_or_update_data_source_map
       if data_source_map.nil?
-        build_data_source_map(data_source_id: 1, map_to_grid: 'unspecified', map_to_cluster: 'unspecified')
+        build_data_source_map
         data_source_map.save
       elsif data_source_map.map_to_host != data_source_map.calculate_map_to_host && device_should_have_dsm_updated
         data_source_map.update_attribute(:map_to_host, data_source_map.calculate_map_to_host)
@@ -242,11 +220,8 @@ module Ivy
     end
 
     def device_should_have_dsm_updated
-      # XXX Add Ivy::Device::PowerDistribution and Ivy::Device::PowerFeed if they ever exist.
       if tagged?
         false
-      elsif [Ivy::Device::Sensor, Ivy::Device::PowerStrip].include?(self.class)
-        false 
       else
         true
       end
@@ -283,7 +258,6 @@ module Ivy
       limit_nrads = YAML.load_file("/etc/concurrent-thinking/appliance/release.yml")['nrad_limit'] rescue nil
       return unless limit_rads && limit_nrads
       current = Ivy::Device.all.size - Ivy::Device.blank.size - Ivy::Device::RackTaggedDevice.all.size
-      # current -= Ivy::Device.sensors.size #+ Ivy::Device::VirtualServer.all.size
       return if current < (limit_rads + limit_nrads)
       self.errors.add(:base, "The device limit of #{limit_rads+limit_nrads} has been exceeded")
     end
@@ -294,7 +268,5 @@ end
 Dir["#{File.dirname(__FILE__)}/device/**.rb"].each do |d|
   file_name = File.basename(d, '.rb')
   require "ivy/device/#{file_name}"
-  unless [ 'sensor' ].include? file_name
-    Ivy::Device.types << "Ivy::Device::#{file_name.classify}".constantize
-  end
+  Ivy::Device.types << "Ivy::Device::#{file_name.classify}".constantize
 end

@@ -24,8 +24,7 @@ class ContextMenu {
     this.VERBOSE              = true;
     this.SPACER               = '<br>';
     this.ASPECT_MAP           = { front: 'f', rear: 'r' };
-    this.DEVICE_TYPE_URL_MAP  = { managedDevice: 'managed' };
-    this.COMMAND_MODEL        = 'Command';
+    this.DEVICE_TYPE_URL_MAP  = {};
   }
 
 
@@ -123,7 +122,7 @@ class ContextMenu {
           var div_class  = (option.class != null) ? option.class : "";
           var piece      = option.caption != null ? option.caption : option.content;
           var option_url = option.url;
-          var disabled   = option.disableForCommand && (((device instanceof Chassis) && (device.model === ContextMenu.COMMAND_MODEL)) || ((device instanceof Machine) && (device.parent.model === ContextMenu.COMMAND_MODEL)));
+          var disabled   = false;
           var on_click   = disabled ? null : option.onClick;
 
           piece = Util.substitutePhrase(piece, 'view_devices', view_devices);

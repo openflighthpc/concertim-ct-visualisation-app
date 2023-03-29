@@ -60,9 +60,7 @@ module Ivy
 
         tagged_device.tagged = true
         tagged_device.name ||= self.name
-        tagged_device.build_data_source_map(
-          :data_source_id=>1, :map_to_grid => 'unspecified', :map_to_cluster => 'unspecified',
-          :map_to_host => "tagdev-#{Time.now.to_f}-#{self.name}")
+        tagged_device.build_data_source_map(map_to_host: "tagdev-#{Time.now.to_f}-#{self.name}")
       end
       
       def fix_tagged_device_errors

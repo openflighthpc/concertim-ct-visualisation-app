@@ -14,7 +14,7 @@ module Ivy
       def get_structure(racks=nil)
         sql = generate_sql(racks)
         begin
-          xml = Ivy::Model.connection.exec_query(sql).rows.join
+          xml = ApplicationRecord.connection.exec_query(sql).rows.join
         rescue
           Rails.logger.debug("An exception occured whilst generating IRV structure")
           Rails.logger.debug($!.class)
@@ -56,10 +56,10 @@ SELECT
                                R.name as "name",
                                R.u_height as "uHeight" ,
                                ( SELECT id from sorted_racks offset (select row_num from (select id,row_number() over () as row_num from sorted_racks) t where id=R.id) limit 1) as "nextRackId"),
-                               ( select XmlAgg( XmlElement( name "template", XmlAttributes (T.template_id as "id",T.name,T.manufacturer,T.model,T.rackable,T.product_url as "url",
+                               ( select XmlAgg( XmlElement( name "template", XmlAttributes (T.id,T.name,T.model,T.rackable,
                                                                                             T.images,T.height,T.rows,T.columns,T.rack_repeat_ratio,T.depth,
                                                                                             T.padding_left,T.padding_right,T.padding_top,T.padding_bottom,T.simple
-                                                                                            ))) from templates T where T.template_id = R.template_id limit 1 ),
+                                                                                            ))) from templates T where T.id = R.template_id limit 1 ),
                                ( SELECT XmlAgg( 
                                          XmlElement( name "Chassis", 
                                                      XmlAttributes( C.id,
@@ -72,14 +72,10 @@ SELECT
                                                                     C.rack_start_u as "uStart",
                                                                     C.rack_end_u as "uEnd",
                                                                     ( select DD.id from devices DD where DD.base_chassis_id = C.id and DD.tagged = true) as "tagged_device_id"),
-                                                                    ( select XmlAgg( XmlElement( name "template", XmlAttributes (T.template_id as "id",T.name,T.manufacturer,T.model,T.rackable,
+                                                                    ( select XmlAgg( XmlElement( name "template", XmlAttributes (T.id,T.name,T.model,T.rackable,
                                                                                                                                  T.images,T.height,T.rows,T.columns,T.rack_repeat_ratio,T.depth,
                                                                                                                                  T.padding_left,T.padding_right,T.padding_top,T.padding_bottom,T.simple
-                                                                                                                                 ))) from templates T where T.template_id = C.template_id limit 1 ),
-                                                                    ( select XmlAgg( XmlElement( name "powerSupplies", 
-                                                                                                XmlAttributes( ps.name as "name", ps.id as "id", 
-                                                                                                               ps.power_strip_id as "power_strip_id", ps.power_strip_socket_id as "socket_id"  ))) 
-                                                                      from power_supplies ps where ps.base_chassis_id = C.id) ,
+                                                                                                                                 ))) from templates T where T.id = C.template_id limit 1 ),
 					  			    ( select XmlAgg(
                                                                               XmlElement( name "Slots",
                                                                                           XmlAttributes( S.id as "id",
@@ -88,13 +84,8 @@ SELECT
                                                                                           ( select XmlAgg( 
                                                                                                    XmlElement( name "Machine",
                                                                                                                 XmlAttributes( D.id as "id",
-                                                                                                                               case when (D.hypervisor is not null and D.hypervisor <> '') then 'VirtualHost' else D.type end as "type",
-                                                                                                                               D.name as "name" ),
-                                                                                                               ( select XmlAgg( XmlElement( name "powerSupplies", 
-                                                                                                                                           XmlAttributes( ps.name as "name", ps.id as "id", 
-                                                                                                                                                          ps.power_strip_id as "power_strip_id", 
-                                                                                                                                                          ps.power_strip_socket_id as "socket_id"  ))) 
-                                                                                                                 from power_supplies ps where ps.slot_id = D.slot_id) 
+                                                                                                                               D.type as "type",
+                                                                                                                               D.name as "name" )
                                                                                                    )) from devices D where D.slot_id = S.id
                                                                                           )
                                                                               )

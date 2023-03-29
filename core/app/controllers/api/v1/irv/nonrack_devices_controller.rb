@@ -86,7 +86,6 @@ class Api::V1::Irv::NonrackDevicesController < Api::V1::Irv::BaseController
       simple: template.simple,
       deviceType: template.chassis_type,
       model: template.model,
-      manufacturer: template.manufacturer,
       rackable: template.rackable,
       padding: {
         left: template.padding_left,

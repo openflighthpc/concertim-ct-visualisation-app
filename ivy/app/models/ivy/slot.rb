@@ -1,5 +1,5 @@
 module Ivy
-  class Slot < Ivy::Model
+  class Slot < ApplicationRecord
     self.table_name = "slots"
 
     include Ivy::Concerns::LiveUpdate::Slot
@@ -14,7 +14,6 @@ module Ivy
     belongs_to :chassis_row, class_name: 'Ivy::ChassisRow'
     has_one :device, dependent: :destroy
     has_one :chassis, through: :chassis_row
-    has_one :cluster, through: :chassis
 
 
     ###############################

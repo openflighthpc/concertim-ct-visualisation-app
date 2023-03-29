@@ -15,17 +15,7 @@ module Ivy
     class Create
 
       def self.call(rack_params)
-        # [:initial_purchase_date, :warranty_expiry_date, :maintenance_expiry_date, :depreciation_date].each do |attr|
-        #   param = rack_params.delete(attr)
-        #   rack_params[:tagged_device_attributes][attr] = param unless rack_params[:tagged_device_attributes][attr]
-        # end
-        #
-        # [:serial_number, :asset_number, :initial_cost, :cost_centre, :weight].each do |attr|
-        #   param = rack_params.delete(attr)
-        #   rack_params[:tagged_device_attributes][attr] = param unless rack_params[:tagged_device_attributes][attr]
-        # end
-
-        rack = Ivy::Cluster.first.racks.build(rack_params)
+        rack = Ivy::HwRack.new(rack_params)
         rack.save
         rack
       end

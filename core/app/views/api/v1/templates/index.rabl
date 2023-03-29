@@ -1,4 +1,4 @@
 object @templates
 attribute :id
-attribute template_name: :name
+attribute :name
 attribute :description

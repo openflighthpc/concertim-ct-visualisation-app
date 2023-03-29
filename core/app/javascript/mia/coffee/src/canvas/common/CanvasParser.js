@@ -2,7 +2,6 @@
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
  * DS102: Remove unnecessary code created because of implicit returns
- * DS206: Consider reworking classes to avoid initClass
  * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
@@ -12,10 +11,6 @@ import Profiler from 'Profiler';
 
 // takes the various JSON structures, reformats if necessary and populates the view model
 class CanvasParser {
-  static initClass() {
-    this.YAML_BLANK_STRING        = '""';
-  }
-
   constructor(model) {
     this.model = model;
   }
@@ -117,8 +112,6 @@ class CanvasParser {
       }
   
       if ((chassis.template.height === 1) && (chassis.uStart != null) && (chassis.uEnd != null)) { chassis.template.height  = chassis.uEnd - chassis.uStart; }
-      //chassis.template = template
-      //chassis.yaml = template_yaml
   
       var unit = (chassis.template.images != null) ? chassis.template.images.unit : null; 
   
@@ -181,60 +174,6 @@ class CanvasParser {
     return rack;
   }
 
-  parseYAML(yaml_str) {
-    Profiler.begin(Profiler.CRITICAL);
-    const parts  = yaml_str.split('\n');
-    const parsed = {};
-    while (parts.length > 0) { this.parseYAMLElement(parts, parsed); }
-    Profiler.end(Profiler.CRITICAL);
-    return parsed;
-  }
-
-  parseYAMLElement(list, parent_obj, indent) {
-    if (indent == null) { indent = 0; }
-    Profiler.begin(Profiler.CRITICAL);
-    while(list.length > 0) {
-      var el          = list[0];
-      var first_delim = el.indexOf(':');
-      var last_delim  = el.lastIndexOf(':');
-
-      if (first_delim === last_delim) {
-        list.splice(0, 1);
-        Profiler.end(Profiler.CRITICAL);
-        return;
-      }
-
-      if (first_delim < indent) {
-        Profiler.end(Profiler.CRITICAL);
-        return;
-      }
-
-      list.splice(0, 1);
-
-      var key   = el.substring(first_delim+1, last_delim);
-      var value = el.substr(el.lastIndexOf(':') + 1).replace(/(^\s*)|(\s*$)/g, '');
-
-      if (first_delim !== last_delim) {
-        if (value === '') {
-          parent_obj[key] = {};
-          this.parseYAMLElement(list, parent_obj[key], first_delim + 1);
-        } else {
-          if (isNaN(Number(value))) {
-            if (value === CanvasParser.YAML_BLANK_STRING) {
-              parent_obj[key] = '';
-            } else {
-              parent_obj[key] = value;
-            }
-          } else {
-            parent_obj[key] = Number(value);
-          }
-        }
-      }
-    }
-
-    return Profiler.end(Profiler.CRITICAL);
-  }
-
 
   parseTemplate(item) {
     Profiler.begin(Profiler.CRITICAL);
@@ -247,9 +186,7 @@ class CanvasParser {
     item.template.rackable = Number(item.template.rackable);
     item.template.simple  = item.template.simple === "true" ? true : false;
 
-    if (item.template.images != null) {
-      item.template.images  = this.parseYAML(item.template.images);
-    } else {
+    if (item.template.images == null) {
       item.template.images  = {};
     }
 
@@ -262,5 +199,5 @@ class CanvasParser {
     return Profiler.end(Profiler.CRITICAL);
   }
 };
-CanvasParser.initClass();
+
 export default CanvasParser;

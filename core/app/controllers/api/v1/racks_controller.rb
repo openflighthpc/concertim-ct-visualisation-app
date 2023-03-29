@@ -33,9 +33,7 @@ class Api::V1::RacksController < Api::V1::ApplicationController
   # DELETE /racks/1
   #
   def destroy
-    if @rack.contains_mia?
-      render json: {errors: "rack contains the Concertim device"}, status: :unprocessable_entity
-    elsif !@rack.empty? && !ActiveModel::Type::Boolean.new.cast(params[:recurse])
+    if !@rack.empty? && !ActiveModel::Type::Boolean.new.cast(params[:recurse])
       render json: {errors: "rack is not empty"}, status: :unprocessable_entity
     elsif @rack.destroy 
       render json: {}, status: :ok
