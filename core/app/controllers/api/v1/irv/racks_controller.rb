@@ -78,7 +78,7 @@ class Api::V1::Irv::RacksController < Api::V1::Irv::BaseController
     # XXX Update model to serialize this column.
     # XXX Update JS to accept a JSON object for these attributes.
     template = structure['template']
-    template['images'] = JSON.parse(template['images']).symbolize_keys.to_yaml
+    template['images'] = JSON.parse(template['images'])
 
     case structure['Chassis']
     when nil
