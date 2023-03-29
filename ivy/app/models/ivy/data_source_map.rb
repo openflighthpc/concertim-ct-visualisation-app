@@ -48,8 +48,8 @@ module Ivy
 
     before_validation :strip_attributes, :assign_map_to_host
     # before_update :update_metrics
-    # after_save :update_power_strip_interchange, :update_interchange
-    # after_destroy :update_power_strip_interchange, :remove_from_interchange
+    # after_save :update_interchange
+    # after_destroy :remove_from_interchange
     # after_initialize :set_original_values
 
 

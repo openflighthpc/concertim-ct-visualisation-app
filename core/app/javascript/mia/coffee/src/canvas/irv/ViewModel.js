@@ -37,7 +37,7 @@ class ViewModel extends CanvasViewModel {
 
     this.NORMAL_CHART_ORDERS  = [ 'ascending', 'descending', 'physical position', 'name' ];
 
-    this.EXCLUDED_METRICS     = ['ct.capacity.rack','ct.sensor'];
+    this.EXCLUDED_METRICS     = ['ct.capacity.rack'];
 
     // statics overwritten by config
     this.COLOUR_SCALE = [{ pos: 0, col: '#000000' }, { pos: 1, col: '#ffffff' }];

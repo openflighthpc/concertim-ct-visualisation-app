@@ -35,7 +35,7 @@ class StaticGroupManager {
     this.METRIC_LEVEL_ALL       = "all";
 
     // constants and run-time assigned statics
-    this.GROUP_ID_MAP = { chassis: 'chassisIds', devices: 'deviceIds', sensors: 'sensorIds', racks: 'rackIds' };
+    this.GROUP_ID_MAP = { chassis: 'chassisIds', devices: 'deviceIds', racks: 'rackIds' };
   }
 
 
@@ -283,7 +283,7 @@ class StaticGroupManager {
         for (id in device_lookup[group]) {
           // provide only the device id in the case of a simple chassis
           if ((group === 'chassis') && !device_lookup.chassis[id].instances[0].complex) { continue; }
-          if ((group === 'chassis') || (group === 'devices') || (group === 'sensors')) { empty = false; }
+          if ((group === 'chassis') || (group === 'devices')) { empty = false; }
           static_group[group].push(id);
         }
       }
@@ -296,7 +296,7 @@ class StaticGroupManager {
         for (id in filter[group]) {
           // provide only the device id in the case of a simple chassis
           if ((group === 'chassis') && !device_lookup.chassis[id].instances[0].complex) { continue; }
-          if ((group === 'chassis') || (group === 'devices') || (group === 'sensors')) { empty = false; }
+          if ((group === 'chassis') || (group === 'devices')) { empty = false; }
           if (filter[group][id] && selection[group][id]) { static_group[group].push(id); }
         }
       }
@@ -308,7 +308,7 @@ class StaticGroupManager {
         for (id in filter[group]) {
           // provide only the device id in the case of a simple chassis
           if ((group === 'chassis') && !device_lookup.chassis[id].instances[0].complex) { continue; }
-          if ((group === 'chassis') || (group === 'devices') || (group === 'sensors')) { empty = false; }
+          if ((group === 'chassis') || (group === 'devices')) { empty = false; }
           if (filter[group][id]) { static_group[group].push(id); }
         }
       }
@@ -320,7 +320,7 @@ class StaticGroupManager {
         for (id in selection[group]) {
           // provide only the device id in the case of a simple chassis
           if ((group === 'chassis') && !device_lookup.chassis[id].instances[0].complex) { continue; }
-          if ((group === 'chassis') || (group === 'devices') || (group === 'sensors')) { empty = false; }
+          if ((group === 'chassis') || (group === 'devices')) { empty = false; }
           if (selection[group][id]) { static_group[group].push(id); }
         }
       }

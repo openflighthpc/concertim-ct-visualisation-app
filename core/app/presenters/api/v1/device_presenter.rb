@@ -17,8 +17,8 @@ module Api::V1
     # in the chassis is returned.
     def location
       if o.chassis.nil?
-        # This could be a rack tagged device, data centre tagged device or
-        # sensor.  For now, we're not interested in their location.
+        # This could be a rack tagged device or data centre tagged device. For
+        # now, we're not interested in their location.
         nil
 
       elsif o.chassis_simple?
