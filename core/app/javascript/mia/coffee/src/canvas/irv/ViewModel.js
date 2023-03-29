@@ -32,7 +32,6 @@ class ViewModel extends CanvasViewModel {
     this.METRIC_LEVEL_CHASSIS  = 'chassis';
     this.METRIC_LEVEL_ALL      = 'all';
     this.METRIC_NO_VALUE       = 'No metric selected';
-    this.GROUP_NO_VALUE        = 'No group selected';
     this.METRIC_NOT_VALID      = 'Metric not valid';
 
     this.NORMAL_CHART_ORDERS  = [ 'ascending', 'descending', 'physical position', 'name' ];
@@ -118,31 +117,6 @@ class ViewModel extends CanvasViewModel {
     this.enablePresetSelection = ko.dependentObservable(function() {
       const presets = this.presetNames();
       return (presets != null) && (presets.length > 0);
-    }
-    , this);
-
-    // object, group definitions using group id as the key. Initially these contain just the string group name and id. After
-    // a group has been selected and it's definition loaded the definition is also stored here to act as a cache
-    this.groupsById = ko.observable([]);
-
-    // string, name of the currently selected group
-    this.selectedGroup = ko.observable();
-
-    // array of strings, list of available group names
-    this.groupNames = ko.dependentObservable(function() {
-      const presets      = this.groupsById();
-      let preset_names = [];
-      for (var i in presets) { preset_names.push(presets[i].name); }
-      Util.sortCaseInsensitive(preset_names);
-      preset_names = [ViewModel.GROUP_NO_VALUE].concat(preset_names);
-      return preset_names;
-    }
-    , this);
-
-    // boolean, is the group drop-down enabled? Dependencies: groupNames
-    this.enableGroupSelection = ko.dependentObservable(function() {
-      const groups = this.groupNames();
-      return (groups != null) && (groups.length > 0);
     }
     , this);
 
@@ -245,10 +219,6 @@ class ViewModel extends CanvasViewModel {
     return false;
   }
 
-  resetFiltersAndSelectedGroup() {
-    return this.selectedGroup(null);
-  }
-
   resetFilters() {
     this.activeFilter(false);
     this.filteredDevices(this.getBlankGroupObject());
@@ -259,10 +229,6 @@ class ViewModel extends CanvasViewModel {
     const filters                  = this.filters();
     filters[selected_metric] = {};
     return this.filters(filters);
-  }
-
-  noGroupSelected() {
-    return (this.selectedGroup() == null) || (this.selectedGroup() === null) || (this.selectedGroup() === ViewModel.GROUP_NO_VALUE);
   }
 
   getBlankGroupObject() {

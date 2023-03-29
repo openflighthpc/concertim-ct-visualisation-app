@@ -171,7 +171,6 @@ class IRVController extends CanvasController {
     this.evDropFilterBar = this.evDropFilterBar.bind(this);
     this.hintInfoReceived = this.hintInfoReceived.bind(this);
     this.evSwitchStat = this.evSwitchStat.bind(this);
-    this.evSwitchGroup = this.evSwitchGroup.bind(this);
     this.evSwitchGraphOrder = this.evSwitchGraphOrder.bind(this);
     if (options == null) { options = {}; }
     this.options = options;
@@ -309,11 +308,6 @@ class IRVController extends CanvasController {
       });
       ComboBox.boxes.metrics.add_change_callback(() => {
         return this.model.selectedMetric(ComboBox.boxes.metrics.value);
-      });
-    }
-    if (ComboBox.boxes.groups != null) {
-      return ComboBox.boxes.groups.add_change_callback(() => {
-        return this.model.selectedGroup(ComboBox.boxes.groups.value);
       });
     }
   }
@@ -551,7 +545,6 @@ class IRVController extends CanvasController {
     this.model.metricLevel.subscribe(this.switchMetricLevel);
     this.model.selectedMetricStat.subscribe(this.evSwitchStat);
     this.model.graphOrder.subscribe(this.evSwitchGraphOrder);
-    this.model.selectedGroup.subscribe(this.evSwitchGroup);
     this.pollSub = this.model.metricPollRate.subscribe(this.setMetricPollInput);
 
     // Rack Space
@@ -820,8 +813,6 @@ class IRVController extends CanvasController {
 
   // removes any active filter and/or selection
   resetFilters() {
-    this.model.resetFiltersAndSelectedGroup();
-
     this.model.activeSelection(false);
     this.model.selectedDevices(this.model.getBlankGroupObject());
     this.rackSpace.clearAllRacksAsFocused();
@@ -856,10 +847,8 @@ class IRVController extends CanvasController {
   saveSettings(going_to) {
     const settings = {};
 
-    // carry over either the current static group or the selected devices (if any)
-    if (this.model.selectedGroup() != null) {
-      settings.selectedGroup = this.model.selectedGroup();
-    } else if (this.model.activeSelection() || this.crossAppSettings.selectedRacks) {
+    // carry over either the selected devices (if any)
+    if (this.model.activeSelection() || this.crossAppSettings.selectedRacks) {
       const device_lookup    = this.model.deviceLookup();
       const selected_devices = { racks: {} };
       let valid            = false;
@@ -2358,14 +2347,6 @@ class IRVController extends CanvasController {
     if (((filter.max != null) && (filter.max !== col_map.high)) || ((filter.min != null) && (filter.min !== col_map.low))) { return this.applyFilter(); }
   }
 
-
-  // There is one subscriber to selectedGroup in the StaticGroupManager class that runs before this one,
-  // But we also need this subscriber here to setMetricLevel when the selected group has been blanked.
-  evSwitchGroup(group) {
-    if (this.model.noGroupSelected()) {
-      this.rackSpace.setMetricLevel(this.currentMetricLevel);
-    }
-  }
 
   // graphOrder model value subscriber, sets the agreggated metric statistic based upon the chosen chart order
   // @param  order   the newly selected graph order

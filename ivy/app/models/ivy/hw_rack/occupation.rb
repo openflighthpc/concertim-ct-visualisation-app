@@ -27,7 +27,7 @@ module Ivy
       # number_of_devices
       #
       def number_of_devices
-        group ? (MEMCACHE.get("hacor:group:#{group.id}")[:members].size rescue 0) : 0
+        devices.count
       end
 
       # Return the highest empty u for the given facing.

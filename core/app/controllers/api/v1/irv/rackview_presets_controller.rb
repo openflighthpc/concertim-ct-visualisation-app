@@ -22,7 +22,6 @@ class Api::V1::Irv::RackviewPresetsController < Api::V1::Irv::BaseController
   #         "graphOrder": "\"descending\"",
   #         "filters": "{}",
   #         "selectedMetric": "\"Metric not valid\"",
-  #         "selectedGroup": "null",
   #         "invertedColours": "false"
   #       },
   #       "name": "F&B",

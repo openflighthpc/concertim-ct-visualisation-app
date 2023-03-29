@@ -1082,8 +1082,6 @@ class RackSpace extends CanvasSpace {
         }
       }
 
-      this.model.selectedGroup(null);
-
       this.model.activeSelection(active_selection);
       return this.model.selectedDevices(selected_devices);
 
@@ -1104,8 +1102,6 @@ class RackSpace extends CanvasSpace {
         }
       }
 
-
-      this.model.selectedGroup(null);
 
       this.model.activeSelection(true);
       return this.model.selectedDevices(new_sel);
@@ -1379,7 +1375,6 @@ class RackSpace extends CanvasSpace {
     box.top    = box.y;
     box.bottom = box.y + box.height;
 
-    this.model.selectedGroup(null);
     const selection = this.selectWithin(box, true);
     this.model.activeSelection(selection != null);
     this.model.selectedDevices(selection);
@@ -2173,21 +2168,14 @@ class RackSpace extends CanvasSpace {
   // metricLevel model subscriber, creates a selection of relevant devices when changing metric level.
   // @param  metric_level  the new value of metric level
   setMetricLevel(metric_level) {
-    let device, group, group_members, id;
+    let device, group, id;
     this.metricLevel = metric_level;
     const groups       = this.model.groups();
     const selection    = {};
     for (group of Array.from(groups)) { selection[group] = {}; }
 
     const device_lookup = this.model.deviceLookup();
-  
-    const group_selected = this.model.noGroupSelected() === false;
-    if (group_selected) { group_members = document.IRV.groups.selectedGroup.memberIds; }
-    for (var key in group_members) {
-      var value = group_members[key];
-      group_members[key] = group_members[key].map(oneId => parseInt(oneId));
-    }
-  
+
     //
     // "selection" is built up based on the layer selected (here the layer is called "metric level").
     //
@@ -2196,7 +2184,7 @@ class RackSpace extends CanvasSpace {
     if ((metric_level === ViewModel.METRIC_LEVEL_CHASSIS) || (metric_level === ViewModel.METRIC_LEVEL_ALL)) {
       for (id in device_lookup.chassis) {
         device = device_lookup.chassis[id];
-        if (this.groupAndNotInGroup(group_selected, id, group_members != null ? group_members.chassisIds : undefined) || this.selectionAndNotSelected(device) || this.noHoldingAndInHolding(device)) { continue; }
+        if (this.selectionAndNotSelected(device) || this.noHoldingAndInHolding(device)) { continue; }
         if (device.instances[0].complex) {
           selection[device.instances[0].group][device.instances[0].id] = true;
           for (var child of Array.from(device.instances[0].children)) { selection[child.group][child.id] = true; }
@@ -2208,19 +2196,13 @@ class RackSpace extends CanvasSpace {
     if ((metric_level === ViewModel.METRIC_LEVEL_DEVICES) || (metric_level === ViewModel.METRIC_LEVEL_ALL)) {
       for (id in device_lookup.devices) {
         device = device_lookup.devices[id];
-        if (this.groupAndNotInGroup(group_selected, id, group_members != null ? group_members.deviceIds : undefined) || this.selectionAndNotSelected(device) || this.noHoldingAndInHolding(device)) { continue; }
+        if (this.selectionAndNotSelected(device) || this.noHoldingAndInHolding(device)) { continue; }
         selection[device.instances[0].group][device.instances[0].id] = true;
       }
     }
 
     this.model.activeSelection(true);
     return this.model.selectedDevices(selection);
-  }
-
-  // Validates if a group has been selected, and the device is not a member of the group
-  groupAndNotInGroup(group_selected, item_id, group_members) {
-    let needle;
-    return group_selected && (needle = parseInt(item_id), !Array.from(group_members).includes(needle));
   }
 
   // Validates if not showing holding area, and device is in the holding area

@@ -46,12 +46,6 @@ module Ivy
     has_many :devices,                through: :slots
     has_many :chassis_tagged_devices, through: :chassis
 
-    has_one :group,
-      class_name: "Ivy::Group::RuleBasedGroup",
-      foreign_key: :ref_text,
-      primary_key: :name
-
-
     ############################
     #
     # Validations

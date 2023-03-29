@@ -37,7 +37,6 @@ pin "canvas/common/util/Events", to: "mia/coffee/src/canvas/common/util/Events.j
 pin "canvas/common/util/PresetManager", to: "mia/coffee/src/canvas/common/util/PresetManager.js"
 pin "canvas/common/util/RBAC", to: "mia/coffee/src/canvas/common/util/RBAC.js"
 pin "canvas/common/util/Util", to: "mia/coffee/src/canvas/common/util/Util.js"
-pin "canvas/common/util/StaticGroupManager", to: "mia/coffee/src/canvas/common/util/StaticGroupManager.js"
 pin "canvas/common/util/CrossAppSettings", to: "mia/coffee/src/canvas/common/util/CrossAppSettings.js"
 pin "canvas/common/gfx/SimpleRenderer", to: "mia/coffee/src/canvas/common/gfx/SimpleRenderer.js"
 pin "canvas/common/gfx/Easing", to: "mia/coffee/src/canvas/common/gfx/Easing.js"

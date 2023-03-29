@@ -188,13 +188,14 @@ class PresetManager {
 
     this.selected = preset;
   
-    if (!preset.values.hasOwnProperty('selectedGroup')) { preset.values.selectedGroup = '""'; }
-    if (!this.model.validMetric(JSON.parse(preset.values.selectedMetric))) { preset.values.selectedMetric = '"'+PresetManager.METRIC_NOT_VALID+'"'; }
+    const presetMetric = JSON.parse(preset.values.selectedMetric);
+    if (presetMetric != null && !this.model.validMetric(presetMetric)) {
+      preset.values.selectedMetric = '"'+PresetManager.METRIC_NOT_VALID+'"';
+    }
 
     for (var val_def of Array.from(PresetManager.VALUES)) {
       var val_name = val_def.name;
       if (!preset.values.hasOwnProperty(val_name)) { continue; }
-      if ((val_name === 'selectedGroup') && (this.model.activeSelection() === true)) { continue; }
       Profiler.trace(Profiler.INFO, 'PresetManager mapping ' + val_name);
       try {
         // only update the model if current value is different from preset value

@@ -31,7 +31,6 @@ import ThumbNav from 'canvas/common/widgets/ThumbNav';
 import FilterBar from 'canvas/common/widgets/FilterBar';
 import CanvasViewModel from 'canvas/common/CanvasViewModel';
 import ViewModel from 'canvas/irv/ViewModel';
-import StaticGroupManager from 'canvas/common/util/StaticGroupManager';
 import IRVChart from 'canvas/irv/view/IRVChart';
 import Profiler from 'Profiler';
 
@@ -112,25 +111,6 @@ class Configurator {
       PresetManager.MODEL_DEPENDENCIES    = preset_config.modelDependencies;
       PresetManager.DOM_DEPENDENCIES      = preset_config.domDependencies;
       PresetManager.MSG_CONFIRM_UPDATE    = preset_config.msgConfirmUpdate;
-
-      const group_config = config.STATICGROUPMANAGER;
-      console.log(group_config);
-      StaticGroupManager.LIST                  = group_config.list;
-      StaticGroupManager.GET                   = group_config.get;
-      StaticGroupManager.NEW                   = group_config.new;
-      StaticGroupManager.UPDATE                = group_config.update;
-      StaticGroupManager.ERR_CAPTION           = group_config.errors.caption;
-      StaticGroupManager.ERR_INAVLID_NAME      = group_config.errors.invalidName;
-      StaticGroupManager.ERR_WHITE_NAME        = group_config.errors.whiteName;
-      StaticGroupManager.ERR_DUPLICATE_NAME    = group_config.errors.duplicateName;
-      StaticGroupManager.ERR_EMPTY_GROUP       = group_config.errors.emptyGroup;
-      StaticGroupManager.ERR_READ_ONLY         = group_config.errors.readOnly;
-      StaticGroupManager.ERR_GROUP_DATA_CENTRE = group_config.errors.groupDataCentre;
-      StaticGroupManager.MODEL_DEPENDENCIES    = group_config.modelDependencies;
-      StaticGroupManager.DOM_DEPENDENCIES      = group_config.domDependencies;
-      StaticGroupManager.MSG_READ_ONLY         = group_config.errors.readOnly;
-      StaticGroupManager.MSG_CONFIRM_UPDATE    = group_config.msgConfirmUpdate;
-      StaticGroupManager.MSG_EMPTY_GROUP       = group_config.emptyGroup;
     }
  
     const thumb_nav_config            = config.THUMBNAV;
