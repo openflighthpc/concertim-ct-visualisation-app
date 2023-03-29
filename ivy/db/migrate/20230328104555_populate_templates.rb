@@ -1,6 +1,7 @@
 class PopulateTemplates < ActiveRecord::Migration[7.0]
   class Template < ActiveRecord::Base
     establish_connection :ivy
+    enum rackable: { rackable: 1, zerouable: 2, nonrackable: 3 }
   end
 
   def up
@@ -9,7 +10,7 @@ class PopulateTemplates < ActiveRecord::Migration[7.0]
       unless %w[Server HwRack].include?(chassis_type)
         raise ArgumentError, "Unknown chassis_type: #{chassis_type}"
       end
-      rackable = chassis_type == 'Server' ? 1 : 3
+      rackable = chassis_type == 'Server' ? 'rackable' : 'nonrackable'
       rows = chassis_type == 'Server' ? 1 : nil
       columns = chassis_type == 'Server' ? 1 : nil
 
