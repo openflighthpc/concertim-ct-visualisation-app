@@ -1,10 +1,6 @@
 /*
  * decaffeinate suggestions:
  * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS103: Rewrite code to no longer use __guard__, or convert again using --optional-chaining
- * DS206: Consider reworking classes to avoid initClass
- * DS207: Consider shorter variations of null checks
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
@@ -13,40 +9,30 @@ import Events from 'canvas/common/util/Events';
 import Profiler from 'Profiler';
 
 class PresetManager {
-  static initClass() {
+  // statics overwritten by config
+  static PATH    = 'path/to/preset/api';
+  static GET     = 'get_req';
+  static NEW     = 'set_req';
+  static UPDATE  = 'update_req';
+  static VALUES  = [{ type: 'simple', name: 'viewMode' }, { type: 'simple', name: 'scaleMetrics' }, { type: 'simple', name: 'face' }];
 
-    // statics overwritten by config
-    this.PATH    = 'path/to/preset/api';
-    this.GET     = 'get_req';
-    this.NEW     = 'set_req';
-    this.UPDATE  = 'update_req';
-    this.VALUES  = [{ type: 'simple', name: 'viewMode' }, { type: 'simple', name: 'scaleMetrics' }, { type: 'simple', name: 'face' }];
-  
-    this.MODEL_DEPENDENCIES  = { selectedPreset: "selectedPreset", presetsById: "presetsById" };
-    this.DOM_DEPENDENCIES    = { saveDialogue: "save_dialogue", nameInput: 'save_input', defaultAccessor: { element: 'rack_view', property: 'data-preset' } };
+  static MODEL_DEPENDENCIES  = { selectedPreset: "selectedPreset", presetsById: "presetsById" };
+  static DOM_DEPENDENCIES    = { saveDialogue: "save_dialogue", nameInput: 'save_input', defaultAccessor: { element: 'rack_view', property: 'data-preset' } };
 
-    this.MSG_CONFIRM_UPDATE     = 'Are you sure you wish to overwrite the preset [[selected_preset]] with the current display settings?';
-    this.ERR_INVALID_NAME       = 'Choose another name';
-    this.ERR_DUPLICATE_NAME     = 'Choose another';
-    this.ERR_CAPTION            = 'Failed: [[error_message]]';
-    this.ERR_WHITE_NAME         = 'Failed: [[error_message]]';
-    this.METRIC_NOT_VALID       = 'Metric not valid';
+  static MSG_CONFIRM_UPDATE     = 'Are you sure you wish to overwrite the preset [[selected_preset]] with the current display settings?';
+  static ERR_INVALID_NAME       = 'Choose another name';
+  static ERR_DUPLICATE_NAME     = 'Choose another';
+  static ERR_CAPTION            = 'Failed: [[error_message]]';
+  static ERR_WHITE_NAME         = 'Failed: [[error_message]]';
+  static METRIC_NOT_VALID       = 'Metric not valid';
 
-    this.EMPTY_PRESET           = {values: {selectedMetric: '"No metric selected"', gradientLBCMetric: 'false', face: '"front"', viewMode: '"Images and bars"', graphOrder: '"descending"', scaleMetrics: 'true', showChart: 'true', metricPollRate: 60000} };
-
-    // constants and run-time assigned statics
-    this.VALUES_BY_NAME = {};
-  }
+  static EMPTY_PRESET           = {values: {selectedMetric: 'No metric selected', gradientLBCMetric: false, face: 'front', viewMode: 'Images and bars', graphOrder: 'descending', scaleMetrics: true, showChart: true, metricPollRate: 60000} };
 
 
   constructor(model, ignoreDefault) {
-    this.updatePreset = this.updatePreset.bind(this);
-    this.showSaveDialogue = this.showSaveDialogue.bind(this);
-    this.confirmSave = this.confirmSave.bind(this);
-    this.cancelSave = this.cancelSave.bind(this);
     this.presetsReceived = this.presetsReceived.bind(this);
     this.switchPreset = this.switchPreset.bind(this);
-    this.response = this.response.bind(this);
+    this.handleSaveResponse = this.handleSaveResponse.bind(this);
     this.evShowPresetSaveDialogue = this.evShowPresetSaveDialogue.bind(this);
     this.evUpdatePreset = this.evUpdatePreset.bind(this);
     this.evConfirmPresetSave = this.evConfirmPresetSave.bind(this);
@@ -61,8 +47,6 @@ class PresetManager {
       onError   : this.loadError
     }).get();
 
-    for (var val of Array.from(PresetManager.VALUES)) { PresetManager.VALUES_BY_NAME[val.name] = val; }
-
     // create model reference store
     this.modelRefs      = {};
     for (var key in PresetManager.MODEL_DEPENDENCIES) { var value = PresetManager.MODEL_DEPENDENCIES[key]; this.modelRefs[key] = this.model[value]; }
@@ -76,13 +60,11 @@ class PresetManager {
     Events.addEventListener($(PresetManager.DOM_DEPENDENCIES.updateBtn), 'click', this.evUpdatePreset);
     Events.addEventListener($(PresetManager.DOM_DEPENDENCIES.saveBtn), 'click', this.evConfirmPresetSave);
     Events.addEventListener($(PresetManager.DOM_DEPENDENCIES.cancelBtn), 'click', this.evCancelPresetSave);
-
-    document.PRESETS = this;
   }
 
 
   updatePreset() {
-    return this.sendPreset();
+    this.sendPreset();
   }
 
 
@@ -90,7 +72,7 @@ class PresetManager {
     Util.setStyle(this.saveDialogueEl, 'display', 'block');
     const input       = $(PresetManager.DOM_DEPENDENCIES.nameInput);
     input.value = '';
-    return input.focus();
+    input.focus();
   }
 
 
@@ -111,22 +93,19 @@ class PresetManager {
     }
 
     this.sendPreset(name);
-    return Util.setStyle(this.saveDialogueEl, 'display', 'none');
+    Util.setStyle(this.saveDialogueEl, 'display', 'none');
   }
 
 
   cancelSave() {
-    return Util.setStyle(this.saveDialogueEl, 'display', 'none');
-  }
-
-
-  parseBoolean(val) {
-    return val === 'true';
+    Util.setStyle(this.saveDialogueEl, 'display', 'none');
   }
 
 
   pagePresetDefault() {
-    return __guard__($(PresetManager.DOM_DEPENDENCIES.defaultAccessor.element), x => x.get(PresetManager.DOM_DEPENDENCIES.defaultAccessor.property));
+    const el = $(PresetManager.DOM_DEPENDENCIES.defaultAccessor.element);
+    if (el == null) { return; }
+    return el.get(PresetManager.DOM_DEPENDENCIES.defaultAccessor.property);
   }
 
 
@@ -153,7 +132,7 @@ class PresetManager {
 
     // select the default preset, if defined
     if (default_preset != null) {
-      return this.modelRefs.selectedPreset(default_preset);
+      this.modelRefs.selectedPreset(default_preset);
     }
   }
 
@@ -175,11 +154,12 @@ class PresetManager {
       this.model.activeSelection(false);
       this.model.selectedDevices(this.model.getBlankGroupObject());
     }
-    return this.displayPreset(selection);
+    this.displayPreset(selection);
   }
 
 
   displayPreset(preset) {
+    this.debug('displaying preset', preset);
     this.model.loadingAPreset(true);
 
     if (preset == null) {
@@ -187,95 +167,125 @@ class PresetManager {
     }
 
     this.selected = preset;
-  
-    if (!preset.values.hasOwnProperty('selectedGroup')) { preset.values.selectedGroup = '""'; }
-    if (!this.model.validMetric(JSON.parse(preset.values.selectedMetric))) { preset.values.selectedMetric = '"'+PresetManager.METRIC_NOT_VALID+'"'; }
+
+    // XXX Improve this check to include 'No metric selected'.
+    if (preset.values.selectedMetric == null) {
+      // Nothing to do here.
+    } else if (!this.model.validMetric(preset.values.selectedMetric)) {
+      // XXX Is this the right thing to do?  Perhaps just leave it as it is and
+      // not display data.  Make it all red and the like.
+      preset.values.selectedMetric = PresetManager.METRIC_NOT_VALID;
+    }
 
     for (var val_def of Array.from(PresetManager.VALUES)) {
       var val_name = val_def.name;
-      if (!preset.values.hasOwnProperty(val_name)) { continue; }
-      if ((val_name === 'selectedGroup') && (this.model.activeSelection() === true)) { continue; }
-      Profiler.trace(Profiler.INFO, 'PresetManager mapping ' + val_name);
+      if (!preset.values.hasOwnProperty(val_name)) {
+        this.debug('skipping', val_name, 'not present');
+        continue;
+      }
+      if ((val_name === 'selectedGroup') && (this.model.activeSelection() === true)) {
+        this.debug('skipping', val_name, 'active selection');
+        continue;
+      }
       try {
         // only update the model if current value is different from preset value
         // this is only effective for simple data types
-        var new_val;
-        var key     = (val_def.key != null) ? JSON.parse(preset.values[val_def.key]) : null;
-        var current = (key != null) ? this.model[val_name]()[key] : this.model[val_name]();
-        if (preset.values[val_name] != null) { new_val = JSON.parse(preset.values[val_name]); }
-        if (new_val === 'true') { new_val = true; }
-        if (new_val === 'false') { new_val = false; }
-        if (new_val === "") { new_val = null; }
+        const key = (val_def.key != null) ? preset.values[val_def.key] : null;
+        const currentVal = (key != null) ? this.model[val_name]()[key] : this.model[val_name]();
+        const newVal = preset.values[val_name];
 
-        if (current !== new_val) {
+        if (currentVal !== newVal) {
           if (key != null) {
             var obj      = this.model[val_name]();
-            obj[key] = new_val;
+            obj[key] = newVal;
+            this.debug('setting', val_name, key, '=', newVal);
             this.model[val_name](obj);
           } else {
-            this.model[val_name](new_val);
+            this.debug('setting', val_name, '=', newVal);
+            this.model[val_name](newVal);
           }
+        } else {
+          this.debug('skipping', val_name, 'unchanged');
         }
       } catch (err) {
-        Profiler.trace(Profiler.CRITICAL, 'Failed to map preset value "' + val_name + '" ' + err);
+        this.debug('failed to map', val_name, err);
       }
     }
 
-    return this.model.loadingAPreset(false);
+    this.model.loadingAPreset(false);
   }
 
 
+  // Serialize the current selections and create a new preset (or update the
+  // current preset).
   sendPreset(name) {
-    const create_new = (name != null);
+    const isCreating = (name != null);
 
-    if ((this.selected == null) && !create_new) { return; }
+    if ((this.selected == null) && !isCreating) { return; }
 
     // @change stores the latest change to a preset from an update or new request
     // this is used to maintain synchonisation locally without re-requesting the presets
     // from the server
     this.change = { values: {} };
-    const payload = { 'preset[values]': {} };
+    const payload = { values: {} };
 
-    if (create_new) {
-      this.change.name               = name;
-      this.change.default            = false;
-      payload['preset[name]']    = name;
-      payload['preset[default]'] = false;
+    if (isCreating) {
+      this.change.name = name;
+      this.change.default = false;
+      payload.name = name;
+      payload.default = false;
     } else {
-      this.change.default            = this.selected.default;
-      payload['preset[name]']    = this.selected.name;
-      payload['preset[default]'] = this.selected.default;
+      this.change.default = this.selected.default;
+      payload.name = this.selected.name;
+      payload.default = this.selected.default;
     }
 
     for (var val of Array.from(PresetManager.VALUES)) {
-      var str_val;
+      // The value currently assigned to the preset.
+      var presetValue;
       if (val.key != null) {
-        str_val = JSON.stringify(this.model[val.name]()[this.model[val.key]()]);
+        presetValue = this.model[val.name]()[this.model[val.key]()];
       } else {
-        str_val = JSON.stringify(this.model[val.name]());
+        presetValue = this.model[val.name]();
       }
 
-      if (str_val != null) { this.change.values[val.name] = str_val; }
-      payload['preset[values]'][val.name] = str_val;
+      // XXX Is this the issue.  Why don't we record values set as null?
+      // if (presetValue != null) { this.change.values[val.name] = presetValue; }
+      this.change.values[val.name] = presetValue;
+      payload.values[val.name] = presetValue;
     }
-    Profiler.trace(Profiler.INFO, payload);
-    return new Request.JSON({
-      headers    : {'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content')},
-      url        : PresetManager.PATH + Util.substitutePhrase((create_new ? PresetManager.NEW : PresetManager.UPDATE), 'preset_id', (this.selected != null) ? this.selected.id : null) + '?' + (new Date()).getTime(),
-      method     : create_new ? 'post' : 'put',
-      onComplete : this.response,
-      data       : payload
+    this.debug(isCreating ? 'creating' : 'updating', 'payload=', payload);
+
+    new Request.JSON({
+      headers    : {
+        'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content'),
+        'Content-Type': 'application/json',
+      },
+      url        : this.buildUrl(isCreating),
+      method     : isCreating ? 'post' : 'put',
+      onComplete : this.handleSaveResponse,
+      data       : JSON.stringify({preset: payload}),
     }).send();
   }
 
+  buildUrl(isCreating) {
+    const prefix = PresetManager.PATH;
+    const path = isCreating ? PresetManager.NEW : PresetManager.UPDATE;
+    const id = this.selected != null ? this.selected.id : null;
+    const timeStamp = (new Date()).getTime();
+    const url = prefix + Util.substitutePhrase(path, 'preset_id', id) + '?' + timeStamp;
+    return url;
+  }
 
-  response(response) {
-    Profiler.trace(Profiler.INFO, response);
+
+  // Handle the response from creating or updating a preset.
+  handleSaveResponse(response) {
+    this.debug('received response', response);
     if (response.success === "true") {
-      const switch_to            = (this.change.name != null);
-      const presets              = this.modelRefs.presetsById();
-      this.change.id           = response.id;
-      if (!switch_to) { this.change.name         = presets[response.id].name; }
+      const switch_to = (this.change.name != null);
+      const presets = this.modelRefs.presetsById();
+      this.change.id = response.id;
+      if (!switch_to) { this.change.name = presets[response.id].name; }
       presets[response.id] = this.change;
 
       this.modelRefs.presetsById(presets);
@@ -285,9 +295,9 @@ class PresetManager {
         if (switch_to) { this.modelRefs.selectedPreset(this.change.name); }
         this.selSub = this.modelRefs.selectedPreset.subscribe(this.switchPreset);
       }
-      return Profiler.trace(Profiler.INFO, this.change);
+      Profiler.trace(Profiler.INFO, this.change);
     } else {
-      return this.showError(response);
+      this.showError(response);
     }
   }
 
@@ -297,14 +307,14 @@ class PresetManager {
       msg = msg.errors;
     }
 
-    return alert_dialog(Util.substitutePhrase(PresetManager.ERR_CAPTION, 'error_message', msg));
+    alert_dialog(Util.substitutePhrase(PresetManager.ERR_CAPTION, 'error_message', msg));
   }
 
 
   evShowPresetSaveDialogue(ev) {
     ev.preventDefault();
     ev.stopPropagation();
-    return this.showSaveDialogue();
+    this.showSaveDialogue();
   }
 
 
@@ -315,7 +325,7 @@ class PresetManager {
     if (selected_preset === undefined) { return; }
     const message = Util.substitutePhrase(PresetManager.MSG_CONFIRM_UPDATE, 'selected_preset', selected_preset);
     confirm_dialog(message, 'Please confirm', true)
-      .then(() => { document.PRESETS.updatePreset(); })
+      .then(() => { this.updatePreset(); })
       .catch(() => {});
   }
 
@@ -323,19 +333,19 @@ class PresetManager {
   evConfirmPresetSave(ev) {
     ev.preventDefault();
     ev.stopPropagation();
-    return this.confirmSave($(PresetManager.DOM_DEPENDENCIES.nameInput).value);
+    this.confirmSave($(PresetManager.DOM_DEPENDENCIES.nameInput).value);
   }
 
 
   evCancelPresetSave(ev) {
     ev.preventDefault();
     ev.stopPropagation;
-    return this.cancelSave();
+    this.cancelSave();
+  }
+
+  debug(...msg) {
+    console.debug(this.constructor.name, ...msg);
   }
 };
-PresetManager.initClass();
-export default PresetManager;
 
-function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
-}
+export default PresetManager;

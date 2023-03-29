@@ -1187,21 +1187,9 @@ class IRVController extends CanvasController {
   // @param  metric  string, new metric id
   switchMetric(metric) {
     let group;
+    // XXX This guard doesn't handle the case of going from a valid metric to
+    // no metric.  Perhaps it should.
     if (!this.model.validMetric(metric)) { return; }
-
-    // clear the preset selection if the metric we're switching to is not
-    // the one stored against the current preset
-    const selected_preset = this.model.selectedPreset();
-    if (selected_preset != null) {
-      const presets = this.model.presetsById();
-      for (var id in presets) {
-        if (presets[id].name === selected_preset) {
-          var associated_metric = presets[id].values.selectedMetric;
-          associated_metric = associated_metric.substr(1, associated_metric.length - 2);
-          break;
-        }
-      }
-    }
 
     this.resetMetricPoller();
   
