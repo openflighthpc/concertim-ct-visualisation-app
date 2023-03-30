@@ -194,7 +194,7 @@
     "*COMMENT*" : "List of values to store and recall in a preset. The order in which these are defined here defines",
     "*COMMENT*" : "the order in which they will be set when a preset is loaded. These are values held in the ViewModel and",
     "*COMMENT*" : "due to the order sensitivity of knockout can break the IRV if not set in a particular order. Examples of",
-    "*COMMENT*" : "such breakages: if colourMaps is set before filter or if selectedMetric is set before colourMaps",
+    "*COMMENT*" : "such breakages: if colourMaps is set before filter or if filters are set before selectedMetric",
     "values" :
     [
       {
@@ -230,6 +230,10 @@
         "type" : "simple"
       },
       {
+        "name" : "selectedMetric",
+        "type" : "simple"
+      },
+      {
         "name" : "filters",
         "type" : "complex",
         "key"  : "selectedMetric"
@@ -238,10 +242,6 @@
         "name" : "colourMaps",
         "type" : "complex",
         "key"  : "selectedMetric"
-      },
-      {
-        "name" : "selectedMetric",
-        "type" : "simple"
       },
       {
         "name" : "selectedGroup",

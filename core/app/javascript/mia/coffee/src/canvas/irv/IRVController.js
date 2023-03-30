@@ -80,6 +80,7 @@ class IRVController extends CanvasController {
   constructor(options) {
     super(...arguments);
 
+    this.clearSelectedMetric = this.clearSelectedMetric.bind(this);
     this.getUserRoles = this.getUserRoles.bind(this);
     this.configReceived = this.configReceived.bind(this);
     this.evShowHideScrollBars = this.evShowHideScrollBars.bind(this);
@@ -305,15 +306,32 @@ class IRVController extends CanvasController {
     ComboBox.connect_all('cbox');
     if (ComboBox.boxes.metrics != null) {
       this.model.metricIds.subscribe(new_metric_ids => {
-        return ComboBox.boxes.metrics.updateDataIds(new_metric_ids);
+        ComboBox.boxes.metrics.updateDataIds(new_metric_ids);
       });
+
+      // When the metric ComboBox changes update the selected metric.
       ComboBox.boxes.metrics.add_change_callback(() => {
-        return this.model.selectedMetric(ComboBox.boxes.metrics.value);
+        this.model.selectedMetric(ComboBox.boxes.metrics.value);
       });
+
+      // If the selected metric changes to an invalid value, add an error
+      // highlight to the box.
+      this.model.selectedMetric.subscribe((metric) => {
+        if (!this.noMetricSelected(metric) && !this.model.validMetric(metric)) {
+          // A metric has been selected and its not valid.
+          ComboBox.boxes.metrics.addErrorHighlight();
+
+        } else {
+          // Either a valid metric or no metric.  But not the special "no
+          // metric selected" placeholder.
+          ComboBox.boxes.metrics.removeHighlight();
+        }
+      });
+
     }
     if (ComboBox.boxes.groups != null) {
-      return ComboBox.boxes.groups.add_change_callback(() => {
-        return this.model.selectedGroup(ComboBox.boxes.groups.value);
+      ComboBox.boxes.groups.add_change_callback(() => {
+        this.model.selectedGroup(ComboBox.boxes.groups.value);
       });
     }
   }
@@ -554,6 +572,18 @@ class IRVController extends CanvasController {
     this.model.selectedGroup.subscribe(this.evSwitchGroup);
     this.pollSub = this.model.metricPollRate.subscribe(this.setMetricPollInput);
 
+    const resetMetricControl = $('reset_metric');
+    if (resetMetricControl != null) {
+      this.model.selectedMetric.subscribe((metric) => {
+        if (this.noMetricSelected(metric)) {
+          resetMetricControl.addClass('disabled');
+        } else {
+          resetMetricControl.removeClass('disabled');
+        }
+      });
+    }
+
+
     // Rack Space
     this.rackSpace = new RackSpace(this.rackEl, this.chartEl, this.model, this.rackParent);
     if (this.model.showingFullIrv()) {
@@ -789,7 +819,7 @@ class IRVController extends CanvasController {
   evReset(ev) {
     ev.preventDefault();
     ev.stopPropagation();
-    this.resetFilters();
+    this.resetFilterAndSelection();
     return this.resetZoom();
   }
 
@@ -809,21 +839,24 @@ class IRVController extends CanvasController {
     return this.rackSpace.resetZoom();
   }
 
+  clearSelectedMetric() {
+    this.model.selectedMetric(null);
+  }
 
   // reset filters click handler, removes any active selection and filter
   // @param  ev  click event object
   evResetFilters(ev) {
     ev.preventDefault();
     ev.stopPropagation();
-    return this.resetFilters();
+    return this.resetFilterAndSelection();
   }
 
   // removes any active filter and/or selection
-  resetFilters() {
-    this.model.resetFiltersAndSelectedGroup();
+  resetFilterAndSelection() {
+    this.model.resetSelectedGroup();
+    this.model.resetFilter();
+    this.model.resetSelection();
 
-    this.model.activeSelection(false);
-    this.model.selectedDevices(this.model.getBlankGroupObject());
     this.rackSpace.clearAllRacksAsFocused();
     this.rackSpace.setMetricLevel(this.currentMetricLevel);
     return this.filterBar.resetFilters();
@@ -1169,8 +1202,8 @@ class IRVController extends CanvasController {
     }
   }
 
-  noMetricSelected(one_metric){
-    return (one_metric === null) || (one_metric === '') || (one_metric === ViewModel.METRIC_NO_VALUE) || (one_metric === PresetManager.METRIC_NOT_VALID);
+  noMetricSelected(metric){
+    return metric == null || metric === '';
   }
 
   showHideExportDataOption(metric) {
@@ -1182,46 +1215,24 @@ class IRVController extends CanvasController {
     }
   }
 
-  // selectedMetric model property subscriber. Resets selected preset drop-down, clears existing metric data, resets filter and restarts
-  // metric poller(s)
+  // selectedMetric model property subscriber. Clears existing metric data and
+  // restarts metric poller(s)
   // @param  metric  string, new metric id
   switchMetric(metric) {
     let group;
-    if (!this.model.validMetric(metric)) { return; }
-
-    // clear the preset selection if the metric we're switching to is not
-    // the one stored against the current preset
-    const selected_preset = this.model.selectedPreset();
-    if (selected_preset != null) {
-      const presets = this.model.presetsById();
-      for (var id in presets) {
-        if (presets[id].name === selected_preset) {
-          var associated_metric = presets[id].values.selectedMetric;
-          associated_metric = associated_metric.substr(1, associated_metric.length - 2);
-          break;
-        }
-      }
-    }
+    if (!this.noMetricSelected(metric) && !this.model.validMetric(metric)) { return; }
 
     this.resetMetricPoller();
-  
-    // clear metric data
-    const groups = this.model.groups();
-    let blank  = { values: {} };
-    for (group of Array.from(groups)) { blank.values[group] = {}; }
-    this.model.metricData(blank);
+
+    this.model.resetMetricData();
 
     if (this.noMetricSelected(metric)) {
-      this.resetFilters();
+      this.resetFilterAndSelection();
       this.pieCountdown.hide();
-    }
-
-    // reset filter
-    if (this.model.activeFilter() && ((typeof filter === 'undefined' || filter === null) || ((filter.max === colour_map.high) && (filter.min === colour_map.low)))) {
-      blank        = {};
-      for (group of Array.from(groups)) { blank[group] = {}; }
-      this.model.activeFilter(false);
-      return this.model.filteredDevices(blank);
+    } else {
+      // Remove the filter as it might be inappropriate for the new selection.
+      // Consider adding a guard hgere to check if it is.
+      this.model.resetFilter();
     }
   }
 
@@ -2049,12 +2060,7 @@ class IRVController extends CanvasController {
     const metrics         = this.model.metricData();
     const selected_stat   = this.model.selectedMetricStat();
 
-    const {
-      min
-    } = filters[selected_metric];
-    const {
-      max
-    } = filters[selected_metric];
+    const { min, max } = filters[selected_metric];
 
     const filtered_devices = {};
     const groups           = this.model.groups();
@@ -2281,7 +2287,7 @@ class IRVController extends CanvasController {
   }
 
   evResetMetricPoller(ev) {
-    this.resetFilters();
+    this.resetFilterAndSelection();
     this.setAPIFilter();
     return this.resetMetricPoller();
   }

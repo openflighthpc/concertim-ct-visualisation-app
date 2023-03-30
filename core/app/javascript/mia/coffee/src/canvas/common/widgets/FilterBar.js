@@ -229,8 +229,8 @@ class FilterBar {
   setMapMinMax() {
     const selected_preset = this.getSelectedPreset();
 
-    if ((selected_preset != null) && (selected_preset.values["colourMaps"] != null) && (selected_preset.values["selectedMetric"].split('"').join('') === this.model.selectedMetric())) {
-      const presetColourMaps = JSON.parse(selected_preset.values["colourMaps"]);
+    if ((selected_preset != null) && (selected_preset.values["colourMaps"] != null) && (selected_preset.values["selectedMetric"] === this.model.selectedMetric())) {
+      const presetColourMaps = selected_preset.values["colourMaps"];
       this.map.high = presetColourMaps.high;
       return this.map.low = presetColourMaps.low;
     } else {

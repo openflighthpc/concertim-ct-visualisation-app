@@ -13,20 +13,20 @@ class Api::V1::Irv::RackviewPresetsController < Api::V1::Irv::BaseController
   #     "preset": {
   #       "values": {
   #         "metricPollRate": "60000",
-  #         "showChart": "true",
-  #         "gradientLBCMetric": "false",
-  #         "scaleMetrics": "true",
-  #         "viewMode": "\"Images and bars\"",
-  #         "face": "\"both\"",
-  #         "metricLevel": "\"devices\"",
-  #         "graphOrder": "\"descending\"",
-  #         "filters": "{}",
-  #         "selectedMetric": "\"Metric not valid\"",
-  #         "selectedGroup": "null",
-  #         "invertedColours": "false"
+  #         "showChart": true,
+  #         "gradientLBCMetric": false,
+  #         "scaleMetrics": true,
+  #         "viewMode": "Images and bars",
+  #         "face": "both",
+  #         "metricLevel": "devices",
+  #         "graphOrder": "descending",
+  #         "filters": {},
+  #         "selectedMetric": "Metric not valid",
+  #         "selectedGroup": null,
+  #         "invertedColours": false
   #       },
   #       "name": "F&B",
-  #       "default": "false"
+  #       "default": false
   #     }
   #   }
   def create

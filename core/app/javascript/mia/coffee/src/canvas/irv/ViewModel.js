@@ -31,9 +31,7 @@ class ViewModel extends CanvasViewModel {
     this.METRIC_LEVEL_DEVICES  = 'devices';
     this.METRIC_LEVEL_CHASSIS  = 'chassis';
     this.METRIC_LEVEL_ALL      = 'all';
-    this.METRIC_NO_VALUE       = 'No metric selected';
     this.GROUP_NO_VALUE        = 'No group selected';
-    this.METRIC_NOT_VALID      = 'Metric not valid';
 
     this.NORMAL_CHART_ORDERS  = [ 'ascending', 'descending', 'physical position', 'name' ];
 
@@ -219,7 +217,6 @@ class ViewModel extends CanvasViewModel {
       for (var metric in metrics) {
         if (!this.isInExcludedMetrics(metrics[metric].name)) { metric_ids.push(metrics[metric].id); }
       }
-      metric_ids = [ViewModel.METRIC_NO_VALUE].concat(metric_ids);
       return metric_ids;
     }
     , this);
@@ -245,20 +242,32 @@ class ViewModel extends CanvasViewModel {
     return false;
   }
 
-  resetFiltersAndSelectedGroup() {
-    return this.selectedGroup(null);
+  resetSelectedGroup() {
+    this.selectedGroup(null);
   }
 
-  resetFilters() {
+  // Reset the "metric value filter" filter.
+  resetFilter() {
     this.activeFilter(false);
     this.filteredDevices(this.getBlankGroupObject());
-    this.activeSelection(false);
-    this.selectedDevices(this.getBlankGroupObject());
   
     const selected_metric          = this.selectedMetric();
     const filters                  = this.filters();
     filters[selected_metric] = {};
     return this.filters(filters);
+  }
+
+  // Reset the "selection" filter.  The one activated by dragging a selection
+  // box of clicking on Focus on.
+  resetSelection() {
+    this.activeSelection(false);
+    this.selectedDevices(this.getBlankGroupObject());
+  }
+
+  resetMetricData() {
+    let blank  = { values: {} };
+    for (let group of this.groups()) { blank.values[group] = {}; }
+    this.metricData(blank);
   }
 
   noGroupSelected() {

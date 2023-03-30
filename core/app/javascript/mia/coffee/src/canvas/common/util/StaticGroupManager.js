@@ -143,7 +143,8 @@ class StaticGroupManager {
     let i, selection;
     if (this.model.noGroupSelected()) {
       this.selectedGroup = null;
-      this.model.resetFilters();
+      this.model.resetFilter();
+      this.model.resetSelection();
       return;
     }
 

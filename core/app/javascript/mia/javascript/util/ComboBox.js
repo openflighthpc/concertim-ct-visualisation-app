@@ -124,9 +124,9 @@ const ComboBox = new Class({
             case 'enter':
                 if (this.isVisible(this.optionslist) && this._highlighted_node) {
                     this.selectOption();
-                    //hideElement(this.optionslist);
+                    hideElement(this.optionslist);
                     evt.stop();
-                } else if ( key.code == 13 && this.textedit.style.background !== '' ) {
+                } else if ( key === 'enter' && this.textedit.style.background !== '' ) {
                     evt.stop();
                 }
                 break;
@@ -152,7 +152,7 @@ const ComboBox = new Class({
         var val = this.textedit.value;
         var tgt = this._highlighted_node;
         this.textedit.value = tgt.getAttribute("Desc");
-        this.textedit.style.background = "";
+        this.removeHighlight();
 
         if ( this._prevVal != val && !this._suppress_range ) {
             this._prevVal = this.textedit.value;
@@ -222,20 +222,20 @@ const ComboBox = new Class({
         var visibleCount = Math.min(options.length, this.config.maxListLength);
         if ( this._loaded ) {
             if (options.length === 0 && this.textedit.value.length === 0 ) {
-                this.textedit.style.background = "#ddd";
+                this.addEmptyHighlight();
                 return;
             } else if (!visibleCount) {
                 hideElement(this.optionslist);
                 this.blurHighlightedNode();
                 if (this.config.highlightNotFound) {
-                    this.textedit.style.background = "#FF6666";
+                    this.addErrorHighlight();
                 }
                 return;
             }
         }
         if (this._activate_dropdown || this._suppress_range || visibleCount > 1) {
             showElement(this.optionslist);
-            this.textedit.style.background = "#ddd";
+            this.addEmptyHighlight();
         }
         // mjt - IE seems to break within MochiKit, guessing that firstChild is null (or perhaps... "not an object" ;-p).
         if ( !this.optionslist.firstChild ) {
@@ -245,7 +245,7 @@ const ComboBox = new Class({
         var item_dims = getElementDimensions(this.optionslist.firstChild);
         var textedit_dims = getElementDimensions(this.textedit);
         var h = visibleCount ? (visibleCount * item_dims.h) : 0;
-        setElementDimensions(this.optionslist, {w:textedit_dims.w, h:h});
+        setElementDimensions(this.optionslist, {w:textedit_dims.w});
         setElementPosition(this.optionslist, {x:0, y: textedit_dims.h});
 
         this.highlightNode(divs[0]);
@@ -253,6 +253,18 @@ const ComboBox = new Class({
             this.selectOption();
             //hideElement(this.optionslist);
         }
+    },
+
+    addErrorHighlight: function() {
+        this.textedit.style.background = "#FF6666";
+    },
+
+    removeHighlight: function() {
+        this.textedit.style.background = "";
+    },
+
+    addEmptyHighlight: function() {
+        this.textedit.style.background = "#ddd";
     },
 
     clickOption: function(evt) {
