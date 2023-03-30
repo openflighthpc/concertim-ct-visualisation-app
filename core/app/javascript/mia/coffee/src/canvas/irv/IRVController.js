@@ -789,7 +789,7 @@ class IRVController extends CanvasController {
   evReset(ev) {
     ev.preventDefault();
     ev.stopPropagation();
-    this.resetFilters();
+    this.resetFilterAndSelection();
     return this.resetZoom();
   }
 
@@ -815,15 +815,15 @@ class IRVController extends CanvasController {
   evResetFilters(ev) {
     ev.preventDefault();
     ev.stopPropagation();
-    return this.resetFilters();
+    return this.resetFilterAndSelection();
   }
 
   // removes any active filter and/or selection
-  resetFilters() {
-    this.model.resetFiltersAndSelectedGroup();
+  resetFilterAndSelection() {
+    this.model.resetSelectedGroup();
+    this.model.resetFilter();
+    this.model.resetSelection();
 
-    this.model.activeSelection(false);
-    this.model.selectedDevices(this.model.getBlankGroupObject());
     this.rackSpace.clearAllRacksAsFocused();
     this.rackSpace.setMetricLevel(this.currentMetricLevel);
     return this.filterBar.resetFilters();
@@ -1200,7 +1200,7 @@ class IRVController extends CanvasController {
     this.model.metricData(blank);
 
     if (this.noMetricSelected(metric)) {
-      this.resetFilters();
+      this.resetFilterAndSelection();
       this.pieCountdown.hide();
     }
 
@@ -2037,12 +2037,7 @@ class IRVController extends CanvasController {
     const metrics         = this.model.metricData();
     const selected_stat   = this.model.selectedMetricStat();
 
-    const {
-      min
-    } = filters[selected_metric];
-    const {
-      max
-    } = filters[selected_metric];
+    const { min, max } = filters[selected_metric];
 
     const filtered_devices = {};
     const groups           = this.model.groups();
@@ -2269,7 +2264,7 @@ class IRVController extends CanvasController {
   }
 
   evResetMetricPoller(ev) {
-    this.resetFilters();
+    this.resetFilterAndSelection();
     this.setAPIFilter();
     return this.resetMetricPoller();
   }

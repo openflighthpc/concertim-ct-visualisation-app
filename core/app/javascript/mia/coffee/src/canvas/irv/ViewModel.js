@@ -245,20 +245,26 @@ class ViewModel extends CanvasViewModel {
     return false;
   }
 
-  resetFiltersAndSelectedGroup() {
-    return this.selectedGroup(null);
+  resetSelectedGroup() {
+    this.selectedGroup(null);
   }
 
-  resetFilters() {
+  // Reset the "metric value filter" filter.
+  resetFilter() {
     this.activeFilter(false);
     this.filteredDevices(this.getBlankGroupObject());
-    this.activeSelection(false);
-    this.selectedDevices(this.getBlankGroupObject());
   
     const selected_metric          = this.selectedMetric();
     const filters                  = this.filters();
     filters[selected_metric] = {};
     return this.filters(filters);
+  }
+
+  // Reset the "selection" filter.  The one activated by dragging a selection
+  // box of clicking on Focus on.
+  resetSelection() {
+    this.activeSelection(false);
+    this.selectedDevices(this.getBlankGroupObject());
   }
 
   noGroupSelected() {

@@ -137,16 +137,10 @@ class PresetManager {
   }
 
   switchPreset() {
-    let selection;
-    const presets  = this.modelRefs.presetsById();
-    const selected = this.modelRefs.selectedPreset();
-    Profiler.trace(Profiler.INFO, "Preset Manager ::::::: switch preset " + selected);
-    for (var i in presets) {
-      if (presets[i].name === selected) {
-        selection = presets[i];
-        break;
-      }
-    }
+    const selectedPresetName = this.modelRefs.selectedPreset();
+
+    const preset = Object.values(this.modelRefs.presetsById()).find(p => p.name === selectedPresetName)
+      || PresetManager.EMPTY_PRESET;
 
     if (this.model.crossAppSettings === true) {
       this.model.crossAppSettings = false;
@@ -154,17 +148,9 @@ class PresetManager {
       this.model.activeSelection(false);
       this.model.selectedDevices(this.model.getBlankGroupObject());
     }
-    this.displayPreset(selection);
-  }
 
-
-  displayPreset(preset) {
-    this.debug('displaying preset', preset);
+    this.debug('::: switching to preset', selectedPresetName, preset);
     this.model.loadingAPreset(true);
-
-    if (preset == null) {
-      preset = PresetManager.EMPTY_PRESET;
-    }
 
     this.selected = preset;
 
@@ -198,7 +184,7 @@ class PresetManager {
           if (key != null) {
             var obj      = this.model[val_name]();
             obj[key] = newVal;
-            this.debug('setting', val_name, key, '=', newVal);
+            this.debug(`setting ${val_name} (key: ${key}) key set to`, newVal, 'obj =', obj);
             this.model[val_name](obj);
           } else {
             this.debug('setting', val_name, '=', newVal);
@@ -212,20 +198,42 @@ class PresetManager {
       }
     }
 
+    if (preset.values.selectedMetric == null) {
+      // The new metric doesn't have an associated metric.  An devices filtered
+      // based on metric value are therefore outdated.
+      this.model.resetFilter();
+    }
+
     this.model.loadingAPreset(false);
   }
 
 
-  // Serialize the current selections and create a new preset (or update the
-  // current preset).
+  // Send a request to create/update a preset to the API server.
   sendPreset(name) {
     const isCreating = (name != null);
-
     if ((this.selected == null) && !isCreating) { return; }
 
-    // @change stores the latest change to a preset from an update or new request
-    // this is used to maintain synchonisation locally without re-requesting the presets
-    // from the server
+    const payload = this.buildPayload(isCreating, name);
+
+    fetch(this.buildUrl(isCreating), {
+      method: isCreating ? 'POST' : 'PUT',
+      headers    : {
+        'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content'),
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({preset: payload}),
+    })
+      .then(response => response.json())
+      .then(this.handleSaveResponse)
+      .catch(this.handleSaveResponse);
+  }
+
+  // Return a payload object of the current selections and keep a record of the
+  // changes made from the currently selected preset.
+  buildPayload(isCreating, name) {
+    // this.change stores the latest change to a preset from an update or new
+    // request this is used to maintain synchonisation locally without
+    // re-requesting the presets from the server
     this.change = { values: {} };
     const payload = { values: {} };
 
@@ -255,17 +263,7 @@ class PresetManager {
       payload.values[val.name] = presetValue;
     }
     this.debug(isCreating ? 'creating' : 'updating', 'payload=', payload);
-
-    new Request.JSON({
-      headers    : {
-        'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content'),
-        'Content-Type': 'application/json',
-      },
-      url        : this.buildUrl(isCreating),
-      method     : isCreating ? 'post' : 'put',
-      onComplete : this.handleSaveResponse,
-      data       : JSON.stringify({preset: payload}),
-    }).send();
+    return payload;
   }
 
   buildUrl(isCreating) {
