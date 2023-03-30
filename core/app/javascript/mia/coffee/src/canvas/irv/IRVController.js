@@ -572,6 +572,18 @@ class IRVController extends CanvasController {
     this.model.selectedGroup.subscribe(this.evSwitchGroup);
     this.pollSub = this.model.metricPollRate.subscribe(this.setMetricPollInput);
 
+    const resetMetricControl = $('reset_metric');
+    if (resetMetricControl != null) {
+      this.model.selectedMetric.subscribe((metric) => {
+        if (this.noMetricSelected(metric)) {
+          resetMetricControl.addClass('disabled');
+        } else {
+          resetMetricControl.removeClass('disabled');
+        }
+      });
+    }
+
+
     // Rack Space
     this.rackSpace = new RackSpace(this.rackEl, this.chartEl, this.model, this.rackParent);
     if (this.model.showingFullIrv()) {
