@@ -31,9 +31,7 @@ class ViewModel extends CanvasViewModel {
     this.METRIC_LEVEL_DEVICES  = 'devices';
     this.METRIC_LEVEL_CHASSIS  = 'chassis';
     this.METRIC_LEVEL_ALL      = 'all';
-    this.METRIC_NO_VALUE       = 'No metric selected';
     this.GROUP_NO_VALUE        = 'No group selected';
-    this.METRIC_NOT_VALID      = 'Metric not valid';
 
     this.NORMAL_CHART_ORDERS  = [ 'ascending', 'descending', 'physical position', 'name' ];
 
@@ -219,7 +217,6 @@ class ViewModel extends CanvasViewModel {
       for (var metric in metrics) {
         if (!this.isInExcludedMetrics(metrics[metric].name)) { metric_ids.push(metrics[metric].id); }
       }
-      metric_ids = [ViewModel.METRIC_NO_VALUE].concat(metric_ids);
       return metric_ids;
     }
     , this);
@@ -265,6 +262,12 @@ class ViewModel extends CanvasViewModel {
   resetSelection() {
     this.activeSelection(false);
     this.selectedDevices(this.getBlankGroupObject());
+  }
+
+  resetMetricData() {
+    let blank  = { values: {} };
+    for (let group of this.groups()) { blank.values[group] = {}; }
+    this.metricData(blank);
   }
 
   noGroupSelected() {

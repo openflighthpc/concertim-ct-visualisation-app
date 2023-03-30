@@ -24,9 +24,8 @@ class PresetManager {
   static ERR_DUPLICATE_NAME     = 'Choose another';
   static ERR_CAPTION            = 'Failed: [[error_message]]';
   static ERR_WHITE_NAME         = 'Failed: [[error_message]]';
-  static METRIC_NOT_VALID       = 'Metric not valid';
 
-  static EMPTY_PRESET           = {values: {selectedMetric: 'No metric selected', gradientLBCMetric: false, face: 'front', viewMode: 'Images and bars', graphOrder: 'descending', scaleMetrics: true, showChart: true, metricPollRate: 60000} };
+  static EMPTY_PRESET           = {values: {selectedMetric: null, gradientLBCMetric: false, face: 'front', viewMode: 'Images and bars', graphOrder: 'descending', scaleMetrics: true, showChart: true, metricPollRate: 60000} };
 
 
   constructor(model, ignoreDefault) {
@@ -153,15 +152,6 @@ class PresetManager {
     this.model.loadingAPreset(true);
 
     this.selected = preset;
-
-    // XXX Improve this check to include 'No metric selected'.
-    if (preset.values.selectedMetric == null) {
-      // Nothing to do here.
-    } else if (!this.model.validMetric(preset.values.selectedMetric)) {
-      // XXX Is this the right thing to do?  Perhaps just leave it as it is and
-      // not display data.  Make it all red and the like.
-      preset.values.selectedMetric = PresetManager.METRIC_NOT_VALID;
-    }
 
     for (var val_def of Array.from(PresetManager.VALUES)) {
       var val_name = val_def.name;

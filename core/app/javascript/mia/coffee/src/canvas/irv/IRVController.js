@@ -80,6 +80,7 @@ class IRVController extends CanvasController {
   constructor(options) {
     super(...arguments);
 
+    this.clearSelectedMetric = this.clearSelectedMetric.bind(this);
     this.getUserRoles = this.getUserRoles.bind(this);
     this.configReceived = this.configReceived.bind(this);
     this.evShowHideScrollBars = this.evShowHideScrollBars.bind(this);
@@ -305,15 +306,32 @@ class IRVController extends CanvasController {
     ComboBox.connect_all('cbox');
     if (ComboBox.boxes.metrics != null) {
       this.model.metricIds.subscribe(new_metric_ids => {
-        return ComboBox.boxes.metrics.updateDataIds(new_metric_ids);
+        ComboBox.boxes.metrics.updateDataIds(new_metric_ids);
       });
+
+      // When the metric ComboBox changes update the selected metric.
       ComboBox.boxes.metrics.add_change_callback(() => {
-        return this.model.selectedMetric(ComboBox.boxes.metrics.value);
+        this.model.selectedMetric(ComboBox.boxes.metrics.value);
       });
+
+      // If the selected metric changes to an invalid value, add an error
+      // highlight to the box.
+      this.model.selectedMetric.subscribe((metric) => {
+        if (!this.noMetricSelected(metric) && !this.model.validMetric(metric)) {
+          // A metric has been selected and its not valid.
+          ComboBox.boxes.metrics.addErrorHighlight();
+
+        } else {
+          // Either a valid metric or no metric.  But not the special "no
+          // metric selected" placeholder.
+          ComboBox.boxes.metrics.removeHighlight();
+        }
+      });
+
     }
     if (ComboBox.boxes.groups != null) {
-      return ComboBox.boxes.groups.add_change_callback(() => {
-        return this.model.selectedGroup(ComboBox.boxes.groups.value);
+      ComboBox.boxes.groups.add_change_callback(() => {
+        this.model.selectedGroup(ComboBox.boxes.groups.value);
       });
     }
   }
@@ -809,6 +827,9 @@ class IRVController extends CanvasController {
     return this.rackSpace.resetZoom();
   }
 
+  clearSelectedMetric() {
+    this.model.selectedMetric(null);
+  }
 
   // reset filters click handler, removes any active selection and filter
   // @param  ev  click event object
@@ -1169,8 +1190,8 @@ class IRVController extends CanvasController {
     }
   }
 
-  noMetricSelected(one_metric){
-    return (one_metric === null) || (one_metric === '') || (one_metric === ViewModel.METRIC_NO_VALUE) || (one_metric === PresetManager.METRIC_NOT_VALID);
+  noMetricSelected(metric){
+    return metric == null || metric === '';
   }
 
   showHideExportDataOption(metric) {
@@ -1182,34 +1203,24 @@ class IRVController extends CanvasController {
     }
   }
 
-  // selectedMetric model property subscriber. Resets selected preset drop-down, clears existing metric data, resets filter and restarts
-  // metric poller(s)
+  // selectedMetric model property subscriber. Clears existing metric data and
+  // restarts metric poller(s)
   // @param  metric  string, new metric id
   switchMetric(metric) {
     let group;
-    // XXX This guard doesn't handle the case of going from a valid metric to
-    // no metric.  Perhaps it should.
-    if (!this.model.validMetric(metric)) { return; }
+    if (!this.noMetricSelected(metric) && !this.model.validMetric(metric)) { return; }
 
     this.resetMetricPoller();
-  
-    // clear metric data
-    const groups = this.model.groups();
-    let blank  = { values: {} };
-    for (group of Array.from(groups)) { blank.values[group] = {}; }
-    this.model.metricData(blank);
+
+    this.model.resetMetricData();
 
     if (this.noMetricSelected(metric)) {
       this.resetFilterAndSelection();
       this.pieCountdown.hide();
-    }
-
-    // reset filter
-    if (this.model.activeFilter() && ((typeof filter === 'undefined' || filter === null) || ((filter.max === colour_map.high) && (filter.min === colour_map.low)))) {
-      blank        = {};
-      for (group of Array.from(groups)) { blank[group] = {}; }
-      this.model.activeFilter(false);
-      return this.model.filteredDevices(blank);
+    } else {
+      // Remove the filter as it might be inappropriate for the new selection.
+      // Consider adding a guard hgere to check if it is.
+      this.model.resetFilter();
     }
   }
 

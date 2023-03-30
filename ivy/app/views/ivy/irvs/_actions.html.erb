@@ -65,7 +65,7 @@
     </div>
   </div>
 
-  <div id="metric_container" class="div_table">
+  <div id="metric_container" class="div_table metric_container">
     <div class="div_row div_row_header">
       Metric
     </div>
@@ -79,6 +79,11 @@
     <div class="div_row">
       <div class="div_cell">
         <%= render_autocomplete_field( "metrics", {:name=>'associated_metric', :no_field_id_prepend=>true, :is_remote_url => false, :url => "document.IRV.model.metricIds", :onfocus => "document.IRV.evFocusMetricSelect(event)", :onmouseup => "document.IRV.evMouseUpMetricSelect(event)", :databind => "value: selectedMetric"}) %>
+      </div>
+    </div>
+    <div class="div_row">
+      <div class="div_cell right_col preset_controls">
+        <a href="#" id="reset_metric" data-bind="click: document.IRV.clearSelectedMetric">Clear</a>
       </div>
     </div>
     <div class="div_row">
