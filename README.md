@@ -13,8 +13,8 @@ devices have been added, metrics can be reported for those devices using the
 [metric reporting
 daemon](https://github.com/alces-flight/concertim-metric-reporting-daemon).
 
-There are [rack and device API example scripts](docs/api/examples) and [metric
-reporting example
+This repo contains [rack and device API example scripts](docs/api/examples).
+The metric reporting daemon repository has its own [metric API example
 scripts](https://github.com/alces-flight/concertim-metric-reporting-daemon/tree/main/docs/examples).
 
 Once metrics have been reported they can be visualised using the interactive
