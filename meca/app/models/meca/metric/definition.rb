@@ -17,8 +17,10 @@ module Meca
       end
 
       def values_for_devices_with_metric(metric)
+        metric = metric.to_sym
         [].tap do |el|
           non_tagged_devices_with_metric(metric).each do |key, device|
+            device.deep_symbolize_keys!
             next if device_stale?(device)
             next if device[:metrics].nil? || device[:metrics][metric].nil?
             value = device[:metrics][metric][:value]
@@ -28,8 +30,10 @@ module Meca
       end
 
       def values_for_chassis_with_metric(metric)
+        metric = metric.to_sym
         [].tap do |el|
           tagged_devices_with_metric(metric).each do |key, device|
+            device.deep_symbolize_keys!
             next if device[:mtime].nil? || (Time.now - device[:mtime]) > 90 || device[:metrics].nil? || device[:metrics][metric].nil?
             value = device[:metrics][metric][:value]
             el << MetricValue.new(id: device[:chassis_id], value: value) if value
@@ -40,6 +44,7 @@ module Meca
       def metric_definitions
         parser = URI::Parser.new
         fetch_many(device_keys).each do |_, device|
+          device.deep_symbolize_keys!
           next if device_stale?(device)
           next if device[:metrics].nil?
           device[:metrics].values.each do |metric|
