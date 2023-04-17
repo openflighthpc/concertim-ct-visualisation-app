@@ -91,6 +91,7 @@ class Configurator {
       IRVController.INVALID_POLL_COLOUR         = controller_config.invalidPollColour;
       IRVController.DEFAULT_METRIC_STAT         = controller_config.defaultMetricStat;
       IRVController.MODIFIED_RACK_POLL_RATE     = controller_config.modifiedRackPollRate;
+      IRVController.METRIC_TEMPLATES_POLL_RATE  = controller_config.metricTemplatesPollRate;
     }
  
     const parser_config                  = config.PARSER;

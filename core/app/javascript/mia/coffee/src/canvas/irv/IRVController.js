@@ -65,7 +65,7 @@ class IRVController extends CanvasController {
     this.NAV_HIDE_LAYOUT_UPDATE_DELAY  = 1000;
     this.EXPORT_IMAGE_URL              = '/-/api/v1/irv/racks/export_image';
     this.METRIC_POLL_EDIT_DELAY        = 2000;
-    this.METRIC_TEMPLATES_POLL_RATE     = 113000;
+    this.METRIC_TEMPLATES_POLL_RATE    = 30000;
     this.MIN_METRIC_POLL_RATE          = 600;
     this.INVALID_POLL_COLOUR           = '#f99';
     this.DEFAULT_METRIC_STAT           = 'max';

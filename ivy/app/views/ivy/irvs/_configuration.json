@@ -80,7 +80,10 @@
     "*COMMENT*"                : "Colour to apply to metric poll rate input box if value is too low or contains garbage",
     "invalidPollColour"        : "#f99",
     "defaultMetricStat"        : "max",
+    "*COMMENT*"                : "How frequently to poll for rack/device modifications.",
     "modifiedRackPollRate"     : 30000,
+    "*COMMENT*"                : "How frequently to poll for new metrics.",
+    "metricTemplatesPollRate"  : 30000,
 
 
     "*COMMENT*" : "Export CVS button settings",
