@@ -80,7 +80,7 @@ module Ivy
     end
 
     def rack_limit
-      limit = YAML.load_file("/etc/concurrent-thinking/appliance/release.yml")['rack_limit'] rescue nil
+      limit = YAML.load_file("/opt/concertim/licence-limits.yml")['rack_limit'] rescue nil
       return if limit.nil? || Ivy::HwRack.count < limit
       self.errors.add(:base, "The rack limit of #{limit} has been exceeded")
     end

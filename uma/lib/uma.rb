@@ -8,7 +8,7 @@ module Uma
   extend Dry::Configurable
 
   setting :jwt_secret_file,
-    default: '/data/private/share/daemons/ct-metric-reporting-daemon/config/secret',
+    default: '/opt/concertim/etc/secret',
     constructor: ->(value){ Pathname(value) }
 
   setting :jwt_secret,
