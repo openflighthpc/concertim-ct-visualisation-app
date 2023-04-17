@@ -372,6 +372,12 @@ const ComboBox = new Class({
             this.button.disabled = '';
 
             this.setOptions(dataArray);
+
+            if (this.optionslist && this.isVisible(this.optionslist)) {
+              // If the dropdown is displayed, update its contents.
+              this.update();
+              this.build(this.exposed_options);
+            }
         }
     },
 
