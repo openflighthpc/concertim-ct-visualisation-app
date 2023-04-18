@@ -24,6 +24,14 @@ module Uma
       uniqueness: true,
       format: { with: /\A[a-zA-Z0-9\-\_\.]*\Z/, message: "can contain only alphanumeric characters, hyphens, underscores and periods."}
 
+    ####################################
+    #
+    # Delegation
+    #
+    ####################################
+
+    delegate :can?, :cannot?, to: :ability
+
     ###############################
     #
     # Devise
@@ -36,9 +44,9 @@ module Uma
       :recoverable, :rememberable, :validatable,
       :jwt_authenticatable, jwt_revocation_strategy: Devise::JWT::RevocationStrategies::Null
 
-    def can?(action, resource)
-      # XXX Is this OK?  Do we want Emma::CanCanAbilityManager back.
-      Ability.new(self).can?(action, resource)
+    def ability
+      return @__ability if defined?(@__ability)
+      @__ability = ::Ability.new(self)
     end
   end
 end
