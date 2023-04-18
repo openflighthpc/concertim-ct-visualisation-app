@@ -254,8 +254,8 @@ module Ivy
 
     def device_limit 
       return if tagged
-      limit_rads = YAML.load_file("/etc/concurrent-thinking/appliance/release.yml")['device_limit'] rescue nil
-      limit_nrads = YAML.load_file("/etc/concurrent-thinking/appliance/release.yml")['nrad_limit'] rescue nil
+      limit_rads = YAML.load_file("/opt/concertim/licence-limits.yml")['device_limit'] rescue nil
+      limit_nrads = YAML.load_file("/opt/concertim/licence-limits.yml")['nrad_limit'] rescue nil
       return unless limit_rads && limit_nrads
       current = Ivy::Device.all.size - Ivy::Device.blank.size - Ivy::Device::RackTaggedDevice.all.size
       return if current < (limit_rads + limit_nrads)
