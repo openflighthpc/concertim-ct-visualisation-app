@@ -43,7 +43,7 @@ echo "Added badly named and located device to rack" >&2
 echo
 
 # Correct the name of the device.
-OUTPUT=$("${SCRIPT_DIR}/update-device.sh" "${DEVICE_ID}" comp201)
+OUTPUT=$("${SCRIPT_DIR}/update-device.sh" "${DEVICE_ID}" comp${NAME_PREFIX}01)
 if [ $? -ne 0 ] ; then
     # Errors will have been sent to stderr.
     exit
