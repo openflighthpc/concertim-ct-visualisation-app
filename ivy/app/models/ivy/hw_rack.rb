@@ -51,6 +51,8 @@ module Ivy
       foreign_key: :ref_text,
       primary_key: :name
 
+    belongs_to :user, class_name: 'Uma::User'
+
 
     ############################
     #

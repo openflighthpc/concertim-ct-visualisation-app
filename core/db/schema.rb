@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_28_104555) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_18_171245) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -83,7 +83,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_28_104555) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "template_id", null: false
+    t.bigint "user_id", null: false
     t.index ["template_id"], name: "index_racks_on_template_id"
+    t.index ["user_id"], name: "index_racks_on_user_id"
   end
 
   create_table "ivy.slots", id: :bigint, default: -> { "nextval('slots_id_seq'::regclass)" }, force: :cascade do |t|
@@ -214,5 +216,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_28_104555) do
   add_foreign_key "ivy.devices", "base_chassis", on_update: :cascade, on_delete: :cascade
   add_foreign_key "ivy.devices", "slots", on_update: :cascade, on_delete: :cascade
   add_foreign_key "ivy.racks", "templates", on_update: :cascade, on_delete: :restrict
+  add_foreign_key "ivy.racks", "users", on_update: :cascade, on_delete: :restrict
   add_foreign_key "ivy.slots", "chassis_rows", on_update: :cascade, on_delete: :cascade
 end

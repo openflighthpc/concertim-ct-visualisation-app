@@ -14,8 +14,8 @@ module Ivy
   module HwRackServices
     class Create
 
-      def self.call(rack_params)
-        rack = Ivy::HwRack.new(rack_params)
+      def self.call(rack_params, user)
+        rack = Ivy::HwRack.new(rack_params.merge(user: user))
         rack.save
         rack
       end

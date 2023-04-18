@@ -12,7 +12,7 @@ class Api::V1::RacksController < Api::V1::ApplicationController
   end
 
   def create
-    @rack = Ivy::HwRackServices::Create.call(rack_params.to_h)
+    @rack = Ivy::HwRackServices::Create.call(rack_params.to_h, current_user)
 
     if @rack.persisted?
       render action: :show

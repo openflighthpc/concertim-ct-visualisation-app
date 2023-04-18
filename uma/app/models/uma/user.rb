@@ -3,6 +3,16 @@ module Uma
 
     self.table_name = "users"
 
+    ####################################
+    #
+    # Associations
+    #
+    ####################################
+
+    has_many :racks,
+      class_name: 'Ivy::HwRack',
+      dependent: :destroy
+
     ###############################
     #
     # Validations

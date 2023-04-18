@@ -12,7 +12,7 @@ class Api::V1::Irv::RacksController < Api::V1::Irv::BaseController
     #
     # Uncomment the bellow to use the new ultra fast query method!
     #
-    irv_rack_structure = Crack::XML.parse(Ivy::Irv.get_structure(params[:rack_ids]))
+    irv_rack_structure = Crack::XML.parse(Ivy::Irv.get_structure(params[:rack_ids], current_user))
     fix_structure(irv_rack_structure)
     render :json => irv_rack_structure.to_json
 

@@ -11,8 +11,8 @@ module Ivy
     # Canvas functions
 
     class << self
-      def get_structure(racks=nil)
-        sql = generate_sql(racks)
+      def get_structure(racks=nil, user)
+        sql = generate_sql(racks, user)
         begin
           xml = ApplicationRecord.connection.exec_query(sql).rows.join
         rescue
@@ -32,21 +32,24 @@ module Ivy
 
       private
 
-      def generate_sql(racks)
-        condition = case racks
+      def generate_sql(racks, user)
+        racks_condition = case racks
                     when Array
-                      " WHERE R.id in (#{racks.map{|rack_id| rack_id.to_i}.join(',')})"
+                      " R.id in (#{racks.map{|rack_id| rack_id.to_i}.join(',')})"
                     when Integer
-                      " WHERE R.id = #{racks}"
+                      " R.id = #{racks}"
                     when String
-                      " WHERE R.id = #{racks}"
+                      " R.id = #{racks}"
                     else
-                      ""
+                      nil
                     end
+        users_condition = " R.user_id = #{user.id}"
+        all_conditions = [racks_condition, users_condition].compact.join(" AND ")
+        condition = " WHERE #{all_conditions}"
 
 ret = (<<SQL)
 WITH sorted_racks AS (
-SELECT id, name, u_height, template_id FROM racks ORDER BY SUBSTRING( "name" FROM E'^(.*?)(\\\\d+)?$'), lpad(substring( "name" from E'(\\\\d+)$'), 30, '0') asc
+SELECT id, name, u_height, template_id, user_id FROM racks ORDER BY SUBSTRING( "name" FROM E'^(.*?)(\\\\d+)?$'), lpad(substring( "name" from E'(\\\\d+)$'), 30, '0') asc
 )
 SELECT
   XmlElement( name "Racks",
