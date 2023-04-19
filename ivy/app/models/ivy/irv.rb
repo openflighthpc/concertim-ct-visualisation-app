@@ -32,24 +32,33 @@ module Ivy
 
       private
 
+      def rack_ids(racks, user)
+        requested_ids =
+          case racks
+          when Array
+            racks.map{|rack_id| rack_id.to_i}
+          when Integer
+            [racks]
+          when String
+            [racks.to_i]
+          else
+            nil
+          end
+        permitted_ids = Ivy::HwRack.accessible_by(user.ability).pluck('id')
+        if requested_ids.nil?
+          permitted_ids
+        else
+          requested_ids & permitted_ids
+        end
+      end
+
       def generate_sql(racks, user)
-        racks_condition = case racks
-                    when Array
-                      " R.id in (#{racks.map{|rack_id| rack_id.to_i}.join(',')})"
-                    when Integer
-                      " R.id = #{racks}"
-                    when String
-                      " R.id = #{racks}"
-                    else
-                      nil
-                    end
-        users_condition = " R.user_id = #{user.id}"
-        all_conditions = [racks_condition, users_condition].compact.join(" AND ")
-        condition = " WHERE #{all_conditions}"
+        ids = rack_ids(racks, user)
+        condition = ids.blank? ? "" : " WHERE R.id in (#{ids.join(',')})"
 
 ret = (<<SQL)
 WITH sorted_racks AS (
-SELECT id, name, u_height, template_id, user_id FROM racks ORDER BY SUBSTRING( "name" FROM E'^(.*?)(\\\\d+)?$'), lpad(substring( "name" from E'(\\\\d+)$'), 30, '0') asc
+SELECT id, name, u_height, template_id FROM racks ORDER BY SUBSTRING( "name" FROM E'^(.*?)(\\\\d+)?$'), lpad(substring( "name" from E'(\\\\d+)$'), 30, '0') asc
 )
 SELECT
   XmlElement( name "Racks",
