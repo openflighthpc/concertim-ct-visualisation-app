@@ -41,6 +41,7 @@ class Api::V1::Irv::RacksController < Api::V1::Irv::BaseController
     authorize! :read, Ivy::HwRack
 
     error_for('Rack') if @rack.nil?
+    @rack = Api::V1::RackPresenter.new(@rack)
   end
 
   private
