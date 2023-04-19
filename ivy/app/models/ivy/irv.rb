@@ -11,8 +11,8 @@ module Ivy
     # Canvas functions
 
     class << self
-      def get_structure(racks=nil)
-        sql = generate_sql(racks)
+      def get_structure(racks=nil, user)
+        sql = generate_sql(racks, user)
         begin
           xml = ApplicationRecord.connection.exec_query(sql).rows.join
         rescue
@@ -32,17 +32,29 @@ module Ivy
 
       private
 
-      def generate_sql(racks)
-        condition = case racks
-                    when Array
-                      " WHERE R.id in (#{racks.map{|rack_id| rack_id.to_i}.join(',')})"
-                    when Integer
-                      " WHERE R.id = #{racks}"
-                    when String
-                      " WHERE R.id = #{racks}"
-                    else
-                      ""
-                    end
+      def rack_ids(racks, user)
+        requested_ids =
+          case racks
+          when Array
+            racks.map{|rack_id| rack_id.to_i}
+          when Integer
+            [racks]
+          when String
+            [racks.to_i]
+          else
+            nil
+          end
+        permitted_ids = Ivy::HwRack.accessible_by(user.ability).pluck('id')
+        if requested_ids.nil?
+          permitted_ids
+        else
+          requested_ids & permitted_ids
+        end
+      end
+
+      def generate_sql(racks, user)
+        ids = rack_ids(racks, user)
+        condition = ids.blank? ? "" : " WHERE R.id in (#{ids.join(',')})"
 
 ret = (<<SQL)
 WITH sorted_racks AS (

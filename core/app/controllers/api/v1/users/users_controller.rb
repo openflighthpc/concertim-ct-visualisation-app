@@ -22,7 +22,11 @@ class Api::V1::Users::UsersController < Api::V1::Users::BaseController
     params[:permissions].each do |rbac_action,rbac_resources|
       result[rbac_action] = {}
       rbac_resources.each do |_, rbac_resource|
-        result[rbac_action][rbac_resource] = current_user.can?(rbac_action.to_sym, rbac_resource)
+        if rbac_resource.safe_constantize
+          result[rbac_action][rbac_resource] = current_user.can?(rbac_action.to_sym, rbac_resource.safe_constantize)
+        else
+          result[rbac_action][rbac_resource] = false
+        end
       end
     end
     render json: result

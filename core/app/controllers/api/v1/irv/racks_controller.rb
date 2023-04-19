@@ -12,7 +12,7 @@ class Api::V1::Irv::RacksController < Api::V1::Irv::BaseController
     #
     # Uncomment the bellow to use the new ultra fast query method!
     #
-    irv_rack_structure = Crack::XML.parse(Ivy::Irv.get_structure(params[:rack_ids]))
+    irv_rack_structure = Crack::XML.parse(Ivy::Irv.get_structure(params[:rack_ids], current_user))
     fix_structure(irv_rack_structure)
     render :json => irv_rack_structure.to_json
 
@@ -31,9 +31,12 @@ class Api::V1::Irv::RacksController < Api::V1::Irv::BaseController
     timestamp = params[:modified_timestamp]
     suppressAdditions = params[:suppress_additions]
 
-    @added = suppressAdditions == "true" ? [] : Ivy::HwRack.excluding_ids(rack_ids)
-    @modified = Ivy::HwRack.where(id: rack_ids).modified_after(timestamp)
-    @deleted = rack_ids - Ivy::HwRack.where(id: rack_ids).pluck(:id)
+    accessible_racks = Ivy::HwRack.accessible_by(current_ability)
+    filtered_racks = accessible_racks.where(id: rack_ids)
+
+    @added = suppressAdditions == "true" ? [] : accessible_racks.excluding_ids(rack_ids)
+    @modified = filtered_racks.modified_after(timestamp)
+    @deleted = rack_ids - filtered_racks.pluck(:id)
   end
 
   def tooltip
@@ -41,6 +44,7 @@ class Api::V1::Irv::RacksController < Api::V1::Irv::BaseController
     authorize! :read, Ivy::HwRack
 
     error_for('Rack') if @rack.nil?
+    @rack = Api::V1::RackPresenter.new(@rack)
   end
 
   private

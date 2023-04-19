@@ -11,6 +11,9 @@ module Api::V1
     def devices
       @devices ||= o.devices.occupying_rack_u.map {|d| Api::V1::DevicePresenter.new(d) }
     end
+
+    def user
+      @user ||= Api::V1::UserPresenter.new(o.user)
+    end
   end
 end
-

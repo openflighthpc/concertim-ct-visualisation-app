@@ -40,10 +40,12 @@ class Api::V1::Irv::NonrackDevicesController < Api::V1::Irv::BaseController
     timestamp = params[:modified_timestamp]
     suppressAdditions = params[:suppress_additions]
   
-    relevant_chassis = Ivy::Chassis::NonRackChassis.dcrvshowable
-    @added = suppressAdditions == "true" ? [] : relevant_chassis.excluding_ids(non_rack_ids).pluck(:id)
-    @modified = relevant_chassis.modified_after(timestamp).where(id: non_rack_ids).pluck(:id)
-    @deleted = non_rack_ids - relevant_chassis.where(id: non_rack_ids).pluck(:id)
+    accessible_chassis = Ivy::Chassis::NonRackChassis.accessible_by(current_ability).dcrvshowable
+    filtered_chassis = accessible_chassis.where(id: non_rack_ids)
+
+    @added = suppressAdditions == "true" ? [] : accessible_chassis.excluding_ids(non_rack_ids).pluck(:id)
+    @modified = filtered_chassis.modified_after(timestamp).pluck(:id)
+    @deleted = non_rack_ids - filtered_chassis.pluck(:id)
     render :json => { :timestamp => Time.new.to_i, :added => @added, :modified => @modified, :deleted => @deleted}
   end
 

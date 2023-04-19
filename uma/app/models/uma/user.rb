@@ -3,6 +3,16 @@ module Uma
 
     self.table_name = "users"
 
+    ####################################
+    #
+    # Associations
+    #
+    ####################################
+
+    has_many :racks,
+      class_name: 'Ivy::HwRack',
+      dependent: :destroy
+
     ###############################
     #
     # Validations
@@ -13,6 +23,14 @@ module Uma
     validates :login,
       uniqueness: true,
       format: { with: /\A[a-zA-Z0-9\-\_\.]*\Z/, message: "can contain only alphanumeric characters, hyphens, underscores and periods."}
+
+    ####################################
+    #
+    # Delegation
+    #
+    ####################################
+
+    delegate :can?, :cannot?, to: :ability
 
     ###############################
     #
@@ -26,9 +44,9 @@ module Uma
       :recoverable, :rememberable, :validatable,
       :jwt_authenticatable, jwt_revocation_strategy: Devise::JWT::RevocationStrategies::Null
 
-    def can?(action, resource)
-      # XXX Is this OK?  Do we want Emma::CanCanAbilityManager back.
-      Ability.new(self).can?(action, resource)
+    def ability
+      return @__ability if defined?(@__ability)
+      @__ability = ::Ability.new(self)
     end
   end
 end

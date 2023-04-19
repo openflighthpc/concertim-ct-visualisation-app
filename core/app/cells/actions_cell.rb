@@ -117,9 +117,7 @@ class ActionsCell < Cell::ViewModel
       end
     
       opts = options.reject {|k, v| [:can, :cannot, :on].include?(k)}
-
-      @ability_manager ||= Emma::CanCanAbilityManager.new(@current_user)
-      ability = @ability_manager.ability_for(resource_or_class)
+      ability = @current_user.ability
       
       if ability.send(permission, action_name, resource_or_class)
         if block_given?
