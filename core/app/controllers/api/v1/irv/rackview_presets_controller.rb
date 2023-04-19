@@ -5,7 +5,7 @@ class Api::V1::Irv::RackviewPresetsController < Api::V1::Irv::BaseController
   def index
     authorize! :index, Meca::RackviewPreset
     @user = current_user
-    @presets = Meca::RackviewPreset.all
+    @presets = Meca::RackviewPreset.accessible_by(current_ability)
   end
 
   # Example JSON request.
@@ -30,10 +30,7 @@ class Api::V1::Irv::RackviewPresetsController < Api::V1::Irv::BaseController
   #     }
   #   }
   def create
-    permitted_params.tap do |h|
-      h[:user_id] = current_user.id
-    end
-    preset = Meca::RackviewPreset.new(permitted_params)
+    preset = Meca::RackviewPreset.new(permitted_params.merge(user_id: current_user.id))
     if cannot? :create, preset
       return failure_response(preset, AUTH_FAILURE_MESSAGE)
     end

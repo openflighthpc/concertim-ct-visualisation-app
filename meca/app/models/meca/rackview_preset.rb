@@ -5,6 +5,14 @@ module Meca
 
     self.table_name = 'rackview_presets'
 
+    ############################
+    #
+    # Associations
+    #
+    ############################
+
+    belongs_to :user, class_name: 'Uma::User'
+
 
     ####################################
     #
