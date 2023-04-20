@@ -26,11 +26,13 @@
 
           <center>
             <%= f.submit "Login", class: :button, name: :login %>
-            <br>
-            <span style="font-size: 10px">
+            <div class="sign-up-link">
+              Or <%= link_to "Sign up", new_registration_path(resource_name) %>
+            </div>
+            <div class="powered-by">
               &copy; 2023
               <%= link_to "Powered by Alces Concertim", "https://alces-flight.com" %>
-            </span>
+            </div>
           </center>
         <% end %>
       </div>
