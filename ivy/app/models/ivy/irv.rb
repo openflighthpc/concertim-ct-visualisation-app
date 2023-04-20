@@ -54,7 +54,7 @@ module Ivy
 
       def generate_sql(racks, user)
         ids = rack_ids(racks, user)
-        condition = ids.blank? ? "" : " WHERE R.id in (#{ids.join(',')})"
+        condition = ids.empty? ? " WHERE 1 = 0 " : " WHERE R.id in (#{ids.join(',')})"
 
 ret = (<<SQL)
 WITH sorted_racks AS (
