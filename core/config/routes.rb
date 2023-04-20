@@ -66,12 +66,10 @@ Rails.application.routes.draw do
           end
         end
 
-        namespace :users do
-          resources :users, only: [] do
-            collection do
-              # Endpoint for checking user abilities.
-              get :can_i, action: :can_i?, as: :ability_check
-            end
+        resources :users, only: [] do
+          collection do
+            # Endpoint for checking user abilities.
+            get :can_i, action: :can_i?, as: :ability_check
           end
         end
       end
