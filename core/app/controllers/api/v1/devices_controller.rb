@@ -19,7 +19,8 @@ class Api::V1::DevicesController < Api::V1::ApplicationController
       @device = Api::V1::DevicePresenter.new(@device)
       render action: :show
     else
-      failure_response(!@device.valid? ? @device : chassis)
+      failed_object = !@device.valid? ? @device : chassis
+      render json: {errors: failed_object.errors.as_json}, status: :unprocessable_entity
     end
   end
 
