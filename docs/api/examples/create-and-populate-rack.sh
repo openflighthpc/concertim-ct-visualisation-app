@@ -28,7 +28,7 @@ echo
 # Prefix nodes in the first rack with `1`, nodes in the second rack with `2`
 # etc..
 NUM_RACKS=$("${SCRIPT_DIR}/list-racks.sh" | jq 'length')
-NAME_PREFIX=${NUM_RACKS}
+NAME_PREFIX=$( echo "${RACK_NAME}" | tr -dc 0-9 )
 
 # Create a badly named and located device in that empty rack.
 LARGE_TEMPLATE_ID=4
@@ -62,19 +62,7 @@ echo "Moved device" >&2
 "${SCRIPT_DIR}/show-device.sh" "${DEVICE_ID}"
 echo
 
-SMALL_TEMPLATE_ID=2
-# The offset caused by using a large template for the first node.
-OFFSET=2
-for i in $(seq -w 02 38) ; do
-  name="comp${NAME_PREFIX}${i}"
-  start_u=$(( 10#${i} + ${OFFSET} ))
-  OUTPUT=$("${SCRIPT_DIR}/create-device.sh" ${name} "${RACK_ID}" f ${start_u} "${SMALL_TEMPLATE_ID}")
-  if [ $? -ne 0 ] ; then
-      # Errors will have been sent to stderr.
-      exit
-  fi
-  echo "Added ${name} to rack ${RACK_NAME}" >&2
-done
+./populate-rack.sh ${RACK_ID} 4 39 comp${NAME_PREFIX}02
 
 "${SCRIPT_DIR}/show-rack.sh" "${RACK_ID}"
 echo
