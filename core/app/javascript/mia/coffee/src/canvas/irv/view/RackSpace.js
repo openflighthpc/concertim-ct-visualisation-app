@@ -488,6 +488,13 @@ class RackSpace extends CanvasSpace {
   // draw all racks
   draw() {
     Profiler.begin(Profiler.CRITICAL);
+
+    if (this.racks == null || this.racks.length === 0) {
+      Util.setStyle($('zero-racks-message'), 'visibility', 'visible');
+    } else {
+      Util.setStyle($('zero-racks-message'), 'visibility', 'hidden');
+    }
+
     const show_u_labels = this.scale >= CanvasSpace.U_LBL_SCALE_CUTOFF;
     const show_name_label = this.scale >= CanvasSpace.NAME_LBL_SCALE_CUTOFF;
     if (this.model.showingRacks()) {
@@ -653,12 +660,10 @@ class RackSpace extends CanvasSpace {
   }
 
   resetRackSpace() {
+    const hadZeroRacks = this.racks == null || this.racks.length === 0;
     if (this.racks != null) { for (var rack of Array.from(this.racks)) { rack.destroy(); } }
     this.racks = [];
     if (this.model.showingRacks() && !this.model.showingFullIrv()) {
-      if (this.model.racks().length === 0) {
-        window.location = "/-/irv";
-      }
       this.setUpRacks();
       this.centreRacks();
       this.model.activeSelection(true);
@@ -669,6 +674,11 @@ class RackSpace extends CanvasSpace {
       }
     } else if (this.model.showingFullIrv()) {
       this.setUpRacks();
+      if (hadZeroRacks) {
+        // Only refresh if we've got our first racks to display. Otherwise we
+        // might undo some of the user's filtering.
+        this.refreshRacks();
+      }
     }
 
     return this.draw();
