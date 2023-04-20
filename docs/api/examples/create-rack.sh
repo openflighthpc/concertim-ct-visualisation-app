@@ -14,33 +14,29 @@ BASE_URL="https://${CONCERTIM_HOST}/api/v1"
 # generated LOGIN and PASSWORD environment variables must be set.
 AUTH_TOKEN=${AUTH_TOKEN:-$("${SCRIPT_DIR}"/get-auth-token.sh)}
 
-# We want slightly different requests depending on if this is the first rack
-# being created or not.
-#
-# If it is the first, we need to specify the name and height of the rack.  If
-# it is not the first, we don't want to specify them, and instead use the
-# defaults that are calculated on the details of the last created rack.
-NUM_RACKS=$("${SCRIPT_DIR}/list-racks.sh" | jq -r length)
+NAME=${1}
+U_HEIGHT=${2}
 
-if [ "${NUM_RACKS}" == "0" ] ; then
-    # If we don't yet have any racks we create a body with the name and U
-    # height.
-    BODY=$(jq --null-input \
-        --arg name "Rack-1" \
-        --arg u_height 42 \
-        '
+# If a previous rack has been created, both the name and height are optional.
+# Here we construct the body based on the given inputs and assume that the user
+# has provided sufficient arguments.
+BODY=$( jq --null-input  \
+  --arg name "${NAME}" \
+  --arg u_height "${U_HEIGHT}" \
+  '
 {
   "name": $name,
-  "u_height": $u_height|tonumber
+  "u_height": $u_height|(try tonumber catch "")
 }
-'
+' \
+  | jq 'with_entries( select( .value != "" ) )'
 )
-fi
 
 # Run curl with funky redirection to capture response body and status code.
 BODY_FILE=$(mktemp)
 HTTP_STATUS=$(
-if [ "${NUM_RACKS}" == "0" ] ; then
+if [ "${BODY}" != "{}" ] ; then
+    # The user has given at least on of rack name or u height.
     curl -s -k \
         -w "%{http_code}" \
         -o >(cat > "${BODY_FILE}") \
@@ -50,8 +46,9 @@ if [ "${NUM_RACKS}" == "0" ] ; then
         -X POST "${BASE_URL}/racks" \
         -d "${BODY}"
 else
-    # If we already have some racks defined, we send an empty body to use
-    # defaults based on those provided for the last created rack.
+    # The user has not provided either rack name or u height.  We assume that
+    # there is a previously created rack that sensible defaults can be taken
+    # from.  If not, an error message will be displayed.
     curl -s -k \
         -w "%{http_code}" \
         -o >(cat > "${BODY_FILE}") \
