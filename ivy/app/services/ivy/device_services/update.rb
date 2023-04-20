@@ -13,13 +13,19 @@
 module Ivy
   module DeviceServices
     class Update
-      def self.call(device, device_params, chassis_params = nil)
+      def self.call(device, device_params, chassis_params, user)
         chassis = device.indirect_chassis
         device.update(device_params) 
 
         if chassis
           chassis.name = chassis.assign_name if chassis.name.blank?
-          chassis.update(chassis_params) if chassis_params
+          if chassis_params
+            chassis.attributes = chassis_params
+            if chassis.rack_id_changed?
+              user.ability.authorize!(:update, chassis.rack)
+            end
+          end
+          chassis.save
         end
 
         return [device, chassis]

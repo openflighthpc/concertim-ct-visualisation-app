@@ -13,7 +13,12 @@ class Api::V1::DevicesController < Api::V1::ApplicationController
   end
 
   def update
-    @device, chassis = Ivy::DeviceServices::Update.call(@device, device_params.to_h, chassis_params.to_h)
+    @device, chassis = Ivy::DeviceServices::Update.call(
+      @device,
+      device_params.to_h,
+      chassis_params.to_h,
+      current_user
+    )
 
     if @device.valid? && chassis.valid? 
       @device = Api::V1::DevicePresenter.new(@device)
