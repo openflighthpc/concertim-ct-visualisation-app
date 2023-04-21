@@ -56,9 +56,7 @@ Rails.application.routes.draw do
           end
         end
 
-        namespace :groups do
-          resources :groups, only: [:index, :show]
-        end
+        resources :groups, only: [:index, :show]
 
         namespace :metrics do
           resources :metrics, :constraints => { :id => /.*/ }, only: [] do
