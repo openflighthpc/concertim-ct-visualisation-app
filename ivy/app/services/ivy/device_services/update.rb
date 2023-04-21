@@ -19,11 +19,8 @@ module Ivy
 
         if chassis
           chassis.name = chassis.assign_name if chassis.name.blank?
-          if chassis_params
-            chassis.attributes = chassis_params
-            if chassis.rack_id_changed?
-              user.ability.authorize!(:update, chassis.rack)
-            end
+          unless chassis_params.blank?
+            Ivy::DeviceServices::Move.call(chassis, chassis_params, user)
           end
           chassis.save
         end

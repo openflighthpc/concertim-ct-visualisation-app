@@ -1,10 +1,7 @@
 #
 # Ivy::DeviceServices::Destroy
 #
-# Service for destroying a device. Destroys the device and returns success/failure boolean, a flash notice
-# and a boolean representing whether this should prompt the "show destroy issues" popup to appear or not. 
-# 
-# If the logic in here starts to get any more complex, split out into methods. 
+# Service for destroying a device. Destroys the device and returns success/failure boolean.
 #
 module Ivy
   module DeviceServices
