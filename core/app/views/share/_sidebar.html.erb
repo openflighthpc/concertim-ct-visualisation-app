@@ -9,7 +9,7 @@
       <%
           title =
             if user_signed_in?
-              is_account_settings_page = active_navigation_item_name(:level => 1) == "#{current_user.firstname} #{current_user.surname}"
+              is_account_settings_page = active_navigation_item_name(:level => 1) == "#{current_user.name}"
               if is_account_settings_page
                 "Account settings"
               else

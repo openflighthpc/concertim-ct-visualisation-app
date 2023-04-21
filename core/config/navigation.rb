@@ -4,7 +4,7 @@ SimpleNavigation::Configuration.run do |navigation|
   navigation.items do |primary|
 
     if user_signed_in?
-      primary.item :youraccount, "#{current_user.firstname} #{current_user.surname}", '#',
+      primary.item :youraccount, "#{current_user.name}", '#',
         align: :right,
         icon: :youraccount,
         highlights_on: /\/users/ do |acc|

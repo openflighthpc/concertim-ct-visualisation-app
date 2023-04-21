@@ -5,13 +5,8 @@
   <%= devise_error_messages! %>
 
   <div class="formItem">
-    <%= f.label :first_name, "First name", :class => 'required_field' %>
-    <%= f.text_field :firstname, :autocomplete => :off %>
-  </div>
-
-  <div class="formItem">
-    <%= f.label :last_name, "Last name", :class => 'required_field' %>
-    <%= f.text_field :surname, :autocomplete => :off %>
+    <%= f.label :name, "Name", :class => 'required_field' %>
+    <%= f.text_field :name, :autocomplete => :off %>
   </div>
 
   <div class="formItem">
