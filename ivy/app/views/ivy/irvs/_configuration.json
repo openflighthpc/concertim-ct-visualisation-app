@@ -115,7 +115,7 @@
       "liveResources"      :
       {
         "path"            : "",
-        "metricTemplates" : "/api/v1/metrics/metrics/structure",
+        "metricTemplates" : "/api/v1/metrics/structure",
         "rackDefinitions" : "/api/v1/irv/racks",
         "modifiedRackIds" : "/api/v1/irv/racks/modified",
         "nonrackDeviceDefinitions" : "/api/v1/irv/nonrack_devices",

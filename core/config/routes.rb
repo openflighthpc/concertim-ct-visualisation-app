@@ -57,13 +57,9 @@ Rails.application.routes.draw do
         end
 
         resources :groups, only: [:index, :show]
-
-        namespace :metrics do
-          resources :metrics, :constraints => { :id => /.*/ }, only: [] do
-            get :structure, :on => :collection
-          end
+        resources :metrics, :constraints => { :id => /.*/ }, only: [] do
+          get :structure, :on => :collection
         end
-
         resources :users, only: [] do
           collection do
             # Endpoint for checking user abilities.
