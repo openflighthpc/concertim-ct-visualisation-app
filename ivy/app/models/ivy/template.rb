@@ -26,10 +26,10 @@ module Ivy
       length: { maximum: 255 }
     validates :height,
       presence: true,
-      numericality: { only_integer: true, greater_than: 0, less_than: 7 }
+      numericality: { only_integer: true, greater_than: 0 }
     validates :depth,
       presence: true,
-      numericality: { only_integer: true, greater_than: 0, less_than: 3 }
+      numericality: { only_integer: true, in: 1..2 }
     validates :version,
       presence: true,
       numericality: { only_integer: true, greater_than: 0 }

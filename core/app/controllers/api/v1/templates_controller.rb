@@ -12,7 +12,11 @@ class Api::V1::TemplatesController < Api::V1::ApplicationController
     if @template.persisted?
       render action: :show
     else
-      render json: @template.errors.details, status: :unprocessable_entity
+      if @template.errors.of_kind?(:images, :blank)
+        @template.errors.delete(:images, :blank)
+        @template.errors.add(:images, 'No images found for template height')
+      end
+      render json: @template.errors.as_json, status: :unprocessable_entity
     end
   end
 
@@ -20,7 +24,7 @@ class Api::V1::TemplatesController < Api::V1::ApplicationController
     if @template.update(update_params)
       render action: :show
     else
-      render json: @template.errors.details, status: :unprocessable_entity
+      render json: @template.errors.as_json, status: :unprocessable_entity
     end
   end
 
@@ -31,7 +35,7 @@ class Api::V1::TemplatesController < Api::V1::ApplicationController
     elsif @template.destroy
       render json: {}, status: :ok
     else
-      render json: @template.errors.details, status: :unprocessable_entity
+      render json: @template.errors.as_json, status: :unprocessable_entity
     end
   end
 

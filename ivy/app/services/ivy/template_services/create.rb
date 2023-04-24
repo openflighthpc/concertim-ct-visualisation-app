@@ -37,7 +37,7 @@ module Ivy
 
         # For now we have hard-coded images and padding.  We should support
         # users uploading their images here.
-        template.images = images_from_height(template.height)
+        set_images_from_height(template)
         set_padding_from_height(template)
 
         template
@@ -52,8 +52,9 @@ module Ivy
         6 => {front: "generic_front_6u.png", rear: "generic_rear_6u.png"},
       }.freeze
 
-      def images_from_height(height)
-        IMAGES_BY_HEIGHT[height]
+      def set_images_from_height(template)
+        img = IMAGES_BY_HEIGHT[template.height]
+        template.images = img
       end
 
       def set_padding_from_height(template)
