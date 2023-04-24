@@ -26,7 +26,7 @@ module Ivy
       length: { maximum: 255 }
     validates :height,
       presence: true,
-      numericality: { only_integer: true, greater_than: 0, less_than: 5 }
+      numericality: { only_integer: true, greater_than: 0, less_than: 7 }
     validates :depth,
       presence: true,
       numericality: { only_integer: true, greater_than: 0, less_than: 3 }

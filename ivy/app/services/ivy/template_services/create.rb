@@ -38,22 +38,31 @@ module Ivy
         # For now we have hard-coded images and padding.  We should support
         # users uploading their images here.
         template.images = images_from_height(template.height)
-        template.padding_left = 0
-        template.padding_bottom = 0
-        template.padding_right = 1
-        template.padding_top = 0
+        set_padding_from_height(template)
 
         template
       end
 
       IMAGES_BY_HEIGHT = {
-        1 => {front: "small-front.png", rear: "small-rear.png"},
-        2 => {front: "medium-front.png", rear: "medium-rear.png"},
-        3 => {front: "large-front.png", rear: "large-rear.png"},
-        4 => {front: "xlarge-front.png", rear: "xlarge-rear.png"},
+        1 => {front: "generic_front_1u.png", rear: "generic_rear_1u.png"},
+        2 => {front: "generic_front_2u.png", rear: "generic_rear_2u.png"},
+        3 => {front: "generic_front_3u.png", rear: "generic_rear_3u.png"},
+        4 => {front: "generic_front_4u.png", rear: "generic_rear_4u.png"},
+        5 => {front: "generic_front_5u.png", rear: "generic_rear_5u.png"},
+        6 => {front: "generic_front_6u.png", rear: "generic_rear_6u.png"},
       }.freeze
+
       def images_from_height(height)
         IMAGES_BY_HEIGHT[height]
+      end
+
+      def set_padding_from_height(template)
+        # The correct padding depends on the image.  All of the images in
+        # IMAGES_BY_HEIGHT require a padding of 0,0,0,0.  So that's easy.
+        template.padding_left = 0
+        template.padding_bottom = 0
+        template.padding_right = 0
+        template.padding_top = 0
       end
     end
   end
