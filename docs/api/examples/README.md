@@ -33,6 +33,22 @@ scripts can be used.
 
 ## Rack and device API usage
 
+### Users
+
+List all users.  Returns a list of all users that the current user is permitted
+to view.  For admin users this is all users, for non-admin users this is their
+own user.
+
+```
+./list-users.sh
+```
+
+Get details of current user.  Provides details of the current user.
+
+```
+./current-user.sh
+```
+
 ### Racks
 
 List all racks.
