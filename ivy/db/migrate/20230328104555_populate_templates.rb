@@ -6,6 +6,7 @@ class PopulateTemplates < ActiveRecord::Migration[7.0]
 
   def up
     templates.each do |t|
+      say "Creating template #{t[:name]}"
       chassis_type = (t[:chassis_type] || 'Server').to_s
       unless %w[Server HwRack].include?(chassis_type)
         raise ArgumentError, "Unknown chassis_type: #{chassis_type}"
@@ -41,6 +42,12 @@ class PopulateTemplates < ActiveRecord::Migration[7.0]
 
       record.save!
     end
+
+    # The rack template is created with a specific ID, doing skips the
+    # sequence, so we update it here.
+    execute <<-SQL
+      SELECT setval('ivy.templates_id_seq', (SELECT max(id) FROM ivy.templates))
+    SQL
   end
 
   def down
