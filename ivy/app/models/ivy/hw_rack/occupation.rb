@@ -3,6 +3,7 @@ module Ivy
 
     # Module grouping methods related to querying the occupation of a rack.
     module Occupation
+      class InvalidRackU < ArgumentError; end
 
       # u_is_empty? returns true if the U is empty.
       #
@@ -13,7 +14,7 @@ module Ivy
       # by the excluded device.
       #
       def u_is_empty?(u, facing:nil, exclude:nil)
-        raise ArgumentError, "Invalid u given" if u.to_i > u_height or u.to_i < 1
+        raise InvalidRackU, u if u.to_i > u_height or u.to_i < 1
 
         relevant_chassis = chassis.occupying_rack_u.where.not("rack_start_u > ?", u).where.not("rack_end_u < ?", u)
         relevant_chassis.none? { |c| c.occupy_u?(u, facing: facing, exclude: exclude) }

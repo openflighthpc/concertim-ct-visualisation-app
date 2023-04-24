@@ -80,7 +80,7 @@ li.widget {
       color: $dark-blue;
       margin: 0.4em 0;
     }
-    :last-child {
+    > :last-child {
       /* reduce "white space" at bottom of widget >:( */
       margin-bottom: 0;
     }

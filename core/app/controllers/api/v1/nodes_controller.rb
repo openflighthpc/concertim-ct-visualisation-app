@@ -6,7 +6,8 @@ class Api::V1::NodesController < Api::V1::ApplicationController
     result = Ivy::TemplatePersister.new(
       find_template,
       chassis_params.to_h,
-      device_params.to_h
+      device_params.to_h,
+      current_user,
     ).call
     if result.success?
       device = result.chassis.slots.reload.first.device

@@ -115,7 +115,7 @@
       "liveResources"      :
       {
         "path"            : "",
-        "metricTemplates" : "/api/v1/metrics/metrics/structure",
+        "metricTemplates" : "/api/v1/metrics/structure",
         "rackDefinitions" : "/api/v1/irv/racks",
         "modifiedRackIds" : "/api/v1/irv/racks/modified",
         "nonrackDeviceDefinitions" : "/api/v1/irv/nonrack_devices",
@@ -260,13 +260,13 @@
   "STATICGROUPMANAGER":
   {
     "*COMMENT*"        : "Server API URL to grab a list of static group names and their associated IDs",
-    "list"             : "/api/v1/groups/groups?group_for=irv&group_filter=excluding_system_non_physical_device_groups",
+    "list"             : "/api/v1/groups?group_for=irv",
     "*COMMENT*"        : "Server API URL to get a specific static group",
-    "get"              : "/api/v1/groups/groups/[[group_id]]?group_for=irv",
+    "get"              : "/api/v1/groups/[[group_id]]?group_for=irv",
     "*COMMENT*"        : "Server API UTL to post a new static group",
-    "new"              : "/-/api/v1/groups/static_groups",
+    "new"              : "/-/api/v1/static_groups",
     "*COMMENT*"        : "Server API URL to update an existing static group",
-    "update"           : "/-/api/v1/groups/static_groups/[[group_id]]",
+    "update"           : "/-/api/v1/static_groups/[[group_id]]",
     "*COMMENT*"        : "Static group update confirmation message",
     "msgConfirmUpdate" : "Are you sure you wish to overwrite the static group [[selected_group]] with the current selection?",
 

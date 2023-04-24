@@ -89,6 +89,7 @@ module Ivy
 
     # Custom Validations
     validate :name_is_unique_within_device_scope
+    validate :start_u_is_valid, if: :in_rack?
     validate :target_u_is_empty, if: :in_rack?
     
 
@@ -299,12 +300,23 @@ module Ivy
       name
     end
 
+    def start_u_is_valid
+      if rack_start_u > rack.u_height || rack_start_u < 1
+        errors.add(:rack_start_u, 'is invalid')
+      end
+      if rack_end_u > rack.u_height
+        errors.add(:rack_end_u, 'is invalid')
+      end
+    end
+
     def target_u_is_empty
       is_full_depth = u_depth == rack.u_depth
       facing = is_full_depth ? nil : self.facing
       return if rack.u_is_empty?(rack_start_u, exclude: self.id, facing: facing)
 
       errors.add(:rack_start_u, 'is occupied')
+    rescue Ivy::HwRack::Occupation::InvalidRackU
+      errors.add(:rack_start_u, 'is invalid')
     end
   end
 end

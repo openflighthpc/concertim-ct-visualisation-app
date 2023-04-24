@@ -15,7 +15,7 @@
   width: 130px;
 }
 
-#login_panel {
+#login_panel, #signup_panel {
 
   position: absolute;
   width: 350px;
@@ -35,7 +35,16 @@
   .button {
     background-color: $dark-blue !important;
     color: white !important;
+    margin-bottom: 0.75em;
   }
+
+  .sign-up-link {
+    margin-bottom: 0.5em;
+  }
+
+  .powered-by {
+   font-size: 10px;
+ }
 
   h3 {
     color: $dark-grey !important; 
@@ -47,5 +56,4 @@
     clear: both;
     color: $dark-blue !important;
   }
-
 }

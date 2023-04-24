@@ -14,7 +14,7 @@
 
   height: 100%;
   
-  #loader
+  #loader, .shadow-box-message-container
   {
     position: absolute;
     top: 0px;
@@ -22,21 +22,15 @@
     width: 100%;
     height: 100%;
     z-index: 99999;
-
-    //background: rgb(0, 0, 0);
-    //background: rgba(0, 0, 0, 0.2);
-    filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#33000000, endColorstr=#33000000);
-    -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr=#33000000, endColorstr=#33000000)";
   }
 
-  #loader #dialogue
+  #loader #dialogue, .shadow-box-message-container .shadow-box-message
   {
     margin: 10% auto;
     width: 300px;
     height: 185px;
     line-height: 185px;
     text-align: center;
-//    background-image: url('/images/irv/concertim/stripe_bg.png');
     border-radius: 10px;
     -moz-border-radius: 10px;
     -webkit-border-radius: 10px;
@@ -44,6 +38,18 @@
     -moz-box-shadow: 3px 3px 12px 3px rgba(0,0,0,0.3);
     -webkit-box-shadow: 3px 3px 12px 3px rgba(0,0,0,0.3);
     box-shadow: 3px 3px 12px 3px rgba(0,0,0,0.3);
+  }
+
+  #zero-racks-message {
+    visibility: hidden;
+  }
+
+  .shadow-box-message-container .shadow-box-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: inherit;
+    padding: 1em;
   }
 
   .updater_mask

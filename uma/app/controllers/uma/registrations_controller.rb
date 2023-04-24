@@ -32,7 +32,10 @@ class Uma::RegistrationsController < Devise::RegistrationsController
   private
 
   def configure_permitted_parameters
-    update_attrs = [:firstname, :surname]
+    update_attrs = [:name]
     devise_parameter_sanitizer.permit :account_update, keys: update_attrs
+
+    sign_up_attrs = [:login, :email, :name]
+    devise_parameter_sanitizer.permit :sign_up, keys: sign_up_attrs
   end
 end

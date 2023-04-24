@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_19_160146) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_21_154838) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -189,8 +189,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_19_160146) do
 
   create_table "uma.users", id: :bigint, default: -> { "nextval('users_id_seq'::regclass)" }, force: :cascade do |t|
     t.string "login", limit: 80, null: false
-    t.string "firstname", limit: 56, null: false
-    t.string "surname", limit: 56, null: false
+    t.string "name", limit: 56, null: false
     t.text "email", default: "", null: false
     t.string "encrypted_password", limit: 128, default: "", null: false
     t.datetime "current_sign_in_at"

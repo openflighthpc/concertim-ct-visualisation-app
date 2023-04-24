@@ -16,9 +16,8 @@ class Api::V1::Irv::ChassisController < Api::V1::Irv::BaseController
       return
     end
 
-    @chassis.update_position(params.permit(%w[rack_id rack_start_u facing type]).to_h)
-    @chassis.calculate_rack_end_u
-    
+    location_params = params.permit(%w[rack_id rack_start_u facing type])
+    Ivy::DeviceServices::Move.call(@chassis, location_params, current_user)
     render json: {success: @chassis.save}
   end
 

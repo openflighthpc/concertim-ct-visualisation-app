@@ -3,12 +3,12 @@ import Events from 'canvas/common/util/Events';
 
 // RBAC = Rule Based Access Control
 //
-// RBAC queries the api action /-/api/v1/users/users/can_i with a
+// RBAC queries the api action /-/api/v1/users/can_i with a
 // specific set of permissions (getPermissionsToQuery) on construction time.
 // Then, via the function can_i, the results obtained from the api call are queried.
 // This class is shared between the DCRV and DCPV.
 class RBAC {
-  static PATH = '/api/v1/users/users/can_i';
+  static PATH = '/api/v1/users/can_i';
 
   constructor(model, ignoreDefault) {
     this.permisionsReceived = this.permisionsReceived.bind(this);

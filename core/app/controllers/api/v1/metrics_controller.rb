@@ -1,4 +1,4 @@
-class Api::V1::Metrics::MetricsController < Api::V1::Metrics::BaseController
+class Api::V1::MetricsController < Api::V1::ApplicationController
 
   def structure
     # XXX Add authorization!  :index metrics/devices/chassis?  Or something

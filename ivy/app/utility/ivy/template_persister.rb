@@ -32,10 +32,11 @@ module Ivy
     # +template+ is the Template instance that is being persisted.
     # +params+ are the params that have been gathered from the user, e.g.,
     # location and name.
-    def initialize(template, chassis_params, device_params)
+    def initialize(template, chassis_params, device_params, user)
       @template = template
       @chassis_params = chassis_params
       @device_params = device_params
+      @user = user
     end
 
     def call
@@ -44,6 +45,7 @@ module Ivy
       Rails.logger.debug("Persisting template #{@template.id}")
       Ivy::Chassis.transaction do
         create_object_graph
+        @user.ability.authorize!(:update, @chassis.rack)
       end
       Result.new(@chassis, true, nil)
     rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved

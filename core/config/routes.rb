@@ -56,22 +56,16 @@ Rails.application.routes.draw do
           end
         end
 
-        namespace :groups do
-          resources :groups, only: [:index, :show]
+        resources :groups, only: [:index, :show]
+        resources :metrics, :constraints => { :id => /.*/ }, only: [] do
+          get :structure, :on => :collection
         end
-
-        namespace :metrics do
-          resources :metrics, :constraints => { :id => /.*/ }, only: [] do
-            get :structure, :on => :collection
-          end
-        end
-
-        namespace :users do
-          resources :users, only: [] do
-            collection do
-              # Endpoint for checking user abilities.
-              get :can_i, action: :can_i?, as: :ability_check
-            end
+        resources :users, only: [:index] do
+          collection do
+            # Endpoint for checking user abilities.
+            get :can_i, action: :can_i?, as: :ability_check
+            # Endpoint for getting the currently signed in user.
+            get :current
           end
         end
       end

@@ -13,13 +13,19 @@ class Api::V1::DevicesController < Api::V1::ApplicationController
   end
 
   def update
-    @device, chassis = Ivy::DeviceServices::Update.call(@device, device_params.to_h, chassis_params.to_h)
+    @device, chassis = Ivy::DeviceServices::Update.call(
+      @device,
+      device_params.to_h,
+      chassis_params.to_h,
+      current_user
+    )
 
     if @device.valid? && chassis.valid? 
       @device = Api::V1::DevicePresenter.new(@device)
       render action: :show
     else
-      failure_response(!@device.valid? ? @device : chassis)
+      failed_object = !@device.valid? ? @device : chassis
+      render json: {errors: failed_object.errors.as_json}, status: :unprocessable_entity
     end
   end
 
