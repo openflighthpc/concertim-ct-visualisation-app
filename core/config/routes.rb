@@ -60,10 +60,12 @@ Rails.application.routes.draw do
         resources :metrics, :constraints => { :id => /.*/ }, only: [] do
           get :structure, :on => :collection
         end
-        resources :users, only: [] do
+        resources :users, only: [:index] do
           collection do
             # Endpoint for checking user abilities.
             get :can_i, action: :can_i?, as: :ability_check
+            # Endpoint for getting the currently signed in user.
+            get :current
           end
         end
       end

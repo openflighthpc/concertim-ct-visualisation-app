@@ -1,4 +1,16 @@
 class Api::V1::UsersController < Api::V1::ApplicationController
+  load_and_authorize_resource :user, :class => Uma::User, only: [:index]
+
+  def index
+    @users = @users.map {|user| Api::V1::UserPresenter.new(user)}
+    render
+  end
+
+  def current
+    authorize! :read, current_user
+    @user = Api::V1::UserPresenter.new(current_user)
+    render action: :show
+  end
 
   #
   # GET /api/v1/users/can_i
