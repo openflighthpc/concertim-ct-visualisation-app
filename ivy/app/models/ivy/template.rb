@@ -10,7 +10,8 @@ module Ivy
     #
     #######################
 
-    has_many :chassis, class_name: 'Ivy::Chassis'
+    has_many :chassis, class_name: 'Ivy::Chassis',
+      dependent: :destroy
 
 
     ############################
@@ -103,6 +104,12 @@ module Ivy
 
     def complex?
       !simple?
+    end
+
+    # Return true if there are any devices that have been created from this
+    # template.
+    def has_devices?
+      chassis.count > 0
     end
   end
 end

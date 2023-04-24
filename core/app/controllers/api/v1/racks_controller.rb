@@ -36,7 +36,7 @@ class Api::V1::RacksController < Api::V1::ApplicationController
   def destroy
     if !@rack.empty? && !ActiveModel::Type::Boolean.new.cast(params[:recurse])
       render json: {errors: "rack is not empty"}, status: :unprocessable_entity
-    elsif @rack.destroy 
+    elsif @rack.destroy
       render json: {}, status: :ok
     else
       render json: @rack.errors.details, status: :unprocessable_entity
