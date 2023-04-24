@@ -81,7 +81,7 @@ div#deviceFind .cbox {
   position: absolute;
   overflow: auto;
   min-height: 38px;  /* if the list is displayed, we have at least 1 result. Do not let the box be smaller than 1 result. */
-  max-height: 150px;
+  max-height: 250px;
 }
 
 .drop_down_meta {
