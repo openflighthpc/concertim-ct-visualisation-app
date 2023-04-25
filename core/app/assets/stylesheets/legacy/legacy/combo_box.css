@@ -55,7 +55,7 @@ div#deviceFind .cbox {
 }
 
 .cbox {
-  display: inline;
+  display: inline-block;
   position: relative;
 }
 

@@ -244,8 +244,9 @@ const ComboBox = new Class({
 
         var item_dims = getElementDimensions(this.optionslist.firstChild);
         var textedit_dims = getElementDimensions(this.textedit);
+        var node_dims = getElementDimensions(this.node);
         var h = visibleCount ? (visibleCount * item_dims.h) : 0;
-        setElementDimensions(this.optionslist, {w:textedit_dims.w});
+        setElementDimensions(this.optionslist, {w:node_dims.w});
         setElementPosition(this.optionslist, {x:0, y: textedit_dims.h});
 
         this.highlightNode(divs[0]);
