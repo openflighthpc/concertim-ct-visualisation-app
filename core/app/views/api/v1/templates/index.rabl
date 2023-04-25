@@ -1,4 +1,4 @@
 object @templates
-attribute :id
-attribute :name
-attribute :description
+node do |template|
+  partial('api/v1/templates/show', :object => template)
+end

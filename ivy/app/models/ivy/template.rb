@@ -10,7 +10,8 @@ module Ivy
     #
     #######################
 
-    has_many :chassis, class_name: 'Ivy::Chassis'
+    has_many :chassis, class_name: 'Ivy::Chassis',
+      dependent: :destroy
 
 
     ############################
@@ -28,7 +29,7 @@ module Ivy
       numericality: { only_integer: true, greater_than: 0 }
     validates :depth,
       presence: true,
-      numericality: { only_integer: true, greater_than: 0 }
+      numericality: { only_integer: true, in: 1..2 }
     validates :version,
       presence: true,
       numericality: { only_integer: true, greater_than: 0 }
@@ -103,6 +104,12 @@ module Ivy
 
     def complex?
       !simple?
+    end
+
+    # Return true if there are any devices that have been created from this
+    # template.
+    def has_devices?
+      chassis.count > 0
     end
   end
 end

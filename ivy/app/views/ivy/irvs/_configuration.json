@@ -516,7 +516,7 @@
         "moreInfoDelay" : 2000,
         "rackText"      : "<div style='font-weight:700;margin-left:-10px;'>Rack: [[name]]</div>Height: [[u_height]]U<br>((Url: [[url]]<br>))",
         "chassisText"   : "<div style='font-weight:700;margin-left:-10px;'>Chassis: [[name]]</div>((Rack: [[parent_name]]<br>))((Metric: [[metric_name]]<br>))(((Min: [[metric_min]]<br>))((Max: [[metric_max]]<br>))((Average: [[metric_mean]]<br>))((Total: [[metric_total]]<br>))(Value: [[metric_value]]<br>))Height: [[u_height]]U<br>((Config: [[num_rows]] rows x [[slots_per_row]] slots<br>))((Position: [[u_position]]<br>))((Free slots: [[slots_available]]<br>))",
-        "deviceText"    : "<div style='font-weight:700;margin-left:-10px;'>Device: [[name]]</div>((Rack: [[rack_name]]<br>))((Chassis: [[parent_name]]<br>))((Metric: [[metric_name]]<br>))((Min: [[metric_min]]<br>))((Max: [[metric_max]]<br>))((Average: [[metric_mean]]<br>))((Total: [[metric_total]]<br>))((Value: [[metric_value]]<br>))((Height: [[u_height]]U<br>))((Position: [[position]]<br>))((Type: [[device_type]]<br>))"
+        "deviceText"    : "<div style='font-weight:700;margin-left:-10px;'>Device: [[name]]</div>((Rack: [[rack_name]]<br>))((Chassis: [[parent_name]]<br>))((Metric: [[metric_name]]<br>))((Min: [[metric_min]]<br>))((Max: [[metric_max]]<br>))((Average: [[metric_mean]]<br>))((Total: [[metric_total]]<br>))((Value: [[metric_value]]<br>))((Height: [[u_height]]U<br>))((Position: [[position]]<br>))"
       },
 
       "THUMBHINT":

@@ -91,6 +91,29 @@ List all available device templates.
 ./list-templates.sh
 ```
 
+Create a template.  A suitable image for the template will be selected based on
+the provided height.  Currently, there is no option to provide a custom image.
+
+```
+./create-template.sh <NAME> <DESCRIPTION> <U_HEIGHT>
+```
+
+Update a template's name and description.  The template's height cannot be
+updated so as to avoid an issue where this could result in overlapping devices
+in a rack.
+
+```
+./update-template.sh <TEMPLATE_ID> <NAME> <DESCRIPTION>
+```
+
+Delete a template.  If recurse is given, any devices created from the template
+will be deleted.  If recurse is not given this will fail if any devices have
+been created from the template.
+
+```
+./delete-template.sh <TEMPLATE_ID> [recurse]
+```
+
 ### Devices
 
 List all devices.
