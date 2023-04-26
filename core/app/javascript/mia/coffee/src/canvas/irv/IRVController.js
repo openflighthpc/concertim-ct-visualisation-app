@@ -1133,12 +1133,6 @@ class IRVController extends CanvasController {
       rack_height_proportion = 0.96;
     }
 
-    //Setting the height of the canvas area, based on the actual height of the window.
-    const dims_page_content = $(IRVController.MAIN_PAGE_CONTENT_ID).getCoordinates();
-    const interactive_canvas_view = $(IRVController.CANVAS_CONTENT_ID);
-    const interactive_coords = interactive_canvas_view.getCoordinates();
-    Util.setStyle(interactive_canvas_view, 'height', ((dims_page_content.height + dims_page_content.top) - interactive_coords.top - IRVController.BOTTOM_PADDING) + 'px');
-
     Util.setStyle(this.rackParent, 'height', (rack_height_proportion * 99) + '%');
     if (this.model.showChart()) {
       Util.setStyle(this.chartEl, 'top', ((rack_height_proportion + filter_height_proportion) * 100) + '%');
