@@ -53,9 +53,10 @@ module Meca
             mval = metric[:value]
             minmax(mname, mval)
             if MetricType.get(mname).nil? && @custom_types[mname].nil?
+              units = metric[:units].nil? ? nil : metric[:units].force_encoding('utf-8')
               @custom_types[mname] = MetricType.new(:id => mname,
                                                     :name => mname,
-                                                    :units => parser.escape(metric[:units]).force_encoding('utf-8'),
+                                                    :units => units,
                                                     :range => :auto,
                                                     :type => :dynamic,
                                                     :selectable => true)
