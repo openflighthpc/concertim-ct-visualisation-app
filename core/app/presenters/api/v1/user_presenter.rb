@@ -5,6 +5,6 @@
 module Api::V1
   class UserPresenter < Emma::Presenter
     # Be selective about what attributes and methods we expose.
-    delegate :login, :name, to: :o
+    delegate :login, :name, :project_id, to: :o
   end
 end
