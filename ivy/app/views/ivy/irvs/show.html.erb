@@ -19,9 +19,15 @@
   </div>
   <div class="shadow-box-message-container hidden" id="zero-racks-message">
     <div class="shadow-box-message">
-      Racks have not yet been added to this account.  They will be
-      automatically created and populated from the appropriate openstack
-      project.
+      <% if current_user.project_id.blank? %>
+        <span>
+          Before racks can be added to your account, you need to
+          <%= link_to "configure an OpenStack project ID", uma_engine.edit_user_registration_path %>.
+        </span>
+      <% else %>
+        Racks will automatically be created and populated from the configured
+        OpenStack project.
+      <% end %>
     </div>
   </div>
   <div id="context_menu"></div>
