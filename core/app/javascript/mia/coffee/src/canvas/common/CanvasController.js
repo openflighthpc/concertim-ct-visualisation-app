@@ -240,8 +240,7 @@ class CanvasController {
   }
 
   init() {
-    // Hide loader
-    Util.setStyle($('loader'), 'visibility', 'hidden');
+    $('loader').addClass('hidden');
 
     // Store global reference to controller CC = CanvasController
     document.CC = this;

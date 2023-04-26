@@ -13,35 +13,14 @@
 #interactive_canvas_view {
 
   height: 100%;
+  position: relative;
   
-  #loader, .shadow-box-message-container
-  {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    width: 100%;
+  .shadow-box-message-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     height: 100%;
     z-index: 99999;
-  }
-
-  #loader #dialogue, .shadow-box-message-container .shadow-box-message
-  {
-    margin: 10% auto;
-    width: 300px;
-    height: 185px;
-    line-height: 185px;
-    text-align: center;
-    border-radius: 10px;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-    border: 3px solid #666;
-    -moz-box-shadow: 3px 3px 12px 3px rgba(0,0,0,0.3);
-    -webkit-box-shadow: 3px 3px 12px 3px rgba(0,0,0,0.3);
-    box-shadow: 3px 3px 12px 3px rgba(0,0,0,0.3);
-  }
-
-  #zero-racks-message {
-    visibility: hidden;
   }
 
   .shadow-box-message-container .shadow-box-message {
@@ -50,6 +29,16 @@
     justify-content: center;
     line-height: inherit;
     padding: 1em;
+    width: 300px;
+    height: 185px;
+    text-align: center;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border: 3px solid #666;
+    -moz-box-shadow: 3px 3px 12px 3px rgba(0,0,0,.3);
+    -webkit-box-shadow: 3px 3px 12px 3px rgba(0,0,0,.3);
+    box-shadow: 3px 3px 12px 3px rgba(0,0,0,.3);
   }
 
   .updater_mask

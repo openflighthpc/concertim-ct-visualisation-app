@@ -491,8 +491,7 @@ class IRVController extends CanvasController {
   // triggered when all initialisation data and rack images have loaded. Sets up everything, instanciates class instances, starts
   // pollers and adds event listeners
   init() {
-    // Hide loader
-    Util.setStyle($('loader'), 'visibility', 'hidden');
+    $('loader').addClass('hidden');
     this.clickAssigned      = true;
     this.dragging           = false;
     this.hintTmr            = 0;
