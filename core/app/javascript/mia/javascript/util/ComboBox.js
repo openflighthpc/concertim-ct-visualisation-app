@@ -200,6 +200,7 @@ const ComboBox = new Class({
     _connect_ids: [],
 
     build: function(options) {
+        this.showing_all_options = options === this.config.options;
         while (this._connect_ids.length) { this._connect_ids.pop().removeEvents(); }
         var onmouseover = bind(this.itemMouseOver, this);
         var onmouseout = bind(this.itemMouseOut, this);
@@ -244,8 +245,9 @@ const ComboBox = new Class({
 
         var item_dims = getElementDimensions(this.optionslist.firstChild);
         var textedit_dims = getElementDimensions(this.textedit);
+        var node_dims = getElementDimensions(this.node);
         var h = visibleCount ? (visibleCount * item_dims.h) : 0;
-        setElementDimensions(this.optionslist, {w:textedit_dims.w});
+        setElementDimensions(this.optionslist, {w:node_dims.w});
         setElementPosition(this.optionslist, {x:0, y: textedit_dims.h});
 
         this.highlightNode(divs[0]);
@@ -372,11 +374,20 @@ const ComboBox = new Class({
             this.button.disabled = '';
 
             this.setOptions(dataArray);
-
             if (this.optionslist && this.isVisible(this.optionslist)) {
-              // If the dropdown is displayed, update its contents.
-              this.update();
-              this.build(this.exposed_options);
+              // If the dropdown is displayed, update its contents making sure
+              // to maintain any active filtering.
+              if (this.showing_all_options) {
+                    this.update();
+                    this._activate_dropdown = true;
+                    this.build(this.config.options);
+                    if (document.getElementById(this.textedit.value)) {
+                      this.highlightNode(document.getElementById(this.textedit.value));
+                    }
+              } else {
+                    this.update();
+                    this.build(this.exposed_options);
+              }
             }
         }
     },

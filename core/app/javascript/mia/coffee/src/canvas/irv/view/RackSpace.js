@@ -490,9 +490,9 @@ class RackSpace extends CanvasSpace {
     Profiler.begin(Profiler.CRITICAL);
 
     if (this.racks == null || this.racks.length === 0) {
-      Util.setStyle($('zero-racks-message'), 'visibility', 'visible');
+      $('zero-racks-message').removeClass('hidden');
     } else {
-      Util.setStyle($('zero-racks-message'), 'visibility', 'hidden');
+      $('zero-racks-message').addClass('hidden');
     }
 
     const show_u_labels = this.scale >= CanvasSpace.U_LBL_SCALE_CUTOFF;

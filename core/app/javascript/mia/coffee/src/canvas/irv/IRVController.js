@@ -491,8 +491,7 @@ class IRVController extends CanvasController {
   // triggered when all initialisation data and rack images have loaded. Sets up everything, instanciates class instances, starts
   // pollers and adds event listeners
   init() {
-    // Hide loader
-    Util.setStyle($('loader'), 'visibility', 'hidden');
+    $('loader').addClass('hidden');
     this.clickAssigned      = true;
     this.dragging           = false;
     this.hintTmr            = 0;
@@ -1133,12 +1132,6 @@ class IRVController extends CanvasController {
     } else {
       rack_height_proportion = 0.96;
     }
-
-    //Setting the height of the canvas area, based on the actual height of the window.
-    const dims_page_content = $(IRVController.MAIN_PAGE_CONTENT_ID).getCoordinates();
-    const interactive_canvas_view = $(IRVController.CANVAS_CONTENT_ID);
-    const interactive_coords = interactive_canvas_view.getCoordinates();
-    Util.setStyle(interactive_canvas_view, 'height', ((dims_page_content.height + dims_page_content.top) - interactive_coords.top - IRVController.BOTTOM_PADDING) + 'px');
 
     Util.setStyle(this.rackParent, 'height', (rack_height_proportion * 99) + '%');
     if (this.model.showChart()) {

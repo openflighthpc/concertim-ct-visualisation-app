@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_04_21_154838) do
+ActiveRecord::Schema[7.0].define(version: 2023_04_26_145248) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -204,8 +204,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_04_21_154838) do
     t.boolean "root", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "project_id", limit: 255
     t.index ["email"], name: "index_uma.users_on_email", unique: true
     t.index ["login"], name: "index_uma.users_on_login", unique: true
+    t.index ["project_id"], name: "index_users_on_project_id", unique: true
   end
 
   add_foreign_key "ivy.base_chassis", "racks", on_update: :cascade, on_delete: :restrict
