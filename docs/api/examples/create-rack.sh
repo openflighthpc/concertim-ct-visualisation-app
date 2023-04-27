@@ -14,49 +14,58 @@ BASE_URL="https://${CONCERTIM_HOST}/api/v1"
 # generated LOGIN and PASSWORD environment variables must be set.
 AUTH_TOKEN=${AUTH_TOKEN:-$("${SCRIPT_DIR}"/get-auth-token.sh)}
 
-NAME=${1}
-U_HEIGHT=${2}
+USER_ID=${1}
+NAME=${2}
+U_HEIGHT=${3}
 
-# If a previous rack has been created, both the name and height are optional.
-# Here we construct the body based on the given inputs and assume that the user
-# has provided sufficient arguments.
+# Here lies complex JSON documentation creation. The complications arise due to
+# the following:
+#
+# * NAME is optional.
+# * U_HEIGHT is optional.
+# * USER_ID is mandatory if the rack is being created for an admin user.
+#   Otherwise it should not be provided and will be ignored if it is.
+#
+# To achieve this, we use jq to construct a JSON document, such as
+#
+# ```
+# {"rack": {"name": "", "u_height": 42, "user_id": "3"}}
+# ```
+#
+# Then we pipe that document to jq passing a funky script which dives into the
+# `rack` parameter and removes any blank entries.  For the above example the
+# resulting document would be:
+#
+# ```
+# {"rack": {"u_height": 42, "user_id": "3"}}
+# ```
 BODY=$( jq --null-input  \
   --arg name "${NAME}" \
+  --arg user_id "${USER_ID}" \
   --arg u_height "${U_HEIGHT}" \
   '
 {
-  "name": $name,
-  "u_height": $u_height|(try tonumber catch "")
+  "rack": {
+    "name": $name,
+    "user_id": $user_id,
+    "u_height": $u_height|(try tonumber catch "")
+  }
 }
 ' \
-  | jq 'with_entries( select( .value != "" ) )'
+  | jq '{rack: .rack | with_entries(select(.value != ""))}'
 )
 
 # Run curl with funky redirection to capture response body and status code.
 BODY_FILE=$(mktemp)
 HTTP_STATUS=$(
-if [ "${BODY}" != "{}" ] ; then
-    # The user has given at least on of rack name or u height.
-    curl -s -k \
-        -w "%{http_code}" \
-        -o >(cat > "${BODY_FILE}") \
-        -H 'Content-Type: application/json' \
-        -H "Accept: application/json" \
-        -H "Authorization: Bearer ${AUTH_TOKEN}" \
-        -X POST "${BASE_URL}/racks" \
-        -d "${BODY}"
-else
-    # The user has not provided either rack name or u height.  We assume that
-    # there is a previously created rack that sensible defaults can be taken
-    # from.  If not, an error message will be displayed.
-    curl -s -k \
-        -w "%{http_code}" \
-        -o >(cat > "${BODY_FILE}") \
-        -H "Accept: application/json" \
-        -H "Authorization: Bearer ${AUTH_TOKEN}" \
-        -X POST "${BASE_URL}/racks" \
-        -d ''
-fi
+  curl -s -k \
+      -w "%{http_code}" \
+      -o >(cat > "${BODY_FILE}") \
+      -H 'Content-Type: application/json' \
+      -H "Accept: application/json" \
+      -H "Authorization: Bearer ${AUTH_TOKEN}" \
+      -X POST "${BASE_URL}/racks" \
+      -d "${BODY}"
 )
 
 if [ "${HTTP_STATUS}" == "200" ] || [ "${HTTP_STATUS}" == "201" ] ; then

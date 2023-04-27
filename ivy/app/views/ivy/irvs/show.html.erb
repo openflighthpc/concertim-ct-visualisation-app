@@ -19,14 +19,17 @@
   </div>
   <div class="shadow-box-message-container hidden" id="zero-racks-message">
     <div class="shadow-box-message">
-      <% if current_user.project_id.blank? %>
+    <% if current_user.root? %>
+        Racks will automatically be created and populated for users with
+        configured project IDs.
+    <% elsif current_user.project_id.blank? %>
         <span>
           Before racks can be added to your account, you need to
-          <%= link_to "configure an OpenStack project ID", uma_engine.edit_user_registration_path %>.
+          <%= link_to "configure a project ID", uma_engine.edit_user_registration_path %>.
         </span>
       <% else %>
         Racks will automatically be created and populated from the configured
-        OpenStack project.
+        project ID.
       <% end %>
     </div>
   </div>

@@ -14,7 +14,7 @@ AUTH_TOKEN=${AUTH_TOKEN:-$("${SCRIPT_DIR}"/get-auth-token.sh)}
 export AUTH_TOKEN
 
 # Create a rack and capture its ID.
-OUTPUT=$("${SCRIPT_DIR}/create-rack.sh")
+OUTPUT=$("${SCRIPT_DIR}/create-rack.sh" "$@")
 if [ $? -ne 0 ] ; then
     # Errors will have been sent to stderr.
     exit
