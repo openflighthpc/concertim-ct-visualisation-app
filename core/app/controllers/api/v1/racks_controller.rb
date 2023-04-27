@@ -18,7 +18,7 @@ class Api::V1::RacksController < Api::V1::ApplicationController
     if @rack.persisted?
       render action: :show
     else
-      render json: @rack.errors.details, status: :unprocessable_entity
+      render json: @rack.errors.as_json, status: :unprocessable_entity
     end
   end
 
@@ -26,7 +26,7 @@ class Api::V1::RacksController < Api::V1::ApplicationController
     if @rack.update(rack_params)
       render action: :show
     else
-      render json: @rack.errors.details, status: :unprocessable_entity
+      render json: @rack.errors.as_json, status: :unprocessable_entity
     end
   end
 
@@ -39,7 +39,7 @@ class Api::V1::RacksController < Api::V1::ApplicationController
     elsif @rack.destroy
       render json: {}, status: :ok
     else
-      render json: @rack.errors.details, status: :unprocessable_entity
+      render json: @rack.errors.as_json, status: :unprocessable_entity
     end
   end
 
