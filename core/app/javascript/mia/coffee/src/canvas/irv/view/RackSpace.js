@@ -660,7 +660,6 @@ class RackSpace extends CanvasSpace {
   }
 
   resetRackSpace() {
-    const hadZeroRacks = this.racks == null || this.racks.length === 0;
     if (this.racks != null) { for (var rack of Array.from(this.racks)) { rack.destroy(); } }
     this.racks = [];
     if (this.model.showingRacks() && !this.model.showingFullIrv()) {
@@ -674,11 +673,7 @@ class RackSpace extends CanvasSpace {
       }
     } else if (this.model.showingFullIrv()) {
       this.setUpRacks();
-      if (hadZeroRacks) {
-        // Only refresh if we've got our first racks to display. Otherwise we
-        // might undo some of the user's filtering.
-        this.refreshRacks();
-      }
+      this.refreshRacks();
     }
 
     return this.draw();
