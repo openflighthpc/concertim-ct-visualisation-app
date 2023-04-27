@@ -45,15 +45,11 @@ class Api::V1::RacksController < Api::V1::ApplicationController
 
   private
 
-  #
-  # rack_params
-  #
   PERMITTED_PARAMS = %w[name description u_height]
   def rack_params
-    if params.key?(:rack)
-      params.require(:rack).permit(*PERMITTED_PARAMS)
-    else
-      {}
+    permitted = PERMITTED_PARAMS.dup.tap do |a|
+      a << :user_id if current_user.root? && params[:action] == 'create'
     end
+    params.fetch(:rack).permit(*permitted)
   end
 end
