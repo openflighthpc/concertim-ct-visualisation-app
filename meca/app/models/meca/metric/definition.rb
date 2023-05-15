@@ -9,8 +9,6 @@ module Meca
       end
 
       def initialize(opts={})
-        @types = MetricType.dynamic
-        @custom_types = {}
         @minmaxes = {}
         @selected_device_ids = opts.delete(:device_ids) || []
         @selected_tagged_devices_ids = opts.delete(:tagged_devices_ids) || []
@@ -52,21 +50,23 @@ module Meca
             mname = metric[:name]
             mval = metric[:value]
             minmax(mname, mval)
-            if MetricType.get(mname).nil? && @custom_types[mname].nil?
+            if MetricType.get(mname).nil?
               units = metric[:units].nil? ? nil : metric[:units].force_encoding('utf-8')
-              @custom_types[mname] = MetricType.new(:id => mname,
-                                                    :name => mname,
-                                                    :units => units,
-                                                    :range => :auto,
-                                                    :type => :dynamic,
-                                                    :selectable => true)
+              mt = MetricType.new(
+                :id => mname,
+                :name => mname,
+                :units => units,
+                :range => :auto,
+                :type => :dynamic,
+                :selectable => true
+              )
+              MetricType.register(mt)
             end
           end
         end
 
-        metrics = (@types + @custom_types.values.sort{|a,b|a.id<=>b.id})
-
-        return [metrics, @minmaxes]
+        metrics = MetricType.all.sort { |a, b| a.id <=> b.id }
+        [metrics, @minmaxes]
       end
 
       private

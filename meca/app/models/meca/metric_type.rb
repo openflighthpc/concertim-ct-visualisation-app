@@ -13,7 +13,6 @@ module Meca
     end
 
     class << self
-
       def get(id, type=nil)
         m = @registry[id]
         return nil if m.nil?
@@ -21,20 +20,15 @@ module Meca
         return m   if m.type == type
       end
 
-      def dynamic
-        @dynamics
+      def register(metric_type)
+        @registry[metric_type.id] = metric_type
       end
 
+      def all
+        @registry.values
+      end
     end
 
     @registry = {}
-    @statics = []
-    @dynamics = []
-    @statics = @statics.sort do |a,b|
-      a.name <=> b.name
-    end
-    @dynamics = @dynamics.sort do |a,b|
-      a.name <=> b.name
-    end
   end
 end
