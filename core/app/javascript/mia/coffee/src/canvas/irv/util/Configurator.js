@@ -300,7 +300,6 @@ class Configurator {
     ContextMenu.SPACER              = context_menu_config.spacer;
     ContextMenu.URL_INTERNAL_PREFIX = context_menu_config.urlInternalPrefix;
     ContextMenu.ASPECT_MAP          = context_menu_config.aspectMap;
-    ContextMenu.DEVICE_TYPE_URL_MAP = context_menu_config.deviceTypeURLMap;
  
     const filter_bar_config                  = config.FILTERBAR;
     FilterBar.THICKNESS                = filter_bar_config.thickness;

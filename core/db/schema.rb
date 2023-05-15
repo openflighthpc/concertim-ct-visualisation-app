@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_15_170139) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_15_175430) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -62,7 +62,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_15_170139) do
   create_table "ivy.devices", id: :bigint, default: -> { "nextval('devices_id_seq'::regclass)" }, force: :cascade do |t|
     t.string "name", limit: 255, null: false
     t.string "description", limit: 255
-    t.string "type", limit: 255, default: "Server", null: false
     t.boolean "hidden", default: false, null: false
     t.integer "modified_timestamp", default: 0, null: false
     t.datetime "created_at", null: false

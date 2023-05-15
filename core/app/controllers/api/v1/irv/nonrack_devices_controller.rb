@@ -63,7 +63,6 @@ class Api::V1::Irv::NonrackDevicesController < Api::V1::Irv::BaseController
       rows: chassis.template.rows,
       slots: chassis.slots.count,
       template: template_to_hash(chassis.template),
-      tagged_device_id: nil,
       type: chassis.type
     }
   end
@@ -120,7 +119,6 @@ class Api::V1::Irv::NonrackDevicesController < Api::V1::Irv::BaseController
       column: (device.slot.chassis_row_location - 1),
       row: (device.chassis_row.row_number - 1),
       facing: device.chassis.facing,
-      type: device.type,
       template: { images: images, width: 1, height: 1, rotateClockwise: true }
     }
   end

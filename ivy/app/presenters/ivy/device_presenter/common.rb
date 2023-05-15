@@ -18,7 +18,7 @@ module Ivy
       # utility class. 
       #
       def device_type
-        Ivy::TypeHumanizer.humanize(o.type)
+        Ivy::TypeHumanizer.humanize(o.respond_to?(:type) ? o.type : o.class.name)
       end
     end
   end

@@ -9,7 +9,6 @@ module Ivy
     # Those types where simply "humanizing" the type is not good enough.
     # 
     BESPOKE_TEXT_TYPES = {
-      'VirtualServer'       => 'Virtual machine',
       'RackChassis'         => 'Chassis',
       'ZeroURackChassis'    => 'Zero-U rack chassis'
     }

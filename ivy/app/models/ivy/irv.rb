@@ -95,7 +95,6 @@ SELECT
                                                                                           ( select XmlAgg( 
                                                                                                    XmlElement( name "Machine",
                                                                                                                 XmlAttributes( D.id as "id",
-                                                                                                                               D.type as "type",
                                                                                                                                D.name as "name" )
                                                                                                    )) from devices D where D.slot_id = S.id
                                                                                           )

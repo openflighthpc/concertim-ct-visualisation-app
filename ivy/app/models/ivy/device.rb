@@ -104,7 +104,6 @@ module Ivy
       data.merge!(
         name: name,
         id: id,
-        type: type,
         hidden: false,
         useful: model.nil? || model != 'Blank Panel',
         map_to_host: data_source_map.nil? ? nil : data_source_map.map_to_host,

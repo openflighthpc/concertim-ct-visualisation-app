@@ -71,7 +71,7 @@ module Ivy
       @chassis = Ivy::Chassis::RackChassis.create!(chassis_params)
       row = @chassis.chassis_rows.create!
       slot = row.slots.create!(chassis_row_location: 1)
-      device = slot.create_device!(device_params)
+      device = slot.create_device!(@device_params)
       Rails.logger.debug("Built object graph") {
         {chassis: @chassis, row: row, slot: slot, device: device}
       }
@@ -82,12 +82,6 @@ module Ivy
         template: @template,
         u_height: @template.height,
         u_depth: @template.depth,
-      )
-    end
-
-    def device_params
-      @device_params.merge(
-        type: @template.chassis_type
       )
     end
   end

@@ -805,7 +805,6 @@ class SimpleChart {
     const {
       datum
     } = dists[0].coord;
-    if ((datum.device_type == null) && !(datum.instances == null) && !(!datum.instances.length > 0)) { datum.device_type = datum.instances[0].type; }
 
     mouse_coords = Util.resolveMouseCoords(this.tooltip.parentElement != null ? this.tooltip.parentElement : this.tooltip.parentNode, ev);
     return this.showTooltip(datum, mouse_coords.x, mouse_coords.y);
@@ -835,7 +834,6 @@ class SimpleChart {
         var {
           datum
         } = coord;
-        if ((datum.device_type == null) && !(datum.instances == null) && !(!datum.instances.length > 0)) { datum.device_type = datum.instances[0].type; }
         this.showTooltip(datum, mouse_coords.x, mouse_coords.y);
         return;
       }
