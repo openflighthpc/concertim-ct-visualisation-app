@@ -3,9 +3,6 @@ module Ivy
 
     self.table_name = "racks"
 
-    def self.tagged_device_type; 'RackTaggedDevice'; end
-
-    include Ivy::Concerns::Taggable
     include Ivy::Concerns::Templateable
     include Ivy::HwRack::Occupation
     include Ivy::Concerns::LiveUpdate::HwRack
