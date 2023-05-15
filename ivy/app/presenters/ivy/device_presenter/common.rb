@@ -13,7 +13,7 @@ module Ivy
       #
       # device_type
       #
-      # Humanized version of the class (so "RackTaggedDevice" becomes "Rack" and so on). Either
+      # Humanized version of the class (so "RackChassis" becomes "Chassis" and so on). Either
       # hands off to the specific device presenter for that device type or just calls the humanizer
       # utility class. 
       #

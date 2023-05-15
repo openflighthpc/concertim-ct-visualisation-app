@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_15_145759) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_15_170139) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -63,14 +63,11 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_15_145759) do
     t.string "name", limit: 255, null: false
     t.string "description", limit: 255
     t.string "type", limit: 255, default: "Server", null: false
-    t.boolean "tagged", default: false, null: false
     t.boolean "hidden", default: false, null: false
     t.integer "modified_timestamp", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "slot_id"
-    t.bigint "base_chassis_id"
-    t.index ["base_chassis_id"], name: "index_devices_on_base_chassis_id"
     t.index ["slot_id"], name: "index_devices_on_slot_id"
   end
 
@@ -213,7 +210,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_15_145759) do
   add_foreign_key "ivy.base_chassis", "templates", on_update: :cascade, on_delete: :restrict
   add_foreign_key "ivy.chassis_rows", "base_chassis", on_update: :cascade, on_delete: :cascade
   add_foreign_key "ivy.data_source_maps", "devices", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "ivy.devices", "base_chassis", on_update: :cascade, on_delete: :cascade
   add_foreign_key "ivy.devices", "slots", on_update: :cascade, on_delete: :cascade
   add_foreign_key "ivy.racks", "templates", on_update: :cascade, on_delete: :restrict
   add_foreign_key "ivy.racks", "users", on_update: :cascade, on_delete: :restrict

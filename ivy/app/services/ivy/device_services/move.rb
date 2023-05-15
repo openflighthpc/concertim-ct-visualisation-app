@@ -9,7 +9,7 @@ module Ivy
   module DeviceServices
     class Move
       def self.call(chassis, params, user)
-        chassis = chassis.indirect_chassis if chassis.is_a?(Ivy::Device)
+        chassis = chassis.chassis if chassis.is_a?(Ivy::Device)
         chassis.update_position(params)
         if chassis.rack_id_changed?
           # Ensure that we're authorized to move the destination rack.

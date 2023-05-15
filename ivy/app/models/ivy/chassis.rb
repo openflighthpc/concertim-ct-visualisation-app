@@ -56,11 +56,6 @@ module Ivy
     has_many :slots,   :through => :chassis_rows, source: :slot
     has_many :devices, :through => :slots
 
-    has_one :chassis_tagged_device,
-      class_name: "Ivy::Device::ChassisTaggedDevice",
-      foreign_key: :base_chassis_id,
-      dependent: :destroy
-
     #######################
     #
     # Validations
@@ -276,8 +271,8 @@ module Ivy
     private
 
     def name_is_unique_within_device_scope
-      non_tagged_device_names = Device.untagged.pluck(:name)
-      if non_tagged_device_names.include? name
+      device_names = Device.all.pluck(:name)
+      if device_names.include? name
         errors.add :name, "there is already a device with that name"
       end
     end

@@ -82,8 +82,7 @@ SELECT
                                                                     C.slots,
                                                                     (C.slots / C.rows) as cols,
                                                                     C.rack_start_u as "uStart",
-                                                                    C.rack_end_u as "uEnd",
-                                                                    ( select DD.id from devices DD where DD.base_chassis_id = C.id and DD.tagged = true) as "tagged_device_id"),
+                                                                    C.rack_end_u as "uEnd"),
                                                                     ( select XmlAgg( XmlElement( name "template", XmlAttributes (T.id,T.name,T.model,T.rackable,
                                                                                                                                  T.images,T.height,T.rows,T.columns,T.rack_repeat_ratio,T.depth,
                                                                                                                                  T.padding_left,T.padding_right,T.padding_top,T.padding_bottom,T.simple

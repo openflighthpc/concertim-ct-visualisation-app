@@ -11,7 +11,7 @@ module Ivy
     public
 
     def group_devices
-      Ivy::Device.where(:id => member_ids, :tagged => false)
+      Ivy::Device.where(id: member_ids)
     end
 
     # 

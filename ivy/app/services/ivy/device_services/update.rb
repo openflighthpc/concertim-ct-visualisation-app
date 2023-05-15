@@ -14,7 +14,7 @@ module Ivy
   module DeviceServices
     class Update
       def self.call(device, device_params, chassis_params, user)
-        chassis = device.indirect_chassis
+        chassis = device.chassis
         device.update(device_params) 
 
         if chassis

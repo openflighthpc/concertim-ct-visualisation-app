@@ -21,7 +21,7 @@ module Ivy
       end
 
       def empty?
-        devices.empty? && chassis_tagged_devices.empty?
+        devices.empty?
       end
 
       #

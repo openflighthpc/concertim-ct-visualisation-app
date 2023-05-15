@@ -10,8 +10,6 @@ module Ivy
     # 
     BESPOKE_TEXT_TYPES = {
       'VirtualServer'       => 'Virtual machine',
-      'RackTaggedDevice'    => 'Rack',
-      'ChassisTaggedDevice' => 'Chassis',
       'RackChassis'         => 'Chassis',
       'ZeroURackChassis'    => 'Zero-U rack chassis'
     }

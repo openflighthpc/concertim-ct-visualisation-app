@@ -89,7 +89,7 @@ module Ivy
 
         included do
           delegate :update_modified_timestamp,
-            to: :indirect_chassis, allow_nil: true
+            to: :chassis, allow_nil: true
 
           # Maintain modification timestamps for self and associated chassis.
           after_save :update_modified_timestamp, :update_rack_modified_timestamp

@@ -41,7 +41,6 @@ module Ivy
     has_many :chassis_rows,           through: :chassis,      source: :chassis_rows
     has_many :slots,                  through: :chassis_rows, source: :slots
     has_many :devices,                through: :slots
-    has_many :chassis_tagged_devices, through: :chassis
 
     has_one :group,
       class_name: "Ivy::Group::RuleBasedGroup",

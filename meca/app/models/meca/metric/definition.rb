@@ -8,33 +8,20 @@ module Meca
         MEMCACHE.get(key)
       end
 
-      def initialize(opts={})
+      def initialize(device_ids: [])
         @minmaxes = {}
-        @selected_device_ids = opts.delete(:device_ids) || []
-        @selected_tagged_devices_ids = opts.delete(:tagged_devices_ids) || []
+        @selected_device_ids = device_ids || []
       end
 
       def values_for_devices_with_metric(metric)
         metric = metric.to_sym
         [].tap do |el|
-          non_tagged_devices_with_metric(metric).each do |key, device|
+          devices_with_metric(metric).each do |key, device|
             device.deep_symbolize_keys!
             next if device_stale?(device)
             next if device[:metrics].nil? || device[:metrics][metric].nil?
             value = device[:metrics][metric][:value]
             el << MetricValue.new(id: device[:id], value: value) if value
-          end
-        end
-      end
-
-      def values_for_chassis_with_metric(metric)
-        metric = metric.to_sym
-        [].tap do |el|
-          tagged_devices_with_metric(metric).each do |key, device|
-            device.deep_symbolize_keys!
-            next if device[:mtime].nil? || (Time.now - device[:mtime]) > 90 || device[:metrics].nil? || device[:metrics][metric].nil?
-            value = device[:metrics][metric][:value]
-            el << MetricValue.new(id: device[:chassis_id], value: value) if value
           end
         end
       end
@@ -103,12 +90,8 @@ module Meca
         end
       end
 
-      def non_tagged_devices_with_metric(metric)
+      def devices_with_metric(metric)
         fetch_many(device_keys_with_metric(metric) & ids_to_interchange_keys(@selected_device_ids))
-      end
-
-      def tagged_devices_with_metric(metric)
-        fetch_many(device_keys_with_metric(metric) & ids_to_interchange_keys(@selected_tagged_devices_ids))
       end
 
       def device_keys_with_metric(metric)
