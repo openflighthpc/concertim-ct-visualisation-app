@@ -58,65 +58,79 @@ module Ivy
 
 ret = (<<SQL)
 WITH sorted_racks AS (
-SELECT id, name, u_height, template_id FROM racks ORDER BY SUBSTRING( "name" FROM E'^(.*?)(\\\\d+)?$'), lpad(substring( "name" from E'(\\\\d+)$'), 30, '0') asc
+        SELECT id, name, u_height, template_id FROM racks ORDER BY SUBSTRING( "name" FROM E'^(.*?)(\\\\d+)?$'), lpad(substring( "name" FROM E'(\\\\d+)$'), 30, '0') ASC
 )
 SELECT
   XmlElement( name "Racks",
-   XmlAgg( 
-    XmlElement( name "Rack", 
-                XmlAttributes( R.id as "id",
-                               R.name as "name",
-                               R.u_height as "uHeight" ,
-                               ( SELECT id from sorted_racks offset (select row_num from (select id,row_number() over () as row_num from sorted_racks) t where id=R.id) limit 1) as "nextRackId"),
-                               ( select XmlAgg( XmlElement( name "template", XmlAttributes (T.id,T.name,T.model,T.rackable,
-                                                                                            T.images,T.height,T.rows,T.columns,T.rack_repeat_ratio,T.depth,
-                                                                                            T.padding_left,T.padding_right,T.padding_top,T.padding_bottom,T.simple
-                                                                                            ))) from templates T where T.id = R.template_id limit 1 ),
-                               ( SELECT XmlAgg( 
-                                         XmlElement( name "Chassis", 
-                                                     XmlAttributes( C.id,
-   		                                                    C.name,
-		  		                                    C.type,
-                                                                    C.facing,
-                                                                    C.rows,
-                                                                    C.slots,
-                                                                    (C.slots / C.rows) as cols,
-                                                                    C.rack_start_u as "uStart",
-                                                                    C.rack_end_u as "uEnd"),
-                                                                    ( select XmlAgg( XmlElement( name "template", XmlAttributes (T.id,T.name,T.model,T.rackable,
-                                                                                                                                 T.images,T.height,T.rows,T.columns,T.rack_repeat_ratio,T.depth,
-                                                                                                                                 T.padding_left,T.padding_right,T.padding_top,T.padding_bottom,T.simple
-                                                                                                                                 ))) from templates T where T.id = C.template_id limit 1 ),
-					  			    ( select XmlAgg(
-                                                                              XmlElement( name "Slots",
-                                                                                          XmlAttributes( S.id as "id",
-                                                                                                         S.chassis_row_location as "col",
-                                                                                                         CR.row_number as "row" ),
-                                                                                          ( select XmlAgg( 
-                                                                                                   XmlElement( name "Machine",
-                                                                                                                XmlAttributes( D.id as "id",
-                                                                                                                               D.name as "name" )
-                                                                                                   )) from devices D where D.slot_id = S.id
+    XmlAgg( 
+      XmlElement( name "Rack", 
+        XmlAttributes( R.id AS "id",
+                       R.name AS "name",
+                       R.u_height AS "uHeight" ,
+                       ( SELECT id FROM sorted_racks OFFSET (SELECT row_num FROM (SELECT id,row_number() OVER () AS row_num FROM sorted_racks) t WHERE id=R.id) LIMIT 1) AS "nextRackId"),
+                       ( SELECT XmlAgg( XmlElement( name "template",
+                                          XmlAttributes (T.id,T.name,T.model,T.rackable,
+                                                         T.images,T.height,T.rows,T.columns,T.rack_repeat_ratio,T.depth,
+                                                         T.padding_left,T.padding_right,T.padding_top,T.padding_bottom,T.simple
+                                                        )
+                                      ))
+                           FROM templates T WHERE T.id = R.template_id LIMIT 1 
+                       ),
+                       ( SELECT XmlAgg( XmlElement( name "Chassis", 
+                                          XmlAttributes( C.id,
+   		                                         C.name,
+		  		                         C.type,
+                                                         C.facing,
+                                                         C.rows,
+                                                         C.slots,
+                                                         (C.slots / C.rows) AS cols,
+                                                         C.start_u AS "uStart",
+                                                         C.end_u AS "uEnd"),
+                                                         ( SELECT XmlAgg( XmlElement( name "template",
+                                                                            XmlAttributes (T.id,T.name,T.model,T.rackable,
+                                                                                           T.images,T.height,T.rows,T.columns,T.rack_repeat_ratio,T.depth,
+                                                                                           T.padding_left,T.padding_right,T.padding_top,T.padding_bottom,T.simple
                                                                                           )
-                                                                              )
-                                                                             ) from Slots S
-                                                                               join chassis_rows CR on CR.id = S.chassis_row_id
-                                                                               WHERE CR.base_chassis_id = C.id
-								     )
-                                         )
-                                        ) from ( select id,
-					         name,
-					         type,
-                                                 facing,
-                                                 rack_start_u,
-                                                 rack_end_u,
-                                                 template_id, 
-                                                 (select count(CR.id) from chassis_rows CR where CR.base_chassis_id = C.id) as rows,
-                                                 (select count(SL.id) from slots SL join chassis_rows CR on SL.chassis_row_id = CR.id WHERE CR.base_chassis_id = C.id) as slots from base_chassis C where C.rack_id = R.id group by C.id, C.name, C.type, C.facing, C.rack_start_u, C.rack_end_u, C.template_id) as C
-                               )      
+                                                                         ))
+                                                             FROM templates T WHERE T.id = C.template_id LIMIT 1 
+                                                         ),
+                                                         ( SELECT XmlAgg( XmlElement( name "Slots",
+                                                                            XmlAttributes( S.id AS "id",
+                                                                                           (SELECT 1) AS "col",
+                                                                                           (SELECT 1) AS "row" 
+                                                                                         ),
+                                                                            ( SELECT XmlAgg( XmlElement( name "Machine",
+                                                                                               XmlAttributes( D.id AS "id",
+                                                                                                              D.name AS "name" 
+                                                                                                            )
+                                                                                           ))
+                                                                                FROM devices D WHERE D.id = S.id
+                                                                            )
+                                                                        ))
+                                                             FROM ( SELECT id
+                                                                      FROM devices D
+                                                                     WHERE D.base_chassis_id = C.id
+                                                                  ) AS S
+                                                         )
+                                      ))
+                           FROM ( SELECT C.id,
+					 name,
+					 type,
+                                         L.facing,
+                                         L.start_u,
+                                         L.end_u,
+                                         template_id, 
+                                         (SELECT 1) AS rows,
+                                         (SELECT 1) AS slots
+                                    FROM base_chassis C
+                                    JOIN locations L ON L.id = C.location_id
+                                   WHERE L.rack_id = R.id
+                                GROUP BY C.id, C.name, C.type, L.facing, L.start_u, L.end_u, C.template_id
+                                ) as C
+                       )      
                 )
     )
-   ) from sorted_racks R 
+   ) FROM sorted_racks R 
 SQL
 
         ret + condition

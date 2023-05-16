@@ -5,12 +5,12 @@ class Api::V1::NodesController < Api::V1::ApplicationController
     authorize! :create, Ivy::Device
     result = Ivy::TemplatePersister.new(
       find_template,
-      chassis_params.to_h,
+      location_params.to_h,
       device_params.to_h,
       current_user,
     ).call
     if result.success?
-      device = result.chassis.slots.reload.first.device
+      device = result.chassis.device
       @device = Api::V1::DevicePresenter.new(device)
       render template: 'api/v1/devices/show'
     else
@@ -29,9 +29,9 @@ class Api::V1::NodesController < Api::V1::ApplicationController
     permitted_params.except(:location, :template_id)
   end
 
-  def chassis_params
+  def location_params
     permitted_params.fetch(:location, {}).tap do |h|
-      h[:rack_start_u] = h.delete(:start_u) if h.key?(:start_u)
+      h.permit! if h.empty?
     end
   end
 

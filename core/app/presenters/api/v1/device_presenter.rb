@@ -12,14 +12,14 @@ module Api::V1
     delegate :id, :name, :description,
       to: :o
 
-    # location returns the location of the device.  For simple devices, the
-    # chassis location is returned, for complex devices, the location of blade
-    # in the chassis is returned.
+    # location returns the location of the device.  For devices in simple
+    # chassis, the chassis's location is returned. Devices in complex chassis,
+    # are blade servers in a blade enclosure, the location of blade server in
+    # the enclosure is returned.
     def location
       if o.chassis.nil?
-        # This could be a rack tagged device or data centre tagged device. For
-        # now, we're not interested in their location.
-        nil
+        # This should not longer be possible.
+        raise TypeError, "device does not have a chassis"
 
       elsif o.chassis_simple?
         # A simple device/chassis.  It's location is the location of its
@@ -27,21 +27,8 @@ module Api::V1
         Api::V1::ChassisPresenter.new(o.chassis, h).location
 
       elsif o.chassis_complex?
-        # Either a blade enclosure or a blade server.
-        if o.tagged?
-          # A blade enclosure.  It's location is the location of its chassis.
-          Api::V1::ChassisPresenter.new(o.chassis, h).location
-
-        else
-          # A blade server in an enclosure.  It's location is its location in
-          # the enclosure.
-          {
-            row: o.chassis_row.row_number,
-            slot: o.slot.chassis_row_location,
-            chassis_id: o.chassis.id,
-            type: 'blade',
-          }
-        end
+        # A blade server.
+        raise NotImplementedError, "Support for complex chassis is not implemented"
 
       else
         # We shouldn't get here.

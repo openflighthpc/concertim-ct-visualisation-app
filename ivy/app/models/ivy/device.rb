@@ -14,10 +14,9 @@ module Ivy
 
     has_one :data_source_map, dependent: :destroy 
 
-    belongs_to :slot
-    has_one :chassis_row, through: :slot, class_name: 'Ivy::ChassisRow'
-    has_one :chassis, through: :chassis_row, class_name: "Ivy::Chassis"
+    belongs_to :chassis, foreign_key: :base_chassis_id
     has_one :rack, through: :chassis, source: :rack
+    has_one :location, through: :chassis, source: :location
 
     has_one :template, through: :chassis, source: :template
 
@@ -35,8 +34,6 @@ module Ivy
         with: /\A[a-zA-Z0-9\-]*\Z/,
         message: "can contain only alphanumeric characters and hyphens."
       }
-    validates :slot_id, uniqueness: true, allow_nil: true
-    validates :slot_id, presence: true
     validate :name_validator
     validate :device_limit, if: :new_record? 
 
@@ -46,7 +43,9 @@ module Ivy
     #
     #############################
 
-    scope :occupying_rack_u, ->{ joins(:rack).where(base_chassis: {type: :RackChassis}) }
+    # XXX Needs rethinking.
+    # scope :occupying_rack_u, ->{ joins(:rack).where(base_chassis: {type: :RackChassis}) }
+    scope :occupying_rack_u, ->{ joins(:chassis).where(base_chassis: {location: Ivy::Location.occupying_rack_u}) }
 
     ####################################
     #
@@ -70,21 +69,6 @@ module Ivy
     # XXX Probably want to also port
     # :remove_metrics
 
-
-    ####################################
-    #
-    # Class Methods
-    #
-    ####################################
-
-    def self.types
-      @types ||= [Ivy::Device]
-    end
-
-    # def self.inherited(sub_class)
-    #   Ivy::Slot.create_association_for(sub_class)
-    #   super
-    # end
 
     ####################################
     #
@@ -159,11 +143,4 @@ module Ivy
       self.errors.add(:base, "The device limit of #{limit_rads+limit_nrads} has been exceeded")
     end
   end
-end
-
-# XXX Consider replacing this with an inherited hook.
-Dir["#{File.dirname(__FILE__)}/device/**.rb"].each do |d|
-  file_name = File.basename(d, '.rb')
-  require "ivy/device/#{file_name}"
-  Ivy::Device.types << "Ivy::Device::#{file_name.classify}".constantize
 end

@@ -16,7 +16,7 @@ class Api::V1::DevicesController < Api::V1::ApplicationController
     @device, chassis = Ivy::DeviceServices::Update.call(
       @device,
       device_params.to_h,
-      chassis_params.to_h,
+      location_params.to_h,
       current_user
     )
 
@@ -46,10 +46,9 @@ class Api::V1::DevicesController < Api::V1::ApplicationController
     permitted_params.except(:location)
   end
 
-  def chassis_params
+  def location_params
     permitted_params.fetch(:location, {}).tap do |h|
       h.permit! if h.empty?
-      h[:rack_start_u] = h.delete(:start_u) if h.key?(:start_u)
     end
   end
 

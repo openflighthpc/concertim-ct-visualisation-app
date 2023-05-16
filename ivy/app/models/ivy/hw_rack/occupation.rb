@@ -16,8 +16,8 @@ module Ivy
       def u_is_empty?(u, facing:nil, exclude:nil)
         raise InvalidRackU, u if u.to_i > u_height or u.to_i < 1
 
-        relevant_chassis = chassis.occupying_rack_u.where.not("rack_start_u > ?", u).where.not("rack_end_u < ?", u)
-        relevant_chassis.none? { |c| c.occupy_u?(u, facing: facing, exclude: exclude) }
+        relevant_locations = locations.occupying_rack_u.where.not("start_u > ?", u).where.not("end_u < ?", u)
+        relevant_locations.none? { |l| l.occupy_u?(u, facing: facing, exclude: exclude) }
       end
 
       def empty?
@@ -35,10 +35,12 @@ module Ivy
       # Half empty u will be included iff they are empty in the given facing.
       def highest_empty_u(facing = nil)
         if facing.nil?
-          return (chassis.select{|ch| ch.type != 'ZeroURackChassis'}.map(&:rack_end_u).compact.sort.last || 0)
+          # XXX Do we need to add one and check if we're above the rack?
+          locations.reject(&:zero_u?).map(&:end_u).compact.sort.last || 0
         else
-          height = (u_height.nil? || u_height.blank?) ? 1 : u_height
-          return first_empty_u( ( 1..height ).to_a.reverse, facing)
+          raise NotImplementedError
+          # height = (u_height.nil? || u_height.blank?) ? 1 : u_height
+          # first_empty_u( ( 1..height ).to_a.reverse, facing)
         end
       end
 

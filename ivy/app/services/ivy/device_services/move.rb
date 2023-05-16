@@ -2,18 +2,14 @@
 #
 # Note that this doesn't save the device/chassis.  Currently all callers do
 # that afterwards, if that changes we may want to reconsider.
-#
-# Currently, this operates on the chassis, but that is only because the domain
-# model still has legacy aspects to it.
 module Ivy
   module DeviceServices
     class Move
-      def self.call(chassis, params, user)
-        chassis = chassis.chassis if chassis.is_a?(Ivy::Device)
-        chassis.update_position(params)
-        if chassis.rack_id_changed?
-          # Ensure that we're authorized to move the destination rack.
-          user.ability.authorize!(:update, chassis.rack)
+      def self.call(location, params, user)
+        location.update_position(params)
+        if location.rack_id_changed?
+          # Ensure that we're authorized to move to the destination rack.
+          user.ability.authorize!(:update, location.rack)
         end
       end
     end

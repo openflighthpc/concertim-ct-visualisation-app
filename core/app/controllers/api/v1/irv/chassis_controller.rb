@@ -16,9 +16,9 @@ class Api::V1::Irv::ChassisController < Api::V1::Irv::BaseController
       return
     end
 
-    location_params = params.permit(%w[rack_id rack_start_u facing type])
-    Ivy::DeviceServices::Move.call(@chassis, location_params, current_user)
-    render json: {success: @chassis.save}
+    location_params = params.permit(%w[rack_id start_u facing type])
+    Ivy::DeviceServices::Move.call(@chassis.location, location_params, current_user)
+    render json: {success: @chassis.location.save}
   end
 
   private

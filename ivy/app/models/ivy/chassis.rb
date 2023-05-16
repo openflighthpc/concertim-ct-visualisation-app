@@ -9,52 +9,15 @@ module Ivy
 
     #######################
     #
-    # Constants
-    #
-    #######################
-
-    # lr-tb -> left to right, top to bottom.
-    VALID_POPULATION_ORDERS = %w( lr-tb lr-bt rl-tb rl-bt tb-lr bt-lr tb-rl bt-rl )
-
-
-    #######################
-    #
     # Associations
     #
     #######################
 
-    # The `rack` assocation needs to be `optional: true`.  The assocation is
-    # inherited by `NonRackChassis` which obviously doesn't have a rack.  If
-    # `optional: true` is not set, a `NonRackChassis` would never be valid.
-    # Unfortunately, it isn't possible to set this association on the
-    # subclasses with appropriate `optional` settings as it is used in `has_one
-    # through:` relationship in `Device`.
-    #
-    # This mimics the behaviour that this association had in new-legacy where
-    # `belongs_to` associations where optional by default.
-    #
-    # A better solution may be available, but I haven't found it.
-    belongs_to :rack, :class_name => "Ivy::HwRack", optional: true
-
-    #
-    # Simple chassis relationship (one of everything)
-    #
-    has_one :chassis_row, ->{ order(:row_number) },
-      class_name: 'Ivy::ChassisRow',
-      dependent: :destroy,
-      foreign_key: :base_chassis_id
-    has_one :slot,   through: :chassis_row
-    has_one :device, through: :slot
-
-    #
-    # Non-simple chassis relationship (multiple chassis_rows, muptiple slots, multiple devices)
-    #
-    has_many :chassis_rows, ->{ order(:row_number) },
-      class_name: 'Ivy::ChassisRow',
-      :dependent => :destroy,
-      :foreign_key => :base_chassis_id
-    has_many :slots,   :through => :chassis_rows, source: :slot
-    has_many :devices, :through => :slots
+    belongs_to :location
+    has_one :rack, through: :location
+    has_one :device,
+      foreign_key: :base_chassis_id,
+      dependent: :destroy
 
     #######################
     #
@@ -68,24 +31,13 @@ module Ivy
     #######################
     
     validates :name, presence: true, uniqueness: true
-    validates :slot_population_order,
-      inclusion: { in: VALID_POPULATION_ORDERS, permitted: VALID_POPULATION_ORDERS },
-      allow_blank: true
-
-    # These are only relevant if the chassis is in a rack.
-    validates :u_height, numericality: { only_integer: true, greater_than: 0 }, if: :in_rack?
-    validates :rack_start_u, :rack_end_u, numericality: { only_integer: true, greater_than: 0 } , allow_blank: true, if: :in_rack? 
-    validates :u_depth, numericality: { only_integer: true, greater_than: 0 }, if: :in_rack?
-    validates :facing, inclusion: { in: %w( b f ), permitted: %w( b f ), message: "must be either 'b' or 'f'" }, if: :in_rack?
-
-    # Rack ID is not relevant for nonrack chassis.
-    validates :rack_id, numericality: { only_integer: true }, unless: :nonrack?
-    validates :rack, presence: true, unless: :nonrack?
+    validates :location_id,
+      numericality: { only_integer: true }
+    validates :location,
+      presence: true
 
     # Custom Validations
     validate :name_is_unique_within_device_scope
-    validate :start_u_is_valid, if: :in_rack?
-    validate :target_u_is_empty, if: :in_rack?
     
 
     ####################################
@@ -97,14 +49,11 @@ module Ivy
     delegate :simple?, :complex?,
       to: :template, allow_nil: true
 
+    delegate :u_depth, :u_height, :facing, :occupy_u?, :in_rack?, :has_rack?, :zero_u?, :nonrack?, :position,
+      to: :location, allow_nil: true
 
-    ####################################
-    #
-    # Hooks 
-    #
-    ####################################
-
-    before_validation :calculate_rack_end_u
+    delegate :start_u, :end_u,
+      to: :location, allow_nil: true, prefix: :rack
 
 
     #######################
@@ -120,13 +69,7 @@ module Ivy
           .where("templates.rackable = ?", 1)
       }
     scope :dcrvshowable, -> { where("rack_id is null and show_in_dcrv = true") }
-    scope :for_devices, ->(device_ids) {
-      joins(:chassis_rows => {:slots => :device}).where(:devices => {:id => device_ids})
-    }
-    scope :for_tagged_devices, ->(device_ids) { 
-      joins(:device).where(:devices => {:id => device_ids})
-    }
-    scope :occupying_rack_u, ->{ where(type: :RackChassis) }
+    scope :occupying_rack_u, ->{ where(location: Ivy::Location.occupying_rack_u) }
 
     #######################
     #
@@ -135,7 +78,6 @@ module Ivy
     #######################
 
     def set_defaults
-      self.slot_population_order ||= 'lr-bt'
       self.name = assign_name if self.name.blank?
     end
 
@@ -146,104 +88,8 @@ module Ivy
     #
     #######################
 
-    def calculate_rack_end_u
-      case type
-      when "RackChassis"
-        self.rack_end_u = rack_start_u.nil? ? nil : rack_start_u + ( u_height || 1 ) - 1
-      else 
-        self.rack_end_u = rack_start_u
-      end
-    end
-
-    # has_rack? returns true if the chassis has a rack.  Non-rack chassis do
-    # not have a rack, others should.
-    def has_rack?
-      !rack.nil?
-    end
-
-    def zero_u?
-      kind_of?(Ivy::Chassis::ZeroURackChassis) || type == "ZeroURackChassis"
-    end
- 
-    def nonrack?
-      kind_of?(Ivy::Chassis::NonRackChassis) || type == "NonRackChassis"
-    end
-
-    #
-    # in_rack? returns true if the chassis is *in* a rack, i.e., it occupies a
-    # rack U.  Non-rack chassis and zero-u chassis do not.
-    def in_rack?
-      has_rack? && !zero_u?
-    end
-
-    #
-    # position returns the position of a zero-u chassis;  one of `:t`, `:m`,
-    # `:b` for top, middle or bottom.
-    #
-    def position 
-      return nil unless has_rack? && zero_u?
-
-      case rack_start_u
-      when 1
-        :b
-      when rack.u_height
-        :t
-      else 
-        :m
-      end
-    end
-
     def assign_name
       get_default_name
-      # # If chassis is complex, try increment the name of the previous complex chassis
-      # if !simple? 
-      #   prev_chassis = Ivy::Chassis.order("id desc").select{|ch| !ch.simple?}.first
-      #   if !prev_chassis.nil?
-      #     new_name = prev_chassis.name.sub(/\d+$/) do |m|
-      #         sprintf("%0#{$&.length}d", $&.to_i + 1)
-      #     end
-      #   else
-      #     new_name = get_default_name
-      #   end
-      # else
-      #   new_name = get_default_name
-      # end
-      # new_name 
-    end
-
-    # occupy_u? returns true if the chassis occupies the given u on the given
-    # facing.
-    #
-    # If the chassis is full depth, it occupies both facings at that U,
-    # otherwise it only occupies the facing that it faces.
-    def occupy_u?(rack_u, facing:nil, exclude:nil)
-      return false if self.id == exclude
-      return false unless in_rack?
-
-      # If the chassis starts after the U or ends before it it doesn't occupy
-      # it.
-      return false if self.rack_start_u > rack_u
-      return false if self.rack_end_u < rack_u
-
-      # Otherwise the chassis occupies the U if it is full depth, or we don't
-      # care about the facing, or it matches the given facing.
-      if self.u_depth == self.rack.u_depth
-        true
-      elsif facing.nil?
-        true
-      elsif self.facing == facing
-        true
-      else
-        false
-      end
-    end
-
-    def update_position(params)
-      self.rack_id = params[:rack_id]
-      self.facing = params[:facing]
-      self.rack_start_u = params[:rack_start_u]
-      self.show_in_dcrv = params[:show_in_dcrv] unless params[:show_in_dcrv].nil?
-      self.type = params[:type] unless params[:type].nil?
     end
 
     # 
@@ -260,8 +106,8 @@ module Ivy
         false
       end
     end
-    
-     
+
+
     #############################
     #
     # Private Methods
@@ -293,25 +139,6 @@ module Ivy
       name.split("-").reject(&:blank?).join("-")
 
       name
-    end
-
-    def start_u_is_valid
-      if rack_start_u > rack.u_height || rack_start_u < 1
-        errors.add(:rack_start_u, 'is invalid')
-      end
-      if rack_end_u > rack.u_height
-        errors.add(:rack_end_u, 'is invalid')
-      end
-    end
-
-    def target_u_is_empty
-      is_full_depth = u_depth == rack.u_depth
-      facing = is_full_depth ? nil : self.facing
-      return if rack.u_is_empty?(rack_start_u, exclude: self.id, facing: facing)
-
-      errors.add(:rack_start_u, 'is occupied')
-    rescue Ivy::HwRack::Occupation::InvalidRackU
-      errors.add(:rack_start_u, 'is invalid')
     end
   end
 end

@@ -15,6 +15,7 @@ class Api::V1::Irv::DevicesController < Api::V1::Irv::BaseController
   # 
   # expects param :slot_id
   #
+  # XXX Can we remove this???
   def update_slot
     @device     = Ivy::Device.find(params[:id])
     new_slot    = Ivy::Slot.find(params[:slot_id])

@@ -9,8 +9,7 @@ module Ivy
   # following will be created directly by this class.
   #
   # * one chassis;
-  # * one chassis row;
-  # * one slot;
+  # * one location;
   # * one device;
   #
   # Other records may be created as a result of those being saved, for instance
@@ -32,9 +31,9 @@ module Ivy
     # +template+ is the Template instance that is being persisted.
     # +params+ are the params that have been gathered from the user, e.g.,
     # location and name.
-    def initialize(template, chassis_params, device_params, user)
+    def initialize(template, location_params, device_params, user)
       @template = template
-      @chassis_params = chassis_params
+      @location_params = location_params
       @device_params = device_params
       @user = user
     end
@@ -57,8 +56,7 @@ module Ivy
 
     private
 
-    # Build an object graph starting at Chassis and containing its rows, slots
-    # and device.
+    # Build an object graph starting at Chassis and containing its device and location.
     #
     # Ideally we would create the entire object graph in memory and then call
     # `@chassis.save!`.  Unfortunately, this doesn't work for us, as the
@@ -68,21 +66,23 @@ module Ivy
     # Chassis#slot/Chassis#slots.  If that relationship is ever simplified, we
     # should consider revisiting this and seeing if it can be simplified too.
     def create_object_graph
-      @chassis = Ivy::Chassis::RackChassis.create!(chassis_params)
-      row = @chassis.chassis_rows.create!
-      slot = row.slots.create!(chassis_row_location: 1)
-      device = slot.create_device!(@device_params)
+      @chassis = Ivy::Chassis::RackChassis.new(chassis_params)
+      location = @chassis.create_location!(location_params)
+      device = @chassis.create_device!(@device_params)
       Rails.logger.debug("Built object graph") {
-        {chassis: @chassis, row: row, slot: slot, device: device}
+        {chassis: @chassis, location: location, device: device}
       }
     end
 
-    def chassis_params
-      @chassis_params.merge(
-        template: @template,
+    def location_params
+      @location_params.merge(
         u_height: @template.height,
         u_depth: @template.depth,
       )
+    end
+
+    def chassis_params
+      {template: @template}
     end
   end
 end

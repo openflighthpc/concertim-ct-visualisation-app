@@ -31,8 +31,8 @@ class Ability
     can :read, Ivy::Irv
 
     can :read, Ivy::Template
-    can :manage, Ivy::Chassis, rack: {user: user}
-    can :manage, Ivy::Device, slot: {chassis_row: {chassis: {rack: {user: user}}}}
+    can :manage, Ivy::Chassis, location: {rack: {user: user}}
+    can :manage, Ivy::Device, chassis: {location: {rack: {user: user}}}
     can :manage, Ivy::HwRack, user: user
     can :manage, Meca::RackviewPreset, user: user
 
