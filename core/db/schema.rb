@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_15_175430) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_16_123303) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -96,7 +96,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_15_175430) do
     t.integer "height", null: false
     t.integer "depth", null: false
     t.integer "version", default: 1, null: false
-    t.string "chassis_type", limit: 255, null: false
+    t.string "template_type", limit: 255, null: false
     t.integer "rackable", default: 1, null: false
     t.boolean "simple", default: true, null: false
     t.string "description", limit: 255

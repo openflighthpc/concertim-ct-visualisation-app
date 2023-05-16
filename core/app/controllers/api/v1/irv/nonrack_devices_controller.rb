@@ -85,7 +85,6 @@ class Api::V1::Irv::NonrackDevicesController < Api::V1::Irv::BaseController
       height: template.height,
       depth: template.depth,
       simple: template.simple,
-      deviceType: template.chassis_type,
       model: template.model,
       rackable: template.rackable,
       padding: {

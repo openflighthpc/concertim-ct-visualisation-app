@@ -33,9 +33,9 @@ module Ivy
     validates :version,
       presence: true,
       numericality: { only_integer: true, greater_than: 0 }
-    validates :chassis_type,
+    validates :template_type,
       presence: true,
-      inclusion: { in: %w[Server HwRack] }
+      inclusion: { in: %w[Device HwRack] }
     validates :rackable,
       presence: true
     validates :simple,
@@ -66,24 +66,24 @@ module Ivy
     validates :rows,
       numericality: { only_integer: true },
       inclusion: { in: [1] },
-      unless: ->{ chassis_type == 'HwRack' }
+      unless: ->{ template_type == 'HwRack' }
     validates :columns,
       numericality: { only_integer: true },
       inclusion: { in: [1] },
-      unless: ->{ chassis_type == 'HwRack' }
+      unless: ->{ template_type == 'HwRack' }
     validates :rackable,
       inclusion: { in: ['rackable'] },
-      unless: ->{ chassis_type == 'HwRack' }
+      unless: ->{ template_type == 'HwRack' }
 
     validates :rows,
       absence: true,
-      if: ->{ chassis_type == 'HwRack' }
+      if: ->{ template_type == 'HwRack' }
     validates :columns,
       absence: true,
-      if: ->{ chassis_type == 'HwRack' }
+      if: ->{ template_type == 'HwRack' }
     validates :rackable,
       inclusion: { in: ['nonrackable'] },
-      if: ->{ chassis_type == 'HwRack' }
+      if: ->{ template_type == 'HwRack' }
 
 
     ####################################
