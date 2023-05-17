@@ -86,16 +86,6 @@ module Ivy
       if: ->{ template_type == 'HwRack' }
 
 
-    ####################################
-    #
-    # Scopes
-    #
-    ####################################
-
-    # Templates that can be located in a rack.
-    scope :rackables, -> { where(rackable: 'rackable') }
-
-
     #######################
     #
     # Instance Methods

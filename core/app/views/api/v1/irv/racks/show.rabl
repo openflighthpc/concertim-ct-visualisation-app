@@ -1,28 +1,31 @@
 object @rack
 attributes :id, :name
 attribute :u_height => :uHeight
-child(:rack_chassis) do 
-  attribute :id, :facing
-  attribute :row_count => :rows
-  attribute :slot_count => :slots
-  attribute :column_count => :columns
+
+node(:template) do |rack|
+  partial('api/v1/irv/racks/template', object: rack.template)
+end
+
+child(:chassis, root: 'Chassis') do |foo|
+  attribute :id, :name
+  node(:type) { "RackChassis" }
+  attribute :facing
+  node(:rows) { 1 }
+  node(:slots) { 1 }
+  node(:cols) { 1 }
   attribute :rack_start_u => :uStart
   attribute :rack_end_u => :uEnd
-  attribute :meta_data => :template
-  node(:machines) do |chassis|
-    [].tap do |el|
-      chassis.chassis_rows.slots.each do |slot|
-        if slot.device.nil?
-          el << {}
-        else
-          el << { 
-           :id => slot.device[:id],
-           :name => slot.device.name,
-           :row => slot.chassis_row.row_number,
-           :col => slot.chassis_row_location,
-          }
-        end
-      end    
-    end
+
+  node(:template) do |chassis|
+    partial('api/v1/irv/racks/template', object: chassis.template)
+  end
+
+  node(:Slots) do |chassis|
+    {
+      id: chassis.device.id,
+      col: 1,
+      row: 1,
+      Machine: {id: chassis.device.id, name: chassis.device.name},
+    }
   end
 end
