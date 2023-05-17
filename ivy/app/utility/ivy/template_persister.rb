@@ -56,18 +56,15 @@ module Ivy
 
     private
 
-    # Build an object graph starting at Chassis and containing its device and location.
+    # Build an object graph starting at Location and containing its Chassis and
+    # Device.
     #
     # Ideally we would create the entire object graph in memory and then call
     # `@chassis.save!`.  Unfortunately, this doesn't work for us, as the
-    # foreign keys are not propagated down the graph.  This might be something
-    # that ActiveRecord doesn't support or it might be due to the way that we
-    # have multiple associations using the same foreign keys, e.g.,
-    # Chassis#slot/Chassis#slots.  If that relationship is ever simplified, we
-    # should consider revisiting this and seeing if it can be simplified too.
+    # foreign keys are not propagated down the graph FSR.
     def create_object_graph
-      @chassis = Ivy::Chassis.new(chassis_params)
-      location = @chassis.create_location!(location_params)
+      location = Ivy::Location.create!(location_params)
+      @chassis = location.create_chassis!(chassis_params)
       device = @chassis.create_device!(@device_params)
       Rails.logger.debug("Built object graph") {
         {chassis: @chassis, location: location, device: device}
