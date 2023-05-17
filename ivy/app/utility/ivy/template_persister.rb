@@ -66,7 +66,7 @@ module Ivy
     # Chassis#slot/Chassis#slots.  If that relationship is ever simplified, we
     # should consider revisiting this and seeing if it can be simplified too.
     def create_object_graph
-      @chassis = Ivy::Chassis::RackChassis.new(chassis_params)
+      @chassis = Ivy::Chassis.new(chassis_params)
       location = @chassis.create_location!(location_params)
       device = @chassis.create_device!(@device_params)
       Rails.logger.debug("Built object graph") {

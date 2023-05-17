@@ -43,8 +43,6 @@ module Ivy
     #
     #############################
 
-    # XXX Needs rethinking.
-    # scope :occupying_rack_u, ->{ joins(:rack).where(base_chassis: {type: :RackChassis}) }
     scope :occupying_rack_u, ->{ joins(:chassis).where(base_chassis: {location: Ivy::Location.occupying_rack_u}) }
 
     ####################################

@@ -69,7 +69,7 @@ class Api::V1::Irv::NonrackDevicesController < Api::V1::Irv::BaseController
       rows: chassis.template.rows,
       slots: 1,
       template: template_to_hash(chassis.template),
-      type: chassis.type
+      type: "RackChassis"
     }
   end
 

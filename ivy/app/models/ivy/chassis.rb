@@ -23,11 +23,6 @@ module Ivy
     #
     # Validations
     # 
-    # All validation is done here for all subclasses of chassis (using the
-    # "unless" option, as you can see in the validations). This is because
-    # chassis is the only STI model we have that keeps "mutating" between types
-    # (a NonRackChassis becomes a RackChassis when it's moved).
-    #
     #######################
     
     validates :name, presence: true, uniqueness: true

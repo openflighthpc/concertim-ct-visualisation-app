@@ -10,7 +10,6 @@ module Ivy
     # 
     BESPOKE_TEXT_TYPES = {
       'RackChassis'         => 'Chassis',
-      'ZeroURackChassis'    => 'Zero-U rack chassis'
     }
 
 

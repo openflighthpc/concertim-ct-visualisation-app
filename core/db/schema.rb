@@ -24,8 +24,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_16_134217) do
 
   create_table "ivy.base_chassis", id: :bigint, default: -> { "nextval('base_chassis_id_seq'::regclass)" }, force: :cascade do |t|
     t.string "name", limit: 255, default: "", null: false
-    t.string "slot_population_order", limit: 8, default: "lr-bt", null: false
-    t.string "type", limit: 255, null: false
     t.integer "modified_timestamp", default: 0, null: false
     t.boolean "show_in_dcrv", default: false, null: false
     t.datetime "created_at", null: false

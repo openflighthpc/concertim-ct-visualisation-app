@@ -115,7 +115,7 @@ SELECT
                                       ))
                            FROM ( SELECT C.id,
 					 name,
-					 type,
+					 (select 'RackChassis') as type,
                                          L.facing,
                                          L.start_u,
                                          L.end_u,
@@ -125,7 +125,7 @@ SELECT
                                     FROM base_chassis C
                                     JOIN locations L ON L.id = C.location_id
                                    WHERE L.rack_id = R.id
-                                GROUP BY C.id, C.name, C.type, L.facing, L.start_u, L.end_u, C.template_id
+                                GROUP BY C.id, C.name, L.facing, L.start_u, L.end_u, C.template_id
                                 ) as C
                        )      
                 )
