@@ -5,6 +5,7 @@
 #
 module Ivy
   module DeviceServices
+    # XXX Can we remove this?
     class MoveBlade
 
       class MoveBladeError < StandardError;end

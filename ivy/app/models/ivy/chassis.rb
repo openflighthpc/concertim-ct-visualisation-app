@@ -13,7 +13,8 @@ module Ivy
     #
     #######################
 
-    belongs_to :location
+    belongs_to :location,
+      dependent: :destroy
     has_one :rack, through: :location
     has_one :device,
       foreign_key: :base_chassis_id,

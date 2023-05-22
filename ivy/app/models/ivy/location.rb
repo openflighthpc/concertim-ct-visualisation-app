@@ -2,7 +2,6 @@ module Ivy
   class Location < ApplicationRecord
     self.table_name = "locations"
 
-    # XXX Need this?
     include Ivy::Concerns::LiveUpdate::Location
 
     #######################
