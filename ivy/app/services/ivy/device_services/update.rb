@@ -18,15 +18,20 @@ module Ivy
         location = device.location
         device.update(device_params) 
 
-        if chassis
-          chassis.name = chassis.assign_name if chassis.name.blank?
+        # This is probably a hold over from legacy or new legacy.  Not sure
+        # that its still required.  In what circumstances could the chassis not
+        # have a name?
+        if chassis && chassis.name.blank?
+          chassis.name = chassis.assign_name
+          chassis.save
         end
+
         if location && !location_params.blank?
           Ivy::DeviceServices::Move.call(location, location_params, user)
           location.save
         end
 
-        return [device, chassis]
+        return [device, chassis, location]
       end
     end
   end
