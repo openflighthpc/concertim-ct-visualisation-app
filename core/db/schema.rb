@@ -22,6 +22,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_16_134217) do
 
   connection.schema_search_path = "public,uma,meca,ivy"
 
+  connection.execute "CREATE SEQUENCE ivy.base_chassis_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
+  connection.execute "CREATE SEQUENCE ivy.data_source_maps_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
+  connection.execute "CREATE SEQUENCE ivy.devices_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
+  connection.execute "CREATE SEQUENCE ivy.locations_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
+  connection.execute "CREATE SEQUENCE ivy.racks_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
+  connection.execute "CREATE SEQUENCE ivy.templates_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
+  connection.execute "CREATE SEQUENCE meca.rackview_presets_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
+  connection.execute "CREATE SEQUENCE uma.users_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
+
   create_table "ivy.base_chassis", id: :bigint, default: -> { "nextval('base_chassis_id_seq'::regclass)" }, force: :cascade do |t|
     t.string "name", limit: 255, default: "", null: false
     t.integer "modified_timestamp", default: 0, null: false

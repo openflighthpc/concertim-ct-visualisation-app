@@ -1,10 +1,10 @@
 class PopulateTemplates < ActiveRecord::Migration[7.0]
   class Template < ActiveRecord::Base
-    establish_connection :ivy
     enum rackable: { rackable: 1, zerouable: 2, nonrackable: 3 }
   end
 
   def up
+    Template.reset_column_information
     templates.each do |t|
       say "Creating template #{t[:name]}"
       chassis_type = (t[:chassis_type] || 'Server').to_s
