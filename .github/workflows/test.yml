@@ -1,0 +1,64 @@
+name: Run tests
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['docs/**']
+  pull_request:
+    branches: [main]
+    paths-ignore: ['docs/**']
+
+jobs:
+  test:
+    env:
+      RAILS_ENV: test
+      CONCERTIM_JWT_SECRET: "fake-but-ok"
+
+    name: Run tests
+    runs-on: ubuntu-latest
+    # container: ubuntu:latest
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: db_pass
+        ports: ["5432:5432"]
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - name: Install build dependencies
+        run: |
+          sudo apt-get -y install libpq-dev
+
+      - uses: actions/checkout@v1
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0.2'
+          bundler-cache: true
+          # Increment to force re-installation of the gems.
+          cache-version: 1
+
+      - name: Setup database and create credentials
+        env:
+          DB_DATABASE: ct-vis-test
+          DB_HOST: localhost
+          DB_USER: postgres
+          DB_PASS: db_pass
+        run: |
+          bin/rails db:create
+          bin/rails db:schema:load
+          EDITOR=cat ./bin/rails credentials:edit
+          ./bin/rails encryption:generate
+
+      - name: Test with rails spec
+        env:
+          DB_DATABASE: ct-vis-test
+          DB_HOST: localhost
+          DB_USER: postgres
+          DB_PASS: db_pass
+        # FSR running ./bin/bundle exec rspec does not work; it complains about
+        # incompatible library versions.  However, ./bin/rails spec works just
+        # fine.  :shrug:.
+        run:
+          ./bin/rails spec
