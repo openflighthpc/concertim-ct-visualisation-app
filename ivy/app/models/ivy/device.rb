@@ -12,43 +12,13 @@ module Ivy
     #
     ####################################
 
-    belongs_to :slot, optional: true
-    has_one :chassis_row, through: :slot, class_name: 'Ivy::ChassisRow'
     has_one :data_source_map, dependent: :destroy 
 
-    #
-    # A device can have a relationship with a chassis in one of two ways:
-    #
-    # * A direct relationship, where base_chassis_id on devices joins straight
-    #   to the base_chassis table
-    # * An indirect relationship, through slots => chassis_rows => base_chassis
-    #
-    # A direct relationship indicates that the device is a "tagged" device -
-    # unfortunately doing things this way means the relationship between a
-    # device and a chassis can't be implemented in a simple way. Instead, we
-    # have two relationships (one for each of the two bullet points above) and
-    # a convinience method within the device class called "chassis" that works
-    # out which to call.
-    #
-    belongs_to :direct_chassis, class_name:  "Ivy::Chassis", foreign_key: :base_chassis_id, optional: true
-    has_one :indirect_chassis, through: :chassis_row, class_name: "Ivy::Chassis"
+    belongs_to :chassis, foreign_key: :base_chassis_id
+    has_one :rack, through: :chassis, source: :rack
+    has_one :location, through: :chassis, source: :location
 
-    #
-    # similar technique to chassis has been applied to the rack relationship, as this is
-    # based on the rack relationship.
-    #
-    has_one :direct_rack, through: :direct_chassis, source: :rack
-    has_one :indirect_rack, through: :indirect_chassis, source: :rack
-
-    # We probably don't need this association.  It's currently used by the `blank` scope.
-    has_one :template, through: :indirect_chassis, source: :template
-
-    #
-    # As per above, we now have direct and indirect "templates" through the
-    # respective chassis.
-    # 
-    has_one :indirect_template, through: :indirect_chassis, source: :template
-    has_one :direct_template, through: :direct_chassis, source: :template
+    has_one :template, through: :chassis, source: :template
 
 
     ###########################
@@ -64,8 +34,6 @@ module Ivy
         with: /\A[a-zA-Z0-9\-]*\Z/,
         message: "can contain only alphanumeric characters and hyphens."
       }
-    validates :slot_id, uniqueness: true, allow_nil: true
-    validates :slot_id, presence: true, unless: ->{ tagged? }
     validate :name_validator
     validate :device_limit, if: :new_record? 
 
@@ -75,10 +43,7 @@ module Ivy
     #
     #############################
 
-    scope :tagged,           ->{ where("devices.tagged = ?", true) } 
-    scope :untagged,         ->{ where("devices.tagged != ?", true) } 
-    scope :blank,            ->{ joins(:template).where("templates.model LIKE '%Blank Panel%'") }
-    scope :occupying_rack_u, ->{ joins(:indirect_rack).where(base_chassis: {type: :RackChassis}) }
+    scope :occupying_rack_u, ->{ joins(:chassis).where(base_chassis: {location: Ivy::Location.occupying_rack_u}) }
 
     ####################################
     #
@@ -105,78 +70,10 @@ module Ivy
 
     ####################################
     #
-    # Class Methods
-    #
-    ####################################
-
-    def self.types
-      @types ||= [Ivy::Device]
-    end
-
-    # def self.inherited(sub_class)
-    #   Ivy::Slot.create_association_for(sub_class)
-    #   super
-    # end
-
-    ####################################
-    #
     # Instance Methods
     #
     ####################################
     
-    # 
-    # has_direct_chassis
-    #
-    # Some devices (tagged ones) have a direct relationship with their
-    # chassis. This is indicated by the "base_chassis_id" column on the 
-    # device table being present.
-    #
-    def has_direct_chassis?
-      !base_chassis_id.nil?
-    end
-
-    #
-    # chassis
-    # 
-    # Infers whether this device has a direct or indirect association
-    # with a chassis, and returns the appropriate association. This
-    # method should be used *Sparingly*. Rails cannot bestow all of 
-    # its nifty association powers to you if you're not referring to
-    # associations directly.
-    #
-    def chassis
-      if has_direct_chassis?
-        direct_chassis
-      else
-        indirect_chassis
-      end
-    end
-
-    #
-    # for tagged devices, because they don't have their own template
-    #
-    def template
-      if has_direct_chassis?
-        direct_template
-      else
-        indirect_template
-      end
-    end
-
-    #
-    # rack
-    #
-    # As with chassis, infers the rack of this device based on whether
-    # it has a direct or indirect chassis.
-    #
-    def rack
-      if has_direct_chassis?
-        direct_rack
-      else
-        indirect_rack
-      end
-    end
-
     def metrics
       interchange_data && interchange_data[:metrics] || {}
     end
@@ -189,8 +86,6 @@ module Ivy
       data.merge!(
         name: name,
         id: id,
-        type: type,
-        tagged: tagged,
         hidden: false,
         useful: model.nil? || model != 'Blank Panel',
         map_to_host: data_source_map.nil? ? nil : data_source_map.map_to_host,
@@ -214,59 +109,36 @@ module Ivy
       if data_source_map.nil?
         build_data_source_map
         data_source_map.save
-      elsif data_source_map.map_to_host != data_source_map.calculate_map_to_host && device_should_have_dsm_updated
+      elsif data_source_map.map_to_host != data_source_map.calculate_map_to_host
         data_source_map.update_attribute(:map_to_host, data_source_map.calculate_map_to_host)
-      end
-    end
-
-    def device_should_have_dsm_updated
-      if tagged?
-        false
-      else
-        true
       end
     end
 
     #
     # name_validator
     #
-    # Note: Although tagged devices will also validate, we need to supress the error
-    # message for them in order to preserve their anonimity from users. 
-    #
     def name_validator
       return unless self.name
 
       d = Ivy::Device.where(["lower(name) LIKE ?", self.name.downcase]).first
       if(!d.nil? && d.id != self.id)
-        errors.add(:name, "'#{d.name}' has already been taken by a #{Ivy::DevicePresenter.new(d).device_type}") if !tagged?
+        errors.add(:name, "'#{d.name}' has already been taken by a #{Ivy::DevicePresenter.new(d).device_type}")
       end    
 
-      # Do not allow the creation of non-tagged devices that have the 
-      # same name as a chassis. Tagged devices must be excluded from this
-      # check because tagged devices *must* have the same name as their
-      # associated chassis.
-      unless self.tagged
-        if Chassis.pluck(:name).include?(self.name)
-          errors.add(:name, "there is already a chassis with that name")
-        end
+      # Do not allow the creation of devices that have the same name as a
+      # chassis.
+      if Chassis.pluck(:name).include?(self.name)
+        errors.add(:name, "there is already a chassis with that name")
       end
     end
 
     def device_limit 
-      return if tagged
       limit_rads = YAML.load_file("/opt/concertim/licence-limits.yml")['device_limit'] rescue nil
       limit_nrads = YAML.load_file("/opt/concertim/licence-limits.yml")['nrad_limit'] rescue nil
       return unless limit_rads && limit_nrads
-      current = Ivy::Device.all.size - Ivy::Device.blank.size - Ivy::Device::RackTaggedDevice.all.size
+      current = Ivy::Device.all.size
       return if current < (limit_rads + limit_nrads)
       self.errors.add(:base, "The device limit of #{limit_rads+limit_nrads} has been exceeded")
     end
   end
-end
-
-# XXX Consider replacing this with an inherited hook.
-Dir["#{File.dirname(__FILE__)}/device/**.rb"].each do |d|
-  file_name = File.basename(d, '.rb')
-  require "ivy/device/#{file_name}"
-  Ivy::Device.types << "Ivy::Device::#{file_name.classify}".constantize
 end

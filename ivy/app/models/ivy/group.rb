@@ -11,7 +11,7 @@ module Ivy
     public
 
     def group_devices
-      Ivy::Device.where(:id => member_ids, :tagged => false)
+      Ivy::Device.where(id: member_ids)
     end
 
     # 
@@ -20,7 +20,7 @@ module Ivy
     # Returns complex device chassis and non-rack device chassis
     #
     def group_chassis
-      chassis = Ivy::Chassis.for_tagged_devices(member_ids) + Ivy::Chassis::NonRackChassis.for_devices(member_ids)
+      raise NotImplementedError, "complex chassis and non-rack device chassis are no longer implemented"
     end
 
     def member_ids

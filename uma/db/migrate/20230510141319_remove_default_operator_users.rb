@@ -2,13 +2,11 @@ class RemoveDefaultOperatorUsers < ActiveRecord::Migration[7.0]
   module Ivy
     class HwRack < ActiveRecord::Base
       self.table_name = "racks"
-      establish_connection :ivy
     end
   end
 
   module Uma
     class User < ActiveRecord::Base
-      establish_connection :uma
       devise :database_authenticatable
 
       has_many :racks, class_name: 'Ivy::HwRack'
@@ -16,11 +14,15 @@ class RemoveDefaultOperatorUsers < ActiveRecord::Migration[7.0]
   end
 
   def up
-    remove_used_user(Uma::User.find_by(login: 'operator_one'))
-    remove_used_user(Uma::User.find_by(login: 'operator_two'))
+    execute 'SET search_path TO ivy,uma,public'
+    Uma::User.reset_column_information
+    remove_unused_user(Uma::User.find_by(login: 'operator_one'))
+    remove_unused_user(Uma::User.find_by(login: 'operator_two'))
   end
 
   def down
+    execute 'SET search_path TO ivy,uma,public'
+    Uma::User.reset_column_information
     Uma::User.create!(
       login: 'operator_one',
       firstname: 'Operator',
@@ -43,7 +45,7 @@ class RemoveDefaultOperatorUsers < ActiveRecord::Migration[7.0]
 
   private
 
-  def remove_used_user(u)
+  def remove_unused_user(u)
     if u.racks.empty?
       say "Removing user:#{u.id}(#{u.login} #{u.name})"
       u.destroy!

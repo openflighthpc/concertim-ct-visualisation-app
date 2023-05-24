@@ -41,6 +41,25 @@ module Ivy
         include HasModifiedTimestamp
       end
 
+      module Location
+        extend ActiveSupport::Concern
+        # include HasModifiedTimestamp
+
+        included do
+          # We don't update after create as we assume that either chassis or
+          # device will do so.
+          after_update :update_rack_modified_timestamp
+        end
+
+        # Update the relevant racks when moving location.
+        def update_rack_modified_timestamp
+          current_rack = rack
+          previous_rack = rack_id_previously_changed? ? Ivy::HwRack.find(rack_id_previously_was) : nil
+          current_rack.update_modified_timestamp unless current_rack.nil?
+          previous_rack.update_modified_timestamp unless previous_rack.nil?
+        end
+      end
+
       module Chassis
         extend ActiveSupport::Concern
         include HasModifiedTimestamp
@@ -51,15 +70,13 @@ module Ivy
           # unnecessary work and (2) potentially having a partially created
           # simple chassis appear on the rack.
           after_create :update_rack_modified_timestamp, if: :complex?
-          after_update :update_rack_modified_timestamp
         end
 
         # Update the relevant racks when moving location.
         def update_rack_modified_timestamp
-          current_rack = rack
-          previous_rack = rack_id_previously_changed? ? Ivy::HwRack.find(rack_id_previously_was) : nil
-          current_rack.update_modified_timestamp unless current_rack.nil?
-          previous_rack.update_modified_timestamp unless previous_rack.nil?
+          return if location.nil?
+          return if location.rack.nil?
+          location.rack.update_modified_timestamp
         end
 
         # Update either this chassis modified_timestamp or this chassis's rack's
@@ -74,22 +91,12 @@ module Ivy
 
       end
 
-      module Slot
-        extend ActiveSupport::Concern
-
-        included do
-          # FSR legacy allowed a nil chassis here.  Why? Do we still need it?
-          delegate :update_rack_modified_timestamp,
-            to: :chassis, allow_nil: true
-        end
-      end
-
       module Device
         extend ActiveSupport::Concern
 
         included do
           delegate :update_modified_timestamp,
-            to: :indirect_chassis, allow_nil: true
+            to: :chassis, allow_nil: true
 
           # Maintain modification timestamps for self and associated chassis.
           after_save :update_modified_timestamp, :update_rack_modified_timestamp
@@ -108,14 +115,14 @@ module Ivy
         # blade enclosure to another) both the current and previous parents are
         # updated.
         def update_rack_modified_timestamp
-          current_slot = slot
-          previous_slot = slot_id_previously_changed? ? Ivy::Slot.find(slot_id_previously_was) : nil
+          current_chassis = chassis
+          previous_chassis = base_chassis_id_previously_changed? ? Ivy::Chassis.find(base_chassis_id_previously_was) : nil
 
-          if current_slot.present? && current_slot.chassis.present?
-            current_slot.chassis.update_modified_timestamp_of_chassis_or_rack
+          if current_chassis.present?
+            current_chassis.update_modified_timestamp_of_chassis_or_rack
           end
-          if previous_slot.present? && previous_slot.chassis.present?
-            previous_slot.chassis.update_modified_timestamp_of_chassis_or_rack
+          if previous_chassis.present?
+            previous_chassis.update_modified_timestamp_of_chassis_or_rack
           end
         end
       end

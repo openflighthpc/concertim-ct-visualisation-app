@@ -3,9 +3,6 @@ module Ivy
 
     self.table_name = "racks"
 
-    def self.tagged_device_type; 'RackTaggedDevice'; end
-
-    include Ivy::Concerns::Taggable
     include Ivy::Concerns::Templateable
     include Ivy::HwRack::Occupation
     include Ivy::Concerns::LiveUpdate::HwRack
@@ -25,26 +22,14 @@ module Ivy
     #
     # Associations
     #
-    # Re: chassis relationship (it's done differently here to legacy due to
-    # chassis object heirachy having changed). See notes on "rack_chassis"
-    # method below.
-    #
     ############################
 
-    has_many :chassis, ->{ order(rack_start_u: :desc) },
-      class_name: 'Ivy::Chassis',
+    has_many :locations, ->{ order(start_u: :desc) },
       foreign_key: :rack_id,
       dependent: :destroy
 
-    has_many :zero_u_rack_chassis, ->{ order(rack_start_u: :desc) },
-      class_name: "Ivy::Chassis::ZeroURackChassis",
-      foreign_key: :rack_id,
-      dependent: :destroy
-
-    has_many :chassis_rows,           through: :chassis,      source: :chassis_rows
-    has_many :slots,                  through: :chassis_rows, source: :slots
-    has_many :devices,                through: :slots
-    has_many :chassis_tagged_devices, through: :chassis
+    has_many :chassis, through: :locations
+    has_many :devices, through: :chassis
 
     has_one :group,
       class_name: "Ivy::Group::RuleBasedGroup",
@@ -77,7 +62,7 @@ module Ivy
     #
     def u_height_greater_than_highest_occupied_u?
       if !(u_height >= highest_empty_u)
-        self.errors.add(:u_height, "must be greater than the highest occupied slot (minimum is therefore #{highest_empty_u}).")
+        self.errors.add(:u_height, "must be greater than the highest occupied U (minimum is therefore #{highest_empty_u}).")
       end
     end
 
@@ -130,19 +115,6 @@ module Ivy
 
     def self.get_canvas_config
       JSON.parse(File.read(Engine.root.join("app/views/ivy/racks/_configuration.json")))
-    end
-
-
-    ############################
-    #
-    # Private Instance Methods
-    #
-    ############################
-
-    private
-
-    def device_joins
-      {:slot => {:chassis_row => :chassis}}
     end
   end
 end

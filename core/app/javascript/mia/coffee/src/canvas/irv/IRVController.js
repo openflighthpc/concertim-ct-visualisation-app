@@ -674,14 +674,6 @@ class IRVController extends CanvasController {
     this.apiFilter = { device_ids: [], tagged_devices_ids: []};
     const groups = ['chassis', 'devices'];
 
-    for (id in device_lookup.chassis) {
-      var oneChassis = device_lookup.chassis[id];
-      if (!this.model.showHoldingArea() && (oneChassis.instances[0] != null ? oneChassis.instances[0].placedInHoldingArea() : undefined)) { continue; }
-      if (oneChassis.template.simple === false) {
-        this.apiFilter.tagged_devices_ids.push(oneChassis.tagged_device_id);
-      }
-    }
-
     for (id in device_lookup.devices) {
       var oneDevice = device_lookup.devices[id];
       if (!this.model.showHoldingArea() && (oneDevice.instances[0] != null ? oneDevice.instances[0].placedInHoldingArea() : undefined)) { continue; }
@@ -689,16 +681,12 @@ class IRVController extends CanvasController {
     }
 
     for (var oneC of Array.from(this.model.dcrvShowableNonRackChassis())) {
-      if (oneC.simple !== true) {
-        this.apiFilter.tagged_devices_ids.push(oneC.tagged_device_id);
-      }
       for (var oneS of Array.from(oneC.Slots)) {
         if (oneS.Machine != null) { this.apiFilter.device_ids.push(oneS.Machine.id); }
       }
     }
 
-    this.apiFilter.tagged_devices_ids = JSON.stringify(this.apiFilter.tagged_devices_ids);
-    return this.apiFilter.device_ids  = JSON.stringify(this.apiFilter.device_ids);
+    this.apiFilter.device_ids  = JSON.stringify(this.apiFilter.device_ids);
   }
 
 

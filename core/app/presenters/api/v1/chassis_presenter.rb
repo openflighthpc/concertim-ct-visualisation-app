@@ -3,14 +3,6 @@
 #
 # Chassis Presenter for API
 #
-# There is some logic in here that tries to present a chassis as if it were a device if
-# the chassis is "simple" - this is a quirk of our system. A non-simple chassis is one 
-# which has multiple devices in it (like a blade centre). A "Simple" chassis is considered
-# at a DB level to be a single device in a single slot of a chassis. 
-#
-# When presented, however, these simple chassis need to look like devices in things like
-# titles.
-#
 module Api::V1
   class ChassisPresenter < Emma::Presenter
 

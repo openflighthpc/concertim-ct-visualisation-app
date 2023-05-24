@@ -13,19 +13,25 @@
 module Ivy
   module DeviceServices
     class Update
-      def self.call(device, device_params, chassis_params, user)
-        chassis = device.indirect_chassis
+      def self.call(device, device_params, location_params, user)
+        chassis = device.chassis
+        location = device.location
         device.update(device_params) 
 
-        if chassis
-          chassis.name = chassis.assign_name if chassis.name.blank?
-          unless chassis_params.blank?
-            Ivy::DeviceServices::Move.call(chassis, chassis_params, user)
-          end
+        # This is probably a hold over from legacy or new legacy.  Not sure
+        # that its still required.  In what circumstances could the chassis not
+        # have a name?
+        if chassis && chassis.name.blank?
+          chassis.name = chassis.assign_name
           chassis.save
         end
 
-        return [device, chassis]
+        if location && !location_params.blank?
+          Ivy::DeviceServices::Move.call(location, location_params, user)
+          location.save
+        end
+
+        return [device, chassis, location]
       end
     end
   end

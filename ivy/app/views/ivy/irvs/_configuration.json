@@ -438,11 +438,6 @@
         "rear"  : "b"
       },
 
-      "deviceTypeURLMap":
-      {
-        "Server"              : "server"
-      },
-
       "options":
       {
         "*COMMENT*": "url parameter substitutions: [[device_id]] [[machine_id]] [[chassis_id]] [[rack_id]]",
@@ -656,7 +651,7 @@
 
       "tooltip":
       {
-        "caption"     : "[[name]] : [[metric]]((<br>Device : [[device_type]]))((<br>&nbsp;total : [[total]]))((<br>&nbsp;max : [[max]]))((<br>&nbsp;average : [[mean]]))((<br>&nbsp;min : [[min]]))",
+        "caption"     : "[[name]] : [[metric]]((<br>&nbsp;total : [[total]]))((<br>&nbsp;max : [[max]]))((<br>&nbsp;average : [[mean]]))((<br>&nbsp;min : [[min]]))",
         "colourField" : "colour"
       }
     },

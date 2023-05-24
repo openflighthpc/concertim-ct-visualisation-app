@@ -31,6 +31,7 @@ class ActiveRecord::ConnectionAdapters::PostgreSQL::SchemaDumper
     extensions(stream)
     types(stream)
     schemas(stream)
+    sequences(stream)
     tables(stream)
     trailer(stream)
 
@@ -73,5 +74,33 @@ class ActiveRecord::ConnectionAdapters::PostgreSQL::SchemaDumper
         foreign_keys(tbl, stream) unless ignored?(tbl)
       end
     end
+  end
+
+  def sequences(stream)
+    sequence_query = <<-SQL
+      SELECT sequence_schema, sequence_name, increment, start_value
+      FROM information_schema.sequences 
+      ORDER BY sequence_name 
+    SQL
+
+    sorted_seqs = @connection.exec_query(sequence_query, "SCHEMA")
+      .sort_by { |seq| "#{seq["sequence_schema"]}.#{seq["sequence_name"]}" }
+
+    out = StringIO.new
+    sorted_seqs.each do |seq|
+      out.print "  connection.execute \""
+      out.print "CREATE SEQUENCE #{seq["sequence_schema"]}.#{seq["sequence_name"]}"
+      out.print " START WITH #{seq["start_value"]}"
+      out.print " INCREMENT BY #{seq["increment"]}"
+      out.print " NO MINVALUE"
+      out.print " NO MAXVALUE"
+      out.print " CACHE 1"
+      out.print "\""
+      out.puts
+    end
+    out.puts
+
+    out.rewind
+    stream.puts out.read
   end
 end

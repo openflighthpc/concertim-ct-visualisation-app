@@ -24,7 +24,7 @@ module Ivy
           height: params[:height],
           depth: 2,
           version: params[:version] || 1,
-          chassis_type: 'Server',
+          template_type: 'Device',
           rackable: 'rackable',
           simple: true,
           rows: 1,

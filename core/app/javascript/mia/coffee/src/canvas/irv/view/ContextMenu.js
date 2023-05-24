@@ -24,7 +24,6 @@ class ContextMenu {
     this.VERBOSE              = true;
     this.SPACER               = '<br>';
     this.ASPECT_MAP           = { front: 'f', rear: 'r' };
-    this.DEVICE_TYPE_URL_MAP  = {};
   }
 
 
@@ -40,14 +39,13 @@ class ContextMenu {
 
 
   show(device, x, y, available_slot) {
-    let aspect, chassis_id, chassis_name, child, device_id, device_name, device_type, empty_column, empty_row, empty_u, rack_id, rack_name, slot_id;
+    let aspect, chassis_id, chassis_name, child, device_id, device_name, empty_column, empty_row, empty_u, rack_id, rack_name, slot_id;
     this.visible    = true;
     const option_keys = ['common'];
 
     if (device != null) {
       device_id   = device.id;
       device_name = device.name;
-      device_type = (device.type != null) ? ContextMenu.DEVICE_TYPE_URL_MAP[device.type] : undefined;
       child       = device;
     } else {
       option_keys.push('global');
@@ -128,7 +126,6 @@ class ContextMenu {
           piece = Util.substitutePhrase(piece, 'view_devices', view_devices);
           piece = Util.substitutePhrase(piece, 'device_id', device_id);
           piece = Util.substitutePhrase(piece, 'device_name', device_name);
-          piece = Util.substitutePhrase(piece, 'device_type', device_type);
           piece = Util.substitutePhrase(piece, 'chassis_id', chassis_id);
           piece = Util.substitutePhrase(piece, 'chassis_name', chassis_name);
           piece = Util.substitutePhrase(piece, 'rack_id', rack_id);
@@ -146,7 +143,6 @@ class ContextMenu {
             if (option_url != null) {
               option_url = Util.substitutePhrase(option_url, 'device_id', device_id);
               option_url = Util.substitutePhrase(option_url, 'device_name', device_name);
-              option_url = Util.substitutePhrase(option_url, 'device_type', device_type);
               option_url = Util.substitutePhrase(option_url, 'chassis_id', chassis_id);
               option_url = Util.substitutePhrase(option_url, 'chassis_name', chassis_name);
               option_url = Util.substitutePhrase(option_url, 'rack_id', rack_id);
@@ -163,7 +159,6 @@ class ContextMenu {
             if (on_click != null) {
               on_click = Util.substitutePhrase(on_click, 'device_id', device_id);
               on_click = Util.substitutePhrase(on_click, 'device_name', device_name);
-              on_click = Util.substitutePhrase(on_click, 'device_type', device_type);
               on_click = Util.substitutePhrase(on_click, 'chassis_id', chassis_id);
               on_click = Util.substitutePhrase(on_click, 'chassis_name', chassis_name);
               on_click = Util.substitutePhrase(on_click, 'rack_id', rack_id);

@@ -2,28 +2,30 @@ class Api::V1::Irv::RacksController < Api::V1::Irv::BaseController
 
   def index
     authorize! :index, Ivy::HwRack
-    # As RABL has quite a serious issue where it casts the collection as an array
-    # before itterating over it, causeing Data Mapper which lazy loads any way
-    # to call for each item indevidually, rather that with a single shot request
-    # for it all.
+    # New legacy moved from using Rabl to render the response to having
+    # postgresql generate XML and convert that to JSON.  Part of that was due
+    # to issues with Rabl and DataMapper.  We no longer use DataMapper.
     #
-    # Because of this we will get the database to produce what we need directly
-    # in the form of XML, convert it to JSON and send it back to the requestor
-    #
-    # Uncomment the bellow to use the new ultra fast query method!
-    #
-    irv_rack_structure = Crack::XML.parse(Ivy::Irv.get_structure(params[:rack_ids], current_user))
-    fix_structure(irv_rack_structure)
-    render :json => irv_rack_structure.to_json
+    # The SQL query generating the XML is complicated.  To aid in testing the
+    # slow method has been kept.  The two methods should generate identical
+    # JSON documents.  (Or nearly so, the XML version has everything encoded as
+    # strings).
 
-    # If you want XML uncomment the below
-    #
-    # render :xml => irv_rack_structure
+    if params[:slow]
+      # This is the slow and easy to understand method.  We do jump through
+      # some hoops to have the output wrapped in `{"Racks": {"Rack": <the rabl
+      # template>}}`.
+      @racks = Ivy::HwRack.all
+      renderer = Rabl::Renderer.new('api/v1/irv/racks/index', @racks, view_path: 'app/views', format: 'hash')
+      render json: {Racks: {Rack: renderer.render}}
 
-    #XXX This is the slow method, comment this out when using the above
-    #
-    # @racks = Ivy::HwRack.all
-   end
+    else
+      # The fast and awkward to understand method.
+      irv_rack_structure = Crack::XML.parse(Ivy::Irv.get_structure(params[:rack_ids], current_user))
+      fix_structure(irv_rack_structure)
+      render :json => irv_rack_structure.to_json
+    end
+  end
 
   def modified
     authorize! :index, Ivy::HwRack

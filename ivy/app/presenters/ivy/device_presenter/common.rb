@@ -13,12 +13,12 @@ module Ivy
       #
       # device_type
       #
-      # Humanized version of the class (so "RackTaggedDevice" becomes "Rack" and so on). Either
-      # hands off to the specific device presenter for that device type or just calls the humanizer
-      # utility class. 
+      # Humanized version of the class. Either hands off to the specific device
+      # presenter for that device type or just calls the humanizer utility
+      # class. 
       #
       def device_type
-        Ivy::TypeHumanizer.humanize(o.type)
+        Ivy::TypeHumanizer.humanize(o.respond_to?(:type) ? o.type : o.class.name)
       end
     end
   end

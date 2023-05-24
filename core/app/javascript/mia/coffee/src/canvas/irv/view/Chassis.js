@@ -265,13 +265,13 @@ class Chassis extends RackObject {
   }
 
   updatePosition() {
-    const data = {rack_id:this.parent().id, rack_start_u:(this.uStart()+1), facing: (this.face === 'front' ? 'f' : 'b'), type:"RackChassis"};
+    const data = {rack_id:this.parent().id, start_u:(this.uStart()+1), facing: (this.face === 'front' ? 'f' : 'b'), type:"RackChassis"};
     this.conf = {action:'update_position', data};
     return this.create_request();
   }
 
   moveToOrFromHoldingArea(new_type, rack_id, start_u, new_face) {
-    const data = {rack_id, rack_start_u:start_u, type:new_type, show_in_dcrv: false, facing:new_face};
+    const data = {rack_id, start_u:start_u, type:new_type, show_in_dcrv: false, facing:new_face};
     this.conf = {action:'update_position', data};
     return this.create_request();
   }

@@ -63,7 +63,6 @@ class Machine extends RackObject {
     this.row         = def.row;
     this.column      = def.column;
     this.slot_id     = null;
-    this.type        = def.type;
     this.selected    = false;
     this.assets      = [];
 
