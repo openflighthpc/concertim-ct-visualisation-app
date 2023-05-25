@@ -186,4 +186,77 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
       include_examples "single rack response examples"
     end
   end
+
+  describe "POST :create" do
+    context "when logged in as admin" do
+      include_context "Logged in as admin"
+      let(:url_under_test) { urls.api_v1_racks_path }
+      let(:rack_owner) { create(:user) }
+      let(:valid_attributes) {
+        {
+          rack: {
+            u_height: 20,
+            user_id: rack_owner.id,
+            metadata: { "foo" => "bar" }
+          }
+        }
+      }
+      let(:invalid_attributes) {
+        {
+          rack: {
+            u_heigt: -1,
+            metadata: "should be an object"
+          }
+        }
+      }
+
+      context "with valid parameters" do
+        def send_request
+          post url_under_test,
+            params: valid_attributes,
+            headers: headers,
+            as: :json
+        end
+
+        it "creates a new rack" do
+          expect {
+            send_request
+          }.to change(Ivy::HwRack, :count).by(1)
+        end
+
+        it "renders a successful response" do
+          send_request
+          expect(response).to have_http_status :ok
+        end
+
+        it "includes the rack in the response" do
+          send_request
+          parsed_rack = JSON.parse(response.body)
+          expect(parsed_rack["u_height"]).to eq valid_attributes[:rack][:u_height]
+          expect(parsed_rack["owner"]["id"]).to eq valid_attributes[:rack][:user_id]
+          expect(parsed_rack["metadata"]).to eq valid_attributes[:rack][:metadata]
+        end
+      end
+
+      context "with invalid parameters" do
+        def send_request
+          post url_under_test,
+            params: invalid_attributes,
+            headers: headers,
+            as: :json
+        end
+
+        it "does not create a new rack" do
+          expect {
+            send_request
+          }.not_to change(Ivy::HwRack, :count)
+        end
+
+        it "renders an unprocessable entity response" do
+          send_request
+          expect(response).to have_http_status :unprocessable_entity
+        end
+      end
+    end
+  end
 end

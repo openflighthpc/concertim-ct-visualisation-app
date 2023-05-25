@@ -12,6 +12,7 @@ FactoryBot.define do
   end
 
   trait :rack_template do
+    id { Ivy::HwRack::DEFAULT_TEMPLATE_ID }
     template_type { "HwRack" }
     rackable { "nonrackable" }
   end

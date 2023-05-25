@@ -45,7 +45,7 @@ class Api::V1::RacksController < Api::V1::ApplicationController
 
   private
 
-  PERMITTED_PARAMS = %w[name description u_height]
+  PERMITTED_PARAMS = %w[name description u_height] << {metadata: {}}
   def rack_params
     permitted = PERMITTED_PARAMS.dup.tap do |a|
       a << :user_id if current_user.root? && params[:action] == 'create'
