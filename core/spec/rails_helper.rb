@@ -8,6 +8,7 @@ require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 
 require_relative 'support/shared_contexts/requests/authentication'
+require_relative 'support/shared_examples/requests'
 require_relative 'support/factory_bot'
 require_relative 'support/matchers/model'
 

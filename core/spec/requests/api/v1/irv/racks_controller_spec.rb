@@ -21,6 +21,7 @@ RSpec.describe "Api::V1::Irv::RacksControllers", type: :request do
 
   context "when logged in as admin" do
     include_context "Logged in as admin"
+    let(:user) { authenticated_user }
 
     shared_examples "successful JSON response" do
       it "renders a successful response" do
