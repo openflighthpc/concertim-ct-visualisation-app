@@ -3,6 +3,7 @@ FactoryBot.define do
     sequence(:name) { |n| "Rack-#{n}" }
     u_height { 1 }
     u_depth { 1 }
+    metadata { {} }
 
     association :user
   end
