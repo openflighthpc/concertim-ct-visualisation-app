@@ -25,7 +25,8 @@ module Uma
       format: { with: /\A[a-zA-Z0-9\-\_\.]*\Z/, message: "can contain only alphanumeric characters, hyphens, underscores and periods."}
     validates :project_id,
       uniqueness: true,
-      length: { maximum: 255 }
+      length: { maximum: 255 },
+      allow_nil: true
 
     ####################################
     #
