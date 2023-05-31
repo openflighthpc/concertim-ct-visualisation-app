@@ -30,6 +30,11 @@ module Ivy
           rows: 1,
           columns: 1,
 
+          foreign_id: params[:foreign_id],
+          vcpus: params[:vcpus],
+          ram: params[:ram],
+          disk: params[:disk],
+
           # Needed for IRV structure.  Should be removed eventually.
           model: nil,
           rack_repeat_ratio: nil,

@@ -41,12 +41,13 @@ class Api::V1::TemplatesController < Api::V1::ApplicationController
 
   private
 
-  PERMITTED_PARAMS = %w(name description height version schema_version)
+  CREATE_ONLY_PARAMS = %w(height version schema_version)
+  PERMITTED_PARAMS = %w(name description foreign_id vcpus ram disk)
   def template_params
-    params.require(:template).permit(*PERMITTED_PARAMS)
+    params.require(:template).permit(*PERMITTED_PARAMS, *CREATE_ONLY_PARAMS)
   end
 
   def update_params
-    params.require(:template).permit(:name, :description)
+    params.require(:template).permit(*PERMITTED_PARAMS)
   end
 end

@@ -18,19 +18,34 @@ NAME=${1}
 DESCRIPTION=${2}
 U_HEIGHT=${3}
 
+# The following are optional.  If not given they will default to `nil`/`null`.
+FOREIGN_ID=${4}
+VCPUS=${5}
+RAM=${6}
+DISK=${7}
+
 BODY=$(jq --null-input \
     --arg name "${NAME}" \
     --arg description "${DESCRIPTION}" \
     --arg height "${U_HEIGHT}" \
+    --arg foreign_id "${FOREIGN_ID}" \
+    --arg vcpus "${VCPUS}" \
+    --arg ram "${RAM}" \
+    --arg disk "${DISK}" \
     '
 {
     "template": {
         "name": $name,
         "description": $description,
-        "height": $height|tonumber
+        "height": $height|tonumber,
+        "foreign_id": $foreign_id,
+        "vcpus": $vcpus|(try tonumber catch ""),
+        "ram": $ram|(try tonumber catch ""),
+        "disk": $disk|(try tonumber catch "")
     }
 }
-'
+' \
+  | jq '{template: .template | with_entries(select(.value != ""))}'
 )
 
 # Run curl with funky redirection to capture response body and status code.

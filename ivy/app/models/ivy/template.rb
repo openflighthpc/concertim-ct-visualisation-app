@@ -85,6 +85,18 @@ module Ivy
       inclusion: { in: ['nonrackable'] },
       if: ->{ template_type == 'HwRack' }
 
+    validates :foreign_id,
+      length: { maximum: 255 },
+      allow_nil: true
+    validates :vcpus,
+      numericality: { only_integer: true, greater_than: 0 },
+      allow_nil: true
+    validates :ram,
+      numericality: { only_integer: true, greater_than: 0 },
+      allow_nil: true
+    validates :disk,
+      numericality: { only_integer: true, greater_than: 0 },
+      allow_nil: true
 
     #######################
     #

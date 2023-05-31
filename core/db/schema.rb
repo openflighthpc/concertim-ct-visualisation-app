@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_30_142214) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_31_161942) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -111,6 +111,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_30_142214) do
     t.string "rack_repeat_ratio", limit: 255
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "foreign_id"
+    t.integer "vcpus"
+    t.integer "ram"
+    t.integer "disk"
   end
 
   create_table "meca.rackview_presets", id: :bigint, default: -> { "nextval('rackview_presets_id_seq'::regclass)" }, force: :cascade do |t|
