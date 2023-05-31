@@ -11,25 +11,29 @@ RSpec.shared_examples "successful JSON response" do
 end
 
 RSpec.shared_examples "unauthorised JSON response" do
+  let(:request_method) { :get }
+
   it "returns an unauthorised response" do
-    get url_under_test, headers: headers, as: :json
+    send(request_method, url_under_test, headers: headers, as: :json)
     expect(response).to have_http_status :unauthorized
   end
 
   it "returns an unauthorised response error message as JSON" do
-    get url_under_test, headers: headers, as: :json
+    send(request_method, url_under_test, headers: headers, as: :json)
     expect(response.body).to eq ({error: "You need to sign in or sign up before continuing."}.to_json)
   end
 end
 
 RSpec.shared_examples "forbidden JSON response" do
+  let(:request_method) { :get }
+
   it "returns a forbidden response" do
-    get url_under_test, headers: headers, as: :json
+    send(request_method, url_under_test, headers: headers, as: :json)
     expect(response).to have_http_status :forbidden
   end
 
   it "returns an unauthorised response error message as JSON" do
-    get url_under_test, headers: headers, as: :json
+    send(request_method, url_under_test, headers: headers, as: :json)
     parsed_body = JSON.parse(response.body)
     expect(parsed_body["errors"][0]["title"]).to eq "Not Authorized"
   end

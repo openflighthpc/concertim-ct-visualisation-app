@@ -9,7 +9,7 @@
 module Api::V1
   class DevicePresenter < Emma::Presenter
     # Be selective about what attributes and methods we expose.
-    delegate :id, :name, :description,
+    delegate :id, :name, :description, :metadata,
       to: :o
 
     # location returns the location of the device.  For devices in simple

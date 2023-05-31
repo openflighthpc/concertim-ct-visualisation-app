@@ -36,6 +36,7 @@ module Ivy
       }
     validate :name_validator
     validate :device_limit, if: :new_record? 
+    validate :metadata_format
 
     #############################
     #
@@ -139,6 +140,10 @@ module Ivy
       current = Ivy::Device.all.size
       return if current < (limit_rads + limit_nrads)
       self.errors.add(:base, "The device limit of #{limit_rads+limit_nrads} has been exceeded")
+    end
+
+    def metadata_format
+      self.errors.add(:metadata, "Must be an object") unless metadata.is_a?(Hash)
     end
   end
 end

@@ -1,8 +1,7 @@
 FactoryBot.define do
   factory :template, class: 'Ivy::Template' do
     sequence(:name) { |n| "Template #{n}" }
-    height { 1 }
-    depth { 1 }
+    depth { 2 }
     description { "" }
     images { {fake: "image"} }
     padding_left { 0 }
@@ -15,5 +14,14 @@ FactoryBot.define do
     id { Ivy::HwRack::DEFAULT_TEMPLATE_ID }
     template_type { "HwRack" }
     rackable { "nonrackable" }
+    height { 40 }
+  end
+
+  trait :device_template do
+    template_type { "Device" }
+    rackable { "rackable" }
+    rows { 1 }
+    columns { 1 }
+    height { 1 }
   end
 end

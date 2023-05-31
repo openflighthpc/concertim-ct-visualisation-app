@@ -88,26 +88,9 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
           expect(parsed_racks.length).to eq 1
         end
 
-        it "has the correct attributes" do
-          get url_under_test, headers: headers, as: :json
-          expect(parsed_rack["id"]).to eq rack.id
-          expect(parsed_rack["name"]).to eq rack.name
-          expect(parsed_rack["u_height"]).to eq rack.u_height
-        end
-
         it "does not include device listing" do
           get url_under_test, headers: headers, as: :json
           expect(parsed_rack).not_to have_key "devices"
-        end
-
-        it "has the correct owner" do
-          get url_under_test, headers: headers, as: :json
-          expected_owner = {
-            id: rack.user.id,
-            login: rack.user.login,
-            name: rack.user.name,
-          }.stringify_keys
-          expect(parsed_rack["owner"].slice(*expected_owner.keys)).to eq expected_owner
         end
 
         include_examples "single rack response examples"

@@ -35,7 +35,7 @@ class Api::V1::NodesController < Api::V1::ApplicationController
     end
   end
 
-  PERMITTED_PARAMS = ["name", "description", "location" => %w[rack_id start_u facing]]
+  PERMITTED_PARAMS = ["name", "description", "location" => %w[rack_id start_u facing]] << {metadata: {}}
   def permitted_params
     params.require(:device).permit(*PERMITTED_PARAMS)
   end
