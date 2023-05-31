@@ -56,21 +56,7 @@ module Ivy
     validates :u_height, numericality: { only_integer: true, greater_than: 0, less_than: 73 }
     validate :u_height_greater_than_highest_occupied_u?, unless: :new_record?
     validate :rack_limit, if: :new_record?
-
-    #
-    # u_height is not allowed to be lower than space used.
-    #
-    def u_height_greater_than_highest_occupied_u?
-      if !(u_height >= highest_empty_u)
-        self.errors.add(:u_height, "must be greater than the highest occupied U (minimum is therefore #{highest_empty_u}).")
-      end
-    end
-
-    def rack_limit
-      limit = YAML.load_file("/opt/concertim/licence-limits.yml")['rack_limit'] rescue nil
-      return if limit.nil? || Ivy::HwRack.count < limit
-      self.errors.add(:base, "The rack limit of #{limit} has been exceeded")
-    end
+    validate :metadata_format
 
     ############################
     #
@@ -115,6 +101,34 @@ module Ivy
 
     def self.get_canvas_config
       JSON.parse(File.read(Engine.root.join("app/views/ivy/racks/_configuration.json")))
+    end
+
+    ############################
+    #
+    # Private Instance Methods
+    #
+    ############################
+
+    private
+
+    #
+    # u_height is not allowed to be lower than space used.
+    #
+    def u_height_greater_than_highest_occupied_u?
+      return if u_height.nil?
+      if !(u_height >= highest_empty_u)
+        self.errors.add(:u_height, "must be greater than the highest occupied U (minimum is therefore #{highest_empty_u}).")
+      end
+    end
+
+    def rack_limit
+      limit = YAML.load_file("/opt/concertim/licence-limits.yml")['rack_limit'] rescue nil
+      return if limit.nil? || Ivy::HwRack.count < limit
+      self.errors.add(:base, "The rack limit of #{limit} has been exceeded")
+    end
+
+    def metadata_format
+      self.errors.add(:metadata, "Must be an object") unless metadata.is_a?(Hash)
     end
   end
 end

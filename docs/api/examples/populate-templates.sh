@@ -17,32 +17,32 @@ export AUTH_TOKEN
 # Populate default dev templates. All templates portrayed in this script are
 # fictitious. No identification with actual OpenStack flavours (active or
 # inactive) is intended or should be inferred.
-"${SCRIPT_DIR}/create-template.sh" Small "m1.small: 1 VCPU; 2GB RAM; 10GB Disk" 1
+"${SCRIPT_DIR}/create-template.sh" Small "m1.small: 1 VCPU; 2GB RAM; 10GB Disk" 1 m1.small 1 2 10
 if [ $? -ne 0 ] ; then
     # Errors will have been sent to stderr.
     exit
 fi
-"${SCRIPT_DIR}/create-template.sh" Medium "m1.medium: 2 VCPUs; 3GB RAM; 10GB Disk" 2
+"${SCRIPT_DIR}/create-template.sh" Medium "m1.medium: 2 VCPUs; 3GB RAM; 10GB Disk" 2 m1.medium 2 3 10
 if [ $? -ne 0 ] ; then
     # Errors will have been sent to stderr.
     exit
 fi
-"${SCRIPT_DIR}/create-template.sh" Large "m1.large: 4 VCPUs; 8GB RAM; 10GB Disk" 3
+"${SCRIPT_DIR}/create-template.sh" Large "m1.large: 4 VCPUs; 8GB RAM; 10GB Disk" 3 m1.large 4 8 10
 if [ $? -ne 0 ] ; then
     # Errors will have been sent to stderr.
     exit
 fi
-"${SCRIPT_DIR}/create-template.sh" X-Large "m1.xlarge: 8 VCPUs; 16GB RAM; 30GB Disk" 4
+"${SCRIPT_DIR}/create-template.sh" X-Large "m1.xlarge: 8 VCPUs; 16GB RAM; 30GB Disk" 4 m1.xlarge 8 16 30
 if [ $? -ne 0 ] ; then
     # Errors will have been sent to stderr.
     exit
 fi
-"${SCRIPT_DIR}/create-template.sh" XX-Large "m1.xxlarge: 16 VCPUs; 32GB RAM; 30GB Disk" 5
+"${SCRIPT_DIR}/create-template.sh" XX-Large "m1.xxlarge: 16 VCPUs; 32GB RAM; 30GB Disk" 5 m1.xxlarge 16 32 30
 if [ $? -ne 0 ] ; then
     # Errors will have been sent to stderr.
     exit
 fi
-"${SCRIPT_DIR}/create-template.sh" XXX-Large "m1.xxxlarge: 32 VCPUs; 64GB RAM; 30GB Disk" 6
+"${SCRIPT_DIR}/create-template.sh" XXX-Large "m1.xxxlarge: 32 VCPUs; 64GB RAM; 30GB Disk" 6 m1.xxxlarge 32 64 30
 if [ $? -ne 0 ] ; then
     # Errors will have been sent to stderr.
     exit

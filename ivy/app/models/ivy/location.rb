@@ -167,6 +167,9 @@ module Ivy
     private
 
     def start_u_is_valid
+      return if start_u.nil?
+      return if end_u.nil?
+
       if start_u > rack.u_height || start_u < 1
         errors.add(:start_u, 'is invalid')
       end
@@ -176,6 +179,11 @@ module Ivy
     end
 
     def target_u_is_empty
+      return if rack.nil?
+      return if u_depth.nil?
+      return if facing.nil?
+      return if start_u.nil?
+
       is_full_depth = u_depth == rack.u_depth
       facing = is_full_depth ? nil : self.facing
       return if rack.u_is_empty?(start_u, exclude: self.id, facing: facing)

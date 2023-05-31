@@ -8,7 +8,9 @@ require 'rspec/rails'
 # Add additional requires below this line. Rails is not loaded until this point!
 
 require_relative 'support/shared_contexts/requests/authentication'
+require_relative 'support/shared_examples/requests'
 require_relative 'support/factory_bot'
+require_relative 'support/matchers/model'
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
 # spec/support/ and its subdirectories. Files matching `spec/**/*_spec.rb` are
@@ -63,4 +65,6 @@ RSpec.configure do |config|
   config.filter_rails_from_backtrace!
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
+
+  config.include Concertim::Matchers::Model, type: :model
 end

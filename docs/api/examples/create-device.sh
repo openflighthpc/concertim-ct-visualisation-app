@@ -20,6 +20,8 @@ FACING=${3}
 START_U=${4}
 TEMPLATE_ID=${5}
 
+# The metadata below is hardcoded but it could be any valid JSON document.
+
 BODY=$(jq --null-input \
     --arg name "${NAME}" \
     --arg description "This is ${NAME}" \
@@ -37,6 +39,10 @@ BODY=$(jq --null-input \
             "facing": $facing,
             "rack_id": $rack_id|tonumber,
             "start_u": $start_u|tonumber
+        },
+        "metadata": {
+          "key_one": "value_one",
+          "key_two": 2
         }
     }
 }

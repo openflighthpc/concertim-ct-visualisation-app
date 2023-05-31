@@ -5,7 +5,7 @@
 module Api::V1
   class RackPresenter < Emma::Presenter
     # Be selective about what attributes and methods we expose.
-    delegate :id, :name, :u_height,
+    delegate :id, :name, :u_height, :metadata,
       to: :o
 
     def devices

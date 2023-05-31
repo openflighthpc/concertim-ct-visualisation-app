@@ -5,11 +5,11 @@ RSpec.shared_context "Not logged in" do
 end
 
 RSpec.shared_context "Logged in as admin" do
-  let(:headers) { Devise::JWT::TestHelpers.auth_headers({}, user) }
-  let(:user) { create(:user, :admin) }
+  let(:headers) { Devise::JWT::TestHelpers.auth_headers({}, authenticated_user) }
+  let(:authenticated_user) { create(:user, :admin) }
 end
 
 RSpec.shared_context "Logged in as non-admin" do
-  let(:headers) { Devise::JWT::TestHelpers.auth_headers({}, user) }
-  let(:user) { create(:user) }
+  let(:headers) { Devise::JWT::TestHelpers.auth_headers({}, authenticated_user) }
+  let(:authenticated_user) { create(:user) }
 end

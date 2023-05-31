@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_16_134217) do
+ActiveRecord::Schema[7.0].define(version: 2023_05_31_161942) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -61,6 +61,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_16_134217) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "base_chassis_id", null: false
+    t.jsonb "metadata", default: {}, null: false
     t.index ["base_chassis_id"], name: "index_devices_on_base_chassis_id"
   end
 
@@ -85,6 +86,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_16_134217) do
     t.datetime "updated_at", null: false
     t.bigint "template_id", null: false
     t.bigint "user_id", null: false
+    t.jsonb "metadata", default: {}, null: false
     t.index ["template_id"], name: "index_racks_on_template_id"
     t.index ["user_id"], name: "index_racks_on_user_id"
   end
@@ -109,6 +111,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_16_134217) do
     t.string "rack_repeat_ratio", limit: 255
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "foreign_id"
+    t.integer "vcpus"
+    t.integer "ram"
+    t.integer "disk"
   end
 
   create_table "meca.rackview_presets", id: :bigint, default: -> { "nextval('rackview_presets_id_seq'::regclass)" }, force: :cascade do |t|

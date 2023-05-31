@@ -39,6 +39,8 @@ U_HEIGHT=${3}
 # ```
 # {"rack": {"u_height": 42, "user_id": "3"}}
 # ```
+#
+# The metadata below is hardcoded but it could be any valid JSON document.
 BODY=$( jq --null-input  \
   --arg name "${NAME}" \
   --arg user_id "${USER_ID}" \
@@ -48,7 +50,11 @@ BODY=$( jq --null-input  \
   "rack": {
     "name": $name,
     "user_id": $user_id,
-    "u_height": $u_height|(try tonumber catch "")
+    "u_height": $u_height|(try tonumber catch ""),
+    "metadata": {
+      "key_one": "value_one",
+      "key_two": 2
+    }
   }
 }
 ' \
