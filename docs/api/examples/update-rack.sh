@@ -18,6 +18,10 @@ RACK_ID=${1}
 NAME=${2}
 HEIGHT=${3}
 
+# The metadata below is hardcoded but it could be any valid JSON document.  The
+# metadata will be set to exactly this document; any values not present will be
+# removed.
+
 BODY=$(jq --null-input \
     --arg name "${NAME}" \
     --arg u_height ${HEIGHT} \
@@ -25,7 +29,11 @@ BODY=$(jq --null-input \
 {
     "rack": {
         "name": $name,
-        "u_height": $u_height|tonumber
+        "u_height": $u_height|tonumber,
+        "metadata": {
+          "key_one": "value_one.updated",
+          "key_three": [4,5,6]
+        }
     }
 }
 '

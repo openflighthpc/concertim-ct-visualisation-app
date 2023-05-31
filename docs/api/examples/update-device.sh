@@ -17,6 +17,10 @@ AUTH_TOKEN=${AUTH_TOKEN:-$("${SCRIPT_DIR}"/get-auth-token.sh)}
 DEVICE_ID=${1}
 NAME=${2}
 
+# The metadata below is hardcoded but it could be any valid JSON document.  The
+# metadata will be set to exactly this document; any values not present will be
+# removed.
+
 BODY=$(jq --null-input \
     --arg name "${NAME}" \
     --arg description "This is ${NAME}" \
@@ -24,7 +28,11 @@ BODY=$(jq --null-input \
 {
     "device": {
         "name": $name,
-        "description": $description
+        "description": $description,
+        "metadata": {
+          "key_one": "value_one.updated",
+          "key_three": [4,5,6]
+        }
     }
 }
 '
