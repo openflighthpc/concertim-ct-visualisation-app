@@ -188,9 +188,14 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
   end
 
   describe "POST :create" do
+    let(:url_under_test) { urls.api_v1_racks_path }
+
+    context "when not logged in" do
+      include_examples "unauthorised JSON response"
+    end
+
     context "when logged in as admin" do
       include_context "Logged in as admin"
-      let(:url_under_test) { urls.api_v1_racks_path }
       let(:rack_owner) { create(:user) }
       let(:valid_attributes) {
         {
@@ -204,7 +209,7 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
       let(:invalid_attributes) {
         {
           rack: {
-            u_heigt: -1,
+            u_height: -1,
             metadata: "should be an object"
           }
         }
@@ -257,6 +262,105 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
           expect(response).to have_http_status :unprocessable_entity
         end
       end
+    end
+  end
+
+  describe "PATCH :update" do
+    let(:url_under_test) { urls.api_v1_rack_path(rack) }
+    let!(:rack) {
+      create(:rack, user: rack_owner, template: template, metadata: initial_rack_metadata, u_height: initial_u_height)
+    }
+    let(:initial_rack_metadata) { {} }
+    let(:initial_u_height) { 20 }
+
+    shared_examples "authorized user updating rack" do
+      let(:valid_attributes) {
+        {
+          rack: {
+            u_height: initial_u_height + 2,
+            metadata: initial_rack_metadata.merge("foo" => "bar")
+          }
+        }
+      }
+      let(:invalid_attributes) {
+        {
+          rack: {
+            u_height: -1,
+            metadata: "should be an object"
+          }
+        }
+      }
+
+      context "with valid parameters" do
+        def send_request
+          patch url_under_test,
+            params: valid_attributes,
+            headers: headers,
+            as: :json
+        end
+
+        it "renders a successful response" do
+          send_request
+          expect(response).to have_http_status :ok
+        end
+
+        it "updates the rack" do
+          expect {
+            send_request
+          }.to change{ rack.reload.updated_at }
+        end
+
+        it "includes the rack in the response" do
+          send_request
+          parsed_rack = JSON.parse(response.body)
+          expect(parsed_rack["u_height"]).to eq valid_attributes[:rack][:u_height]
+          expect(parsed_rack["metadata"]).to eq valid_attributes[:rack][:metadata]
+        end
+      end
+
+      context "with invalid parameters" do
+        def send_request
+          patch url_under_test,
+            params: invalid_attributes,
+            headers: headers,
+            as: :json
+        end
+
+        it "does not update the rack" do
+          expect {
+            send_request
+          }.not_to change{ rack.reload.updated_at }
+        end
+
+        it "renders an unprocessable entity response" do
+          send_request
+          expect(response).to have_http_status :unprocessable_entity
+        end
+      end
+    end
+
+    context "when not logged in" do
+      include_examples "unauthorised JSON response"
+      let(:rack_owner) { create(:user) }
+    end
+
+    context "when logged in as rack owner" do
+      include_context "Logged in as non-admin"
+      let(:rack_owner) { authenticated_user }
+      include_examples "authorized user updating rack"
+    end
+
+    context "when logged in as another user" do
+      include_context "Logged in as non-admin"
+      include_examples "forbidden JSON response" do
+        let(:rack_owner) { create(:user) }
+      end
+    end
+
+    context "when logged in as admin" do
+      include_context "Logged in as admin"
+      let(:rack_owner) { create(:user) }
+      include_examples "authorized user updating rack"
     end
   end
 end
