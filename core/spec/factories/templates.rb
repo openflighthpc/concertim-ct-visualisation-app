@@ -15,6 +15,13 @@ FactoryBot.define do
     template_type { "HwRack" }
     rackable { "nonrackable" }
     height { 40 }
+
+    after(:create) do
+      max_id = Ivy::Template.pluck(:id).max
+      Ivy::Template.connection.execute <<-SQL
+        ALTER SEQUENCE ivy.templates_id_seq RESTART WITH #{max_id + 1}
+      SQL
+    end
   end
 
   trait :device_template do
