@@ -2,7 +2,7 @@ module Concertim
   module Matchers
     module Model
       extend RSpec::Matchers::DSL
-      
+
       matcher :have_error do |*expected|
         match do |record|
           record.validate
@@ -10,7 +10,7 @@ module Concertim
         end
 
         failure_message do |record|
-          "expected record to have error #{expected} has errors #{record.errors.details}" 
+          "expected record to have error #{expected} has errors #{record.errors.details}"
         end
       end
     end
