@@ -36,7 +36,7 @@ class Ability
     can :manage, Ivy::HwRack, user: user
     can :manage, Meca::RackviewPreset, user: user
 
-    can :read, Uma::User, id: user.id
+    can [:read, :update], Uma::User, id: user.id
   end
 
   # Despite specifying what a user can/can't do, you will eventually come
