@@ -17,6 +17,10 @@ class Fleece::ConfigsController < ApplicationController
     end
   end
 
+  def edit
+    redirect_to new_fleece_configs_path if @config.nil?
+  end
+
   def update
     if @config.update(config_params)
       flash[:notice] = "Cloud environment config updated"
