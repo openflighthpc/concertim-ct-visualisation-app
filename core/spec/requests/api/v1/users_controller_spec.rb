@@ -106,14 +106,52 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
     let(:user) { create(:user, project_id: initial_project_id) }
     let(:initial_project_id) { nil }
 
+    shared_examples "can set user's project_id" do
+      include_examples "update generic JSON API endpoint examples" do
+        before(:each) do
+          expect(user.project_id).to be_blank
+        end
+
+        let(:object_under_test) { user }
+        let(:valid_attributes) {
+          {
+            user: { project_id: SecureRandom.uuid }
+          }
+        }
+        let(:invalid_attributes) {
+          {
+            user: { }
+          }
+        }
+      end
+    end
+
     shared_examples "can update user's project_id" do
+      before(:each) { user.project_id = SecureRandom.uuid; user.save! }
+
       include_examples "update generic JSON API endpoint examples" do
         let(:object_under_test) { user }
         let(:valid_attributes) {
           {
-            user: {
-              project_id: initial_project_id.nil? ? "" : initial_project_id + ".updated"
-            }
+            user: { project_id: SecureRandom.uuid }
+          }
+        }
+        let(:invalid_attributes) {
+          {
+            user: { }
+          }
+        }
+      end
+    end
+
+    shared_examples "cannot update user's project_id" do
+      before(:each) { user.project_id = SecureRandom.uuid; user.save! }
+
+      include_examples "cannot update generic JSON API endpoint examples" do
+        let(:object_under_test) { user }
+        let(:valid_attributes) {
+          {
+            user: { project_id: SecureRandom.uuid }
           }
         }
         let(:invalid_attributes) {
@@ -142,6 +180,24 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
       end
     end
 
+    shared_examples "cannot unset user's project_id" do
+      before(:each) { user.project_id = SecureRandom.uuid; user.save! }
+
+      include_examples "cannot update generic JSON API endpoint examples" do
+        let(:object_under_test) { user }
+        let(:valid_attributes) {
+          {
+            user: { project_id: nil }
+          }
+        }
+        let(:invalid_attributes) {
+          {
+            user: { }
+          }
+        }
+      end
+    end
+
     context "when not logged in" do
       include_examples "unauthorised JSON response" do
         let(:request_method) { :patch }
@@ -151,8 +207,9 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
     context "when logged in as updated user" do
       include_context "Logged in as non-admin"
       let(:user) { authenticated_user }
-      it_behaves_like "can update user's project_id"
-      it_behaves_like "can unset user's project_id"
+      it_behaves_like "can set user's project_id"
+      it_behaves_like "cannot update user's project_id"
+      it_behaves_like "cannot unset user's project_id"
     end
 
     context "when logged in as some other non-admin user" do
@@ -164,6 +221,7 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
 
     context "when logged in as admin user" do
       include_context "Logged in as admin"
+      it_behaves_like "can set user's project_id"
       it_behaves_like "can update user's project_id"
       it_behaves_like "can unset user's project_id"
     end
