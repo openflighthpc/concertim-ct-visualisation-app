@@ -1,0 +1,51 @@
+<%= form_for(@config, url: fleece_configs_path) do |f| %>
+
+  <% if @config.errors.any? %>
+    <div id="error_explanation">
+      <h2>There are <%= pluralize(@config.errors.count, "error") %>:</h2>
+   
+      <ul>
+      <% @config.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="formItem">
+    <%= f.label :host_name, "Host name", class: 'required_field' %>
+    <%= f.text_field :host_name, autocomplete: :off %>
+  </div>
+
+  <div class="formItem">
+    <%= f.label :host_ip, "Host IP", class: 'required_field' %>
+    <%= f.text_field :host_ip, autocomplete: :off %>
+  </div>
+
+  <div class="formItem">
+    <%= f.label :port, "Port", class: 'required_field' %>
+    <%= f.number_field :port, minimum: 1, maximum: 65535 %>
+  </div>
+
+  <div class="formItem">
+    <%= f.label :username, "Username", class: 'required_field' %>
+    <%= f.text_field :username, autocomplete: :off %>
+  </div>
+
+  <div class="formItem">
+    <%= f.label :password, "Password", class: 'required_field' %>
+    <%= f.text_field :password, autocomplete: :off %>
+  </div>
+
+  <div class="formItem">
+    <%= f.label :project_name, "Admin project name", class: 'required_field' %>
+    <%= f.text_field :project_name, autocomplete: :off %>
+  </div>
+
+  <div class="formItem">
+    <%= f.label :domain_name, "Domain name", class: 'required_field' %>
+    <%= f.text_field :domain_name, autocomplete: :off %>
+  </div>
+
+  <%= f.submit @config.persisted? ? 'Update' : 'Create' %>
+<% end %>

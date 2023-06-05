@@ -8,6 +8,10 @@ Rails.application.routes.draw do
   # the legacy sign up page.
   root to: redirect('/irv')
 
+  namespace :fleece do
+    resource :configs
+  end
+
   # API routes
   #
   # Some of these have been done in a non-railsy way (you have "posts" where you should have 
