@@ -8,17 +8,21 @@ class Fleece::ConfigsController < ApplicationController
     end
   end
 
+  def new
+    redirect_to edit_fleece_configs_path if @config.persisted?
+  end
+
   def create
     if @config.update(config_params)
       flash[:notice] = "Cloud environment config created"
       redirect_to fleece_configs_path
     else
-      render action: :new
+      render action: :new, status: :unprocessable_entity
     end
   end
 
   def edit
-    redirect_to new_fleece_configs_path if @config.nil?
+    redirect_to new_fleece_configs_path if @config.nil? || !@config.persisted?
   end
 
   def update
@@ -26,7 +30,7 @@ class Fleece::ConfigsController < ApplicationController
       flash[:notice] = "Cloud environment config updated"
       redirect_to fleece_configs_path
     else
-      render action: :edit
+      render action: :edit, status: :unprocessable_entity
     end
   end
 
@@ -40,7 +44,10 @@ class Fleece::ConfigsController < ApplicationController
   def load_config
     @config = Fleece::Config.first
 
-    if params[:action] == 'new' || params[:action] == 'create'
+    if params[:action] == 'new'
+      @config ||= Fleece::Config.new
+    end
+    if params[:action] == 'create'
       raise "Only a single config is supported" unless @config.nil?
       @config = Fleece::Config.new
     end

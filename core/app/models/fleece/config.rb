@@ -39,8 +39,8 @@ class Fleece::Config < ApplicationRecord
       presence: true,
       length: { maximum: 255 },
       format: {
-        with: /\A[a-zA-Z0-9\-\_]*\Z/,
-        message: "can contain only alphanumeric characters, hyphens and underscores."
+        with: /\A[a-zA-Z0-9\-\_.]*\Z/,
+        message: "can contain only alphanumeric characters, hyphens, dots and underscores."
       }
 
 end
