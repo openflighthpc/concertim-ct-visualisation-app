@@ -1,0 +1,50 @@
+<%
+    set_title 'Cloud environment configuration'
+-%>
+
+<% content_for(:side_content) do %>
+  <%= render 'actions' %>
+<% end %>
+
+<div class="dl_group">
+  <h4>Cloud environment configuration</h4>
+  <dl>
+
+    <dt>Host name</dt>
+    <dd>
+      <span><%= @config.host_name %></span>
+    </dd>
+
+    <dt>Host IP</dt>
+    <dd>
+      <span><%= @config.host_ip %></span>
+    </dd>
+
+    <dt>Port</dt>
+    <dd>
+      <span><%= @config.port %></span>
+    </dd>
+
+    <dt>Username</dt>
+    <dd>
+      <span><%= @config.username %></span>
+    </dd>
+
+    <dt>Password</dt>
+    <dd>
+      <code>XXXXXXX</code>
+      <button class="button small secondary copyToClipboard" data-text="<%= @config.password %>">Copy</button>
+    </dd>
+
+    <dt>Admin project name</dt>
+    <dd>
+      <span><%= @config.project_name %></span>
+    </dd>
+
+    <dt>Domain name</dt>
+    <dd>
+      <span><%= @config.domain_name %></span>
+    </dd>
+
+  </dl>
+</div>

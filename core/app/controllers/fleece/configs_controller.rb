@@ -5,8 +5,6 @@ class Fleece::ConfigsController < ApplicationController
   def show
     if @config.nil? || !@config.persisted?
       redirect_to new_fleece_configs_path
-    else
-      redirect_to edit_fleece_configs_path
     end
   end
 
