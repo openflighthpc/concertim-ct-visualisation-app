@@ -55,16 +55,66 @@ RSpec.describe Ivy::HwRack, type: :model do
       expect(new_rack).to have_error(:name, :taken)
     end
 
-    it "must have a unique name across all users" do
+    it "can duplicate names for racks belonging to other users" do
       new_user = create(:user)
       new_rack = build(:rack, user: new_user, template: template, name: subject.name)
-      expect(new_rack).to have_error(:name, :taken)
+      expect(new_rack).not_to have_error(:name, :taken)
     end
 
     it "must be higher than highest node" do
       # Changing the height of a rack is only allowed if the new height is
       # sufficiently large to accomodate all of the nodes it contains.
       skip "implement this when we have device factories et al"
+    end
+  end
+
+  describe "defaults" do
+    before(:each) { Ivy::HwRack.destroy_all }
+
+    context "when there are no other racks" do
+      it "defaults height to 42" do
+        rack = Ivy::HwRack.new(u_height: nil, user: user)
+        expect(rack.u_height).to eq 42
+      end
+
+      it "defaults name to Rack-1" do
+        rack = Ivy::HwRack.new(user: user)
+        expect(rack.name).to eq "Rack-1"
+      end
+    end
+
+    context "when there are other racks for other users" do
+      let(:other_user) { create(:user) }
+
+      let!(:existing_rack) {
+        create(:rack, u_height: 24, name: 'MyRack-2', template: template, user: other_user)
+      }
+
+      it "defaults height to 42" do
+        rack = Ivy::HwRack.new(u_height: nil, user: user)
+        expect(rack.u_height).to eq 42
+      end
+
+      it "defaults name to Rack-1" do
+        rack = Ivy::HwRack.new(user: user)
+        expect(rack.name).to eq "Rack-1"
+      end
+    end
+
+    context "when there are other racks for this user" do
+      let!(:existing_rack) {
+        create(:rack, u_height: 24, name: 'MyRack-2', template: template, user: user)
+      }
+
+      it "defaults height to existing racks height" do
+        rack = Ivy::HwRack.new(u_height: nil, user: user)
+        expect(rack.u_height).to eq 24
+      end
+
+      it "defaults name to increment of existing racks name" do
+        rack = Ivy::HwRack.new(user: user)
+        expect(rack.name).to eq 'MyRack-3'
+      end
     end
   end
 end

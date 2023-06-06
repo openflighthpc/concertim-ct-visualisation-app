@@ -47,7 +47,7 @@ module Ivy
 
     validates :name,
       presence: true,
-      uniqueness: true,
+      uniqueness: {scope: :user},
       format: {
         with: /\A[a-zA-Z0-9\-\_]*\Z/,
         message: "can contain only alphanumeric characters, hyphens and underscores."
@@ -70,7 +70,7 @@ module Ivy
 
       # The remaining defaults take their value from that given to the last
       # rack.
-      last_rack = Ivy::HwRack.all.order(:created_at).last
+      last_rack = Ivy::HwRack.where(user: user).order(:created_at).last
 
       self.u_height ||= last_rack.nil? ? 42 : last_rack.u_height
       self.name ||=
@@ -79,7 +79,7 @@ module Ivy
             sprintf("%0#{$1.length}d%s", $1.to_i + 1, $2)
           end
         else
-          "Rack-#{Ivy::HwRack.count + 1}"
+          "Rack-#{Ivy::HwRack.where(user: user).count + 1}"
         end
     end
 
