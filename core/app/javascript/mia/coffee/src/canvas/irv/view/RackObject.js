@@ -226,7 +226,8 @@ class RackObject extends RackSpaceObject {
         bgFill    : RackObject.NAME_LBL_BG_FILL,
         bgAlpha   : RackObject.NAME_LBL_BG_ALPHA,
         bgPadding : RackObject.NAME_LBL_BG_PADDING,
-        maxWidth  : this.width - (RackObject.NAME_LBL_BG_PADDING * 2)});
+        maxWidth  : this.width - (RackObject.NAME_LBL_BG_PADDING * 2)
+      });
 
     } else if (!visible && (this.nameLbl != null)) {
       RackObject.INFO_GFX.remove(this.nameLbl);

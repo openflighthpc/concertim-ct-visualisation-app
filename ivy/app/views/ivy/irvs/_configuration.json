@@ -547,7 +547,7 @@
         "nameLbl": 
         {
           "offsetX" : 0,
-          "offsetY" : -40,
+          "offsetY" : -30,
           "font"    : "Verdana",
           "size"    : 38,
           "minSize" : 8,

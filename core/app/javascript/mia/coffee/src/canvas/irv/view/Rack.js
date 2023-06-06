@@ -151,6 +151,8 @@ class Rack extends RackObject {
       this.included = true;
     }
 
+    this.owner = def.owner;
+
     Profiler.end(Profiler.DEBUG);
   }
 
@@ -215,7 +217,8 @@ class Rack extends RackObject {
   destroy() {
     super.destroy();
     this.showULabels(false);
-    return this.showNameLabel(false);
+    this.showNameLabel(false);
+    this.showOwnerLabel(false);
   }
     //model = RackObject.MODEL
     //model_racks = model.racks()
@@ -318,13 +321,14 @@ class Rack extends RackObject {
     })();
   }
 
-  draw(show_u_labels, show_name_label) {
+  draw(show_u_labels, show_name_label, show_owner_label) {
     Profiler.begin(Profiler.DEBUG);
     // clear
     for (var asset of Array.from(this.assets)) { RackObject.RACK_GFX.remove(asset); }
     this.assets = [];
 
     // add labels as necessary
+    this.showOwnerLabel(show_owner_label);
     this.showNameLabel(show_name_label);
     this.showULabels(show_u_labels);
 
@@ -348,6 +352,34 @@ class Rack extends RackObject {
     this.children = this.face === ViewModel.FACE_FRONT ? this.rearFirst : this.frontFirst;
     super.draw();
     return Profiler.end(Profiler.DEBUG);
+  }
+
+  showOwnerLabel(visible) {
+    if (visible) {
+      if (this.ownerLbl != null) { RackObject.INFO_GFX.remove(this.ownerLbl); }
+
+      let size = RackObject.NAME_LBL_SIZE * RackObject.INFO_GFX.scale;
+      if (size < RackObject.NAME_LBL_MIN_SIZE) { size = RackObject.NAME_LBL_MIN_SIZE; }
+
+      let ownerName = this.owner.name;
+
+      this.ownerLbl = RackObject.INFO_GFX.addText({
+        x         : this.x + (this.width / 2) + RackObject.NAME_LBL_OFFSET_X,
+        y         : this.y + RackObject.NAME_LBL_OFFSET_Y - 45,
+        caption   : ownerName,
+        font      : size + 'px ' + RackObject.NAME_LBL_FONT,
+        align     : RackObject.NAME_LBL_ALIGN,
+        fill      : RackObject.NAME_LBL_COLOUR,
+        bgFill    : RackObject.NAME_LBL_BG_FILL,
+        bgAlpha   : RackObject.NAME_LBL_BG_ALPHA,
+        bgPadding : RackObject.NAME_LBL_BG_PADDING,
+        maxWidth  : this.width - (RackObject.NAME_LBL_BG_PADDING * 2)
+        });
+
+    } else if (!visible && this.ownerLbl != null) {
+      RackObject.INFO_GFX.remove(this.ownerLbl);
+      this.ownerLbl = null;
+    }
   }
 
   showULabels(visible, target_scale) {

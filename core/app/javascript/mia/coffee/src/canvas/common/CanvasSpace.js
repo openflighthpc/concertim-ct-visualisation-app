@@ -76,7 +76,7 @@ class CanvasSpace {
   // draw all racks
   draw() {
     Profiler.begin(Profiler.CRITICAL);
-    for (var rack of Array.from(this.racks)) { rack.draw(false, false); }
+    for (var rack of Array.from(this.racks)) { rack.draw(false, false, false); }
     return Profiler.end(Profiler.CRITICAL);
   }
 
