@@ -28,7 +28,7 @@ RSpec.shared_examples "forbidden HTML request" do
   end
 
   it "returns a HTML document" do
-    get url_under_test, headers: headers
+    send(request_method, url_under_test, headers: headers)
     expect( response.content_type ).to start_with 'text/html'
   end
 end

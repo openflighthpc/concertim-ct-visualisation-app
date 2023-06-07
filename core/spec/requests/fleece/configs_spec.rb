@@ -214,4 +214,75 @@ RSpec.describe "Fleece::Configs", type: :request do
       end
     end
   end
+
+  describe "POST :send_config" do
+    let(:url_under_test) { urls.send_fleece_configs_path }
+
+    context "when not logged in" do
+      include_examples "unauthorised HTML request" do
+        let(:request_method) { :post }
+      end
+    end
+
+    context "when logged in as non-admin" do
+      include_context "Logged in as non-admin"
+      include_examples "forbidden HTML request" do
+        let(:request_method) { :post }
+      end
+    end
+
+    context "when logged in as admin" do
+      include_context "Logged in as admin"
+
+      context "when there is not a configuration" do
+        before(:each) { Fleece::Config.destroy_all }
+
+        it "does not perform the job" do
+          result = Fleece::PostConfigJob::Result.new(true, nil)
+          allow(Fleece::PostConfigJob).to receive(:perform_now).and_return(result)
+
+          post url_under_test, headers: headers
+          expect(Fleece::PostConfigJob).not_to have_received(:perform_now)
+        end
+
+        it "displays an error message to the user" do
+          post url_under_test, headers: headers
+          expect(flash[:alert]).to match /Unable to send/
+        end
+      end
+
+      context "when there is a configuration" do
+        let!(:config) { create(:fleece_config) }
+        let(:result) { Fleece::PostConfigJob::Result.new(success, error_message) }
+        let(:success) { true }
+        let(:error_message) { nil }
+
+        before(:each) do 
+          allow(Fleece::PostConfigJob).to receive(:perform_now).and_return(result)
+        end
+
+        it "performs the job now" do
+          post url_under_test, headers: headers
+          expect(Fleece::PostConfigJob).to have_received(:perform_now).with(config).once
+        end
+
+        context "when the job is successful" do
+          it "displays an info message to the user" do
+            post url_under_test, headers: headers
+            expect(flash[:success]).to match /\bconfig.*\bsent\b/
+          end
+        end
+
+        context "when the job is unsuccessful" do
+          let(:success) { false }
+          let(:error_message) { "oopsie daisy" }
+
+          it "displays an error message to the user" do
+            post url_under_test, headers: headers
+            expect(flash[:alert]).to match error_message
+          end
+        end
+      end
+    end
+  end
 end

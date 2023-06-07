@@ -8,7 +8,8 @@
 
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
-    <%= javascript_include_tag "application" %>
+    <%= javascript_include_tag "legacy-application" %>
+    <%= javascript_import_module_tag "application" %>
     <%= yield :head %>
   </head>
 
