@@ -2,6 +2,10 @@ object @rack
 attributes :id, :name
 attribute :u_height => :uHeight
 
+child :user, root: 'owner' do
+  extends 'api/v1/users/show'
+end
+
 node(:template) do |rack|
   partial('api/v1/irv/racks/template', object: rack.template)
 end

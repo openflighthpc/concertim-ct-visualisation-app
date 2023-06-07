@@ -47,12 +47,26 @@ RSpec.describe "Api::V1::Irv::RacksControllers", type: :request do
           expect(parsed_racks["id"].to_i).to eq rack.id
           expect(parsed_racks["name"]).to eq rack.name
           expect(parsed_racks["uHeight"].to_i).to eq rack.u_height
+        end
+
+        it "includes the rack's template" do
+          get url_under_test, headers: headers, as: :json
           expected_template = {
             height: template.height.to_s,
             depth: template.depth.to_s,
             name: template.name,
           }.stringify_keys
           expect(parsed_racks["template"].slice(*expected_template.keys)).to eq expected_template
+        end
+
+        it "includes the rack's owner" do
+          get url_under_test, headers: headers, as: :json
+          expected_owner = {
+            id: user.id.to_s,
+            login: user.login,
+            name: user.name,
+          }.stringify_keys
+          expect(parsed_racks["owner"].slice(*expected_owner.keys)).to eq expected_owner
         end
       end
 
