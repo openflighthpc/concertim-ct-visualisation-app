@@ -1,6 +1,6 @@
 <%=
-  render_lhm_actions 'Cloud environment actions' do |lhm_actions|
-    lhm_actions.add title: 'View', path: fleece_configs_path
-    lhm_actions.add title: 'Edit', path: edit_fleece_configs_path
+  render_action_dropdown 'Cloud environment actions' do |builder|
+    builder.add title: 'View', path: fleece_configs_path
+    builder.add title: 'Edit', path: edit_fleece_configs_path
   end
 %>
