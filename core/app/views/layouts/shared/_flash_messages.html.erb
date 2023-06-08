@@ -1,9 +1,3 @@
-<% if flash[:notice] -%>
-  <%= flash_box(:notice) %>
-<% end -%>
-<% if flash[:warn] -%>
-  <%= flash_box(:warn) %>
-<% end -%>
-<% if flash[:alert] -%>
-  <%= flash_box(:alert) %>
-<% end -%>
+<% flash.keys.each do |level| %>
+  <%= flash_box(level) %>
+<% end %>

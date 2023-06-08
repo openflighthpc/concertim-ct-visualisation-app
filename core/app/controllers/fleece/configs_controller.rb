@@ -14,7 +14,7 @@ class Fleece::ConfigsController < ApplicationController
 
   def create
     if @config.update(config_params)
-      flash[:notice] = "Cloud environment config created"
+      flash[:success] = "Cloud environment config created"
       redirect_to fleece_configs_path
     else
       render action: :new, status: :unprocessable_entity
@@ -27,7 +27,7 @@ class Fleece::ConfigsController < ApplicationController
 
   def update
     if @config.update(config_params)
-      flash[:notice] = "Cloud environment config updated"
+      flash[:success] = "Cloud environment config updated"
       redirect_to fleece_configs_path
     else
       render action: :edit, status: :unprocessable_entity
