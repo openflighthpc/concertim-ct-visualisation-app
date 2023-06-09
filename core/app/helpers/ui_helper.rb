@@ -23,7 +23,7 @@ module UiHelper
   # render_lhm_actions renders the actions for the left-hand sidebar menu.
   #
   def render_lhm_actions(title, opts = {}, &block)
-    cell(:actions).(:show, title, block, opts)
+    cell(:actions).(:show, title, block, opts.merge(side: true))
   end
 
   #

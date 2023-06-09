@@ -21,6 +21,7 @@ class ActionsCell < Cell::ViewModel
     # @title = title
     @is_dropdown = opts[:is_dropdown] || false
     @dropdown_id = opts[:dropdown_id] || 'drop'
+    @side = opts[:side] || false
 
     ActionBuilder.new(current_user, self).tap do |builder|
       block.call(builder)
@@ -55,6 +56,10 @@ class ActionsCell < Cell::ViewModel
     else
       {}
     end
+  end
+
+  def side?
+    !!@side
   end
 
   private
@@ -96,9 +101,7 @@ class ActionsCell < Cell::ViewModel
       html = (block_given? ? block.call : options[:html])
       opts = options.reject {|k, v| [:title, :html, :path, :can, :cannot, :on].include?(k)}
       
-      if opts[:side]
-        add_side(html, opts)
-      elsif html
+      if html
         add_custom(html, opts)
       else
         add_item(title, path, opts)
@@ -141,6 +144,10 @@ class ActionsCell < Cell::ViewModel
     end
  
     private
+
+    def side?
+      @cell.side?
+    end
   
     #
     # add_item
@@ -149,7 +156,11 @@ class ActionsCell < Cell::ViewModel
     #
     def add_item(title, path, opts = {})
       action = Action.new(title, path, opts, @cell)
-      @dropdown_actions << action
+      if side?
+        @actions << action
+      else
+        @dropdown_actions << action
+      end
     end
 
     #
@@ -160,17 +171,11 @@ class ActionsCell < Cell::ViewModel
     #
     def add_custom(html, opts = {})
       action = CustomAction.new(html, opts)
-      @dropdown_actions << action
-    end
-
-    #
-    # add_side
-    # 
-    # Used to specify html that will be rendered in the sidebar only.
-    #
-    def add_side(html, opts = {})
-      action = SideAction.new(html, opts)
-      @actions << action
+      if side?
+        @actions << action
+      else
+        @dropdown_actions << action
+      end
     end
  end
   
@@ -198,7 +203,7 @@ class ActionsCell < Cell::ViewModel
     end
 
     def html
-      @cell.link_to @title, @path, @tops
+      @cell.link_to @title, @path, @opts
     end
   end
 
@@ -222,16 +227,6 @@ class ActionsCell < Cell::ViewModel
     def initialize(html, opts = {})
       @html = html
       @path = opts[:path]
-      @opts = opts
-    end
-  end
-
-  class SideAction < ActionItem
-    attr_reader :html, :opts
-
-    def initialize(html, opts = {})
-      @html = html
-      @path = nil
       @opts = opts
     end
   end
