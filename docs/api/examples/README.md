@@ -49,6 +49,13 @@ Get details of current user.  Provides details of the current user.
 ./current-user.sh
 ```
 
+Update project ID for a given user.  Currently, `project_id` is the only
+attribute that can be updated via the API.
+
+```
+./update-user.sh <USER_ID> <PROJECT_ID>
+```
+
 ### Racks
 
 List all racks.

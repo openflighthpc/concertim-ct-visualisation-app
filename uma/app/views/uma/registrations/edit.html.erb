@@ -11,8 +11,12 @@
 
   <% unless current_user.root? %>
     <div class="formItem">
-      <%= f.label :project_id, "Project ID" %>
-      <%= f.text_field :project_id, :autocomplete => :off %>
+      <%
+          disabled = current_user.project_id.present?
+          tooltip = disabled ? "Once set project IDs can only be changed by an admin user" : ""
+      %>
+      <%= f.label :project_id, "Project ID", title: tooltip %>
+      <%= f.text_field :project_id, autocomplete: :off, disabled: disabled %>
     </div>
   <% end %>
 

@@ -1,11 +1,17 @@
 # Pin npm packages by running ./bin/importmap
 
 pin "application", to: "application.js"
+
+# Page-specific javascripts.
 pin "IRV", to: "IRV.js"
+pin "registrations/new", to: "registrations/new.js"
+
+# Utility Javascripts.
 pin "Profiler", to: "mia/javascript/irv/NullProfiler.js"
 pin "util/ComboBox", to: "mia/javascript/util/ComboBox.js"
 pin "util/Dialog", to: "util/Dialog.js"
 
+# Javascripts for the IRV.
 pin "canvas/irv/util/Parser", to: "mia/coffee/src/canvas/irv/util/Parser.js"
 pin "canvas/irv/util/Configurator", to: "mia/coffee/src/canvas/irv/util/Configurator.js"
 pin "canvas/irv/util/AssetManager", to: "mia/coffee/src/canvas/irv/util/AssetManager.js"

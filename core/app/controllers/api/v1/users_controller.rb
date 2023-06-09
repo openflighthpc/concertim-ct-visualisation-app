@@ -1,5 +1,5 @@
 class Api::V1::UsersController < Api::V1::ApplicationController
-  load_and_authorize_resource :user, :class => Uma::User, only: [:index]
+  load_and_authorize_resource :user, :class => Uma::User, except: [:current, :can_i?]
 
   def index
     @users = @users.map {|user| Api::V1::UserPresenter.new(user)}
@@ -10,6 +10,14 @@ class Api::V1::UsersController < Api::V1::ApplicationController
     authorize! :read, current_user
     @user = Api::V1::UserPresenter.new(current_user)
     render action: :show
+  end
+
+  def update
+    if @user.update(user_params)
+      render action: :show
+    else
+      render json: @user.errors.as_json, status: :unprocessable_entity
+    end
   end
 
   #
@@ -44,4 +52,12 @@ class Api::V1::UsersController < Api::V1::ApplicationController
     render json: result
   end
 
+  private
+
+  def user_params
+    permitted_params = [].tap do |a|
+      a << :project_id if current_user.root? || current_user.project_id.blank?
+    end
+    params.require(:user).permit(*permitted_params)
+  end
 end
