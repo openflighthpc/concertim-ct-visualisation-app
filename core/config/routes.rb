@@ -9,7 +9,11 @@ Rails.application.routes.draw do
   root to: redirect('/irv')
 
   namespace :fleece, path: 'cloud-env' do
-    resource :configs, path: 'config'
+    resource :configs, path: 'config' do
+      member do
+        post :send_config, as: 'send', path: 'send'
+      end
+    end
   end
 
   # API routes

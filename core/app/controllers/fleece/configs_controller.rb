@@ -14,7 +14,7 @@ class Fleece::ConfigsController < ApplicationController
 
   def create
     if @config.update(config_params)
-      flash[:notice] = "Cloud environment config created"
+      flash[:success] = "Cloud environment config created"
       redirect_to fleece_configs_path
     else
       render action: :new, status: :unprocessable_entity
@@ -27,11 +27,28 @@ class Fleece::ConfigsController < ApplicationController
 
   def update
     if @config.update(config_params)
-      flash[:notice] = "Cloud environment config updated"
+      flash[:success] = "Cloud environment config updated"
       redirect_to fleece_configs_path
     else
       render action: :edit, status: :unprocessable_entity
     end
+  end
+
+  # POST the config to the ip/port specified in the config
+  def send_config
+    if @config.nil? || !@config.persisted?
+      flash[:alert] = "Unable to send cloud environment configuration it has not yet been created."
+      redirect_to action: :show
+      return
+    end
+
+    result = Fleece::PostConfigJob.perform_now(@config)
+    if result.success?
+      flash[:success] = "Cloud environment configuration sent"
+    else
+      flash[:alert] = "Unable to send configuration: #{result.error_message}"
+    end
+    redirect_to action: :show
   end
 
   private

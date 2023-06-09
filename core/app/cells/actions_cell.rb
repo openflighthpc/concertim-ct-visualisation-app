@@ -134,7 +134,7 @@ class ActionsCell < Cell::ViewModel
     # Adds a label with a title that separates menu items.
     #
     def divider(title = nil)
-      unless @actions.empty?
+      unless @dropdown_actions.empty?
         divider = ActionDivider.new(title)
         @dropdown_actions << divider
       end

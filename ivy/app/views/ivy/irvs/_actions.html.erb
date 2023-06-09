@@ -1,6 +1,6 @@
 <%=
-  render_lhm_actions 'Rack actions' do |lhm_actions|
-    lhm_actions.add title: 'Export data', path: '#', id: :export_link
+  render_action_dropdown 'Rack actions' do |builder|
+    builder.add title: 'Export data', path: '#', id: :export_link
   end
 %>
 

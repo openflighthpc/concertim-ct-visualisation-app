@@ -7,10 +7,11 @@ pin "IRV", to: "IRV.js"
 pin "registrations/new", to: "registrations/new.js"
 
 # Utility Javascripts.
+pin "@rails/ujs", to: "https://ga.jspm.io/npm:@rails/ujs@7.0.5/lib/assets/compiled/rails-ujs.js"
 pin "Profiler", to: "mia/javascript/irv/NullProfiler.js"
 pin "util/ComboBox", to: "mia/javascript/util/ComboBox.js"
 pin "util/Dialog", to: "util/Dialog.js"
-pin "util/copyToClipboard", to: "util/copyToClipboard.js"
+# pin "util/copyToClipboard", to: "util/copyToClipboard.js"
 
 # Javascripts for the IRV.
 pin "canvas/irv/util/Parser", to: "mia/coffee/src/canvas/irv/util/Parser.js"

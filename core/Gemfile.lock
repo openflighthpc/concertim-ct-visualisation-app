@@ -163,6 +163,10 @@ GEM
       railties (>= 5.0.0)
     faker (3.2.0)
       i18n (>= 1.8.11, < 2)
+    faraday (2.7.6)
+      faraday-net_http (>= 2.0, < 3.1)
+      ruby2_keywords (>= 0.0.4)
+    faraday-net_http (3.0.2)
     foreman (0.87.2)
     fugit (1.8.1)
       et-orbi (~> 1, >= 1.2.7)
@@ -278,6 +282,7 @@ GEM
       rspec-mocks (~> 3.12)
       rspec-support (~> 3.12)
     rspec-support (3.12.0)
+    ruby2_keywords (0.0.5)
     rubyzip (2.3.2)
     selenium-webdriver (4.7.1)
       rexml (~> 3.2, >= 3.2.5)
@@ -347,6 +352,7 @@ DEPENDENCIES
   devise-jwt (>= 0.10.0)
   factory_bot_rails (~> 6.2.0)
   faker
+  faraday (~> 2.7)
   foreman
   good_job (~> 3.12)
   importmap-rails
