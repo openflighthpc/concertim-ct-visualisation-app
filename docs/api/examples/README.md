@@ -33,6 +33,15 @@ scripts can be used.
 
 ## Rack and device API usage
 
+### Cloud environment config
+
+Get the configured cloud environment config.  If the configuration has not yet
+been created a 404 response is returned.
+
+```
+./show-cloud-env-config.sh
+```
+
 ### Users
 
 List all users.  Returns a list of all users that the current user is permitted

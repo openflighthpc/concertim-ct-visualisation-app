@@ -1,11 +1,11 @@
 FactoryBot.define do
   factory :fleece_config, class: 'Fleece::Config' do
-    host_name { "hostname" }
-    host_ip { IPAddr.new("8.8.8.8") }
-    username { "username" }
-    password { "password" }
-    port { 1 }
-    project_name { "project-name" }
-    domain_name { "domain-name" }
+    host_name { Faker::Internet.domain_name }
+    host_ip { IPAddr.new(Faker::Internet.ip_v4_address) }
+    username { Faker::Internet.username }
+    password { Faker::Internet.password }
+    port { rand(1...65535) }
+    project_name { "project-#{Faker::Alphanumeric.alphanumeric}" }
+    domain_name { Faker::Internet.domain_name }
   end
 end

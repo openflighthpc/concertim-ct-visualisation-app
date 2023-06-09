@@ -8,8 +8,8 @@ Rails.application.routes.draw do
   # the legacy sign up page.
   root to: redirect('/irv')
 
-  namespace :fleece do
-    resource :configs
+  namespace :fleece, path: 'cloud-env' do
+    resource :configs, path: 'config'
   end
 
   # API routes
@@ -25,6 +25,10 @@ Rails.application.routes.draw do
         resources :templates, only: [:index, :create, :update, :destroy]
         resources :nodes, only: [:create]
         resources :devices, only: [:index, :show, :update, :destroy]
+
+        namespace :fleece, path: 'cloud-env' do
+          resource :configs, path: 'config', only: [:show]
+        end
 
         namespace :irv do
           resources :racks, only: [:index] do
