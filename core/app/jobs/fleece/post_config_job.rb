@@ -57,7 +57,7 @@ class Fleece::PostConfigJob < ApplicationJob
           # f.request :authorization, 'Bearer', @config.token
 
           f.response :json
-          f.response :logger, nil, {
+          f.response :logger, Rails.logger, {
             formatter: Emma::FaradayLogFormatter,
             headers: {request: true, response: true, errors: false},
             bodies: true,
