@@ -27,7 +27,7 @@ class Api::V1::UsersController < Api::V1::ApplicationController
   # cancan ability checker - used to check yourself and your own abilities.
   #
   def can_i?
-    # On the permissions params, this action should recieve an structure of the
+    # On the permissions params, this action should recieve a structure of the
     # following form
     #
     # {
@@ -42,7 +42,9 @@ class Api::V1::UsersController < Api::V1::ApplicationController
     params[:permissions].each do |rbac_action,rbac_resources|
       result[rbac_action] = {}
       rbac_resources.each do |_, rbac_resource|
-        if rbac_resource.safe_constantize
+        if rbac_resource == "all"
+          result[rbac_action][rbac_resource] = current_user.can?(rbac_action.to_sym, :all)
+        elsif rbac_resource.safe_constantize
           result[rbac_action][rbac_resource] = current_user.can?(rbac_action.to_sym, rbac_resource.safe_constantize)
         else
           result[rbac_action][rbac_resource] = false

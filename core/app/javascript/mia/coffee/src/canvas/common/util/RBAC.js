@@ -33,7 +33,8 @@ class RBAC {
       permissions:
         {
           manage: ["Ivy::HwRack", "Ivy::Device", "Ivy::Chassis"],
-          move:   ["Ivy::Device", "Ivy::Chassis"]
+          move:   ["Ivy::Device", "Ivy::Chassis"],
+          view:   ["all"]
         }
     };
   }

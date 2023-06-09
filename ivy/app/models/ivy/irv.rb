@@ -58,7 +58,12 @@ module Ivy
 
 ret = (<<SQL)
 WITH sorted_racks AS (
-        SELECT id, name, u_height, template_id FROM racks ORDER BY SUBSTRING( "name" FROM E'^(.*?)(\\\\d+)?$'), lpad(substring( "name" FROM E'(\\\\d+)$'), 30, '0') ASC
+        SELECT racks.id AS id, racks.name AS name, racks.u_height AS u_height, racks.template_id AS template_id, racks.user_id AS user_id
+          FROM racks
+          JOIN uma.users as users ON racks.user_id = users.id
+      ORDER BY LOWER(users.name)
+             , SUBSTRING("racks"."name" FROM E'^(.*?)(\\\\d+)?$')
+             , LPAD(SUBSTRING( "racks"."name" FROM E'(\\\\d+)$'), 30, '0') ASC
 )
 SELECT
   XmlElement( name "Racks",
@@ -68,6 +73,9 @@ SELECT
                        R.name AS "name",
                        R.u_height AS "uHeight" ,
                        ( SELECT id FROM sorted_racks OFFSET (SELECT row_num FROM (SELECT id,row_number() OVER () AS row_num FROM sorted_racks) t WHERE id=R.id) LIMIT 1) AS "nextRackId"),
+                       ( SELECT XmlElement( name "owner", XmlAttributes (O.id, O.name, O.login))
+                           FROM uma.users O WHERE O.id = R.user_id LIMIT 1 
+                       ),
                        ( SELECT XmlAgg( XmlElement( name "template",
                                           XmlAttributes (T.id,T.name,T.model,T.rackable,
                                                          T.images,T.height,T.rows,T.columns,T.rack_repeat_ratio,T.depth,
