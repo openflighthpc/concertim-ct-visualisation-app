@@ -1,3 +1,38 @@
+RSpec.shared_examples "successful HTML response" do
+  it "renders a successful response" do
+    get url_under_test, headers: headers
+    expect(response).to be_successful
+  end
+
+  it "returns a HTML document" do
+    get url_under_test, headers: headers
+    expect( response.content_type ).to start_with 'text/html'
+  end
+end
+
+RSpec.shared_examples "unauthorised HTML request" do
+  let(:request_method) { :get }
+
+  it "redirects to the sign in page" do
+    send(request_method, url_under_test, headers: headers)
+    expect(response).to redirect_to '/users/sign_in'
+  end
+end
+
+RSpec.shared_examples "forbidden HTML request" do
+  let(:request_method) { :get }
+
+  it "returns a forbidden response" do
+    send(request_method, url_under_test, headers: headers, as: :json)
+    expect(response).to have_http_status :forbidden
+  end
+
+  it "returns a HTML document" do
+    get url_under_test, headers: headers
+    expect( response.content_type ).to start_with 'text/html'
+  end
+end
+
 RSpec.shared_examples "successful JSON response" do
   it "renders a successful response" do
     get url_under_test, headers: headers, as: :json

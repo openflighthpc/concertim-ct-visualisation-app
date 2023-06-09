@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_05_31_161942) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_05_140921) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -29,6 +29,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_31_161942) do
   connection.execute "CREATE SEQUENCE ivy.racks_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
   connection.execute "CREATE SEQUENCE ivy.templates_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
   connection.execute "CREATE SEQUENCE meca.rackview_presets_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
+  connection.execute "CREATE SEQUENCE public.fleece_configs_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
   connection.execute "CREATE SEQUENCE uma.users_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
 
   create_table "ivy.base_chassis", id: :bigint, default: -> { "nextval('base_chassis_id_seq'::regclass)" }, force: :cascade do |t|
@@ -123,6 +124,18 @@ ActiveRecord::Schema[7.0].define(version: 2023_05_31_161942) do
     t.jsonb "values"
     t.integer "user_id"
     t.boolean "global", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "fleece_configs", id: :bigint, default: -> { "nextval('fleece_configs_id_seq'::regclass)" }, force: :cascade do |t|
+    t.string "host_name", limit: 255, null: false
+    t.inet "host_ip", null: false
+    t.string "username", limit: 255, null: false
+    t.string "password", limit: 255, null: false
+    t.integer "port", default: 5000, null: false
+    t.string "project_name", limit: 255, null: false
+    t.string "domain_name", limit: 255, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

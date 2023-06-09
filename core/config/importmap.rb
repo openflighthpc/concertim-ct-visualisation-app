@@ -10,6 +10,7 @@ pin "registrations/new", to: "registrations/new.js"
 pin "Profiler", to: "mia/javascript/irv/NullProfiler.js"
 pin "util/ComboBox", to: "mia/javascript/util/ComboBox.js"
 pin "util/Dialog", to: "util/Dialog.js"
+pin "util/copyToClipboard", to: "util/copyToClipboard.js"
 
 # Javascripts for the IRV.
 pin "canvas/irv/util/Parser", to: "mia/coffee/src/canvas/irv/util/Parser.js"

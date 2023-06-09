@@ -24,3 +24,15 @@
 jQuery(document).ready(function() {
   jQuery(document).foundation();
 });
+
+// Setup .copyToClipboard buttons to copy their given text to the clipboard.
+document.addEventListener("DOMContentLoaded", function () {
+  const copyToClipboardButtons = document.querySelectorAll(".copyToClipboard");
+  copyToClipboardButtons.forEach((button) => {
+    button.addEventListener("click", (ev) => {
+      navigator.clipboard.writeText(button.dataset.text).
+        then(() => { button.innerHTML = 'Copied'; });
+      setTimeout(() => { button.innerHTML = 'Copy'; }, 1000);
+    });
+  });
+});

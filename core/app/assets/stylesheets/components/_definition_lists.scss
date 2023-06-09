@@ -1,0 +1,44 @@
+dl {
+  margin-left: 2em;
+
+  dd, dt {
+    p {
+      margin: 0;
+      padding: 0;
+    }
+  }
+}
+
+
+div.dl_group {
+
+  font-size: 1em;
+
+  dl {
+    margin-left: 2em;
+  }
+
+  dl dt {
+    font-weight: bold;
+    width: 13.5em;
+    margin-bottom: 0.3em !important;
+  }
+
+  dl dd {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    white-space: normal !important;
+    margin-left: 0 !important;
+  }
+
+  dl dt, dl dd {
+    float: left;
+  }
+  dl dd + dt, dl dd + dd {
+    clear: left;
+  }
+}
+
+// p.notes {
+//   max-width: 400px;
+// }
