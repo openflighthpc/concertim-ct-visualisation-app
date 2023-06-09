@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_06_105434) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_07_151532) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -29,6 +29,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_06_105434) do
   connection.execute "CREATE SEQUENCE ivy.racks_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
   connection.execute "CREATE SEQUENCE ivy.templates_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
   connection.execute "CREATE SEQUENCE meca.rackview_presets_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
+  connection.execute "CREATE SEQUENCE public.fleece_cluster_types_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
   connection.execute "CREATE SEQUENCE public.fleece_configs_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
   connection.execute "CREATE SEQUENCE uma.users_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
 
@@ -124,6 +125,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_06_105434) do
     t.jsonb "values"
     t.integer "user_id"
     t.boolean "global", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "fleece_cluster_types", id: :bigint, default: -> { "nextval('fleece_cluster_types_id_seq'::regclass)" }, force: :cascade do |t|
+    t.string "name", limit: 255, null: false
+    t.string "description", limit: 1024, null: false
+    t.string "kind", null: false
+    t.integer "nodes", default: 1, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

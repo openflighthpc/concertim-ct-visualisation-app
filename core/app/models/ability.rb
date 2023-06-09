@@ -36,6 +36,9 @@ class Ability
     can :manage, Ivy::HwRack, user: user
     can :manage, Meca::RackviewPreset, user: user
 
+    can :read, Fleece::ClusterType
+    can :create, Fleece::Cluster
+
     can [:read, :update], Uma::User, id: user.id
   end
 

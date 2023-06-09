@@ -1,0 +1,11 @@
+<% set_title "Select cluster type" %>
+
+<% if @cluster_types.empty? %>
+  <p>There are no cluster types available at present.</p>
+<% else %>
+  <div style="display: flex; justify-content: space-evenly;">
+    <% @cluster_types.each do |cluster_type| %>
+      <%= render partial: 'card', object: cluster_type %>
+    <% end %>
+  </div>
+<% end %>

@@ -1,0 +1,7 @@
+<h4>Actions</h4>
+
+<%=
+  render_lhm_actions("bob") do |actions|
+    actions.add title: "Re-select cluster type", path: fleece_cluster_types_path
+  end
+%>

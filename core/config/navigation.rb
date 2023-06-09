@@ -17,7 +17,13 @@ SimpleNavigation::Configuration.run do |navigation|
       if current_user.root?
         primary.item :fleece_config, 'Cloud environment', Rails.application.routes.url_helpers.fleece_config_path,
           icon: :config,
-          highlights_on: /\/fleece\/configs/
+          highlights_on: /\/cloud-env\/configs/
+      end
+
+      if current_user.can?(:create, Fleece::Cluster)
+        primary.item :fleece_cluster_types, 'Launch cluster', Rails.application.routes.url_helpers.fleece_cluster_types_path,
+          icon: :racks,
+          highlights_on: /\/cloud-env\/(cluster-types|clusters)/
       end
 
     else
