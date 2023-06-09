@@ -9,7 +9,7 @@ Rails.application.routes.draw do
   root to: redirect('/irv')
 
   namespace :fleece, path: 'cloud-env' do
-    resource :configs, path: 'config' do
+    resource :config do
       member do
         post :send_config, as: 'send', path: 'send'
       end
@@ -31,7 +31,7 @@ Rails.application.routes.draw do
         resources :devices, only: [:index, :show, :update, :destroy]
 
         namespace :fleece, path: 'cloud-env' do
-          resource :configs, path: 'config', only: [:show]
+          resource :config, only: [:show]
         end
 
         namespace :irv do

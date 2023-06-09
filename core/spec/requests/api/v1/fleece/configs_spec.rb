@@ -5,7 +5,7 @@ RSpec.describe "Api::V1::Fleece::Configs", type: :request do
   let(:urls) { Rails.application.routes.url_helpers }
 
   describe "GET :show" do
-    let(:url_under_test) { urls.api_v1_fleece_configs_path }
+    let(:url_under_test) { urls.api_v1_fleece_config_path }
 
     let(:parsed_body) { JSON.parse(response.body) }
     let(:parsed_config) { parsed_body }

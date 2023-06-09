@@ -5,7 +5,7 @@ RSpec.describe "Fleece::Configs", type: :request do
   let(:urls) { Rails.application.routes.url_helpers }
 
   describe "GET :show" do
-    let(:url_under_test) { urls.fleece_configs_path }
+    let(:url_under_test) { urls.fleece_config_path }
     before(:each) { create(:fleece_config) }
 
     context "when not logged in" do
@@ -24,7 +24,7 @@ RSpec.describe "Fleece::Configs", type: :request do
   end
 
   describe "GET :new" do
-    let(:url_under_test) { urls.new_fleece_configs_path }
+    let(:url_under_test) { urls.new_fleece_config_path }
 
     context "when logged in as admin" do
       include_context "Logged in as admin"
@@ -38,14 +38,14 @@ RSpec.describe "Fleece::Configs", type: :request do
 
         it "redirects to the edit page" do
           get url_under_test, headers: headers
-          expect(response).to redirect_to urls.edit_fleece_configs_path
+          expect(response).to redirect_to urls.edit_fleece_config_path
         end
       end
     end
   end
 
   describe "GET :edit" do
-    let(:url_under_test) { urls.edit_fleece_configs_path }
+    let(:url_under_test) { urls.edit_fleece_config_path }
 
     context "when logged in as admin" do
       include_context "Logged in as admin"
@@ -55,7 +55,7 @@ RSpec.describe "Fleece::Configs", type: :request do
 
         it "redirects to the new page" do
           get url_under_test, headers: headers
-          expect(response).to redirect_to urls.new_fleece_configs_path
+          expect(response).to redirect_to urls.new_fleece_config_path
         end
       end
 
@@ -71,9 +71,9 @@ RSpec.describe "Fleece::Configs", type: :request do
     context "when logged in as admin" do
       include_context "Logged in as admin"
 
-      let(:url_under_test) { urls.fleece_configs_path }
+      let(:url_under_test) { urls.fleece_config_path }
       let(:model_under_test) { Fleece::Config }
-      let(:expected_redirect_url) { urls.fleece_configs_path }
+      let(:expected_redirect_url) { urls.fleece_config_path }
 
       let(:valid_attributes) do
         {fleece_config: attributes_for(:fleece_config)}
@@ -139,9 +139,9 @@ RSpec.describe "Fleece::Configs", type: :request do
 
       let!(:fleece_config) { create(:fleece_config) }
 
-      let(:url_under_test) { urls.fleece_configs_path }
+      let(:url_under_test) { urls.fleece_config_path }
       let(:object_under_test) { fleece_config }
-      let(:expected_redirect_url) { urls.fleece_configs_path }
+      let(:expected_redirect_url) { urls.fleece_config_path }
 
       let(:valid_attributes) do
         {
@@ -216,7 +216,7 @@ RSpec.describe "Fleece::Configs", type: :request do
   end
 
   describe "POST :send_config" do
-    let(:url_under_test) { urls.send_fleece_configs_path }
+    let(:url_under_test) { urls.send_fleece_config_path }
 
     context "when not logged in" do
       include_examples "unauthorised HTML request" do

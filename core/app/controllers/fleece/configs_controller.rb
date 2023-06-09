@@ -4,31 +4,31 @@ class Fleece::ConfigsController < ApplicationController
 
   def show
     if @config.nil? || !@config.persisted?
-      redirect_to new_fleece_configs_path
+      redirect_to new_fleece_config_path
     end
   end
 
   def new
-    redirect_to edit_fleece_configs_path if @config.persisted?
+    redirect_to edit_fleece_config_path if @config.persisted?
   end
 
   def create
     if @config.update(config_params)
       flash[:success] = "Cloud environment config created"
-      redirect_to fleece_configs_path
+      redirect_to fleece_config_path
     else
       render action: :new, status: :unprocessable_entity
     end
   end
 
   def edit
-    redirect_to new_fleece_configs_path if @config.nil? || !@config.persisted?
+    redirect_to new_fleece_config_path if @config.nil? || !@config.persisted?
   end
 
   def update
     if @config.update(config_params)
       flash[:success] = "Cloud environment config updated"
-      redirect_to fleece_configs_path
+      redirect_to fleece_config_path
     else
       render action: :edit, status: :unprocessable_entity
     end
