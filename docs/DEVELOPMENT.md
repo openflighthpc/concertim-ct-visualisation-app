@@ -116,5 +116,5 @@ and then change to the app directory (`cd /opt/concertim/dev/ct-visualisation-ap
 
 1. Select available story in Pivotal tracker.
 2. Implement it with test coverage on a feature branch.
-3. Create PR https://github.com/alces-flight/ct-visualisation-app/pulls.
+3. Create PR https://github.com/alces-flight/concertim-ct-visualisation-app/pulls.
 4. Update Pivotal tracker with PR details and mark story as finished.
