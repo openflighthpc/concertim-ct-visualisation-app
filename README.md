@@ -22,7 +22,8 @@ rack view which runs in a browser.
 
 ## Development
 
-TBD: complete this section.
+See the [development docs](docs/DEVELOPMENT.md) for details on development and
+getting started with development.
 
 ## Deployment
 
