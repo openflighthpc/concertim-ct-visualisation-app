@@ -48,7 +48,7 @@ class Fleece::PostCreateClusterJob < ApplicationJob
 
     def conn
       @conn ||= Faraday.new(
-        url: build_url.to_s,
+        url: URI(@config.cluster_builder_base_url).to_s,
         ) do |f|
         # Use the same timeout for open, read and write.
         f.options.timeout = @timeout
@@ -71,14 +71,6 @@ class Fleece::PostCreateClusterJob < ApplicationJob
           f.adapter(:test, @test_stubs)
         end
       end
-    end
-
-    def build_url
-      uri = URI("")
-      uri.scheme = "http"
-      uri.host = @config.host_ip.to_s
-      uri.port = @config.port
-      uri
     end
 
     def path

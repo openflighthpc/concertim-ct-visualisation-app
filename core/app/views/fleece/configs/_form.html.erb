@@ -52,5 +52,10 @@
     <%= f.text_field :domain_name, autocomplete: :off %>
   </div>
 
+  <div class="formItem">
+    <%= f.label :cluster_builder_base_url, "Cluster builder base url", class: 'required_field' %>
+    <%= f.text_field :cluster_builder_base_url, autocomplete: :off %>
+  </div>
+
   <%= f.submit @config.persisted? ? 'Update' : 'Create' %>
 <% end %>
