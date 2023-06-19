@@ -7,6 +7,14 @@ class Fleece::ClustersController < ApplicationController
 
   def create
     authorize! :create, Fleece::Cluster
+    @config = Fleece::Config.first
+
+    if @config.nil?
+      flash[:alert] = "Unable to send cluster configuration: cloud environment config not set"
+      render action: :new
+      return
+    end
+
     @cluster_type = Fleece::ClusterType.find(params[:cluster_type_id])
     @cluster = Fleece::Cluster.new(kind: @cluster_type, **cluster_params)
     if !@cluster.valid?
@@ -14,12 +22,7 @@ class Fleece::ClustersController < ApplicationController
       return
     end
 
-    # XXX We probably want this.
-    # result = Fleece::CreateClusterJob.perform_now(@cluster)
-    result = Object.new.tap do |o|
-      def o.success? ; true ; end
-      def o.error_message ; "not yet implemented" ; end
-    end
+    result = Fleece::PostCreateClusterJob.perform_now(@cluster, @config)
 
     if result.success?
       flash[:success] = "Cluster configuration sent (or at least faked)"
