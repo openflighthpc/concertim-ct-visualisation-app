@@ -1,6 +1,15 @@
 <% set_title "Select cluster type" %>
 
-<% if @cluster_types.empty? %>
+<% if @config.nil? %>
+   <p>
+     New clusters cannot be launched as the Cloud Environment has not yet been configured.
+     <% if current_user.root %>
+       Please <%= link_to 'set the configuration', fleece_config_path %> to continue.
+     <% else %>
+      Please contact an admin.
+     <% end %>
+   </p>
+<% elsif @cluster_types.empty? %>
   <p>There are no cluster types available at present.</p>
 <% else %>
   <div style="display: flex; justify-content: space-evenly;">
