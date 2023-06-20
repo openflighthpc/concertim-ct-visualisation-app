@@ -18,7 +18,7 @@
       </ul>
     </div>
   <% end %>
-  
+
   <% @cluster_type.fields.each do |field| %>
     <div class="formItem">
       <%= f.label field.id.to_sym, field.label, class: 'required_field', title: field.description %>

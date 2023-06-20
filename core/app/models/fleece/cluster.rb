@@ -15,6 +15,7 @@ class Fleece::Cluster
     @cluster_params = cluster_params
     @kind.fields.each do |field|
       singleton_class.class_eval { attr_accessor field.id }
+      self.send("#{field.id}=", cluster_params[field.id] || field.default)
     end
   end
 

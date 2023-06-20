@@ -71,7 +71,7 @@ class Fleece::ClusterType < ApplicationRecord
   #           ]
   #         }
   #       ],
-  #       "default": "m1.small",
+  #       "default": "PostgreSQL",
   #       "description": "Which database flavour do you want?",
   #       "label": "Database flavour",
   #       "type": "string",

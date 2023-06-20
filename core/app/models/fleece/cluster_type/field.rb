@@ -76,7 +76,18 @@ class Fleece::ClusterType::Field
   end
 
   def form_options
-    allowed_values? ? allowed_values : {required: true}
+    allowed_values? ? allowed_values : {required: true, placeholder: form_placeholder}
+  end
+
+  # possible future improvement: have JS for creating text boxes for each array/ hash option instead of
+  # expecting user to input text in correct format
+  def form_placeholder
+    case type
+    when 'comma_delimited_list'
+      'A list of choices separated by commas: choice1,choice2,choice3'
+    when 'json'
+      'Collection of keys and values: {"key1": "value1", "key2": "value2"}'
+    end
   end
 
   ############################
@@ -88,13 +99,13 @@ class Fleece::ClusterType::Field
   private
 
   MAPPED_TYPE_CLASSES = {
-    "string" => [String], "number" => [Float, Integer], "comma_delimited_list" => [Array],
-    "json" => [Hash], "boolean" => [TrueClass, FalseClass]
+    "string" => [String], "number" => [Float, Integer], "comma_delimited_list" => [String],
+    "json" => [String], "boolean" => [TrueClass, FalseClass]
   }
 
   MAPPED_FIELD_TYPES = {
-    "string" => "text_field", "number" => "number_field", "comma_delimited_list" => "text_field",
-    "json" => "text_field", "boolean" => "check_box"
+    "string" => "text_field", "number" => "number_field", "comma_delimited_list" => "text_area",
+    "json" => "text_area", "boolean" => "check_box"
   }
 
   def default_matches_kind
