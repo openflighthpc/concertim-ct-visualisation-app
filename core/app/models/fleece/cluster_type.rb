@@ -17,6 +17,10 @@ class Fleece::ClusterType < ApplicationRecord
     presence: true,
     uniqueness: true
 
+  # fields will require some sophisticated validation
+  validates :fields,
+    presence: true
+
   # The custom configuration for this cluster type.
   #
   # Currently, nothing is custom about this, all cluster types have a single
@@ -64,6 +68,36 @@ class Fleece::ClusterType < ApplicationRecord
   #   },
   # ]
   # ```
-  validates :nodes,
-    numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 1_000 }
+  #
+
+
+  # ####################################
+  # #
+  # # Public Instance Methods
+  # #
+  # ####################################
+
+  def fields(raw: false)
+    if raw
+      super()
+    else
+      @_fields ||=
+        begin
+          raw_fields = super()
+          if raw_fields.nil?
+            nil
+          else
+            raw_fields.map { |field| Fleece::ClusterType::Field.new(field) }
+          end
+        end
+    end
+  end
+
+  def fields=(raw_fields)
+    if raw_fields.nil? || raw_fields.blank?
+      super(nil)
+    else
+      super(raw_fields)
+    end
+  end
 end
