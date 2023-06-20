@@ -13,6 +13,7 @@ class Fleece::ClusterType < ApplicationRecord
     presence: true,
     length: { maximum: 1024 }
 
+  # kind is the id provided by cluster builder
   validates :kind,
     presence: true,
     uniqueness: true
@@ -22,51 +23,75 @@ class Fleece::ClusterType < ApplicationRecord
     presence: true
 
   # The custom configuration for this cluster type.
-  #
-  # Currently, nothing is custom about this, all cluster types have a single
-  # item of configuration which is the number of nodes.
-  #
-  # This will change to allow each ClusterType to specify custom configuration.
-  # Perhaps this will be stored as a JSON blob in the database.  The new
-  # cluster form will construct the form inputs based on the custom
-  # configuration.
-  #
-  # Example configuration might look like:
-  #
-  # ```
-  # [
+  # For example:
+  # ````
   #   {
-  #     "id": "number_of_headnodes",
-  #     "text": "Enter the number of headnodes",
-  #     "description": "...",
-  #     "default": 1,
-  #     "input": {
+  #     "clustername": {
+  #       "constraints": [
+  #         {
+  #           "description": "Cluster name must be between 6 and 255 characters",
+  #           "length": {
+  #             "max": 255,
+  #             "min": 6
+  #           }
+  #         },
+  #         {
+  #           "allowed_pattern": "[a-zA-Z]+[a-zA-Z0-9\\-\\_]*",
+  #           "description": "Cluster name can contain only alphanumeric characters, hyphens and underscores"
+  #         }
+  #       ],
+  #       "default": "mycluster",
+  #       "description": "The name your cluster should be given",
+  #       "label": "Cluster name",
+  #       "type": "string"
+  #     },
+  #     "count": {
+  #       "constraints": [
+  #         {
+  #           "description": "Number of replicas cannot be less than one",
+  #           "range": {
+  #             "min": 1
+  #           }
+  #         }
+  #       ],
+  #       "default": 3,
+  #       "description": "How many replicas should your cluster contain?",
+  #       "label": "Number of database replicas",
   #       "type": "number"
   #     },
-  #     "validation": {
-  #       "type": "integer",
-  #       "minimum": 1,
-  #     }
-  #   },
-  #   {
-  #     "id": "redundancy",
-  #     "text": "How much redundancy do you want?",
-  #     "description": "...",
-  #     "default": "high",
-  #     "input": {
-  #       "type": "select",
-  #       "options": [
-  #         {"text": "High",   "value": "high"},
-  #         {"text": "Medium", "value": "medium"},
-  #         {"text": "Low",    "value": "low"},
-  #       ]
+  #     "database_flavour": {
+  #       "constraints": [
+  #         {
+  #           "allowed_values": [
+  #             "MariaDB",
+  #             "PostgreSQL",
+  #             "Cassandra"
+  #           ]
+  #         }
+  #       ],
+  #       "default": "m1.small",
+  #       "description": "Which database flavour do you want?",
+  #       "label": "Database flavour",
+  #       "type": "string"
   #     },
-  #     "validation": {
-  #       "type": "string",
-  #       "enum": ["high", "medium", "low"],
+  #     "node_flavour": {
+  #       "constraints": [
+  #         {
+  #           "allowed_values": [
+  #             "m1.small",
+  #             "m1.medium",
+  #             "m1.large",
+  #             "m1.xxlarge",
+  #             "m1.xxxlarge"
+  #           ]
+  #         }
+  #       ],
+  #       "default": "m1.small",
+  #       "description": "Which flavour should be be used for the database servers?",
+  #       "label": "Node flavour",
+  #       "type": "string"
   #     }
-  #   },
-  # ]
+  #   }
   # ```
   #
 
@@ -87,7 +112,7 @@ class Fleece::ClusterType < ApplicationRecord
           if raw_fields.nil?
             nil
           else
-            raw_fields.map { |field| Fleece::ClusterType::Field.new(field) }
+            raw_fields.map { |id, details| Fleece::ClusterType::Field.new(id, details) }
           end
         end
     end

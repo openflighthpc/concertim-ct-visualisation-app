@@ -82,7 +82,7 @@ class Fleece::PostCreateClusterJob < ApplicationJob
         view_path: 'app/views',
         format: 'hash'
       })
-      renderer.render
+      {cluster: renderer.render}
     end
   end
 end

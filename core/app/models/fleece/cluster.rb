@@ -5,17 +5,20 @@ class Fleece::Cluster
   # meaning for ActiveRecord::Base and may have special meaning for ActiveModel
   # too.
   attr_accessor :kind
-  attr_accessor :name
-  attr_accessor :nodes
+  attr_accessor :cluster_params
 
   validates :kind,
     presence: true
 
-  validates :name,
-    presence: true,
-    length: { maximum: 255 }
+  def initialize(kind:, **cluster_params)
+    @kind = kind
+    @cluster_params = cluster_params
+    @kind.fields.each do |field|
+      singleton_class.class_eval { attr_accessor field.id }
+    end
+  end
 
-  validates :nodes,
-    presence: true,
-    numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 1_000 }
+  def type_id
+    @kind.kind
+  end
 end

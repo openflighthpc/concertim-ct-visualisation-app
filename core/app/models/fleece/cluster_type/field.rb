@@ -11,7 +11,7 @@ class Fleece::ClusterType::Field
   ####################################
 
   attr_accessor :id
-  attr_accessor :kind
+  attr_accessor :type
   attr_accessor :label
   attr_accessor :description
   attr_accessor :default
@@ -26,7 +26,7 @@ class Fleece::ClusterType::Field
   #
   ############################
 
-  validates :kind,
+  validates :type,
             presence: true,
             inclusion: { in: %w(string number comma_delimited_list json boolean) }
 
@@ -41,7 +41,7 @@ class Fleece::ClusterType::Field
             presence: true,
             inclusion: { in: [true, false] }
 
-  validate :default_matches_kind
+  validate :default_matches_type
 
   ############################
   #
@@ -49,11 +49,33 @@ class Fleece::ClusterType::Field
   #
   ############################
 
-  def initialize(hash)
+  def initialize(id, hash)
+    @id = id
     hash = defaults.merge(hash)
     hash.each do |key, value|
       send("#{key}=", value) if respond_to?("#{key}=")
     end
+  end
+
+  def allowed_values?
+    allowed_values.any?
+  end
+
+  def allowed_values
+    return @_allowed_values if defined?(@_allowed_values)
+
+    target_hash = constraints.find {|constraint| constraint.keys.include?("allowed_values") }
+    @_allowed_values = target_hash ? target_hash["allowed_values"] : {}
+  end
+
+  # take these out of the model. Cell? Presenter?
+
+  def form_field_type
+    allowed_values? ? 'select' : "#{MAPPED_FIELD_TYPES[type]}"
+  end
+
+  def form_options
+    allowed_values? ? allowed_values : {required: true}
   end
 
   ############################
@@ -64,13 +86,18 @@ class Fleece::ClusterType::Field
 
   private
 
-  MAPPED_KIND_CLASSES = {
+  MAPPED_TYPE_CLASSES = {
     "string" => [String], "number" => [Float, Integer], "comma_delimited_list" => [Array],
     "json" => [Hash], "boolean" => [TrueClass, FalseClass]
   }
 
+  MAPPED_FIELD_TYPES = {
+    "string" => "text_field", "number" => "number_field", "comma_delimited_list" => "text_field",
+    "json" => "text_field", "boolean" => "check_box"
+  }
+
   def default_matches_kind
-    if default && !MAPPED_KIND_CLASSES[kind]&.include?(default.class)
+    if default && !MAPPED_TYPE_CLASSES[type]&.include?(default.class)
       errors.add(:default, "must match value format")
     end
   end
@@ -78,7 +105,8 @@ class Fleece::ClusterType::Field
   def defaults
     {
       hidden: false,
-      immutable: false
+      immutable: false,
+      constraints: {}
     }
   end
 end

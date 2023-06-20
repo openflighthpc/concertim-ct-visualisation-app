@@ -135,7 +135,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_07_161632) do
     t.string "kind", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.jsonb "fields", default: [], null: false
+    t.jsonb "fields", default: {}, null: false
   end
 
   create_table "fleece_configs", id: :bigint, default: -> { "nextval('fleece_configs_id_seq'::regclass)" }, force: :cascade do |t|

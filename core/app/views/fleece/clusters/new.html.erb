@@ -19,15 +19,13 @@
     </div>
   <% end %>
 
-  <div class="formItem">
-    <%= f.label :name, "Cluster name", class: 'required_field' %>
-    <%= f.text_field :name, autocomplete: :off %>
-  </div>
-
-  <div class="formItem">
-    <%= f.label :nodes, "Number of nodes", class: 'required_field' %>
-    <%= f.number_field :nodes, minimum: 1 %>
-  </div>
+  <% # need to retain/ set a sensible order %>
+  <% @cluster_type.fields.each do |field| %>
+    <div class="formItem">
+      <%= f.label field.id.to_sym, field.label, class: 'required_field' %>
+      <%= f.send(field.form_field_type, field.id.to_sym, field.form_options) %>
+    </div>
+  <% end %>
 
   <%= f.submit 'Create' %>
 <% end %>

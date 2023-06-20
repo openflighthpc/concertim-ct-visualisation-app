@@ -1,3 +1,4 @@
 object @cluster
 
-attributes :kind, :name, :nodes
+attributes :type_id
+attributes :cluster_params => :parameters
