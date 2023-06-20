@@ -11,6 +11,7 @@ class Fleece::ClusterType::Field
   ####################################
 
   attr_accessor :id
+  attr_accessor :order
   attr_accessor :type
   attr_accessor :label
   attr_accessor :description

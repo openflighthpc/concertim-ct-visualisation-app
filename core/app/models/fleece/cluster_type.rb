@@ -43,7 +43,8 @@ class Fleece::ClusterType < ApplicationRecord
   #       "default": "mycluster",
   #       "description": "The name your cluster should be given",
   #       "label": "Cluster name",
-  #       "type": "string"
+  #       "type": "string",
+  #       "order": 1
   #     },
   #     "count": {
   #       "constraints": [
@@ -57,7 +58,8 @@ class Fleece::ClusterType < ApplicationRecord
   #       "default": 3,
   #       "description": "How many replicas should your cluster contain?",
   #       "label": "Number of database replicas",
-  #       "type": "number"
+  #       "type": "number",
+  #       "order": 2
   #     },
   #     "database_flavour": {
   #       "constraints": [
@@ -72,7 +74,8 @@ class Fleece::ClusterType < ApplicationRecord
   #       "default": "m1.small",
   #       "description": "Which database flavour do you want?",
   #       "label": "Database flavour",
-  #       "type": "string"
+  #       "type": "string",
+  #       "order": 3
   #     },
   #     "node_flavour": {
   #       "constraints": [
@@ -89,7 +92,8 @@ class Fleece::ClusterType < ApplicationRecord
   #       "default": "m1.small",
   #       "description": "Which flavour should be be used for the database servers?",
   #       "label": "Node flavour",
-  #       "type": "string"
+  #       "type": "string".
+  #       "order": 4
   #     }
   #   }
   # ```
@@ -112,7 +116,7 @@ class Fleece::ClusterType < ApplicationRecord
           if raw_fields.nil?
             nil
           else
-            raw_fields.map { |id, details| Fleece::ClusterType::Field.new(id, details) }
+            raw_fields.map { |id, details| Fleece::ClusterType::Field.new(id, details) }.sort_by(&:order)
           end
         end
     end
