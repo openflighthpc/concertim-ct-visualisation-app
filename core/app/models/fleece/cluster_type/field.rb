@@ -63,10 +63,7 @@ class Fleece::ClusterType::Field
   end
 
   def allowed_values
-    return @_allowed_values if defined?(@_allowed_values)
-
-    target_hash = constraints.find {|constraint| constraint.keys.include?("allowed_values") }
-    @_allowed_values = target_hash ? target_hash["allowed_values"] : {}
+    @_allowed_values ||= find_constraint("allowed_values")
   end
 
   # take these out of the model. Cell? Presenter?
@@ -76,7 +73,48 @@ class Fleece::ClusterType::Field
   end
 
   def form_options
-    allowed_values? ? allowed_values : {required: true, placeholder: form_placeholder}
+    return allowed_values if allowed_values?
+
+    {
+       required: true,
+       placeholder: form_placeholder
+     }.merge(min_max).merge(required_length).merge(step).merge(allowed_pattern)
+  end
+
+  def min_max
+    return {} unless type == "number"
+
+    find_constraint("range")
+  end
+
+  def required_length
+    return {} unless %w[string json comma_delimited_list].include?(type)
+
+    required = find_constraint("length")
+    required.keys.each do |key|
+      required["#{key}length"] = required.delete(key)
+    end
+
+    required
+  end
+
+  def step
+    return {} unless type == "number"
+
+    details = find_constraint("modulo")
+    return {} if details.empty?
+
+    details["min"] = details.delete("step") if details["step"]
+    details
+  end
+
+  def allowed_pattern
+    return {} unless type == "string"
+
+    pattern = find_constraint("allowed_pattern")
+    return {} if pattern.empty?
+
+    {pattern: pattern}
   end
 
   # possible future improvement: have JS for creating text boxes for each array/ hash option instead of
@@ -120,5 +158,10 @@ class Fleece::ClusterType::Field
       immutable: false,
       constraints: {}
     }
+  end
+
+  def find_constraint(name)
+    target_hash = constraints.find {|constraint| constraint.keys.include?(name) }
+    target_hash ? target_hash[name] : {}
   end
 end
