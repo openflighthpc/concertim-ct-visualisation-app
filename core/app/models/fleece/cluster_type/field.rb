@@ -56,6 +56,7 @@ class Fleece::ClusterType::Field
     hash.each do |key, value|
       send("#{key}=", value) if respond_to?("#{key}=")
     end
+    self.default ||= step[:min]
   end
 
   def allowed_values?
@@ -104,7 +105,7 @@ class Fleece::ClusterType::Field
     details = find_constraint("modulo")
     return {} if details.empty?
 
-    details[:min] = details.delete("step") if details["step"]
+    details[:min] = details.delete("offset") if details["offset"]
     details
   end
 
