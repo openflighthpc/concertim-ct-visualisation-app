@@ -92,7 +92,7 @@ class Fleece::ClusterType::Field
 
     required = find_constraint("length")
     required.keys.each do |key|
-      required["#{key}length"] = required.delete(key)
+      required["#{key}length".to_sym] = required.delete(key)
     end
 
     required
@@ -104,7 +104,7 @@ class Fleece::ClusterType::Field
     details = find_constraint("modulo")
     return {} if details.empty?
 
-    details["min"] = details.delete("step") if details["step"]
+    details[:min] = details.delete("step") if details["step"]
     details
   end
 
@@ -114,7 +114,8 @@ class Fleece::ClusterType::Field
     pattern = find_constraint("allowed_pattern")
     return {} if pattern.empty?
 
-    {pattern: pattern}
+    # This is some strange hacky stuff to prevent the regex being escaped when rendered. Must be a better way?
+    {pattern: [pattern].to_s[2..-4]}
   end
 
   # possible future improvement: have JS for creating text boxes for each array/ hash option instead of
