@@ -56,7 +56,7 @@ class Fleece::ClusterType::Field
     hash.each do |key, value|
       send("#{key}=", value) if respond_to?("#{key}=")
     end
-    self.default ||= step[:min]
+    self.default ||= step["min"]
   end
 
   def allowed_values?
@@ -70,7 +70,13 @@ class Fleece::ClusterType::Field
   # take these out of the model. Cell? Presenter?
 
   def form_field_type
+    return 'hidden_field' if hidden
+
     allowed_values? ? 'select' : "#{MAPPED_FIELD_TYPES[type]}"
+  end
+
+  def select_box?
+    form_field_type == 'select'
   end
 
   def form_options
@@ -79,7 +85,7 @@ class Fleece::ClusterType::Field
       disabled: immutable
     }
     unless allowed_values?
-      options[:placeholder] = form_placeholder,
+      options[:placeholder] = form_placeholder
       options = options.merge(min_max).merge(required_length).merge(step).merge(allowed_pattern)
     end
     options
@@ -129,7 +135,7 @@ class Fleece::ClusterType::Field
     when 'comma_delimited_list'
       'A list of choices separated by commas: choice1,choice2,choice3'
     when 'json'
-      'Collection of keys and values: {"key1": "value1", "key2": "value2"}'
+      'Collection of keys and values: {"key1":"value1", "key2":"value2"}'
     end
   end
 
