@@ -149,7 +149,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_07_161632) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_handler_port", default: 42356, null: false
-    t.string "cluster_builder_base_url", limit: 255, null: false
   end
 
   create_table "good_job_batches", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

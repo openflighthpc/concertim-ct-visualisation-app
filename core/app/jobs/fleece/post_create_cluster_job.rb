@@ -39,7 +39,7 @@ class Fleece::PostCreateClusterJob < ApplicationJob
 
     def call
       response = conn.post(path, body)
-      Result.new(response.success?, response.reason_phrase || "Unknown error")
+      Result.new(response.success?, response.body || "Unknown error")
     rescue Faraday::Error
       Result.new(false, $!.message)
     end
@@ -74,7 +74,7 @@ class Fleece::PostCreateClusterJob < ApplicationJob
     end
 
     def path
-      "/clusters"
+      "/clusters/"
     end
 
     def body
@@ -93,11 +93,19 @@ class Fleece::PostCreateClusterJob < ApplicationJob
     end
 
     def cloud_env_details
-      renderer = Rabl::Renderer.new('api/v1/fleece/configs/show', @config, {
-        view_path: 'app/views',
-        format: 'hash'
-      })
-      renderer.render
+      {
+        auth_url: @config.auth_url,
+        username: "admin",
+        password: "reelshanRojPak8",
+        project_name: "admin",
+        user_domain_name: "default",
+        project_domain_name: "default"
+      }
+      # renderer = Rabl::Renderer.new('api/v1/fleece/configs/show', @config, {
+      #   view_path: 'app/views',
+      #   format: 'hash'
+      # })
+      # renderer.render
     end
   end
 end

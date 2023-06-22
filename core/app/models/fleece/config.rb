@@ -46,14 +46,6 @@ class Fleece::Config < ApplicationRecord
         message: "can contain only alphanumeric characters, hyphens, dots and underscores."
       }
 
-    validates :cluster_builder_base_url,
-              presence: true,
-              length: { maximum: 255 },
-              format: {
-                with: /\A[a-zA-Z0-9\-\/\_\.\:]*\Z/,
-                message: "can contain only alphanumeric characters, hyphens, colons, forward slashes, dots and underscores."
-              }
-
     def auth_url
       "http://#{host_ip}:#{port}/v3"
     end
@@ -63,5 +55,9 @@ class Fleece::Config < ApplicationRecord
       url.port = user_handler_port
       url.path = "/create_user_project"
       url.to_s
+    end
+
+    def cluster_builder_base_url
+      "http://#{host_ip}:5000"
     end
 end
