@@ -82,7 +82,8 @@ class Fleece::ClusterType::Field
   def form_options
     options = {
       required: true,
-      disabled: immutable
+      disabled: immutable,
+      class: 'new-cluster-field'
     }
     unless allowed_values?
       options[:placeholder] = form_placeholder
@@ -137,6 +138,10 @@ class Fleece::ClusterType::Field
     when 'json'
       'Collection of keys and values: {"key1":"value1", "key2":"value2"}'
     end
+  end
+
+  def constraint_text
+    constraints.map {|constraint| constraint["description"]}.join(". ")
   end
 
   ############################
