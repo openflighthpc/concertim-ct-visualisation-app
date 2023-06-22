@@ -22,7 +22,11 @@
   <% @cluster_type.fields.each do |field| %>
     <div class="formItem">
       <%= f.label field.id.to_sym, field.label, class: 'required_field', title: field.description %>
-      <%= f.send(field.form_field_type, field.id.to_sym, field.form_options) %>
+      <% if field.allowed_values? %>
+        <%= f.send(field.form_field_type, field.id.to_sym, field.allowed_values, {}, field.form_options) %>
+      <% else %>
+        <%= f.send(field.form_field_type, field.id.to_sym, field.form_options) %>
+      <% end %>
     </div>
   <% end %>
 

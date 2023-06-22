@@ -74,12 +74,15 @@ class Fleece::ClusterType::Field
   end
 
   def form_options
-    return allowed_values if allowed_values?
-
-    {
-       required: true,
-       placeholder: form_placeholder
-     }.merge(min_max).merge(required_length).merge(step).merge(allowed_pattern)
+    options = {
+      required: true,
+      disabled: immutable
+    }
+    unless allowed_values?
+      options[:placeholder] = form_placeholder,
+      options = options.merge(min_max).merge(required_length).merge(step).merge(allowed_pattern)
+    end
+    options
   end
 
   def min_max
@@ -158,7 +161,7 @@ class Fleece::ClusterType::Field
     {
       hidden: false,
       immutable: false,
-      constraints: {}
+      constraints: {},
     }
   end
 
@@ -166,4 +169,7 @@ class Fleece::ClusterType::Field
     target_hash = constraints.find {|constraint| constraint.keys.include?(name) }
     target_hash ? target_hash[name] : {}
   end
+
+  # if immutable, must have a default value
+  # if hidden, must have a default value
 end
