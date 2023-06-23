@@ -2,7 +2,7 @@ class Fleece::ClustersController < ApplicationController
   def new
     authorize! :create, Fleece::Cluster
     @cluster_type = Fleece::ClusterType.find(params[:cluster_type_id])
-    @cluster = Fleece::Cluster.new(kind: @cluster_type)
+    @cluster = Fleece::Cluster.new(kind: @cluster_type, name: nil)
   end
 
   def create
@@ -16,7 +16,9 @@ class Fleece::ClustersController < ApplicationController
     end
 
     @cluster_type = Fleece::ClusterType.find(params[:cluster_type_id])
-    @cluster = Fleece::Cluster.new(kind: @cluster_type, **cluster_params)
+    @cluster = Fleece::Cluster.new(
+      kind: @cluster_type, name: permitted_params[:name], cluster_params: permitted_params[:cluster_params]
+    )
     if !@cluster.valid?
       render action: :new
       return
@@ -35,8 +37,7 @@ class Fleece::ClustersController < ApplicationController
 
   private
 
-  def cluster_params
-    permitted_params = @cluster_type.fields(raw: true).keys
-    params.require(:fleece_cluster).permit(*permitted_params)
+  def permitted_params
+    params.require(:fleece_cluster).permit(:name, cluster_params: @cluster_type.fields(raw: true).keys)
   end
 end

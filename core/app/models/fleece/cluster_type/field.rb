@@ -20,6 +20,7 @@ class Fleece::ClusterType::Field
   attr_accessor :constraints
   attr_accessor :immutable
   attr_accessor :tags
+  attr_accessor :value
 
   ############################
   #
@@ -35,11 +36,9 @@ class Fleece::ClusterType::Field
             presence: true
 
   validates :hidden,
-            presence: true,
             inclusion: { in: [true, false] }
 
   validates :immutable,
-            presence: true,
             inclusion: { in: [true, false] }
 
   validate :default_matches_type
@@ -57,6 +56,7 @@ class Fleece::ClusterType::Field
       send("#{key}=", value) if respond_to?("#{key}=")
     end
     self.default ||= step["min"]
+    self.value = default
   end
 
   def allowed_values?
@@ -83,7 +83,9 @@ class Fleece::ClusterType::Field
     options = {
       required: true,
       disabled: immutable,
-      class: 'new-cluster-field'
+      class: 'new-cluster-field',
+      name: "fleece_cluster[cluster_params][#{id}]",
+      id: "fleece_cluster_cluster_params_#{id}"
     }
     unless allowed_values?
       options[:placeholder] = form_placeholder
@@ -144,6 +146,10 @@ class Fleece::ClusterType::Field
     constraints.map {|constraint| constraint["description"]}.join(". ")
   end
 
+  def valid_value?(value)
+    true
+  end
+
   ############################
   #
   # Private Instance Methods
@@ -162,7 +168,7 @@ class Fleece::ClusterType::Field
     "json" => "text_area", "boolean" => "check_box"
   }
 
-  def default_matches_kind
+  def default_matches_type
     if default && !MAPPED_TYPE_CLASSES[type]&.include?(default.class)
       errors.add(:default, "must match value format")
     end
