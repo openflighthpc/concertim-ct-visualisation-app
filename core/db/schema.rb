@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_05_140921) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_27_093328) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -219,7 +219,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_05_140921) do
     t.string "project_id", limit: 255
     t.index ["email"], name: "index_uma.users_on_email", unique: true
     t.index ["login"], name: "index_uma.users_on_login", unique: true
-    t.index ["project_id"], name: "index_users_on_project_id", unique: true
+    t.index ["project_id"], name: "index_uma.users_on_project_id", unique: true, where: "(NOT NULL::boolean)"
   end
 
   add_foreign_key "ivy.base_chassis", "locations", on_update: :cascade, on_delete: :restrict
