@@ -3,6 +3,13 @@
 class Uma::RegistrationsController < Devise::RegistrationsController
   before_action :configure_permitted_parameters
 
+  def create
+    super
+    if @user.persisted?
+      Uma::UserSignupJob.perform_later(@user)
+    end
+  end
+
   protected
 
   # We only want to require a password check when changing the password.

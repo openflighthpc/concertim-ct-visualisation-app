@@ -43,4 +43,14 @@ class Fleece::Config < ApplicationRecord
         message: "can contain only alphanumeric characters, hyphens, dots and underscores."
       }
 
+    def auth_url
+      "http://#{host_ip}:#{port}/v3"
+    end
+
+    def user_handler_url
+      url = URI(auth_url)
+      url.port = 42356
+      url.path = "/create-user-project/"
+      url.to_s
+    end
 end
