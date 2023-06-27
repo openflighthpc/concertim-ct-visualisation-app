@@ -3,8 +3,8 @@ require 'faraday'
 class Fleece::PostCreateClusterJob < ApplicationJob
   queue_as :default
 
-  def perform(cluster, config, **options)
-    r = Runner.new(cluster, config, **options)
+  def perform(cluster, config, user, **options)
+    r = Runner.new(cluster, config, user, **options)
     r.call
   end
 
@@ -26,9 +26,10 @@ class Fleece::PostCreateClusterJob < ApplicationJob
   class Runner
     DEFAULT_TIMEOUT = 5
 
-    def initialize(cluster, config, timeout:nil, test_stubs:nil)
+    def initialize(cluster, config, user, timeout:nil, test_stubs:nil)
       @cluster = cluster
       @config = config
+      @user = user
       @timeout = timeout || DEFAULT_TIMEOUT
       @test_stubs = test_stubs
 
@@ -93,14 +94,16 @@ class Fleece::PostCreateClusterJob < ApplicationJob
     end
 
     def cloud_env_details
-      {
+      cloud_env = {
         auth_url: @config.auth_url,
-        username: "admin",
-        password: "reelshanRojPak8",
-        project_name: "admin",
-        user_domain_name: "default",
-        project_domain_name: "default"
+        user_domain_name: @config.domain_name,
+        project_domain_name: @config.domain_name
       }
+      cloud_env[:username] = @user.root ? @config.username : @user.login
+      cloud_env[:password] = @user.root ? @config.password : @user.cluster_builder_password
+      cloud_env[:project_name] = @user.root ? @config.project_name : @user.project_id
+      cloud_env
+
       # renderer = Rabl::Renderer.new('api/v1/fleece/configs/show', @config, {
       #   view_path: 'app/views',
       #   format: 'hash'

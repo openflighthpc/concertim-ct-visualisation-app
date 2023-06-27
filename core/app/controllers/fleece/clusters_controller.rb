@@ -24,7 +24,7 @@ class Fleece::ClustersController < ApplicationController
       return
     end
 
-    result = Fleece::PostCreateClusterJob.perform_now(@cluster, @config)
+    result = Fleece::PostCreateClusterJob.perform_now(@cluster, @config, current_user)
 
     if result.success?
       flash[:success] = "Cluster configuration sent (or at least faked)"
