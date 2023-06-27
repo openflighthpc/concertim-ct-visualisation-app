@@ -127,8 +127,7 @@ class Fleece::ClusterType::Field
     pattern = find_constraint("allowed_pattern")
     return {} if pattern.empty?
 
-    # This is some strange hacky stuff to prevent the regex being escaped when rendered. Must be a better way?
-    {pattern: [pattern].to_s[2..-4]}
+    { pattern: pattern }
   end
 
   # possible future improvement: have JS for creating text boxes for each array/ hash option instead of
