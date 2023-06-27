@@ -58,6 +58,6 @@ class Fleece::Config < ApplicationRecord
     end
 
     def cluster_builder_base_url
-      "http://#{host_ip}:5000"
+      "http://#{host_ip}:42378"
     end
 end
