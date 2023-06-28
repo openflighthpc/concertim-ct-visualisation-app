@@ -25,7 +25,7 @@
   </div>
 
   <h4>Cluster Parameters</h4>
-  <% @cluster_type.fields.each do |field| %>
+  <% @cluster.fields.each do |field| %>
     <%= f.fields_for :cluster_params, field do |cluster_param| %>
       <div class="formItem">
         <%= cluster_param.label field.id.to_sym, field.label, class: 'required_field', title: field.description unless field.hidden %>

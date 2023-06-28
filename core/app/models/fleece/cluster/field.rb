@@ -1,4 +1,4 @@
-class Fleece::ClusterType::Field
+class Fleece::Cluster::Field
   include ActiveModel::Validations
 
   # Format and options are driven by content defined in
@@ -42,6 +42,7 @@ class Fleece::ClusterType::Field
             inclusion: { in: [true, false] }
 
   validate :valid_number?, if: -> { type == "number" }
+  validate :validate_step, if: -> { constraints["modulo"] }
   validate :valid_json?, if: -> { type == "json" }
   validate :valid_boolean?, if: -> { type == "boolean" }
 
@@ -57,8 +58,24 @@ class Fleece::ClusterType::Field
     details.each do |key, value|
       send("#{key}=", value) if respond_to?("#{key}=")
     end
-    self.default ||= step["min"]
+    self.default ||= step[:min]
     self.value = default
+  end
+
+  # Puts into a more usable format. This could be done at cluster type creation instead of here.
+  def constraints=(values)
+    @constraints = {}
+    values.each do |constraint|
+      constraint_name = constraint.keys.find {|key| key != "description" }
+      @constraints[constraint_name] = {
+        details: constraint[constraint_name],
+        description: constraint["description"]
+      }
+    end
+  end
+
+  def constraint_names
+    @constraint_names ||= constraints.keys
   end
 
   def allowed_values?
@@ -66,7 +83,7 @@ class Fleece::ClusterType::Field
   end
 
   def allowed_values
-    @_allowed_values ||= find_constraint("allowed_values")
+    @_allowed_values ||= get_constraint_details("allowed_values")
   end
 
   # take these out of the model. Cell? Presenter?
@@ -99,13 +116,13 @@ class Fleece::ClusterType::Field
   def min_max
     return {} unless type == "number"
 
-    find_constraint("range")
+    get_constraint_details("range")
   end
 
   def required_length
     return {} unless %w[string json comma_delimited_list].include?(type)
 
-    required = find_constraint("length")
+    required = get_constraint_details("length")
     required.keys.each do |key|
       required["#{key}length".to_sym] = required.delete(key)
     end
@@ -116,17 +133,17 @@ class Fleece::ClusterType::Field
   def step
     return {} unless type == "number"
 
-    details = find_constraint("modulo")
+    details = get_constraint_details("modulo")
     return {} if details.empty?
 
-    details[:min] = details.delete("offset") if details["offset"]
+    details[:min] = details["offset"] if details["offset"]
     details
   end
 
   def allowed_pattern
     return {} unless type == "string"
 
-    pattern = find_constraint("allowed_pattern")
+    pattern = get_constraint_details("allowed_pattern")
     return {} if pattern.empty?
 
     { pattern: pattern }
@@ -144,7 +161,7 @@ class Fleece::ClusterType::Field
   end
 
   def constraint_text
-    constraints.map {|constraint| constraint["description"]}.join(". ")
+    constraint_names.map {|name| constraints[name][:description] }.join(". ")
   end
 
   ############################
@@ -168,9 +185,9 @@ class Fleece::ClusterType::Field
     }
   end
 
-  def find_constraint(name)
-    target_hash = constraints.find {|constraint| constraint.keys.include?(name) }
-    target_hash ? target_hash[name] : {}
+  def get_constraint_details(name)
+    target_hash = constraints[name]
+    target_hash ? target_hash[:details] : {}
   end
 
   def valid_number?
@@ -192,6 +209,17 @@ class Fleece::ClusterType::Field
   def valid_boolean?
     unless type == "boolean" && ["f", "false", false, "0", 0, "t", "true", true, "1", 1].include?(value)
       errors.add(:value, "must be a valid boolean")
+    end
+  end
+
+  def validate_step
+    constraint = constraints["modulo"]
+    number = value.to_f
+    offset = constraint[:details]["offset"]
+    step = constraint[:details]["step"]
+    unless (offset && number == offset) || (offset ? number - offset : number) % step == 0
+      error_message = constraint[:description] || "must match step pattern"
+      errors.add(:value, error_message)
     end
   end
 

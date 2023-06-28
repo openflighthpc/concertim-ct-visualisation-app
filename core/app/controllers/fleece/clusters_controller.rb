@@ -38,6 +38,6 @@ class Fleece::ClustersController < ApplicationController
   private
 
   def permitted_params
-    params.require(:fleece_cluster).permit(:name, cluster_params: @cluster_type.fields(raw: true).keys)
+    params.require(:fleece_cluster).permit(:name, cluster_params: @cluster_type.fields.keys)
   end
 end

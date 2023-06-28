@@ -99,34 +99,4 @@ class Fleece::ClusterType < ApplicationRecord
   # ```
   #
 
-
-  # ####################################
-  # #
-  # # Public Instance Methods
-  # #
-  # ####################################
-
-  def fields(raw: false)
-    if raw
-      super()
-    else
-      @_fields ||=
-        begin
-          raw_fields = super()
-          if raw_fields.nil?
-            nil
-          else
-            raw_fields.map { |id, details| Fleece::ClusterType::Field.new(id, details) }.sort_by(&:order)
-          end
-        end
-    end
-  end
-
-  def fields=(raw_fields)
-    if raw_fields.nil? || raw_fields.blank?
-      super(nil)
-    else
-      super(raw_fields)
-    end
-  end
 end

@@ -20,13 +20,15 @@ class Fleece::Cluster
   def initialize(kind:, name:, cluster_params: nil)
     @kind = kind
     @name = name
-    @fields = kind.fields
-    @fields.each { |field| field.value = cluster_params[field.id] unless field.immutable } if cluster_params
+    @fields = kind.fields.map { |id, details| Fleece::Cluster::Field.new(id, details) }.sort_by(&:order)
+    fields.each { |field| field.value = cluster_params[field.id] unless field.immutable } if cluster_params
   end
 
   def type_id
     @kind.kind
   end
+
+
 
   def field_values
     {}.tap do |field_values|
