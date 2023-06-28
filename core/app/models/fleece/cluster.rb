@@ -15,6 +15,8 @@ class Fleece::Cluster
             presence: true,
             length: { maximum: 255 }
 
+  validate :valid_fields?
+
   def initialize(kind:, name:, cluster_params: nil)
     @kind = kind
     @name = name
@@ -30,6 +32,16 @@ class Fleece::Cluster
     {}.tap do |field_values|
       fields.each do |field|
         field_values[field.id] = field.value
+      end
+    end
+  end
+
+  private
+
+  def valid_fields?
+    fields.each do |field|
+      unless field.valid?
+        errors.add(field.id.to_sym, field.errors.full_messages.join("; "))
       end
     end
   end

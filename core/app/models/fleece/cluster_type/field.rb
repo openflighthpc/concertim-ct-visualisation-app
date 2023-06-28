@@ -41,7 +41,9 @@ class Fleece::ClusterType::Field
   validates :immutable,
             inclusion: { in: [true, false] }
 
-  validate :default_matches_type
+  validate :valid_number?, if: -> { type == "number" }
+  validate :valid_json?, if: -> { type == "json" }
+  validate :valid_boolean?, if: -> { type == "boolean" }
 
   ############################
   #
@@ -49,10 +51,10 @@ class Fleece::ClusterType::Field
   #
   ############################
 
-  def initialize(id, hash)
+  def initialize(id, details)
     @id = id
-    hash = defaults.merge(hash)
-    hash.each do |key, value|
+    details = default_details.merge(details)
+    details.each do |key, value|
       send("#{key}=", value) if respond_to?("#{key}=")
     end
     self.default ||= step["min"]
@@ -145,10 +147,6 @@ class Fleece::ClusterType::Field
     constraints.map {|constraint| constraint["description"]}.join(". ")
   end
 
-  def valid_value?(value)
-    true
-  end
-
   ############################
   #
   # Private Instance Methods
@@ -157,23 +155,12 @@ class Fleece::ClusterType::Field
 
   private
 
-  MAPPED_TYPE_CLASSES = {
-    "string" => [String], "number" => [Float, Integer], "comma_delimited_list" => [String],
-    "json" => [String], "boolean" => [TrueClass, FalseClass]
-  }
-
   MAPPED_FIELD_TYPES = {
     "string" => "text_field", "number" => "number_field", "comma_delimited_list" => "text_area",
     "json" => "text_area", "boolean" => "check_box"
   }
 
-  def default_matches_type
-    if default && !MAPPED_TYPE_CLASSES[type]&.include?(default.class)
-      errors.add(:default, "must match value format")
-    end
-  end
-
-  def defaults
+  def default_details
     {
       hidden: false,
       immutable: false,
@@ -184,6 +171,28 @@ class Fleece::ClusterType::Field
   def find_constraint(name)
     target_hash = constraints.find {|constraint| constraint.keys.include?(name) }
     target_hash ? target_hash[name] : {}
+  end
+
+  def valid_number?
+    unless type == "number" && ([Float, Integer].include?(value.class) || /^[1-9]\d*(\.\d+)?$/.match?(value))
+      errors.add(:value, "must be a valid number")
+    end
+  end
+
+  def valid_json?
+    return unless type == "json"
+
+    begin
+      JSON.parse(value)
+    rescue
+      errors.add(:value, "must be valid JSON")
+    end
+  end
+
+  def valid_boolean?
+    unless type == "boolean" && ["f", "false", false, "0", 0, "t", "true", true, "1", 1].include?(value)
+      errors.add(:value, "must be a valid boolean")
+    end
   end
 
   # if immutable, must have a default value
