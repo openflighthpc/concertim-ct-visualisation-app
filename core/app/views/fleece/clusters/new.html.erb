@@ -12,8 +12,8 @@
       <h2>There are <%= pluralize(@cluster.errors.count, "error") %>:</h2>
    
       <ul>
-      <% @cluster.errors.full_messages.each do |msg| %>
-        <li><%= msg %></li>
+      <% @cluster.errors.each do |error| %>
+        <li><%= "#{error.attribute.capitalize}: #{error.type}" %></li>
       <% end %>
       </ul>
     </div>
@@ -21,7 +21,12 @@
 
   <div class="formItem">
     <%= f.label :name, "Cluster name", class: 'required_field' %>
-    <%= f.text_field :name, autocomplete: :off, required: true %>
+    <%= f.text_field :name, autocomplete: :off, required: true,
+                     minlength: 6, maxlength: 255, pattern: "^[a-zA-Z][a-zA-Z0-9\\-_]*$",
+                     class: "new-cluster-field" %>
+    <div class="constraint-text">
+     Must be between 6 and 255 characters. Can contain only alphanumeric characters, hyphens and underscores.
+    </div>
   </div>
 
   <h4>Cluster Parameters</h4>

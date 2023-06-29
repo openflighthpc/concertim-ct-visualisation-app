@@ -27,7 +27,7 @@ class Fleece::ClustersController < ApplicationController
     result = Fleece::PostCreateClusterJob.perform_now(@cluster, @config, current_user)
 
     if result.success?
-      flash[:success] = "Cluster configuration sent (or at least faked)"
+      flash[:success] = "Cluster configuration sent"
       redirect_to ivy_engine.irv_path
     else
       flash[:alert] = "Unable to send cluster configuration: #{result.error_message}"

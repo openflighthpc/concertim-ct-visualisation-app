@@ -32,7 +32,7 @@ class Fleece::Cluster::Field
             presence: true,
             inclusion: { in: %w(string number comma_delimited_list json boolean) }
 
-  validates :id, :label, :description,
+  validates :id, :label, :value,
             presence: true
 
   validates :hidden,
@@ -42,9 +42,13 @@ class Fleece::Cluster::Field
             inclusion: { in: [true, false] }
 
   validate :valid_number?, if: -> { type == "number" }
-  validate :validate_step, if: -> { constraints["modulo"] }
   validate :valid_json?, if: -> { type == "json" }
   validate :valid_boolean?, if: -> { type == "boolean" }
+  validate :validate_modulo, if: -> { constraints["modulo"] }
+  validate :validate_range, if: -> { constraints["range"] }
+  validate :validate_length, if: -> { constraints["length"] }
+  validate :validate_pattern, if: -> { constraints["allowed_pattern"] }
+  validate :validate_allowed_value, if: -> { constraints["allowed_values"] }
 
   ############################
   #
@@ -59,6 +63,7 @@ class Fleece::Cluster::Field
       send("#{key}=", value) if respond_to?("#{key}=")
     end
     self.default ||= step[:min]
+    self.label ||= id
     self.value = default
   end
 
@@ -100,7 +105,7 @@ class Fleece::Cluster::Field
 
   def form_options
     options = {
-      required: true,
+      required: form_field_type != 'check_box',
       disabled: immutable,
       class: 'new-cluster-field',
       name: "fleece_cluster[cluster_params][#{id}]",
@@ -191,7 +196,7 @@ class Fleece::Cluster::Field
   end
 
   def valid_number?
-    unless type == "number" && ([Float, Integer].include?(value.class) || /^[1-9]\d*(\.\d+)?$/.match?(value))
+    unless type == "number" && ([Float, Integer].include?(value.class) || /^-?\d*\.?\d+$/.match?(value))
       errors.add(:value, "must be a valid number")
     end
   end
@@ -207,18 +212,64 @@ class Fleece::Cluster::Field
   end
 
   def valid_boolean?
-    unless type == "boolean" && ["f", "false", false, "0", 0, "t", "true", true, "1", 1].include?(value)
+    unless type == "boolean" && ["f", "false", false, "0", 0, "off", "t", "true", true, "1", 1, "on"].include?(value)
       errors.add(:value, "must be a valid boolean")
     end
   end
 
-  def validate_step
+  def validate_modulo
+    return unless type == "number"
+
     constraint = constraints["modulo"]
     number = value.to_f
     offset = constraint[:details]["offset"]
     step = constraint[:details]["step"]
     unless (offset && number == offset) || (offset ? number - offset : number) % step == 0
-      error_message = constraint[:description] || "must match step pattern"
+      error_message = constraint[:description] || "must match step of #{step}#{" and offset of #{offset}" if offset}"
+      errors.add(:value, error_message)
+    end
+  end
+
+  def validate_range
+    return unless type == "number"
+
+    constraint = constraints["range"]
+    number = value.to_f
+    min = constraint[:details]["min"] || number # may have only min, only max, or both
+    max = constraint[:details]["max"] || number
+    unless number >= min && number <= max
+      error_message = constraint[:description] || "must be between #{min} and #{max} (inclusive)"
+      errors.add(:value, error_message)
+    end
+  end
+
+  def validate_length
+    return unless %w(string comma_delimited_list json).include?(type)
+
+    constraint = constraints["length"]
+    length = value.length
+    min = constraint[:details]["min"] || length
+    max = constraint[:details]["max"] || length
+    unless length >= min && length <= max
+      error_message = constraint[:description] || "must be between #{min} and #{max} characters (inclusive)"
+      errors.add(:value, error_message)
+    end
+  end
+
+  def validate_pattern
+    return unless type == "string"
+
+    constraint = constraints["allowed_pattern"]
+    pattern = constraint[:details]
+    unless Regexp.new(pattern).match?(value)
+      error_message = constraint[:description] || "must match pattern #{pattern}"
+      errors.add(:value, error_message)
+    end
+  end
+
+  def validate_allowed_value
+    unless !allowed_values? || allowed_values.include?(value)
+      error_message = constraint[:description] || "must be chosen from one of the drop down options"
       errors.add(:value, error_message)
     end
   end

@@ -13,7 +13,9 @@ class Fleece::Cluster
 
   validates :name,
             presence: true,
-            length: { maximum: 255 }
+            length: { minimum: 6, maximum: 255 },
+            format: { with: /\A[a-zA-Z][a-zA-Z0-9\-_]*\z/,
+                      message: "can contain only alphanumeric characters, hyphens and underscores" }
 
   validate :valid_fields?
 
@@ -28,8 +30,6 @@ class Fleece::Cluster
     @kind.kind
   end
 
-
-
   def field_values
     {}.tap do |field_values|
       fields.each do |field|
@@ -43,7 +43,7 @@ class Fleece::Cluster
   def valid_fields?
     fields.each do |field|
       unless field.valid?
-        errors.add(field.id.to_sym, field.errors.full_messages.join("; "))
+        errors.add(field.label, field.errors.messages_for(:value).join("; "))
       end
     end
   end
