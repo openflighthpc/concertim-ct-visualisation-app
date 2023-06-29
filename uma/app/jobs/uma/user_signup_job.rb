@@ -7,6 +7,7 @@ class Uma::UserSignupJob < Uma::ApplicationJob
     runner = Runner.new(
       user: user,
       fleece_config: Fleece::Config.first,
+      logger: logger,
       **options
     )
     runner.call
@@ -22,7 +23,7 @@ class Uma::UserSignupJob < Uma::ApplicationJob
       response = super
       unless response.success?
         msg = response.reason_phrase || "Unkown error"
-        GoodJob.logger.info("Failed: #{msg}")
+        @logger.info("Failed: #{msg}")
       end
     end
 

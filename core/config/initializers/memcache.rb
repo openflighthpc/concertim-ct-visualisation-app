@@ -27,7 +27,7 @@ require 'phoenix/cache/wrapper'
 MEMCACHE = Phoenix::Cache::Wrapper.new(
   'localhost:11211', {
     serializer: Marshal,
-    logger: ::ActiveSupport::Logger.new(Rails.root.join("log/interchange.log")),
+    logger: ::ActiveSupport::Logger.new(ENV["RAILS_LOG_TO_STDOUT"].present? ? $stdout : Rails.root.join("log/interchange.log")),
     heartbeat_frequency: 2.seconds,
   }
 )

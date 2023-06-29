@@ -6,9 +6,10 @@ module Emma
     class JobRunner
       DEFAULT_TIMEOUT = 5
 
-      def initialize(fleece_config:, timeout:nil, test_stubs:nil)
+      def initialize(fleece_config:, logger:nil, timeout:nil, test_stubs:nil)
         @fleece_config = fleece_config
         @timeout = timeout || DEFAULT_TIMEOUT
+        @logger = logger || GoodJob.logger
         @test_stubs = test_stubs
 
         if @test_stubs.present? && !Rails.env.test?
@@ -44,7 +45,7 @@ module Emma
             # f.request :retry
 
             f.response :json
-            f.response :logger, Rails.logger, {
+            f.response :logger, @logger, {
               formatter: Emma::Faraday::LogFormatter,
               headers: {request: true, response: true, errors: false},
               bodies: true,
