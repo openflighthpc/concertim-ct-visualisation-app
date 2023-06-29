@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_27_093328) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_27_101118) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -217,6 +217,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_27_093328) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "project_id", limit: 255
+    t.string "fixme_encrypt_this_already_plaintext_password", limit: 128, default: ""
     t.index ["email"], name: "index_uma.users_on_email", unique: true
     t.index ["login"], name: "index_uma.users_on_login", unique: true
     t.index ["project_id"], name: "index_uma.users_on_project_id", unique: true, where: "(NOT NULL::boolean)"
