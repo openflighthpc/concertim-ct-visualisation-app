@@ -1,7 +1,12 @@
 require 'faraday'
 
 class Uma::UserSignupJob < Uma::ApplicationJob
+  class FailedJob < RuntimeError ; end
+
   queue_as :default
+
+  retry_on FailedJob, wait: :exponentially_longer, attempts: 10
+  retry_on ::Faraday::Error, wait: :exponentially_longer, attempts: 10
 
   def perform(user, **options)
     runner = Runner.new(
@@ -24,6 +29,7 @@ class Uma::UserSignupJob < Uma::ApplicationJob
       unless response.success?
         msg = response.reason_phrase || "Unkown error"
         @logger.info("Failed: #{msg}")
+        raise FailedJob, msg
       end
     end
 

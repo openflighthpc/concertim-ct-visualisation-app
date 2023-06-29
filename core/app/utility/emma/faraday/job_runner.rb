@@ -42,9 +42,9 @@ module Emma
             f.options.timeout = @timeout
 
             f.request :json
-            # f.request :retry
 
             f.response :json
+            f.response :raise_error
             f.response :logger, @logger, {
               formatter: Emma::Faraday::LogFormatter,
               headers: {request: true, response: true, errors: false},
