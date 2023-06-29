@@ -44,7 +44,9 @@ class Uma::UserSignupJob < Uma::ApplicationJob
         },
         username: @user.login,
         password: @user.fixme_encrypt_this_already_plaintext_password,
-      }
+      }.tap do |h|
+          h[:project_id] = @user.project_id unless @user.project_id.blank?
+        end
     end
   end
 end
