@@ -6,7 +6,12 @@ class Uma::RegistrationsController < Devise::RegistrationsController
   def create
     super
     if @user.persisted?
-      Uma::UserSignupJob.perform_later(@user)
+      config = Fleece::Config.first
+      if config.present?
+        Uma::UserSignupJob.perform_later(@user, config)
+      else
+        Rails.logger.info("Unable to schedule Uma::UserSignupJob: Fleece::Config has not been created")
+      end
     end
   end
 

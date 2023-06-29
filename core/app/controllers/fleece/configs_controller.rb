@@ -16,6 +16,7 @@ class Fleece::ConfigsController < ApplicationController
     if @config.update(config_params)
       flash[:success] = "Cloud environment config created"
       redirect_to fleece_config_path
+      Fleece::ConfigCreatedJob.perform_later(@config)
     else
       render action: :new, status: :unprocessable_entity
     end

@@ -8,10 +8,10 @@ class Uma::UserSignupJob < Uma::ApplicationJob
   retry_on FailedJob, wait: :exponentially_longer, attempts: 10
   retry_on ::Faraday::Error, wait: :exponentially_longer, attempts: 10
 
-  def perform(user, **options)
+  def perform(user, fleece_config, **options)
     runner = Runner.new(
       user: user,
-      fleece_config: Fleece::Config.first,
+      fleece_config: fleece_config,
       logger: logger,
       **options
     )
