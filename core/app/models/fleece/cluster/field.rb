@@ -35,12 +35,6 @@ class Fleece::Cluster::Field
   validates :id, :label, :value,
             presence: true
 
-  validates :hidden,
-            inclusion: { in: [true, false] }
-
-  validates :immutable,
-            inclusion: { in: [true, false] }
-
   validate :valid_number?, if: -> { type == "number" }
   validate :valid_json?, if: -> { type == "json" }
   validate :valid_boolean?, if: -> { type == "boolean" }
@@ -63,7 +57,7 @@ class Fleece::Cluster::Field
       send("#{key}=", value) if respond_to?("#{key}=")
     end
     self.default ||= step[:min]
-    self.label ||= id
+    self.label ||= id.gsub("_", " ").capitalize
     self.value = default
   end
 
@@ -94,8 +88,6 @@ class Fleece::Cluster::Field
   # take these out of the model. Cell? Presenter?
 
   def form_field_type
-    return 'hidden_field' if hidden
-
     allowed_values? ? 'select' : "#{MAPPED_FIELD_TYPES[type]}"
   end
 
@@ -106,7 +98,6 @@ class Fleece::Cluster::Field
   def form_options
     options = {
       required: form_field_type != 'check_box',
-      disabled: immutable,
       class: 'new-cluster-field',
       name: "fleece_cluster[cluster_params][#{id}]",
       id: "fleece_cluster_cluster_params_#{id}"
@@ -116,6 +107,13 @@ class Fleece::Cluster::Field
       options = options.merge(min_max).merge(required_length).merge(step).merge(allowed_pattern)
     end
     options
+  end
+
+  def form_description
+    details = description
+    details << "\nThis field cannot be changed once set." if immutable
+    details << "\nThis field will be hidden from users." if hidden
+    details
   end
 
   def min_max
@@ -273,7 +271,4 @@ class Fleece::Cluster::Field
       errors.add(:value, error_message)
     end
   end
-
-  # if immutable, must have a default value
-  # if hidden, must have a default value
 end
