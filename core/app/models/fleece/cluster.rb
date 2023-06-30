@@ -1,14 +1,11 @@
 class Fleece::Cluster
   include ActiveModel::API
 
-  # The associated Fleece::ClusterType.  Not using `type` has that has special
-  # meaning for ActiveRecord::Base and may have special meaning for ActiveModel
-  # too.
-  attr_accessor :kind
+  attr_accessor :cluster_type
   attr_accessor :name
   attr_accessor :fields
 
-  validates :kind,
+  validates :cluster_type,
     presence: true
 
   validates :name,
@@ -19,15 +16,15 @@ class Fleece::Cluster
 
   validate :valid_fields?
 
-  def initialize(kind:, name:, cluster_params: nil)
-    @kind = kind
+  def initialize(cluster_type:, name: nil, cluster_params: nil)
+    @cluster_type = cluster_type
     @name = name
-    @fields = kind.fields.map { |id, details| Fleece::Cluster::Field.new(id, details) }.sort_by(&:order)
+    @fields = cluster_type.fields.map { |id, details| Fleece::Cluster::Field.new(id, details) }.sort_by(&:order)
     fields.each { |field| field.value = cluster_params[field.id] unless field.immutable } if cluster_params
   end
 
   def type_id
-    @kind.kind
+    @cluster_type.kind
   end
 
   def field_values

@@ -2,6 +2,28 @@ require 'rails_helper'
 
 RSpec.describe Fleece::ClusterType, type: :model do
   subject { create(:fleece_cluster_type) }
+  let(:fields) do
+    { "clustername"=>
+      {
+        "type"=>"string",
+        "label"=>"Cluster name",
+        "order"=>0,
+        "constraints"=>
+      [
+        {
+          "length"=>{"max"=>255, "min"=>6},
+          "description"=>"Cluster name must be between 6 and 255 characters"
+        },
+        {
+          "description"=>
+        "Cluster name can contain only alphanumeric characters, hyphens and underscores",
+          "allowed_pattern"=>"^[a-zA-Z][a-zA-Z0-9\\-_]*$"
+        }
+      ],
+        "description"=>"The name to give the cluster"
+      }
+    }
+  end
 
   describe 'validations' do
     it "is valid with valid attributes" do
@@ -9,7 +31,7 @@ RSpec.describe Fleece::ClusterType, type: :model do
         name: 'Test cluster',
         description: 'A test cluster type.  It exists only for test purposes.',
         kind: 'test-cluster',
-        nodes: 1,
+        fields: fields,
       )
       expect(cluster_type).to be_valid
     end

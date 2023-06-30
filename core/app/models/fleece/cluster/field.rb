@@ -19,7 +19,6 @@ class Fleece::Cluster::Field
   attr_accessor :hidden
   attr_accessor :constraints
   attr_accessor :immutable
-  attr_accessor :tags
   attr_accessor :value
 
   ############################
@@ -35,14 +34,14 @@ class Fleece::Cluster::Field
   validates :id, :label, :value,
             presence: true
 
-  validate :valid_number?, if: -> { type == "number" }
-  validate :valid_json?, if: -> { type == "json" }
-  validate :valid_boolean?, if: -> { type == "boolean" }
-  validate :validate_modulo, if: -> { constraints["modulo"] }
-  validate :validate_range, if: -> { constraints["range"] }
-  validate :validate_length, if: -> { constraints["length"] }
-  validate :validate_pattern, if: -> { constraints["allowed_pattern"] }
-  validate :validate_allowed_value, if: -> { constraints["allowed_values"] }
+  validate :valid_number?, if: -> { value && type == "number" }
+  validate :valid_json?, if: -> { value && type == "json" }
+  validate :valid_boolean?, if: -> { value && type == "boolean" }
+  validate :validate_modulo, if: -> { value && constraints["modulo"] }
+  validate :validate_range, if: -> { value && constraints["range"] }
+  validate :validate_length, if: -> { value && constraints["length"] }
+  validate :validate_pattern, if: -> { value && constraints["allowed_pattern"] }
+  validate :validate_allowed_value, if: -> { value && constraints["allowed_values"] }
 
   ############################
   #
@@ -259,7 +258,8 @@ class Fleece::Cluster::Field
 
     constraint = constraints["allowed_pattern"]
     pattern = constraint[:details]
-    unless Regexp.new(pattern).match?(value)
+    reg = Regexp.new(pattern)
+    unless reg.match?(value) && !reg.match(value).to_s.blank?
       error_message = constraint[:description] || "must match pattern #{pattern}"
       errors.add(:value, error_message)
     end
