@@ -1,4 +1,5 @@
 require 'faraday'
+require 'faraday/follow_redirects'
 
 module Emma
   module Faraday
@@ -71,6 +72,8 @@ module Emma
 
             f.request :json
 
+            # Follow redirects.  Preserve method for 301 and 302 status codes.
+            f.response :follow_redirects, { standards_compliant: true }
             f.response :json
             f.response :raise_error
             f.response :logger, @logger, {

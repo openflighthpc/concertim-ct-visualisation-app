@@ -1,11 +1,8 @@
 require 'faraday'
 
 class Uma::UserSignupJob < Uma::ApplicationJob
-  class FailedJob < RuntimeError ; end
-
   queue_as :default
 
-  retry_on FailedJob, wait: :exponentially_longer, attempts: 10
   retry_on ::Faraday::Error, wait: :exponentially_longer, attempts: 10
 
   def perform(user, fleece_config, **options)
@@ -22,15 +19,6 @@ class Uma::UserSignupJob < Uma::ApplicationJob
     def initialize(user:, **kwargs)
       @user = user
       super(**kwargs)
-    end
-
-    def call
-      response = super
-      unless response.success?
-        msg = response.reason_phrase || "Unkown error"
-        @logger.info("Failed: #{msg}")
-        raise FailedJob, msg
-      end
     end
 
     private
