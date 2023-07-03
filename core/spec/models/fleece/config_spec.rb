@@ -100,4 +100,16 @@ RSpec.describe Fleece::Config, type: :model do
       expect(subject).to have_error(:project_name, :blank)
     end
   end
+
+  describe "auth_url" do
+    it "is as expected" do
+      expect(subject.auth_url).to eq "http://#{subject.host_ip}:#{subject.port}/v3"
+    end
+  end
+
+  describe "user_handler_url" do
+    it "is as expected" do
+      expect(subject.user_handler_url).to eq "http://#{subject.host_ip}:42356/create-user-project/"
+    end
+  end
 end
