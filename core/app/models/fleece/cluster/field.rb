@@ -17,9 +17,9 @@ class Fleece::Cluster::Field
   attr_accessor :description
   attr_accessor :default
   attr_accessor :hidden
-  attr_accessor :constraints
   attr_accessor :immutable
   attr_accessor :value
+  attr_reader :constraints
 
   ############################
   #
@@ -31,7 +31,7 @@ class Fleece::Cluster::Field
             presence: true,
             inclusion: { in: %w(string number comma_delimited_list json boolean) }
 
-  validates :id, :label, :value,
+  validates :id, :label, :value, :order,
             presence: true
 
   validate :valid_number?, if: -> { value && type == "number" }
@@ -232,10 +232,15 @@ class Fleece::Cluster::Field
 
     constraint = constraints["range"]
     number = value.to_f
-    min = constraint[:details]["min"] || number # may have only min, only max, or both
-    max = constraint[:details]["max"] || number
-    unless number >= min && number <= max
-      error_message = constraint[:description] || "must be between #{min} and #{max} (inclusive)"
+    min = constraint[:details]["min"]
+    max = constraint[:details]["max"]
+    unless (!min || number >= min) && (!max || number <= max)
+      error_message = constraint[:description]
+      if error_message.blank?
+        error_message = "must be "
+        error_message << "at least #{min}" if min
+        error_message << "#{ " and " if min}at most #{max}" if max
+      end
       errors.add(:value, error_message)
     end
   end
@@ -245,10 +250,15 @@ class Fleece::Cluster::Field
 
     constraint = constraints["length"]
     length = value.length
-    min = constraint[:details]["min"] || length
-    max = constraint[:details]["max"] || length
-    unless length >= min && length <= max
-      error_message = constraint[:description] || "must be between #{min} and #{max} characters (inclusive)"
+    min = constraint[:details]["min"]
+    max = constraint[:details]["max"]
+    unless (!min || length >= min) && (!max || length <= max)
+      error_message = constraint[:description]
+      if error_message.blank?
+        error_message = "must be "
+        error_message << "at least #{min} characters" if min
+        error_message << "#{ " and " if min}at most #{max} characters" if max
+      end
       errors.add(:value, error_message)
     end
   end
@@ -266,8 +276,8 @@ class Fleece::Cluster::Field
   end
 
   def validate_allowed_value
-    unless !allowed_values? || allowed_values.include?(value)
-      error_message = constraint[:description] || "must be chosen from one of the drop down options"
+    unless !allowed_values? || allowed_values.include?(value) || (type == "number" && allowed_values.include?(value.to_f))
+      error_message = constraints["allowed_values"][:description] || "must be chosen from one of the drop down options"
       errors.add(:value, error_message)
     end
   end

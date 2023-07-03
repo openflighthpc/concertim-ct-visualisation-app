@@ -1,5 +1,3 @@
-require 'faker'
-
 FactoryBot.define do
   factory :fleece_cluster, class: 'Fleece::Cluster' do
     name { 'mycluster' }
