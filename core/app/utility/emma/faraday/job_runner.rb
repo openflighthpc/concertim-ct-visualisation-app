@@ -3,6 +3,19 @@ require 'faraday'
 module Emma
   module Faraday
 
+    # JobRunner makes a HTTP(S) POST request and returns the response.
+    #
+    # The URL and the body can be configured by subclassing and overriding the
+    # `url` and `body` methods.
+    #
+    # Post processing the of the response can be configured by overriding the
+    # `call` method, see `call` for details.
+    #
+    # If the connection fails a `::Faraday::Error` will be raised.  A
+    # `::Faraday::Error` is also raised for `4xx` and `5xx` responses.  If
+    # `JobRunner` is being used from an `ActiveJob::Base`, the request can be
+    # retried by adding `retry_on ::Faraday::Error, ...` to the `ActiveJob` class.
+    #
     class JobRunner
       DEFAULT_TIMEOUT = 5
 
@@ -17,6 +30,21 @@ module Emma
         end
       end
 
+      # Perform the HTTP(S) POST request and return the response.
+      #
+      # Post processing of the response can be implemented, by subclassing
+      # `JobRunner` and overriding `call` to call `super` and post process the
+      # response, e.g.,
+      #
+      #   class MyJobRunner
+      #     class MyResult < Struct(:success, error_message) ; end
+      #
+      #     def call
+      #       response = super
+      #       MyResult.new(response.success?, response.reason_phrase || "Unknown error")
+      #     end
+      #   end
+      #
       def call
         response = connection.post("", body)
         response

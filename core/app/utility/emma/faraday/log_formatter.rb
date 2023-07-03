@@ -2,6 +2,9 @@ require 'faraday'
 
 module Emma
   module Faraday
+
+    # A faraday log formatter that logs exceptions but less verbosely than the
+    # default logger.
     class LogFormatter < ::Faraday::Logging::Formatter
       # Overridden to use `exc.message` instead of `exc.full_message`.
       def exception(exc)
