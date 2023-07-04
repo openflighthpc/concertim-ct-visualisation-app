@@ -64,7 +64,7 @@ Rails.application.configure do
   # config.active_job.queue_name_prefix = "ct_app_production"
   config.active_job.queue_adapter = :good_job
   config.good_job.execution_mode = :external
-  config.good_job.logger = ::ActiveSupport::Logger.new(Rails.root.join("log/good_job.log"))
+  config.good_job.logger = Rails.logger
 
   config.action_mailer.perform_caching = false
   config.action_mailer.default_url_options = { host: 'command.concertim.alces-flight.com' }
@@ -91,7 +91,12 @@ Rails.application.configure do
     logger           = ActiveSupport::Logger.new(STDOUT)
     logger.formatter = config.log_formatter
     config.logger    = ActiveSupport::TaggedLogging.new(logger)
-    config.good_job.logger = ActiveSupport::Logger.new(STDOUT)
+    if ENV['GOOD_JOB_WORKER'] && ENV['GOOD_JOB_WORKER'] == "true"
+      config.good_job.logger = ActiveSupport::TaggedLogging.new(ActiveSupport::Logger.new(STDOUT))
+      # Work around log issues in development.  See
+      # https://github.com/bensheldon/good_job/issues/490
+      $stdout.sync = true
+    end
   end
 
   # Do not dump schema after migrations.

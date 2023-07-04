@@ -3,6 +3,18 @@
 class Uma::RegistrationsController < Devise::RegistrationsController
   before_action :configure_permitted_parameters
 
+  def create
+    super
+    if @user.persisted?
+      config = Fleece::Config.first
+      if config.present?
+        Uma::UserSignupJob.perform_later(@user, config)
+      else
+        Rails.logger.info("Unable to schedule Uma::UserSignupJob: Fleece::Config has not been created")
+      end
+    end
+  end
+
   protected
 
   # We only want to require a password check when changing the password.

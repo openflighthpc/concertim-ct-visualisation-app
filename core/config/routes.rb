@@ -3,6 +3,9 @@ Rails.application.routes.draw do
   mount Ivy::Engine  => '/', as: :ivy_engine
   mount Meca::Engine => '/', as: :meca_engine
   mount Uma::Engine  => '/', as: :uma_engine
+  authenticate :user, ->(user) { user.root? } do
+    mount GoodJob::Engine => 'good_job'
+  end
 
   # We need to redirect here, otherwise the devise redirections will take us to
   # the legacy sign up page.

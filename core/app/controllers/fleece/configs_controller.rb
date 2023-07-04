@@ -16,6 +16,7 @@ class Fleece::ConfigsController < ApplicationController
     if @config.update(config_params)
       flash[:success] = "Cloud environment config created"
       redirect_to fleece_config_path
+      Fleece::ConfigCreatedJob.perform_later(@config)
     else
       render action: :new, status: :unprocessable_entity
     end
@@ -53,7 +54,7 @@ class Fleece::ConfigsController < ApplicationController
 
   private
 
-  PERMITTED_PARAMS = %w[host_name host_ip username password port project_name domain_name]
+  PERMITTED_PARAMS = %w[host_name host_ip username password port user_handler_port project_name domain_name]
   def config_params
     params.require(:fleece_config).permit(*PERMITTED_PARAMS)
   end

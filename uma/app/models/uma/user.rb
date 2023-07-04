@@ -13,6 +13,15 @@ module Uma
       class_name: 'Ivy::HwRack',
       dependent: :destroy
 
+
+    ####################################
+    #
+    # Hooks
+    #
+    ####################################
+    before_validation :strip_project_id
+
+
     ###############################
     #
     # Validations
@@ -26,7 +35,8 @@ module Uma
     validates :project_id,
       uniqueness: true,
       length: { maximum: 255 },
-      allow_nil: true
+      allow_nil: true,
+      allow_blank: true
 
     ####################################
     #
@@ -51,6 +61,27 @@ module Uma
     def ability
       return @__ability if defined?(@__ability)
       @__ability = ::Ability.new(self)
+    end
+
+    # Also store password in plaintext, for use in the cloud environment. In future this MUST be
+    # encrypted.
+    def password=(new_password)
+      @password = new_password
+      if @password.present?
+        self.encrypted_password = password_digest(@password)
+        self.fixme_encrypt_this_already_plaintext_password = @password
+      end
+    end
+
+
+    ####################################
+    #
+    # Private Instance Methods
+    #
+    ####################################
+
+    def strip_project_id
+      self.project_id = nil if self.project_id.blank?
     end
   end
 end

@@ -44,6 +44,7 @@ RSpec.describe "Api::V1::Fleece::Configs", type: :request do
           expect(parsed_config["username"]).to eq fleece_config.username
           expect(parsed_config["password"]).to eq fleece_config.password
           expect(parsed_config["port"]).to eq fleece_config.port
+          expect(parsed_config["user_handler_port"]).to eq fleece_config.user_handler_port
           expect(parsed_config["project_name"]).to eq fleece_config.project_name
           expect(parsed_config["domain_name"]).to eq fleece_config.domain_name
         end

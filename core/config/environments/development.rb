@@ -74,7 +74,7 @@ Rails.application.configure do
   config.active_job.queue_adapter = :good_job
   config.good_job.execution_mode = :external
   if ENV['GOOD_JOB_WORKER'] && ENV['GOOD_JOB_WORKER'] == "true"
-    config.good_job.logger = ::ActiveSupport::Logger.new(STDOUT)
+    config.good_job.logger = ::ActiveSupport::TaggedLogging.new(::ActiveSupport::Logger.new($stdout))
     # Work around log issues in development.  See
     # https://github.com/bensheldon/good_job/issues/490
     $stdout.sync = true
