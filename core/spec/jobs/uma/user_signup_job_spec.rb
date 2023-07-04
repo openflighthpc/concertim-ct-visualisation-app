@@ -10,20 +10,16 @@ RSpec.describe Uma::UserSignupJob, type: :job do
   }
 
   describe "url" do
-    let(:user_service_port) { 42356 }
     let(:user_service_path) { "/create-user-project/" }
 
     subject { super().send(:url) }
 
     it "uses the correct ip, port and path" do
-      expect(subject).to eq "http://#{config.host_ip}:#{user_service_port}#{user_service_path}"
+      expect(subject).to eq "http://#{config.host_ip}:#{config.user_handler_port}#{user_service_path}"
     end
   end
 
   describe "body" do
-    let(:user_service_port) { 42356 }
-    let(:user_service_path) { "/create-user-project/" }
-
     subject { super().send(:body).with_indifferent_access }
 
     it "contains the user's username" do

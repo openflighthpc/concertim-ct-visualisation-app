@@ -5,6 +5,7 @@ FactoryBot.define do
     username { Faker::Internet.username }
     password { Faker::Internet.password }
     port { rand(1...65535) }
+    user_handler_port { rand(1...65535) }
     project_name { "project-#{Faker::Alphanumeric.alphanumeric}" }
     domain_name { Faker::Internet.domain_name }
   end

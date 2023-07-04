@@ -28,6 +28,11 @@
   </div>
 
   <div class="formItem">
+    <%= f.label :user_handler_port, "User handler port", class: 'required_field' %>
+    <%= f.number_field :user_handler_port, minimum: 1, maximum: 65535 %>
+  </div>
+
+  <div class="formItem">
     <%= f.label :username, "Username", class: 'required_field' %>
     <%= f.text_field :username, autocomplete: :off %>
   </div>

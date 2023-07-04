@@ -73,25 +73,27 @@ RSpec.describe Fleece::Config, type: :model do
       expect(subject).to have_error(:password, :blank)
     end
 
-    describe "port" do
-      it "is not valid without a port" do
-        subject.port = nil
-        expect(subject).to have_error(:port, :not_a_number)
-      end
+    %w(port user_handler_port).each do |port|
+      describe port do
+        it "is not valid without a #{port}" do
+          subject.send("#{port}=", nil)
+          expect(subject).to have_error(port, :not_a_number)
+        end
 
-      it "is not valid with a port below 1" do
-        subject.port = 0
-        expect(subject).to have_error(:port, :greater_than_or_equal_to)
-      end
+        it "is not valid with a #{port} below 1" do
+          subject.send("#{port}=", 0)
+          expect(subject).to have_error(port, :greater_than_or_equal_to)
+        end
 
-      it "is not valid with a port above 65535" do
-        subject.port = 65536
-        expect(subject).to have_error(:port, :less_than_or_equal_to)
-      end
+        it "is not valid with a #{port} above 65535" do
+          subject.send("#{port}=", 65536)
+          expect(subject).to have_error(port, :less_than_or_equal_to)
+        end
 
-      it "is not valid with a non-integer port" do
-        subject.port = 1.5
-        expect(subject).to have_error(:port, :not_an_integer)
+        it "is not valid with a non-integer #{port}" do
+          subject.send("#{port}=", 1.5)
+          expect(subject).to have_error(port, :not_an_integer)
+        end
       end
     end
 
@@ -109,7 +111,8 @@ RSpec.describe Fleece::Config, type: :model do
 
   describe "user_handler_url" do
     it "is as expected" do
-      expect(subject.user_handler_url).to eq "http://#{subject.host_ip}:42356/create-user-project/"
+      expected_url = "http://#{subject.host_ip}:#{subject.user_handler_port}/create-user-project/"
+      expect(subject.user_handler_url).to eq expected_url
     end
   end
 end

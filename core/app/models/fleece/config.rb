@@ -31,6 +31,9 @@ class Fleece::Config < ApplicationRecord
     validates :port,
       numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 65535 }
 
+    validates :user_handler_port,
+      numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 65535 }
+
     validates :project_name,
       presence: true,
       length: { maximum: 255 }
@@ -49,7 +52,7 @@ class Fleece::Config < ApplicationRecord
 
     def user_handler_url
       url = URI(auth_url)
-      url.port = 42356
+      url.port = user_handler_port
       url.path = "/create-user-project/"
       url.to_s
     end
