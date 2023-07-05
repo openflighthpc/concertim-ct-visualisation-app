@@ -31,19 +31,12 @@
 
   <h4>Cluster Parameters</h4>
   <% @cluster.fields.each do |field| %>
+    <% field = Fleece::Cluster::FieldPresenter.new(field) %>
     <%= f.fields_for :cluster_params, field do |cluster_param| %>
       <div class="formItem">
-        <%= cluster_param.label field.id.to_sym, field.label, class: 'required_field', title: field.form_description %>
-        <% if field.select_box? %>
-          <%= cluster_param.send(field.form_field_type, :value, field.allowed_values, {prompt: true}, field.form_options) %>
-        <% else %>
-          <%= cluster_param.send(field.form_field_type, :value, field.form_options) %>
-        <% end %>
-        <% if field.constraints.any? %>
-          <div class="constraint-text">
-            <%= field.constraint_text %>
-          </div>
-        <% end %>
+        <%= field.form_label(cluster_param) %>
+        <%= field.form_input(cluster_param) %>
+        <%= field.constraint_text %>
       </div>
     <% end %>
   <% end %>
