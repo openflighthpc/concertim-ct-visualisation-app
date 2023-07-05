@@ -76,7 +76,11 @@ class Fleece::PostCreateClusterJob < ApplicationJob
       }
       cloud_env[:username] = @user.root ? @fleece_config.username : @user.login
       cloud_env[:password] = @user.root ? @fleece_config.password : @user.fixme_encrypt_this_already_plaintext_password
-      cloud_env[:project_name] = @user.root ? @fleece_config.project_name : @user.project_id
+      if @user.root
+        cloud_env[:project_name] = @fleece_config.project_name
+      else
+        cloud_env[:project_id] = @user.project_id
+      end
       cloud_env
     end
   end

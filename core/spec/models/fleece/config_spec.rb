@@ -73,7 +73,7 @@ RSpec.describe Fleece::Config, type: :model do
       expect(subject).to have_error(:password, :blank)
     end
 
-    %w(port user_handler_port).each do |port|
+    %w(port user_handler_port cluster_builder_port).each do |port|
       describe port do
         it "is not valid without a #{port}" do
           subject.send("#{port}=", nil)

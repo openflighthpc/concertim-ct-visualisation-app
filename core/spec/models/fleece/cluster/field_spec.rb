@@ -55,18 +55,18 @@ RSpec.describe Fleece::Cluster::Field, type: :model do
   shared_examples 'length constraint' do
     shared_examples 'minimum' do
       it 'must be above or equal to minimum length' do
-        subject.value = "a"
+        subject.value = too_short_value
         expect(subject).to have_error(:value, constraints[0]["description"])
-        subject.value = "abc"
+        subject.value = valid_value
         expect(subject).to be_valid
       end
     end
 
     shared_examples 'maximum' do
       it 'must be below or equal to maximum length' do
-        subject.value = "There are too many letters here"
+        subject.value = too_long_value
         expect(subject).to have_error(:value, constraints[0]["description"])
-        subject.value = "Less letters"
+        subject.value = valid_value2
         expect(subject).to be_valid
       end
     end
@@ -113,7 +113,12 @@ RSpec.describe Fleece::Cluster::Field, type: :model do
   end
 
   describe 'string field' do
-    include_examples 'length constraint'
+    include_examples 'length constraint' do
+      let(:too_short_value) { "a" }
+      let(:valid_value) { "abc" }
+      let(:too_long_value) { "there are too many characters here"}
+      let(:valid_value2) { "not so many" }
+    end
 
     context 'pattern constraint' do
       let(:constraints) do
@@ -289,6 +294,48 @@ RSpec.describe Fleece::Cluster::Field, type: :model do
 
     # It's unclear if in this context length is the string length, or the number of list items.
     # I have assumed string length.
-    include_examples 'length constraint'
+    include_examples 'length constraint' do
+      let(:too_short_value) { "a" }
+      let(:valid_value) { "abc" }
+      let(:too_long_value) { "abc,123,reallylonglistitem"}
+      let(:valid_value2) { "abc,123" }
+    end
+  end
+
+  describe 'json field' do
+    let(:type) { "json" }
+
+    # It's unclear if in this context length is the string length, or the number of key-value pairs.
+    # I have assumed string length.
+    include_examples 'length constraint' do
+      let(:too_short_value) { "{}" }
+      let(:valid_value) { {abc: 123}.to_json }
+      let(:too_long_value) { {abc: 123, longvariablename: 99999}.to_json }
+      let(:valid_value2) { {short: 9}.to_json }
+    end
+
+    it 'must be valid json' do
+      subject.value = "abc"
+      expect(subject).to have_error(:value, "must be valid JSON")
+      subject.value = { test: 1, variable: "abc"}.to_json
+      expect(subject).to be_valid
+      subject.value = "{}"
+      expect(subject).to be_valid
+    end
+  end
+
+  describe 'boolean field' do
+    let(:type) { 'boolean' }
+
+    it 'must be a valid boolean' do
+      subject.value = "abc"
+      expect(subject).to have_error(:value, "must be a valid boolean")
+      subject.value = true
+      expect(subject).to be_valid
+      subject.value = "1"
+      expect(subject).to be_valid
+      subject.value = 0
+      expect(subject).to be_valid
+    end
   end
 end

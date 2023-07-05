@@ -63,6 +63,7 @@ class Fleece::Config < ApplicationRecord
     def cluster_builder_base_url
       url = URI(auth_url)
       url.port = cluster_builder_port
+      url.path = ""
       url.to_s
     end
 end
