@@ -3,9 +3,15 @@ require 'faraday'
 class Fleece::PostCreateClusterJob < ApplicationJob
   queue_as :default
 
-  def perform(cluster, config, user, **options)
-    r = Runner.new(cluster, config, user, **options)
-    r.call
+  def perform(cluster, fleece_config, user, **options)
+    runner = Runner.new(
+      cluster: cluster,
+      user: user,
+      fleece_config: fleece_config,
+      logger: logger,
+      **options
+    )
+    runner.call
   end
 
   class Result
@@ -23,55 +29,24 @@ class Fleece::PostCreateClusterJob < ApplicationJob
     end
   end
 
-  class Runner
-    DEFAULT_TIMEOUT = 5
-
-    def initialize(cluster, config, user, timeout:nil, test_stubs:nil)
+  class Runner < Emma::Faraday::JobRunner
+    def initialize(cluster:, user:, **kwargs)
       @cluster = cluster
-      @config = config
       @user = user
-      @timeout = timeout || DEFAULT_TIMEOUT
-      @test_stubs = test_stubs
-
-      if @test_stubs.present? && !Rails.env.test?
-        raise ArgumentError, "test_stubs given but not test environment"
-      end
+      super(**kwargs)
     end
 
     def call
-      response = conn.post(path, body)
-      Result.new(response.success?, response.body || "Unknown error")
+      response = connection.post(path, body)
+      Result.new(response.success?, response.reason_phrase || "Unknown error")
     rescue Faraday::Error
       Result.new(false, $!.message)
     end
 
     private
 
-    def conn
-      @conn ||= Faraday.new(
-        url: URI(@config.cluster_builder_base_url).to_s,
-        ) do |f|
-        # Use the same timeout for open, read and write.
-        f.options.timeout = @timeout
-
-        f.request :json
-        # f.request :retry
-        # f.request :authorization, 'Bearer', @config.token
-
-        f.response :json
-        f.response :logger, Rails.logger, {
-          formatter: Emma::FaradayLogFormatter,
-          headers: {request: true, response: true, errors: false},
-          bodies: true,
-          errors: true
-        } do |logger|
-          logger.filter(/("password"\s*:\s*)("[^"]*")/, '\1"[FILTERED]"')
-        end
-
-        if @test_stubs
-          f.adapter(:test, @test_stubs)
-        end
-      end
+    def url
+      @fleece_config.cluster_builder_base_url
     end
 
     def path
@@ -95,20 +70,14 @@ class Fleece::PostCreateClusterJob < ApplicationJob
 
     def cloud_env_details
       cloud_env = {
-        auth_url: @config.auth_url,
-        user_domain_name: @config.domain_name,
-        project_domain_name: @config.domain_name
+        auth_url: @fleece_config.auth_url,
+        user_domain_name: @fleece_config.domain_name,
+        project_domain_name: @fleece_config.domain_name
       }
-      cloud_env[:username] = @user.root ? @config.username : @user.login
-      cloud_env[:password] = @user.root ? @config.password : @user.fixme_encrypt_this_already_plaintext_password
-      cloud_env[:project_name] = @user.root ? @config.project_name : @user.project_id
+      cloud_env[:username] = @user.root ? @fleece_config.username : @user.login
+      cloud_env[:password] = @user.root ? @fleece_config.password : @user.fixme_encrypt_this_already_plaintext_password
+      cloud_env[:project_name] = @user.root ? @fleece_config.project_name : @user.project_id
       cloud_env
-
-      # renderer = Rabl::Renderer.new('api/v1/fleece/configs/show', @config, {
-      #   view_path: 'app/views',
-      #   format: 'hash'
-      # })
-      # renderer.render
     end
   end
 end
