@@ -52,67 +52,68 @@ RSpec.describe Fleece::Cluster::Field, type: :model do
     expect(subject).to have_error(:order, :blank)
   end
 
-  describe 'string field' do
-    context 'length constraint' do
-
-      shared_examples 'minimum' do
-        it 'must be above or equal to minimum length' do
-          subject.value = "a"
-          expect(subject).to have_error(:value, constraints[0]["description"])
-          subject.value = "abc"
-          expect(subject).to be_valid
-        end
-      end
-
-      shared_examples 'maximum' do
-        it 'must be below or equal to maximum length' do
-          subject.value = "There are too many letters here"
-          expect(subject).to have_error(:value, constraints[0]["description"])
-          subject.value = "Less letters"
-          expect(subject).to be_valid
-        end
-      end
-
-      context 'includes both min and maximum' do
-        let(:constraints) do
-          [
-            {
-              "length"=>{"max"=>12, "min"=>3},
-              "description"=>"must be between 3 and 12 characters"
-            }
-          ]
-        end
-
-        include_examples 'minimum'
-        include_examples 'maximum'
-      end
-
-      context 'just minimum' do
-        let(:constraints) do
-          [
-            {
-              "length"=>{"min"=>3},
-              "description"=>"must be at least 3 characters"
-            }
-          ]
-        end
-
-        include_examples 'minimum'
-      end
-
-      context 'just maximum' do
-        let(:constraints) do
-          [
-            {
-              "length"=>{"max"=>12},
-              "description"=>"must be at most 12 characters"
-            }
-          ]
-        end
-
-        include_examples 'maximum'
+  shared_examples 'length constraint' do
+    shared_examples 'minimum' do
+      it 'must be above or equal to minimum length' do
+        subject.value = "a"
+        expect(subject).to have_error(:value, constraints[0]["description"])
+        subject.value = "abc"
+        expect(subject).to be_valid
       end
     end
+
+    shared_examples 'maximum' do
+      it 'must be below or equal to maximum length' do
+        subject.value = "There are too many letters here"
+        expect(subject).to have_error(:value, constraints[0]["description"])
+        subject.value = "Less letters"
+        expect(subject).to be_valid
+      end
+    end
+
+    context 'includes both min and maximum' do
+      let(:constraints) do
+        [
+          {
+            "length"=>{"max"=>12, "min"=>3},
+            "description"=>"must be between 3 and 12 characters"
+          }
+        ]
+      end
+
+      include_examples 'minimum'
+      include_examples 'maximum'
+    end
+
+    context 'just minimum' do
+      let(:constraints) do
+        [
+          {
+            "length"=>{"min"=>3},
+            "description"=>"must be at least 3 characters"
+          }
+        ]
+      end
+
+      include_examples 'minimum'
+    end
+
+    context 'just maximum' do
+      let(:constraints) do
+        [
+          {
+            "length"=>{"max"=>12},
+            "description"=>"must be at most 12 characters"
+          }
+        ]
+      end
+
+      include_examples 'maximum'
+    end
+  end
+
+  describe 'string field' do
+    include_examples 'length constraint'
 
     context 'pattern constraint' do
       let(:constraints) do
@@ -281,5 +282,13 @@ RSpec.describe Fleece::Cluster::Field, type: :model do
         expect(subject).to be_valid
       end
     end
+  end
+
+  describe 'comma delimited list field' do
+    let(:type) { "comma_delimited_list" }
+
+    # It's unclear if in this context length is the string length, or the number of list items.
+    # I have assumed string length.
+    include_examples 'length constraint'
   end
 end
