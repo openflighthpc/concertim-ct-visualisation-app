@@ -34,6 +34,9 @@ class Fleece::Config < ApplicationRecord
     validates :user_handler_port,
       numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 65535 }
 
+    validates :cluster_builder_port,
+              numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 65535 }
+
     validates :project_name,
       presence: true,
       length: { maximum: 255 }
@@ -58,6 +61,8 @@ class Fleece::Config < ApplicationRecord
     end
 
     def cluster_builder_base_url
-      "http://#{host_ip}:42378"
+      url = URI(auth_url)
+      url.port = cluster_builder_port
+      url.to_s
     end
 end
