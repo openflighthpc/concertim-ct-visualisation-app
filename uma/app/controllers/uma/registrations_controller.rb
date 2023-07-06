@@ -44,9 +44,7 @@ class Uma::RegistrationsController < Devise::RegistrationsController
   private
 
   def configure_permitted_parameters
-    update_attrs = [:name].tap do |attrs|
-      attrs << :project_id unless current_user&.root?
-    end
+    update_attrs = [:name]
     devise_parameter_sanitizer.permit :account_update, keys: update_attrs
 
     sign_up_attrs = [:login, :email] + update_attrs
