@@ -99,13 +99,13 @@ class Fleece::Cluster::Field
     target_hash ? target_hash[:details] : {}
   end
 
+  private
+
   ############################
   #
   # Private Instance Methods
   #
   ############################
-
-  private
 
   def default_details
     {

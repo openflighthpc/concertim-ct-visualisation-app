@@ -49,6 +49,13 @@ class Fleece::Config < ApplicationRecord
         message: "can contain only alphanumeric characters, hyphens, dots and underscores."
       }
 
+
+    ############################
+    #
+    # Public Instance Methods
+    #
+    ############################
+
     def auth_url
       "http://#{host_ip}:#{port}/v3"
     end

@@ -1,9 +1,21 @@
 class Fleece::Cluster
   include ActiveModel::API
 
+  ####################################
+  #
+  # Properties
+  #
+  ####################################
+
   attr_accessor :cluster_type
   attr_accessor :name
   attr_accessor :fields
+
+  ####################################
+  #
+  # Validations
+  #
+  ####################################
 
   validates :cluster_type,
     presence: true
@@ -16,11 +28,17 @@ class Fleece::Cluster
 
   validate :valid_fields?
 
+  ####################################
+  #
+  # Public Instance Methods
+  #
+  ####################################
+
   def initialize(cluster_type:, name: nil, cluster_params: nil)
     @cluster_type = cluster_type
     @name = name
     @fields = cluster_type.fields.map { |id, details| Fleece::Cluster::Field.new(id, details) }.sort_by(&:order)
-    fields.each { |field| field.value = cluster_params[field.id] unless field.immutable } if cluster_params
+    fields.each { |field| field.value = cluster_params[field.id] } if cluster_params
   end
 
   def type_id
@@ -36,6 +54,12 @@ class Fleece::Cluster
   end
 
   private
+
+  ####################################
+  #
+  # Private Instance Methods
+  #
+  ####################################
 
   def valid_fields?
     fields.each do |field|
