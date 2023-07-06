@@ -35,3 +35,9 @@ en:
       user:
         password:
           New password
+
+  activemodel:
+    attributes:
+      "uma/user_signup_job/result":
+        user_id: "user_id"
+        project_id: "project_id"

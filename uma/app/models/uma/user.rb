@@ -37,6 +37,11 @@ module Uma
       length: { maximum: 255 },
       allow_nil: true,
       allow_blank: true
+    validates :cloud_user_id,
+      uniqueness: true,
+      allow_nil: true,
+      allow_blank: true
+
 
     ####################################
     #

@@ -4,6 +4,7 @@ class Uma::UserSignupJob < Uma::ApplicationJob
   queue_as :default
 
   retry_on ::Faraday::Error, wait: :exponentially_longer, attempts: 10
+  retry_on ::ActiveModel::ValidationError, wait: :exponentially_longer, attempts: 10
 
   def perform(user, fleece_config, **options)
     runner = Runner.new(
@@ -15,10 +16,30 @@ class Uma::UserSignupJob < Uma::ApplicationJob
     runner.call
   end
 
+  class Result
+    include ActiveModel::API
+
+    attr_accessor :user_id
+    attr_accessor :project_id
+
+    validates :user_id, presence: true
+    validates :project_id, presence: true
+  end
+
   class Runner < Emma::Faraday::JobRunner
     def initialize(user:, **kwargs)
       @user = user
       super(**kwargs)
+    end
+
+    def call
+      response = super
+      body = response.body
+      result = Result.new(user_id: body["user_id"], project_id: body["project_id"])
+      result.validate!
+      @user.project_id = result.project_id
+      @user.cloud_user_id = result.user_id
+      @user.save!
     end
 
     private
@@ -40,6 +61,7 @@ class Uma::UserSignupJob < Uma::ApplicationJob
         username: @user.login,
         password: @user.fixme_encrypt_this_already_plaintext_password,
       }.tap do |h|
+          h[:cloud_user_id] = @user.cloud_user_id unless @user.cloud_user_id.blank?
           h[:project_id] = @user.project_id unless @user.project_id.blank?
         end
     end
