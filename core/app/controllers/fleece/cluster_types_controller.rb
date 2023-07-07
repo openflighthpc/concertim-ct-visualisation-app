@@ -3,5 +3,6 @@ class Fleece::ClusterTypesController < ApplicationController
 
   def index
     @config = Fleece::Config.first
+    @result = Fleece::GetLatestClusterTypesJob.perform_now(@config) if @config
   end
 end
