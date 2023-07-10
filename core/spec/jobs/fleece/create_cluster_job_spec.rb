@@ -82,32 +82,15 @@ RSpec.describe Fleece::CreateClusterJob, type: :job do
                                         })
     end
 
-    context 'admin user' do
-      let(:user) { create(:user, :admin) }
-
-      it "contains the correct config and admin details" do
-        expect(subject[:cloud_env]).to eq({
-                                            "auth_url" => config.auth_url,
-                                            "username" => config.username,
-                                            "password" => config.password,
-                                            "project_name" => config.project_name,
-                                            "user_domain_name" => config.domain_name,
-                                            "project_domain_name" => config.domain_name,
-                                          })
-      end
-    end
-
-    context 'non admin user' do
-      it "contains the correct config and user details" do
-        expect(subject[:cloud_env]).to eq({
-                                            "auth_url" => config.auth_url,
-                                            "username" => user.login,
-                                            "password" => user.fixme_encrypt_this_already_plaintext_password,
-                                            "project_id" => user.project_id,
-                                            "user_domain_name" => config.domain_name,
-                                            "project_domain_name" => config.domain_name,
-                                          })
-      end
+    it "contains the correct config and user details" do
+      expect(subject[:cloud_env]).to eq({
+                                          "auth_url" => config.auth_url,
+                                          "username" => user.login,
+                                          "password" => user.fixme_encrypt_this_already_plaintext_password,
+                                          "project_id" => user.project_id,
+                                          "user_domain_name" => config.domain_name,
+                                          "project_domain_name" => config.domain_name,
+                                        })
     end
   end
 end

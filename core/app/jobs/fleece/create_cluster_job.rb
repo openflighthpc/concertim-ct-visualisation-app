@@ -69,19 +69,14 @@ class Fleece::CreateClusterJob < ApplicationJob
     end
 
     def cloud_env_details
-      cloud_env = {
+      {
         auth_url: @fleece_config.auth_url,
         user_domain_name: @fleece_config.domain_name,
-        project_domain_name: @fleece_config.domain_name
+        project_domain_name: @fleece_config.domain_name,
+        username: @user.login,
+        password: @user.fixme_encrypt_this_already_plaintext_password,
+        project_id: @user.project_id
       }
-      cloud_env[:username] = @user.root ? @fleece_config.username : @user.login
-      cloud_env[:password] = @user.root ? @fleece_config.password : @user.fixme_encrypt_this_already_plaintext_password
-      if @user.root
-        cloud_env[:project_name] = @fleece_config.project_name
-      else
-        cloud_env[:project_id] = @user.project_id
-      end
-      cloud_env
     end
   end
 end

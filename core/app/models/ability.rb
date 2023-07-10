@@ -17,9 +17,12 @@ class Ability
     important_prohibitions(user)
   end
 
-  # Abilities for root users (can essentially do anything).
+  # Abilities for root users (can essentially do anything, except launch clusters).
   def root_abilities(user)
     can :manage, :all
+
+    cannot :read, Fleece::ClusterType
+    cannot :create, Fleece::Cluster
   end
 
   # Abilities for non-root users.
