@@ -31,7 +31,7 @@
 
   <h4>Cluster Parameters</h4>
   <% @cluster.fields.each do |field| %>
-    <% field = Fleece::Cluster::FieldPresenter.new(field) %>
+    <% field = Fleece::Cluster::FieldPresenter.new(field, self) %>
     <%= f.fields_for :cluster_params, field do |cluster_param| %>
       <div class="formItem">
         <%= field.form_label(cluster_param) %>

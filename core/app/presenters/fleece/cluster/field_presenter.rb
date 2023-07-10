@@ -31,7 +31,7 @@ module Fleece
       def constraint_text
         if constraints.any?
           content = constraint_names.map {|name| constraints[name][:description] }.join(". ")
-          "<div class='constraint-text'>#{content}</div>".html_safe
+          h.tag.div(content, class: 'constraint-text')
         end
       end
 
