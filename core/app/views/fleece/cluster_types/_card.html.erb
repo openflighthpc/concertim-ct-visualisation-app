@@ -1,0 +1,13 @@
+<% cluster_type = card %>
+
+<div class="card" style="width: 300px; border: darkgray 1px solid; padding: 0.5em;">
+  <div class="card-divider" style="border-bottom: darkgray 1px solid;" >
+    <h4><%= cluster_type.name %></h4>
+  </div>
+  <div class="card-section">
+    <p><%= cluster_type.description %></p>
+  </div>
+  <div class="card-section">
+    <%= link_to "Select", new_fleece_cluster_type_cluster_path(cluster_type) %>
+  </div>
+</div>

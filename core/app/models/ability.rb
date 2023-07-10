@@ -17,9 +17,12 @@ class Ability
     important_prohibitions(user)
   end
 
-  # Abilities for root users (can essentially do anything).
+  # Abilities for root users (can essentially do anything, except launch clusters).
   def root_abilities(user)
     can :manage, :all
+
+    cannot :read, Fleece::ClusterType
+    cannot :create, Fleece::Cluster
   end
 
   # Abilities for non-root users.
@@ -35,6 +38,9 @@ class Ability
     can :manage, Ivy::Device, chassis: {location: {rack: {user: user}}}
     can :manage, Ivy::HwRack, user: user
     can :manage, Meca::RackviewPreset, user: user
+
+    can :read, Fleece::ClusterType
+    can :create, Fleece::Cluster
 
     can [:read, :update], Uma::User, id: user.id
   end

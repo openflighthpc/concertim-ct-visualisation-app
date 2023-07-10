@@ -73,7 +73,7 @@ RSpec.describe Fleece::Config, type: :model do
       expect(subject).to have_error(:password, :blank)
     end
 
-    %w(port user_handler_port).each do |port|
+    %w(port user_handler_port cluster_builder_port).each do |port|
       describe port do
         it "is not valid without a #{port}" do
           subject.send("#{port}=", nil)
@@ -111,7 +111,7 @@ RSpec.describe Fleece::Config, type: :model do
 
   describe "user_handler_url" do
     it "is as expected" do
-      expected_url = "http://#{subject.host_ip}:#{subject.user_handler_port}/create-user-project/"
+      expected_url = "http://#{subject.host_ip}:#{subject.user_handler_port}/create_user_project"
       expect(subject.user_handler_url).to eq expected_url
     end
   end

@@ -1,15 +1,6 @@
-<%
-    unless defined?(locals)
-      locals = {}
-    end
-%>
 <%=
   render_action_dropdown 'Cloud environment actions' do |builder|
     builder.add title: 'View', path: fleece_config_path
     builder.add title: 'Edit', path: edit_fleece_config_path
-    if locals[:include_send_request]
-      builder.divider
-      builder.add html: link_to('Post configuration', send_fleece_config_path, method: 'post')
-    end
   end
 %>

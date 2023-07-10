@@ -17,6 +17,9 @@ Rails.application.routes.draw do
         post :send_config, as: 'send', path: 'send'
       end
     end
+    resources :cluster_types, path: 'cluster-types', only: [:index] do
+      resources :clusters, only: [:new, :create]
+    end
   end
 
   # API routes

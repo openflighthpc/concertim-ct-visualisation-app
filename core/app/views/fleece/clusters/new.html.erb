@@ -1,0 +1,45 @@
+<% set_title 'Configure cluster' -%>
+<% content_for(:side_content) do %>
+  <%= render 'actions' %>
+<% end %>
+
+<p>Configure details for cluster <strong><%= @cluster_type.name %></strong></p>
+<p><%= @cluster_type.description %></p>
+
+<%= form_for(@cluster, url: fleece_cluster_type_clusters_path(@cluster_type)) do |f| %>
+  <% if @cluster.errors.any? %>
+    <div id="error_explanation">
+      <h2>There are <%= pluralize(@cluster.errors.count, "error") %>:</h2>
+   
+      <ul>
+      <% @cluster.errors.each do |error| %>
+        <li><%= "#{error.attribute.capitalize}: #{error.type}" %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="formItem">
+    <%= f.label :name, "Cluster name", class: 'required_field' %>
+    <%= f.text_field :name, autocomplete: :off, required: true,
+                     minlength: 6, maxlength: 255, pattern: "^[a-zA-Z][a-zA-Z0-9\\-_]*$",
+                     class: "new-cluster-field" %>
+    <div class="constraint-text">
+     Must be between 6 and 255 characters. Can contain only alphanumeric characters, hyphens and underscores.
+    </div>
+  </div>
+
+  <h4>Cluster Parameters</h4>
+  <% @cluster.fields.each do |field| %>
+    <% field = Fleece::Cluster::FieldPresenter.new(field, self) %>
+    <%= f.fields_for :cluster_params, field do |cluster_param| %>
+      <div class="formItem">
+        <%= field.form_label(cluster_param) %>
+        <%= field.form_input(cluster_param) %>
+        <%= field.constraint_text %>
+      </div>
+    <% end %>
+  <% end %>
+
+  <%= f.submit 'Create' %>
+<% end %>

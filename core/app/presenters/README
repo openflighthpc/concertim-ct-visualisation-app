@@ -56,7 +56,7 @@ No - use a presenter!
     end
 
 
-* Within a presenter you have access to two "convinience methods" called "o" and "h".
+* Within a presenter you have access to two "convenience methods" called "o" and "h".
 
   => o: is a reference to the presented object
   => h: is a reference to the view context (or "helpers", for accessing link_to etc.)

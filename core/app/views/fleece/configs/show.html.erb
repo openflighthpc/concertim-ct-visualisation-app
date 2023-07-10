@@ -3,7 +3,7 @@
 -%>
 
 <% content_for(:side_content) do %>
-  <%= render 'actions', locals: {include_send_request: true} %>
+  <%= render 'actions' %>
 <% end %>
 
 <div class="dl_group">
@@ -28,6 +28,11 @@
     <dt>User handler port</dt>
     <dd>
       <span><%= @config.user_handler_port %></span>
+    </dd>
+
+    <dt>Cluster builder port</dt>
+    <dd>
+      <span><%= @config.cluster_builder_port %></span>
     </dd>
 
     <dt>Username</dt>

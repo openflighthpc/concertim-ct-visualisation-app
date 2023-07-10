@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_06_105434) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_08_093904) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -29,6 +29,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_06_105434) do
   connection.execute "CREATE SEQUENCE ivy.racks_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
   connection.execute "CREATE SEQUENCE ivy.templates_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
   connection.execute "CREATE SEQUENCE meca.rackview_presets_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
+  connection.execute "CREATE SEQUENCE public.fleece_cluster_types_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
   connection.execute "CREATE SEQUENCE public.fleece_configs_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
   connection.execute "CREATE SEQUENCE uma.users_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
 
@@ -128,6 +129,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_06_105434) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "fleece_cluster_types", id: :bigint, default: -> { "nextval('fleece_cluster_types_id_seq'::regclass)" }, force: :cascade do |t|
+    t.string "name", limit: 255, null: false
+    t.string "description", limit: 1024, null: false
+    t.string "foreign_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.jsonb "fields", default: {}, null: false
+  end
+
   create_table "fleece_configs", id: :bigint, default: -> { "nextval('fleece_configs_id_seq'::regclass)" }, force: :cascade do |t|
     t.string "host_name", limit: 255, null: false
     t.inet "host_ip", null: false
@@ -139,6 +149,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_06_105434) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_handler_port", default: 42356, null: false
+    t.integer "cluster_builder_port", default: 42378, null: false
   end
 
   create_table "good_job_batches", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

@@ -10,7 +10,7 @@ RSpec.describe Uma::UserSignupJob, type: :job do
   }
 
   describe "url" do
-    let(:user_service_path) { "/create-user-project/" }
+    let(:user_service_path) { "/create_user_project" }
 
     subject { super().send(:url) }
 
@@ -77,7 +77,7 @@ RSpec.describe Uma::UserSignupJob, type: :job do
   end
 
   describe "updating the user's details from the response" do
-    let(:user_service_path) { "/create-user-project/" }
+    let(:user_service_path) { "/create_user_project" }
     context "when response does not contain expected fields" do
       let(:response_body) { {} }
 

@@ -1,3 +1,5 @@
+require 'faker'
+
 FactoryBot.define do
   factory :fleece_config, class: 'Fleece::Config' do
     host_name { Faker::Internet.domain_name }

@@ -33,6 +33,11 @@
   </div>
 
   <div class="formItem">
+    <%= f.label :cluster_builder_port, "Cluster builder port", class: 'required_field' %>
+    <%= f.number_field :cluster_builder_port, minimum: 1, maximum: 65535 %>
+  </div>
+
+  <div class="formItem">
     <%= f.label :username, "Username", class: 'required_field' %>
     <%= f.text_field :username, autocomplete: :off %>
   </div>

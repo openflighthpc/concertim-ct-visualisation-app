@@ -16,7 +16,7 @@ class CreateFleeceConfigs < ActiveRecord::Migration[7.0]
       t.timestamps
 
       reversible do |dir|
-        dir.down { execute 'SET search_path TO ivy,public' }
+        dir.down { execute 'SET search_path TO public' }
       end
     end
   end
