@@ -3,6 +3,7 @@ class Fleece::ClusterTypesController < ApplicationController
 
   def index
     @config = Fleece::Config.first
-    @result = Fleece::GetLatestClusterTypesJob.perform_now(@config) if @config
+    @result = Fleece::SyncLatestClusterTypesJob.perform_now(@config) if @config
+    flash[:alert] = @result.error_message unless @result.success?
   end
 end
