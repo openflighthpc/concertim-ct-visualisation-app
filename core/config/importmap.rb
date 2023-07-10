@@ -14,6 +14,7 @@ pin "util/Dialog", to: "util/Dialog.js"
 # pin "util/copyToClipboard", to: "util/copyToClipboard.js"
 
 # Javascripts for the IRV.
+pin "canvas/irv/util/DragPolicy", to: "mia/coffee/src/canvas/irv/util/DragPolicy.js"
 pin "canvas/irv/util/Parser", to: "mia/coffee/src/canvas/irv/util/Parser.js"
 pin "canvas/irv/util/Configurator", to: "mia/coffee/src/canvas/irv/util/Configurator.js"
 pin "canvas/irv/util/AssetManager", to: "mia/coffee/src/canvas/irv/util/AssetManager.js"

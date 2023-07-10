@@ -53,6 +53,7 @@ module Ivy
       numericality: { only_integer: true }
     validates :rack,
       presence: true
+    validate :rack_has_not_changed
 
     validate :start_u_is_valid
     validate :target_u_is_empty
@@ -145,7 +146,6 @@ module Ivy
     end
 
     def update_position(params)
-      self.rack_id = params[:rack_id]
       self.facing = params[:facing]
       self.start_u = params[:start_u]
       # XXX Consider if show_in_dcrv is: 1) no longer needed; 2) a chassis
@@ -191,6 +191,13 @@ module Ivy
       errors.add(:start_u, 'is occupied')
     rescue Ivy::HwRack::Occupation::InvalidRackU
       errors.add(:start_u, 'is invalid')
+    end
+
+    def rack_has_not_changed
+      return if !persisted?
+      if rack_id_changed?
+        errors.add(:rack_id, "cannot be updated")
+      end
     end
   end
 end

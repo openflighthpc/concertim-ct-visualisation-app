@@ -149,7 +149,7 @@ facing are `f` or `b` for front and back respectively.
 Move a device.
 
 ```
-./move-device.sh <DEVICE_ID> <RACK_ID> <FACING> <START_U>
+./move-device.sh <DEVICE_ID> <FACING> <START_U>
 ```
 
 Update a device's name.

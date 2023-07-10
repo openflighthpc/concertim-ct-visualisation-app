@@ -15,20 +15,17 @@ BASE_URL="https://${CONCERTIM_HOST}/api/v1"
 AUTH_TOKEN=${AUTH_TOKEN:-$("${SCRIPT_DIR}"/get-auth-token.sh)}
 
 DEVICE_ID=${1}
-RACK_ID=${2}
 FACING=${3}
 START_U=${4}
 
 BODY=$(jq --null-input \
     --arg facing "${FACING}" \
     --arg start_u "${START_U}" \
-    --arg rack_id "${RACK_ID}" \
     '
 {
     "device": {
         "location": {
             "facing": $facing,
-            "rack_id": $rack_id|tonumber,
             "start_u": $start_u|tonumber
         }
     }

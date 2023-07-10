@@ -32,6 +32,7 @@ import ViewModel from 'canvas/irv/ViewModel';
 import Link from 'canvas/irv/view/Link';
 import ImageLink from 'canvas/irv/view/ImageLink';
 import HoldingArea from 'canvas/irv/view/HoldingArea';
+import DragPolicy from 'canvas/irv/util/DragPolicy';
 import Profiler from 'Profiler';
 
 class RackSpace extends CanvasSpace {
@@ -1183,13 +1184,14 @@ class RackSpace extends CanvasSpace {
       this.dragImg       = this.fx.addImg({ img: the_image, x: x + this.dragImgOffset.x, y: y + this.dragImgOffset.y, alpha: RackSpace.DRAG_ITEM_ALPHA });
 
       if (this.selection instanceof Chassis || this.selection instanceof Machine) {
-        for (var rack of Array.from(this.racks)) {
+        const targetRacks = DragPolicy.filter(this.selection, this.racks);
+        targetRacks.forEach((rack) => {
           if (this.moving_a_blade) {
             rack.showFreeSpacesForBlade(this.selection.template.images.front,chassis_id);
           } else if (rack instanceof Rack) {
             rack.showFreeSpacesForChassis(selection_height,chassis_id,this.selection.depth());
           }
-        }
+        });
       }
 
       return this.selection.showDrag();
