@@ -61,11 +61,11 @@ class Fleece::CreateClusterJob < ApplicationJob
     end
 
     def cluster_details
-      renderer = Rabl::Renderer.new('api/v1/fleece/clusters/show', @cluster, {
-        view_path: 'app/views',
-        format: 'hash'
-      })
-      renderer.render
+      {
+        cluster_type_id: @cluster.type_id,
+        name: @cluster.name,
+        parameters: @cluster.field_values
+      }
     end
 
     def cloud_env_details
