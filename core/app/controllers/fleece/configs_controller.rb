@@ -35,23 +35,6 @@ class Fleece::ConfigsController < ApplicationController
     end
   end
 
-  # POST the config to the ip/port specified in the config
-  def send_config
-    if @config.nil? || !@config.persisted?
-      flash[:alert] = "Unable to send cloud environment configuration it has not yet been created."
-      redirect_to action: :show
-      return
-    end
-
-    result = Fleece::PostConfigJob.perform_now(@config)
-    if result.success?
-      flash[:success] = "Cloud environment configuration sent"
-    else
-      flash[:alert] = "Unable to send configuration: #{result.error_message}"
-    end
-    redirect_to action: :show
-  end
-
   private
 
   PERMITTED_PARAMS = %w[host_name host_ip username password port user_handler_port project_name domain_name cluster_builder_port]
