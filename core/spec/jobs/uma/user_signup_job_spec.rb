@@ -10,7 +10,7 @@ RSpec.describe Uma::UserSignupJob, type: :job do
   }
 
   describe "url" do
-    let(:user_service_path) { "/create-user-project/" }
+    let(:user_service_path) { "/create_user_project" }
 
     subject { super().send(:url) }
 
