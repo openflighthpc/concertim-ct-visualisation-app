@@ -30,7 +30,7 @@ RSpec.describe Fleece::ClusterType, type: :model do
       cluster_type = described_class.new(
         name: 'Test cluster',
         description: 'A test cluster type.  It exists only for test purposes.',
-        kind: 'test-cluster',
+        foreign_id: 'test-cluster',
         fields: fields,
       )
       expect(cluster_type).to be_valid
@@ -51,15 +51,15 @@ RSpec.describe Fleece::ClusterType, type: :model do
       expect(subject).to have_error(:description, :blank)
     end
 
-    describe "kind" do
-      it "is not valid without a kind" do
-        subject.kind = nil
-        expect(subject).to have_error(:kind, :blank)
+    describe "foreign id" do
+      it "is not valid without a foreign id" do
+        subject.foreign_id = nil
+        expect(subject).to have_error(:foreign_id, :blank)
       end
 
-      it "must have a unique kind" do
-        new_cluster_type = build(:fleece_cluster_type, kind: subject.kind)
-        expect(new_cluster_type).to have_error(:kind, :taken)
+      it "must have a unique foreign_id" do
+        new_cluster_type = build(:fleece_cluster_type, foreign_id: subject.foreign_id)
+        expect(new_cluster_type).to have_error(:foreign_id, :taken)
       end
     end
   end

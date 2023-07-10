@@ -7,7 +7,7 @@ class CreateFleeceClusterTypes < ActiveRecord::Migration[7.0]
     create_table :fleece_cluster_types do |t|
       t.string  :name,        null: false, limit: 255
       t.string  :description, null: false, limit: 1024
-      t.string  :kind,        null: false
+      t.string  :foreign_id,  null: false
       t.integer :nodes,       null: false, default: 1
 
       t.timestamps

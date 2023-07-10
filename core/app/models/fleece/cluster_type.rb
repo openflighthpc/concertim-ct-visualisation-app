@@ -13,8 +13,8 @@ class Fleece::ClusterType < ApplicationRecord
     presence: true,
     length: { maximum: 1024 }
 
-  # kind is the id provided by cluster builder
-  validates :kind,
+  # the id provided by cluster builder
+  validates :foreign_id,
     presence: true,
     uniqueness: true
 

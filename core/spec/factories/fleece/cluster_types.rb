@@ -4,7 +4,7 @@ FactoryBot.define do
   factory :fleece_cluster_type, class: 'Fleece::ClusterType' do
     name { Faker::Tea.variety }
     description { Faker::Quote.yoda }
-    kind { Faker::Alphanumeric.alpha }
+    foreign_id { Faker::Alphanumeric.alpha }
     fields do
       {
         "clustername"=>

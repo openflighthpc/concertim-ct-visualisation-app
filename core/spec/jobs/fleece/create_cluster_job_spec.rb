@@ -76,7 +76,7 @@ RSpec.describe Fleece::CreateClusterJob, type: :job do
 
     it 'contains cluster details' do
       expect(subject[:cluster]).to eq({
-                                          "cluster_type_id" => cluster.cluster_type.kind,
+                                          "cluster_type_id" => cluster.cluster_type.foreign_id,
                                           "name" => cluster.name,
                                           "parameters" => cluster.field_values
                                         })

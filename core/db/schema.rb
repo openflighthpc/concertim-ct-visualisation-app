@@ -132,7 +132,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_08_093904) do
   create_table "fleece_cluster_types", id: :bigint, default: -> { "nextval('fleece_cluster_types_id_seq'::regclass)" }, force: :cascade do |t|
     t.string "name", limit: 255, null: false
     t.string "description", limit: 1024, null: false
-    t.string "kind", null: false
+    t.string "foreign_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.jsonb "fields", default: {}, null: false

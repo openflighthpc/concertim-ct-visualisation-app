@@ -42,7 +42,7 @@ class Fleece::Cluster
   end
 
   def type_id
-    @cluster_type.kind
+    @cluster_type.foreign_id
   end
 
   def field_values
