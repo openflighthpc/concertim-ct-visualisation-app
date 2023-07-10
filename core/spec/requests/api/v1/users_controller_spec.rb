@@ -103,98 +103,125 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
 
   describe "PATCH :update" do
     let(:url_under_test) { urls.api_v1_user_path(user) }
-    let(:user) { create(:user, project_id: initial_project_id) }
-    let(:initial_project_id) { nil }
+    let(:initial_value) { nil }
 
-    shared_examples "can set user's project_id" do
-      include_examples "update generic JSON API endpoint examples" do
-        before(:each) do
-          expect(user.project_id).to be_blank
+    %w( project_id cloud_user_id ).each do |attr_under_test|
+
+      let(:user) { create(:user, attr_under_test => initial_value) }
+
+      shared_examples "can update user's #{attr_under_test}" do
+        context "when first setting a user's #{attr_under_test}" do
+          include_examples "update generic JSON API endpoint examples" do
+            before(:each) do
+              expect(user.send(attr_under_test)).to be_blank
+            end
+
+            let(:object_under_test) { user }
+            let(:valid_attributes) {
+              {
+                user: { attr_under_test => SecureRandom.uuid }
+              }
+            }
+            let(:invalid_attributes) {
+              {
+                user: { }
+              }
+            }
+          end
         end
 
-        let(:object_under_test) { user }
-        let(:valid_attributes) {
-          {
-            user: { project_id: SecureRandom.uuid }
-          }
-        }
-        let(:invalid_attributes) {
-          {
-            user: { }
-          }
-        }
+        context "when unsetting a user's #{attr_under_test}" do
+          include_examples "update generic JSON API endpoint examples" do
+            before(:each) { user.send("#{attr_under_test}=", SecureRandom.uuid); user.save! }
+
+            let(:object_under_test) { user }
+            let(:valid_attributes) {
+              {
+                user: { attr_under_test => nil }
+              }
+            }
+            let(:invalid_attributes) {
+              {
+                user: { }
+              }
+            }
+          end
+        end
+
+        context "when updating user's #{attr_under_test}" do
+          include_examples "update generic JSON API endpoint examples" do
+            before(:each) { user.send("#{attr_under_test}=", SecureRandom.uuid); user.save! }
+
+            let(:object_under_test) { user }
+            let(:valid_attributes) {
+              {
+                user: { attr_under_test => SecureRandom.uuid }
+              }
+            }
+            let(:invalid_attributes) {
+              {
+                user: { }
+              }
+            }
+          end
+        end
       end
-    end
 
-    shared_examples "can update user's project_id" do
-      before(:each) { user.project_id = SecureRandom.uuid; user.save! }
+      shared_examples "cannot update user's #{attr_under_test}" do
+        context "when first setting a user's #{attr_under_test}" do
+          include_examples "cannot update generic JSON API endpoint examples" do
+            before(:each) do
+              expect(user.send(attr_under_test)).to be_blank
+            end
 
-      include_examples "update generic JSON API endpoint examples" do
-        let(:object_under_test) { user }
-        let(:valid_attributes) {
-          {
-            user: { project_id: SecureRandom.uuid }
-          }
-        }
-        let(:invalid_attributes) {
-          {
-            user: { }
-          }
-        }
-      end
-    end
+            let(:object_under_test) { user }
+            let(:valid_attributes) {
+              {
+                user: { attr_under_test => SecureRandom.uuid }
+              }
+            }
+            let(:invalid_attributes) {
+              {
+                user: { }
+              }
+            }
+          end
+        end
 
-    shared_examples "cannot update user's project_id" do
-      before(:each) { user.project_id = SecureRandom.uuid; user.save! }
+        context "when unsetting a user's #{attr_under_test}" do
+          include_examples "cannot update generic JSON API endpoint examples" do
+            before(:each) { user.send("#{attr_under_test}=", SecureRandom.uuid); user.save! }
+            let(:object_under_test) { user }
+            let(:valid_attributes) {
+              {
+                user: { attr_under_test => nil }
+              }
+            }
+            let(:invalid_attributes) {
+              {
+                user: { }
+              }
+            }
+          end
+        end
 
-      include_examples "cannot update generic JSON API endpoint examples" do
-        let(:object_under_test) { user }
-        let(:valid_attributes) {
-          {
-            user: { project_id: SecureRandom.uuid }
-          }
-        }
-        let(:invalid_attributes) {
-          {
-            user: { }
-          }
-        }
-      end
-    end
+        context "when updating user's #{attr_under_test}" do
+          include_examples "cannot update generic JSON API endpoint examples" do
+            before(:each) { user.send("#{attr_under_test}=", SecureRandom.uuid); user.save! }
 
-    shared_examples "can unset user's project_id" do
-      before(:each) { user.project_id = SecureRandom.uuid; user.save! }
-
-      include_examples "update generic JSON API endpoint examples" do
-        let(:object_under_test) { user }
-        let(:valid_attributes) {
-          {
-            user: { project_id: nil }
-          }
-        }
-        let(:invalid_attributes) {
-          {
-            user: { }
-          }
-        }
-      end
-    end
-
-    shared_examples "cannot unset user's project_id" do
-      before(:each) { user.project_id = SecureRandom.uuid; user.save! }
-
-      include_examples "cannot update generic JSON API endpoint examples" do
-        let(:object_under_test) { user }
-        let(:valid_attributes) {
-          {
-            user: { project_id: nil }
-          }
-        }
-        let(:invalid_attributes) {
-          {
-            user: { }
-          }
-        }
+            let(:object_under_test) { user }
+            let(:valid_attributes) {
+              {
+                user: { attr_under_test => SecureRandom.uuid }
+              }
+            }
+            let(:invalid_attributes) {
+              {
+                user: { }
+              }
+            }
+          end
+        end
       end
     end
 
@@ -207,9 +234,8 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
     context "when logged in as updated user" do
       include_context "Logged in as non-admin"
       let(:user) { authenticated_user }
-      it_behaves_like "can set user's project_id"
       it_behaves_like "cannot update user's project_id"
-      it_behaves_like "cannot unset user's project_id"
+      it_behaves_like "cannot update user's cloud_user_id"
     end
 
     context "when logged in as some other non-admin user" do
@@ -221,9 +247,8 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
 
     context "when logged in as admin user" do
       include_context "Logged in as admin"
-      it_behaves_like "can set user's project_id"
       it_behaves_like "can update user's project_id"
-      it_behaves_like "can unset user's project_id"
+      it_behaves_like "can update user's cloud_user_id"
     end
   end
 end

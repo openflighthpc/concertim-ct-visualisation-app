@@ -58,7 +58,8 @@ class Api::V1::UsersController < Api::V1::ApplicationController
 
   def user_params
     permitted_params = [].tap do |a|
-      a << :project_id if current_user.root? || current_user.project_id.blank?
+      a << :project_id if current_user.root?
+      a << :cloud_user_id if current_user.root?
     end
     params.require(:user).permit(*permitted_params)
   end

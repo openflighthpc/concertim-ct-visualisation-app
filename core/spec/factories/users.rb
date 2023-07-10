@@ -4,6 +4,7 @@ FactoryBot.define do
     sequence(:name) { |n| "User #{n}" }
     email { "#{login}@example.com" }
     project_id { nil }
+    cloud_user_id { nil }
     root { false }
 
     password { SecureRandom.alphanumeric }

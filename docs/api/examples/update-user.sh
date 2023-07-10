@@ -15,13 +15,16 @@ BASE_URL="https://${CONCERTIM_HOST}/api/v1"
 AUTH_TOKEN=${AUTH_TOKEN:-$("${SCRIPT_DIR}"/get-auth-token.sh)}
 
 USER_ID=${1}
-PROJECT_ID=${2}
+CLOUD_USER_ID=${2}
+PROJECT_ID=${3}
 
 BODY=$(jq --null-input \
+    --arg cloud_user_id "${CLOUD_USER_ID}" \
     --arg project_id "${PROJECT_ID}" \
     '
 {
     "user": {
+        "cloud_user_id": $cloud_user_id,
         "project_id": $project_id
     }
 }

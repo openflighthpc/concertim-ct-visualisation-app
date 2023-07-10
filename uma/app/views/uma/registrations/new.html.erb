@@ -36,21 +36,6 @@
           <%= f.password_field :password, autocomplete: "new-password", placeholder: 'Password' %>
           <%= f.password_field :password_confirmation, autocomplete: "new-password", placeholder: 'Password confirmation' %>
 
-          <div class="switch-wrapper--inline">
-            <p title="If you have an existing project ID you wish to use for this account, select this option and enter it.  If you don't, a project ID will be created for you when needed.">
-            I have an existing project ID
-            </p>
-            <div class="switch">
-              <input class="switch-input" id="have_project_id" type="checkbox" name="have_project_id">
-              <label class="switch-paddle" for="have_project_id">
-                <span class="show-for-sr">I have an existing project ID</span>
-              </label>
-            </div>
-          </div>
-          <div class="hidden" id="user_project_id_wrapper" style="margin-left: 1em;">
-            <%= f.text_field :project_id, autocomplete: "off", placeholder: 'Existing Project ID' %>
-          </div>
-
           <center>
             <%= f.submit "Sign up", class: :button, name: :sign_up %>
             <div class="login-link">

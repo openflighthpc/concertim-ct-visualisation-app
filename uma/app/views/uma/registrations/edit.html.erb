@@ -12,11 +12,20 @@
   <% unless current_user.root? %>
     <div class="formItem">
       <%
-          disabled = current_user.project_id.present?
-          tooltip = disabled ? "Once set project IDs can only be changed by an admin user" : ""
+          tooltip = current_user.cloud_user_id.blank? ? "A cloud user ID will be automatically created" : "Once set cloud user IDs can only be changed by an admin user"
+      %>
+      <%= f.label :cloud_user_id, "Cloud User ID", title: tooltip %>
+      <%= f.text_field :cloud_user_id, autocomplete: :off, disabled: true %>
+    </div>
+  <% end %>
+
+  <% unless current_user.root? %>
+    <div class="formItem">
+      <%
+          tooltip = current_user.project_id.blank? ? "A project ID will be automatically created" : "Once set project IDs can only be changed by an admin user"
       %>
       <%= f.label :project_id, "Project ID", title: tooltip %>
-      <%= f.text_field :project_id, autocomplete: :off, disabled: disabled %>
+      <%= f.text_field :project_id, autocomplete: :off, disabled: true %>
     </div>
   <% end %>
 

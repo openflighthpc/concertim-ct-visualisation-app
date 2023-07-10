@@ -53,7 +53,7 @@ class Fleece::Config < ApplicationRecord
     def user_handler_url
       url = URI(auth_url)
       url.port = user_handler_port
-      url.path = "/create-user-project/"
+      url.path = "/create_user_project"
       url.to_s
     end
 end

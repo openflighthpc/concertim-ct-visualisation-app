@@ -58,11 +58,11 @@ Get details of current user.  Provides details of the current user.
 ./current-user.sh
 ```
 
-Update project ID for a given user.  Currently, `project_id` is the only
-attribute that can be updated via the API.
+Update cloud user ID and/or project ID for a given user.  Setting
+`CLOUD_USER_ID` or `PROJECT_ID` to `""` will unset the value for the user.
 
 ```
-./update-user.sh <USER_ID> <PROJECT_ID>
+./update-user.sh <USER_ID> <CLOUD_USER_ID> <PROJECT_ID>
 ```
 
 ### Racks
