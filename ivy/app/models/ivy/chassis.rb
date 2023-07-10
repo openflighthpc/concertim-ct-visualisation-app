@@ -31,9 +31,6 @@ module Ivy
       numericality: { only_integer: true }
     validates :location,
       presence: true
-
-    # Custom Validations
-    validate :name_is_unique_within_device_scope
     
 
     ####################################
@@ -111,13 +108,6 @@ module Ivy
     #############################
     
     private
-
-    def name_is_unique_within_device_scope
-      device_names = Device.all.pluck(:name)
-      if device_names.include? name
-        errors.add :name, "there is already a device with that name"
-      end
-    end
 
     # get_default_name returns what should be a sensible and unique name.
     #
