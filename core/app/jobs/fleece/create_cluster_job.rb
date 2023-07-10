@@ -1,6 +1,6 @@
 require 'faraday'
 
-class Fleece::PostCreateClusterJob < ApplicationJob
+class Fleece::CreateClusterJob < ApplicationJob
   queue_as :default
 
   def perform(cluster, fleece_config, user, **options)

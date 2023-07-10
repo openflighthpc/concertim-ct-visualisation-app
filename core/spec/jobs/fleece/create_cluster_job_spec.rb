@@ -1,11 +1,11 @@
 require 'rails_helper'
 
-RSpec.describe Fleece::PostCreateClusterJob, type: :job do
+RSpec.describe Fleece::CreateClusterJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
   let(:config) { create(:fleece_config) }
   let(:cluster) { build(:fleece_cluster) }
   let(:user) { create(:user) }
-  subject { Fleece::PostCreateClusterJob::Runner.new(cluster: cluster, fleece_config: config, user: user) }
+  subject { Fleece::CreateClusterJob::Runner.new(cluster: cluster, fleece_config: config, user: user) }
 
   describe "url" do
     before(:each) do
