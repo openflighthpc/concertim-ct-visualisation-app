@@ -5,7 +5,7 @@ class Fleece::ClusterTypesController < ApplicationController
     @config = Fleece::Config.first
     if @config
       result = Fleece::SyncLatestClusterTypesJob.perform_now(@config)
-      flash[:alert] = result.error_message unless result.success?
+      flash.now.alert = result.error_message unless result.success?
     end
   end
 end

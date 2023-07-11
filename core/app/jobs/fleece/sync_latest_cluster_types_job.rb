@@ -30,7 +30,12 @@ class Fleece::SyncLatestClusterTypesJob < ApplicationJob
   class Runner < Emma::Faraday::JobRunner
 
     def call
+      connection.headers["If-Modified-Since"] = latest_recorded_change
       response = connection.get(path)
+      if response.status == 304
+        return Result.new(true, nil)
+      end
+
       unless response.success?
         return Result.new(false, "Unable to update cluster types: #{response.reason_phrase || "Unknown error"}")
       end
@@ -51,6 +56,10 @@ class Fleece::SyncLatestClusterTypesJob < ApplicationJob
       "/cluster-types/"
     end
 
+    def latest_recorded_change
+      Fleece::ClusterType.maximum(:version)&.httpdate
+    end
+
     def order_fields(fields)
       return unless fields
 
@@ -67,6 +76,7 @@ class Fleece::SyncLatestClusterTypesJob < ApplicationJob
         type.name = type_details["title"]
         type.description = type_details["description"]
         type.fields = order_fields(type_details["parameters"])
+        type.version = type_details["last_updated"]
         unless type.save
           errors << "Unable to #{type.persisted? ? "update" : "create"} type '#{type.foreign_id}': #{type.errors.full_messages.join("; ")}"
         end

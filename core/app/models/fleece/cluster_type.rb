@@ -22,6 +22,9 @@ class Fleece::ClusterType < ApplicationRecord
   validates :fields,
     presence: true
 
+  validates :version,
+    presence: true
+
   # The custom configuration for this cluster type.
   # For example:
   # ````
@@ -98,6 +101,20 @@ class Fleece::ClusterType < ApplicationRecord
   #   }
   # ```
   #
+
+  # ####################################
+  # #
+  # # Scopes
+  # #
+  # ####################################
+
+  default_scope { order(name: :asc) }
+
+  # ####################################
+  # #
+  # # Public Instance Methods
+  # #
+  # ####################################
 
   def to_param
     foreign_id
