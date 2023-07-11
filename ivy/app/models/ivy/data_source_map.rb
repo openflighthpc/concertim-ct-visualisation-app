@@ -69,12 +69,12 @@ module Ivy
     end
       
 
-    def calculate_map_to_host    
+    def calculate_map_to_host
       if device.respond_to?(:generate_dsm)
-        device.generate_dsm        
-      else        
-        device.name.tr(' ','-')
-      end      
+        device.generate_dsm
+      else
+        "hacor:#{device.class.name.demodulize.downcase}:#{device.id}"
+      end
     end
 
 
