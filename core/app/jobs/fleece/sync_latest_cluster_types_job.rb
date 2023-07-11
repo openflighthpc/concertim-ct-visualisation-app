@@ -71,6 +71,12 @@ class Fleece::SyncLatestClusterTypesJob < ApplicationJob
           errors << "Unable to #{type.persisted? ? "update" : "create"} type '#{type.foreign_id}': #{type.errors.full_messages.join("; ")}"
         end
       end
+
+      Fleece::ClusterType.where.not(foreign_id: types.map { |type| type["id"] }).each do |to_remove|
+        unless to_remove.destroy
+          errors << "Unable to remove type '#{type.foreign_id}': #{type.errors.full_messages.join("; ")}"
+        end
+      end
       errors
     end
   end

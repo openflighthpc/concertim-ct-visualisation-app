@@ -1,7 +1,7 @@
 class Fleece::ClustersController < ApplicationController
   def new
     authorize! :create, Fleece::Cluster
-    @cluster_type = Fleece::ClusterType.find(params[:cluster_type_id])
+    @cluster_type = Fleece::ClusterType.find_by_foreign_id(params[:cluster_type_foreign_id])
     @cluster = Fleece::Cluster.new(cluster_type: @cluster_type)
   end
 
@@ -15,7 +15,7 @@ class Fleece::ClustersController < ApplicationController
       return
     end
 
-    @cluster_type = Fleece::ClusterType.find(params[:cluster_type_id])
+    @cluster_type = Fleece::ClusterType.find_by_foreign_id(params[:cluster_type_foreign_id])
     @cluster = Fleece::Cluster.new(
       cluster_type: @cluster_type, name: permitted_params[:name], cluster_params: permitted_params[:cluster_params]
     )

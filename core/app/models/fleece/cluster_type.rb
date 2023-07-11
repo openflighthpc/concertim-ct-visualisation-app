@@ -99,4 +99,8 @@ class Fleece::ClusterType < ApplicationRecord
   # ```
   #
 
+  def to_param
+    foreign_id
+  end
+
 end
