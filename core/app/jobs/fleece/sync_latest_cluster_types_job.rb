@@ -63,12 +63,12 @@ class Fleece::SyncLatestClusterTypesJob < ApplicationJob
     def update_cluster_types(types)
       errors = []
       types.each do |type_details|
-        type = Fleece::ClusterType.find_or_initialize_by(kind: type_details["id"])
+        type = Fleece::ClusterType.find_or_initialize_by(foreign_id: type_details["id"])
         type.name = type_details["title"]
         type.description = type_details["description"]
         type.fields = order_fields(type_details["parameters"])
         unless type.save
-          errors << "Unable to #{type.persisted? ? "update" : "create"} type '#{type.kind}': #{type.errors.full_messages.join("; ")}"
+          errors << "Unable to #{type.persisted? ? "update" : "create"} type '#{type.foreign_id}': #{type.errors.full_messages.join("; ")}"
         end
       end
       errors
