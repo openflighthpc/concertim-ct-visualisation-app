@@ -44,19 +44,21 @@ RSpec.describe Ivy::Device, type: :model do
       expect(subject).to have_error(:chassis, :blank)
     end
 
-    it "must have a unique name" do
+    it "must have a unique name within its rack" do
       new_device = build(:device, chassis: chassis, name: subject.name)
-      expect(new_device).to have_error(:name, "'#{new_device.name}' has already been taken by a Device")
+
+      expect(new_device.name).to eq device.name
+      expect(new_device).to have_error(:name, :taken)
     end
 
-    it "must have a unique name across all racks" do
-      new_user = create(:user)
-      new_rack = create(:rack, user: new_user, template: rack_template)
+    it "can duplicate names for devices in other racks" do
+      new_rack = create(:rack, user: user, template: rack_template)
       new_location = create(:location, rack: new_rack)
       new_chassis = create(:chassis, location: new_location, template: device_template)
       new_device = build(:device, chassis: new_chassis, name: subject.name)
 
-      expect(new_device).to have_error(:name, "'#{new_device.name}' has already been taken by a Device")
+      expect(new_device.name).to eq device.name
+      expect(new_device).not_to have_error(:name)
     end
 
   end

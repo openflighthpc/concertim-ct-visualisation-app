@@ -120,16 +120,16 @@ module Ivy
     #
     def name_validator
       return unless self.name
+      return unless location.present?
 
-      d = Ivy::Device.where(["lower(name) LIKE ?", self.name.downcase]).first
-      if(!d.nil? && d.id != self.id)
-        errors.add(:name, "'#{d.name}' has already been taken by a #{Ivy::DevicePresenter.new(d).device_type}")
-      end    
+      taken_names = Ivy::Device
+        .joins(chassis: :location)
+        .where(location: {rack_id: location.rack_id})
+        .where.not(id: id)
+        .pluck(:name)
 
-      # Do not allow the creation of devices that have the same name as a
-      # chassis.
-      if Chassis.pluck(:name).include?(self.name)
-        errors.add(:name, "there is already a chassis with that name")
+      if taken_names.include?(name)
+        errors.add(:name, :taken)
       end
     end
 
