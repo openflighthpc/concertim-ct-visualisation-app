@@ -1,7 +1,20 @@
 class Fleece::ClustersController < ApplicationController
   def new
     authorize! :create, Fleece::Cluster
+    @config = Fleece::Config.first
+    if @config.nil?
+      flash[:alert] = "Unable to get latest cluster type details: cloud environment config not set"
+      redirect_to root_path
+      return
+    end
+
     @cluster_type = Fleece::ClusterType.find_by_foreign_id!(params[:cluster_type_foreign_id])
+    result = Fleece::SyncIndividualClusterTypeJob.perform_now(@config, @cluster_type)
+    if !result.success?
+      flash[:alert] = result.error_message
+      redirect_to fleece_cluster_types_path
+      return
+    end
     @cluster = Fleece::Cluster.new(cluster_type: @cluster_type)
   end
 
