@@ -5,6 +5,7 @@ FactoryBot.define do
     name { Faker::Tea.variety }
     description { Faker::Quote.yoda }
     foreign_id { Faker::Alphanumeric.alpha }
+    version { Time.current }
     fields do
       {
         "clustername"=>
