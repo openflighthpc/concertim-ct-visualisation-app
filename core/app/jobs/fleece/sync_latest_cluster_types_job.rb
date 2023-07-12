@@ -37,13 +37,13 @@ class Fleece::SyncLatestClusterTypesJob < ApplicationJob
       end
 
       unless response.success?
-        return Result.new(false, "Unable to update cluster types: #{response.reason_phrase || "Unknown error"}")
+        return Result.new(false, "#{error_description}: #{response.reason_phrase || "Unknown error"}")
       end
 
-      errors = update_cluster_types(response.body)
+      errors = sync_data(response.body)
       Result.new(errors.empty?, errors.join("<br>") || "Unknown error")
     rescue Faraday::Error
-      Result.new(false, "Unable to update cluster types: #{$!.message}")
+      Result.new(false, "#{error_description}: #{$!.message}")
     end
 
     private
@@ -69,7 +69,7 @@ class Fleece::SyncLatestClusterTypesJob < ApplicationJob
       fields
     end
 
-    def update_cluster_types(types)
+    def sync_data(types)
       errors = []
       types.each do |type_details|
         type = Fleece::ClusterType.find_or_initialize_by(foreign_id: type_details["id"])
@@ -88,6 +88,10 @@ class Fleece::SyncLatestClusterTypesJob < ApplicationJob
         end
       end
       errors
+    end
+
+    def error_description
+      "Unable to update cluster types"
     end
   end
 end
