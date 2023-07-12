@@ -76,7 +76,7 @@ class Fleece::SyncLatestClusterTypesJob < ApplicationJob
         type.name = type_details["title"]
         type.description = type_details["description"]
         type.fields = order_fields(type_details["parameters"])
-        type.version = type_details["last_updated"]
+        type.version = type_details["last_modified"]
         unless type.save
           errors << "Unable to #{type.persisted? ? "update" : "create"} type '#{type.foreign_id}': #{type.errors.full_messages.join("; ")}"
         end
