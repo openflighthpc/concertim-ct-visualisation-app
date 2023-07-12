@@ -27,7 +27,7 @@ RSpec.describe Fleece::CreateClusterJob, type: :job do
   describe "#perform" do
     context "when request is successful" do
       before(:each) do
-        stubs.post("http://#{config.host_ip}:#{config.port}/clusters/") { |env| [ 200, {}, ""] }
+        stubs.post("http://#{config.host_ip}:#{config.cluster_builder_port}/clusters/") { |env| [ 200, {}, ""] }
       end
 
       it "returns a successful result" do
@@ -38,7 +38,7 @@ RSpec.describe Fleece::CreateClusterJob, type: :job do
 
     context "when request is not successful" do
       before(:each) do
-        stubs.post("http://#{config.host_ip}:#{config.port}/clusters/") { |env| [ 404, {}, "404 Not Found"] }
+        stubs.post("http://#{config.host_ip}:#{config.cluster_builder_port}/clusters/") { |env| [ 404, {}, "404 Not Found"] }
       end
 
       it "returns an unsuccessful result" do
@@ -55,7 +55,7 @@ RSpec.describe Fleece::CreateClusterJob, type: :job do
 
     context "when request times out" do
       before(:each) do
-        stubs.post("http://#{config.host_ip}:#{config.port}/clusters/") { |env| sleep timeout * 2 ; [ 200, {}, ""] }
+        stubs.post("http://#{config.host_ip}:#{config.cluster_builder_port}/clusters/") { |env| sleep timeout * 2 ; [ 200, {}, ""] }
       end
       let(:timeout) { 0.1 }
 
