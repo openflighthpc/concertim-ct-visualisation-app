@@ -136,7 +136,8 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
         {
           device: {
             name: device.name + "-updated",
-            metadata: device.metadata.merge("kate" => "kate")
+            metadata: device.metadata.merge("kate" => "kate"),
+            status: "ACTIVE",
           }
         }
       }
@@ -144,7 +145,8 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
         {
           device: {
             name: "so not valid",
-            metadata: "should be an object"
+            metadata: "should be an object",
+            status: 'not a valid status',
           }
         }
       }
@@ -176,6 +178,7 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
           parsed_device = JSON.parse(response.body)
           expect(parsed_device["name"]).to eq valid_attributes[:device][:name]
           expect(parsed_device["metadata"]).to eq valid_attributes[:device][:metadata]
+          expect(parsed_device["status"]).to eq valid_attributes[:device][:status]
         end
       end
 

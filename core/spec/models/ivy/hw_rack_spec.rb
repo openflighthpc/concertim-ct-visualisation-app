@@ -11,6 +11,7 @@ RSpec.describe Ivy::HwRack, type: :model do
       rack = described_class.new(
         template: template,
         user: user,
+        status: 'IN_PROGRESS',
       )
       expect(rack).to be_valid
     end
@@ -65,6 +66,16 @@ RSpec.describe Ivy::HwRack, type: :model do
       # Changing the height of a rack is only allowed if the new height is
       # sufficiently large to accomodate all of the nodes it contains.
       skip "implement this when we have device factories et al"
+    end
+
+    it "is not vaild without a status" do
+      subject.status = nil
+      expect(subject).to have_error(:status, :blank)
+    end
+
+    it "is not vaild with an invalid status" do
+      subject.status = "SNAFU"
+      expect(subject).to have_error(:status, :inclusion)
     end
   end
 

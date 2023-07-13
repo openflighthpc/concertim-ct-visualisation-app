@@ -6,6 +6,15 @@ module Ivy
     include Ivy::Concerns::LiveUpdate::Device
 
 
+    #############################
+    #
+    # CONSTANTS
+    #
+    ############################
+
+    VALID_STATUSES = %w(IN_PROGRESS FAILED ACTIVE STOPPED)
+
+
     ####################################
     #
     # Associations
@@ -34,6 +43,9 @@ module Ivy
         with: /\A[a-zA-Z0-9\-]*\Z/,
         message: "can contain only alphanumeric characters and hyphens."
       }
+    validates :status,
+      presence: true,
+      inclusion: { in: VALID_STATUSES, message: "must be one of #{VALID_STATUSES.to_sentence(last_word_connector: ' or ')}" }
     validate :name_validator
     validate :device_limit, if: :new_record? 
     validate :metadata_format

@@ -4,6 +4,7 @@ FactoryBot.define do
     u_height { 40 }
     u_depth { 2 }
     metadata { {} }
+    status { 'IN_PROGRESS' }
 
     association :user
   end

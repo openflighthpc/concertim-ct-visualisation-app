@@ -29,9 +29,10 @@ BODY=$(jq --null-input \
     "device": {
         "name": $name,
         "description": $description,
+        "status": "ACTIVE",
         "metadata": {
-          "key_one": "value_one.updated",
-          "key_three": [4,5,6]
+          "openstack_instance": "8f4e9068-5a39-4717-8a83-6b95e01031eb",
+          "status": ["active", "", ""]
         }
     }
 }

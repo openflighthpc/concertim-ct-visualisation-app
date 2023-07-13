@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_11_153906) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_13_174841) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -64,6 +64,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_11_153906) do
     t.datetime "updated_at", null: false
     t.bigint "base_chassis_id", null: false
     t.jsonb "metadata", default: {}, null: false
+    t.string "status", null: false
     t.index ["base_chassis_id"], name: "index_devices_on_base_chassis_id"
   end
 
@@ -89,6 +90,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_11_153906) do
     t.bigint "template_id", null: false
     t.bigint "user_id", null: false
     t.jsonb "metadata", default: {}, null: false
+    t.string "status", null: false
     t.index ["template_id"], name: "index_racks_on_template_id"
     t.index ["user_id"], name: "index_racks_on_user_id"
   end

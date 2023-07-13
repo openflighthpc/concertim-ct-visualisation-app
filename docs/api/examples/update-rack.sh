@@ -30,9 +30,10 @@ BODY=$(jq --null-input \
     "rack": {
         "name": $name,
         "u_height": $u_height|tonumber,
+        "status": "ACTIVE",
         "metadata": {
-          "key_one": "value_one.updated",
-          "key_three": [4,5,6]
+          "status": "CREATE_COMPLETED",
+          "stack_id": "92927d62-ebcf-4faf-a8ab-4068ca3911f3"
         }
     }
 }
