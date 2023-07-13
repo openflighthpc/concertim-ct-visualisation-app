@@ -37,11 +37,12 @@ class Fleece::Cluster::Field
   validate :valid_number?, if: -> { value && type == "number" }
   validate :valid_json?, if: -> { value && type == "json" }
   validate :valid_boolean?, if: -> { value && type == "boolean" }
-  validate :validate_modulo, if: -> { value && constraints["modulo"] }
-  validate :validate_range, if: -> { value && constraints["range"] }
-  validate :validate_length, if: -> { value && constraints["length"] }
-  validate :validate_pattern, if: -> { value && constraints["allowed_pattern"] }
-  validate :validate_allowed_value, if: -> { value && constraints["allowed_values"] }
+  validate :validate_constraint_formats
+  validate :validate_modulo, if: -> { value && constraints["modulo"] && !errors[:modulo] }
+  validate :validate_range, if: -> { value && constraints["range"] && !errors[:range] }
+  validate :validate_length, if: -> { value && constraints["length"] && !errors[:length] }
+  validate :validate_pattern, if: -> { value && constraints["allowed_pattern"] && !errors[:allowed_pattern] }
+  validate :validate_allowed_value, if: -> { value && constraints["allowed_values"] && !errors[:allowed_values] }
 
   ############################
   #
@@ -96,7 +97,7 @@ class Fleece::Cluster::Field
 
   def get_constraint_details(name)
     target_hash = constraints[name]
-    target_hash ? target_hash[:details] : {}
+    target_hash ? target_hash[:details].clone : {}
   end
 
   private
@@ -202,6 +203,67 @@ class Fleece::Cluster::Field
     unless !allowed_values? || allowed_values.include?(value) || (type == "number" && allowed_values.include?(value.to_f))
       error_message = constraints["allowed_values"][:description] || "must be chosen from one of the drop down options"
       errors.add(:value, error_message)
+    end
+  end
+
+  def validate_constraint_formats
+    constraint_names.each do |constraint_name|
+      self.send("validate_#{constraint_name}_constraint")
+    end
+  end
+
+  def validate_modulo_constraint
+    constraint = constraints["modulo"]
+    step = constraint[:details]["step"]
+    if step.nil?
+      errors.add(:modulo, 'constraint must contain step details')
+    elsif ![Integer, Float].include?(step.class)
+      errors.add(:modulo, 'constraint step must be a valid number')
+    end
+    offset = constraint[:details]["offset"]
+    if offset && ![Integer, Float].include?(offset.class)
+      errors.add(:modulo, 'constraint offset must be empty or a valid number')
+    end
+  end
+
+  def validate_range_constraint
+    constraint = constraints["range"]
+    blank = true
+    constraint[:details].each do |key, value|
+      unless [Integer, Float].include?(value.class)
+        errors.add(:range, "constraint #{key} must be a valid number")
+      end
+      blank = false unless value.nil?
+    end
+    errors.add(:range, "constraint must have a max and/or min") if blank
+  end
+
+  def validate_length_constraint
+    constraint = constraints["length"]
+    blank = true
+    constraint[:details].each do |key, value|
+      unless [Integer, Float].include?(value.class)
+        errors.add(:length, "constraint #{key} must be a valid number")
+      end
+      blank = false unless value.nil?
+    end
+    errors.add(:length, "constraint must have a max and/or min") if blank
+  end
+
+  def validate_allowed_pattern_constraint
+    begin
+      Regexp.new(constraints["allowed_pattern"][:details])
+    rescue
+      errors.add(:allowed_pattern, 'invalid regex')
+    end
+  end
+
+  def validate_allowed_values_constraint
+    constraint = constraints["allowed_values"][:details]
+    if !constraint.is_a?(Array)
+      errors.add(:allowed_values, 'must be an array of values')
+    elsif constraint.blank?
+      errors.add(:allowed_values, 'must not be blank')
     end
   end
 end

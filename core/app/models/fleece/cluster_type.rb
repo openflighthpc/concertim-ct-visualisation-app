@@ -18,12 +18,14 @@ class Fleece::ClusterType < ApplicationRecord
     presence: true,
     uniqueness: true
 
-  # fields will require some sophisticated validation
-  validates :fields,
-    presence: true
-
   validates :version,
     presence: true
+
+  # fields will require some sophisticated validation
+  validates :fields,
+            presence: true
+
+  validate :fields_valid_structure?
 
   # The custom configuration for this cluster type.
   # For example:
@@ -120,4 +122,33 @@ class Fleece::ClusterType < ApplicationRecord
     foreign_id
   end
 
+  private
+
+  # ####################################
+  # #
+  # # Private Instance Methods
+  # #
+  # ####################################
+
+  def fields_valid_structure?
+    return unless fields
+
+    combined_errors = []
+    fields.each do |id, details|
+      begin
+        field = Fleece::Cluster::Field.new(id, details)
+        unless field.valid?
+          field_errors = field.errors
+          value_errors = field_errors.delete(:value)
+          value_errors.each { |error| field_errors.add(:default, error) } if value_errors && field.default
+          if field_errors.any?
+            combined_errors << "field '#{field.id}' is invalid: #{field_errors.full_messages.join("; ")}"
+          end
+        end
+      rescue => error
+        combined_errors << "field invalid: #{error}"
+      end
+    end
+    errors.add(:fields, combined_errors.join(". ")) if combined_errors.any?
+  end
 end
