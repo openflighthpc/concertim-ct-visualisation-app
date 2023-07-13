@@ -135,14 +135,25 @@ class RackHint extends Hint {
 
   appendData(data) {
     if (this.visible) {
-      let append = '';
-      for (var datum in data) {
-        if ((data[datum] != null) && (data[datum] !== '')) { append += datum + ': ' + data[datum] + '<br>'; }
-      }
-
+      const append = this.buildAppend(data, 0);
       this.hintEl.innerHTML += append;
       return this.refreshPosition();
     }
+  }
+
+  buildAppend(data, indent) {
+    let append = '';
+    for (const [key, value] of Object.entries(data)) {
+      if (value == null || value === "") {
+        continue;
+      } else if (typeof value === "object" && !Array.isArray(value)) {
+        append += `<strong>${key}:</strong><br>`;
+        append += this.buildAppend(value, indent+1);
+      } else {
+        append += `<span style="padding-left: ${indent * 10}px">${key}: ${value}</span><br>`;
+      }
+    }
+    return append;
   }
 };
 RackHint.initClass();

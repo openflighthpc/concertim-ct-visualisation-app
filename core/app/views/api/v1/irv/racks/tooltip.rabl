@@ -1,9 +1,11 @@
 object @rack
-node "Owner", if: current_user.root? do |rack|
-  rack.user.name
+attribute status: "Status"
+
+child :user, root: "Owner", if: current_user.root? do |rack|
+  attribute name: "Name"
+  attribute login: "Username"
 end
 
-node do |rack|
-  rack.metadata.transform_keys { |key| key.humanize }
+node "Metadata", if: current_user.root? do |rack|
+  rack.metadata
 end
-
