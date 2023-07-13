@@ -1,6 +1,6 @@
 require 'faraday'
 
-class Fleece::SyncLatestClusterTypesJob < ApplicationJob
+class Fleece::SyncAllClusterTypesJob < ApplicationJob
   queue_as :default
 
   def perform(fleece_config, **options)

@@ -1,6 +1,6 @@
 require 'faraday'
 
-class Fleece::SyncIndividualClusterTypeJob < Fleece::SyncLatestClusterTypesJob
+class Fleece::SyncIndividualClusterTypeJob < Fleece::SyncAllClusterTypesJob
   queue_as :default
 
   def perform(fleece_config, cluster_type, **options)
@@ -13,7 +13,7 @@ class Fleece::SyncIndividualClusterTypeJob < Fleece::SyncLatestClusterTypesJob
     runner.call
   end
 
-  class Runner < Fleece::SyncLatestClusterTypesJob::Runner
+  class Runner < Fleece::SyncAllClusterTypesJob::Runner
 
     def initialize(cluster_type:, **kwargs)
       @cluster_type = cluster_type

@@ -1,9 +1,9 @@
 require 'rails_helper'
 
-RSpec.describe Fleece::SyncLatestClusterTypesJob, type: :job do
+RSpec.describe Fleece::SyncAllClusterTypesJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
   let(:config) { create(:fleece_config) }
-  subject { Fleece::SyncLatestClusterTypesJob::Runner.new(fleece_config: config) }
+  subject { Fleece::SyncAllClusterTypesJob::Runner.new(fleece_config: config) }
 
   describe "url" do
     before(:each) do
@@ -177,6 +177,18 @@ RSpec.describe Fleece::SyncLatestClusterTypesJob, type: :job do
       it "returns a successful result" do
         result = described_class.perform_now(config, test_stubs: stubs)
         expect(result).to be_success
+      end
+
+      context 'with existing cluster type' do
+        let!(:existing_type) { create(:fleece_cluster_type) }
+
+        it 'does not alter existing type' do
+          existing_type.reload
+          result = described_class.perform_now(config, test_stubs: stubs)
+          expect(result).to be_success
+          expect(existing_type.previous_changes.blank?).to eq true
+          expect(existing_type.destroyed?).to eq false
+        end
       end
     end
 
