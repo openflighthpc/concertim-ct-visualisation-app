@@ -14,6 +14,9 @@ import Util from 'canvas/common/util/Util';
 import AssetManager from 'canvas/irv/util/AssetManager';
 import ViewModel from 'canvas/irv/ViewModel';
 
+import NameLabel from 'canvas/irv/view/NameLabel';
+import RackNameLabel from 'canvas/irv/view/RackNameLabel';
+import RackOwnerLabel from 'canvas/irv/view/RackOwnerLabel';
 import RackObject from 'canvas/irv/view/RackObject';
 import Chassis from 'canvas/irv/view/Chassis';
 import ImageLink from 'canvas/irv/view/ImageLink';
@@ -153,6 +156,8 @@ class Rack extends RackObject {
 
     this.owner = def.owner;
     this.buildStatus = def.buildStatus;
+    this.nameLabel = new RackNameLabel(this.infoGfx, this, RackObject.MODEL);
+    this.ownerLabel = new RackOwnerLabel(this.infoGfx, this, RackObject.MODEL);
 
     Profiler.end(Profiler.DEBUG);
   }
@@ -357,29 +362,9 @@ class Rack extends RackObject {
 
   showOwnerLabel(visible) {
     if (visible) {
-      if (this.ownerLbl != null) { RackObject.INFO_GFX.remove(this.ownerLbl); }
-
-      let size = RackObject.NAME_LBL_SIZE * RackObject.INFO_GFX.scale;
-      if (size < RackObject.NAME_LBL_MIN_SIZE) { size = RackObject.NAME_LBL_MIN_SIZE; }
-
-      let ownerName = this.owner.name;
-
-      this.ownerLbl = RackObject.INFO_GFX.addText({
-        x         : this.x + (this.width / 2) + RackObject.NAME_LBL_OFFSET_X,
-        y         : this.y + RackObject.NAME_LBL_OFFSET_Y - 45,
-        caption   : ownerName,
-        font      : size + 'px ' + RackObject.NAME_LBL_FONT,
-        align     : RackObject.NAME_LBL_ALIGN,
-        fill      : RackObject.NAME_LBL_COLOUR,
-        bgFill    : RackObject.NAME_LBL_BG_FILL,
-        bgAlpha   : RackObject.NAME_LBL_BG_ALPHA,
-        bgPadding : RackObject.NAME_LBL_BG_PADDING,
-        maxWidth  : this.width - (RackObject.NAME_LBL_BG_PADDING * 2)
-        });
-
-    } else if (!visible && this.ownerLbl != null) {
-      RackObject.INFO_GFX.remove(this.ownerLbl);
-      this.ownerLbl = null;
+      this.ownerLabel.draw()
+    } else {
+      this.ownerLabel.remove()
     }
   }
 

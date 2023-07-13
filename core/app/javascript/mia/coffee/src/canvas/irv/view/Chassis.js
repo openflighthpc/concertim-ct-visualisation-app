@@ -17,6 +17,7 @@ import ViewModel from 'canvas/irv/ViewModel';
 import RackObject from 'canvas/irv/view/RackObject';
 import Machine from 'canvas/irv/view/Machine';
 import Highlight from 'canvas/irv/view/Highlight';
+import ChassisNameLabel from 'canvas/irv/view/ChassisNameLabel';
 import Profiler from 'Profiler';
 
 
@@ -117,6 +118,7 @@ class Chassis extends RackObject {
     }
 
     this.comparisonName = __guard__(this.nameToShow(), x => x.toLowerCase());
+    this.nameLabel = new ChassisNameLabel(this.infoGfx, this, RackObject.MODEL);
   }
 
   destroy() {
@@ -243,7 +245,6 @@ class Chassis extends RackObject {
     super.draw();
     return Profiler.end(Profiler.DEBUG);
   }
-
 
   select() {
     if (this.highlight == null) {
