@@ -2,7 +2,7 @@
 
   <% if @config.errors.any? %>
     <div id="error_explanation">
-      <h2>There <%= "#{config.errors.count == 1 ? 'is' : 'are'}" %> <%= pluralize(@config.errors.count, "error") %>:</h2>
+      <h2>There <%= "#{@config.errors.count == 1 ? 'is' : 'are'}" %> <%= pluralize(@config.errors.count, "error") %>:</h2>
    
       <ul>
       <% @config.errors.full_messages.each do |msg| %>

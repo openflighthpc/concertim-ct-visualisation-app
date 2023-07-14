@@ -25,7 +25,7 @@ class Fleece::ClusterType < ApplicationRecord
   validates :fields,
             presence: true
 
-  validate :fields_valid_structure?
+  validate :valid_fields_structure?
 
   # The custom configuration for this cluster type.
   # For example:
@@ -130,7 +130,7 @@ class Fleece::ClusterType < ApplicationRecord
   # #
   # ####################################
 
-  def fields_valid_structure?
+  def valid_fields_structure?
     return unless fields
 
     combined_errors = []

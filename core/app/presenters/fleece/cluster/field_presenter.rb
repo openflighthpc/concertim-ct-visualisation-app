@@ -85,6 +85,8 @@ module Fleece
       # possible future improvement: have JS for creating text boxes for each array/ hash option instead of
       # expecting user to input text in correct format
       def form_placeholder
+        return default if default
+
         case type
         when 'comma_delimited_list'
           'A list of choices separated by commas: choice1,choice2,choice3'
