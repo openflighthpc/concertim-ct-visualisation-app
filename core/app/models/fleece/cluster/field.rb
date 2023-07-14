@@ -38,11 +38,11 @@ class Fleece::Cluster::Field
   validate :valid_json?, if: -> { value && type == "json" }
   validate :valid_boolean?, if: -> { value && type == "boolean" }
   validate :validate_constraint_formats
-  validate :validate_modulo, if: -> { value && constraints["modulo"] && !errors[:modulo] }
-  validate :validate_range, if: -> { value && constraints["range"] && !errors[:range] }
-  validate :validate_length, if: -> { value && constraints["length"] && !errors[:length] }
-  validate :validate_pattern, if: -> { value && constraints["allowed_pattern"] && !errors[:allowed_pattern] }
-  validate :validate_allowed_value, if: -> { value && constraints["allowed_values"] && !errors[:allowed_values] }
+  validate :validate_modulo, if: -> { value && constraints["modulo"] && errors[:modulo].blank? }
+  validate :validate_range, if: -> { value && constraints["range"] && errors[:range].blank? }
+  validate :validate_length, if: -> { value && constraints["length"] && errors[:length].blank? }
+  validate :validate_pattern, if: -> { value && constraints["allowed_pattern"] && errors[:allowed_pattern].blank? }
+  validate :validate_allowed_value, if: -> { value && constraints["allowed_values"] && errors[:allowed_values].blank? }
 
   ############################
   #
@@ -254,7 +254,7 @@ class Fleece::Cluster::Field
     begin
       Regexp.new(constraints["allowed_pattern"][:details])
     rescue
-      errors.add(:allowed_pattern, 'invalid regex')
+      errors.add(:allowed_pattern, 'must be valid regex')
     end
   end
 

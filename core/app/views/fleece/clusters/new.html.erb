@@ -9,7 +9,7 @@
 <%= form_for(@cluster, url: fleece_cluster_type_clusters_path(@cluster_type)) do |f| %>
   <% if @cluster.errors.any? %>
     <div id="error_explanation">
-      <h2>There are <%= pluralize(@cluster.errors.count, "error") %>:</h2>
+      <h2>There <%= "#{@cluster.errors.count == 1 ? 'is' : 'are'}" %> <%= pluralize(@cluster.errors.count, "error") %>:</h2>
    
       <ul>
       <% @cluster.errors.each do |error| %>

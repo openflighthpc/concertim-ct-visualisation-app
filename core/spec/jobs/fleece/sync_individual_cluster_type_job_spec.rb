@@ -42,10 +42,11 @@ RSpec.describe Fleece::SyncIndividualClusterTypeJob, type: :job do
             ],
             default: "m1.small",
             label: "The flavour to use for the nodes.",
-            type: "string"
+            type: "string",
+            order: 0
           },
         },
-        title: "Fault-Tolerant Web Hosting"
+        title: "Fault-Tolerant Web Hosting",
       }
     end
     let!(:cluster_type) do
