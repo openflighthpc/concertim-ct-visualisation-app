@@ -3,5 +3,6 @@
 <%=
   render_lhm_actions("bob") do |actions|
     actions.add title: "Re-select cluster type", path: fleece_cluster_types_path
+    actions.add title: "Re-sync cluster type", path: new_fleece_cluster_type_cluster_path(@cluster_type, use_cache: false)
   end
 %>

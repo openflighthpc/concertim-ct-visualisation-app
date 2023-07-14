@@ -1,4 +1,8 @@
 <% set_title "Select cluster type" %>
+<% content_for(:side_content) do %>
+  <%= render 'actions' %>
+<% end %>
+
 <% if @config.nil? %>
    <p>
      New clusters cannot be launched as the Cloud Environment has not yet been configured.

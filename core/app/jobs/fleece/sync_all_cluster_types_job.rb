@@ -3,9 +3,10 @@ require 'faraday'
 class Fleece::SyncAllClusterTypesJob < ApplicationJob
   queue_as :default
 
-  def perform(fleece_config, **options)
+  def perform(fleece_config, use_cache=true, **options)
     runner = Runner.new(
       fleece_config: fleece_config,
+      use_cache: use_cache,
       logger: logger,
       **options
     )
@@ -29,8 +30,13 @@ class Fleece::SyncAllClusterTypesJob < ApplicationJob
 
   class Runner < Emma::Faraday::JobRunner
 
+    def initialize(use_cache:true, **kwargs)
+      @use_cache = use_cache
+      super(**kwargs)
+    end
+
     def call
-      connection.headers["If-Modified-Since"] = latest_recorded_change
+      connection.headers["If-Modified-Since"] = latest_recorded_change if @use_cache
       response = connection.get(path)
       if response.status == 304
         return Result.new(true, nil)

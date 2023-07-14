@@ -1,0 +1,7 @@
+<h4>Actions</h4>
+
+<%=
+  render_lhm_actions("bob") do |actions|
+    actions.add title: "Re-sync latest cluster types", path: fleece_cluster_types_path(use_cache: false)
+  end
+%>

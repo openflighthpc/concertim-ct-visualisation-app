@@ -3,10 +3,11 @@ require 'faraday'
 class Fleece::SyncIndividualClusterTypeJob < Fleece::SyncAllClusterTypesJob
   queue_as :default
 
-  def perform(fleece_config, cluster_type, **options)
+  def perform(fleece_config, cluster_type, use_cache=true, **options)
     runner = Runner.new(
       fleece_config: fleece_config,
       cluster_type: cluster_type,
+      use_cache: use_cache,
       logger: logger,
       **options
     )
