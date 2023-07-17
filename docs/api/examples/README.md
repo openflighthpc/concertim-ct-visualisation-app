@@ -155,7 +155,7 @@ Move a device.
 Update a device's name.
 
 ```
-./update-rack.sh <DEVICE_ID> <NAME>
+./update-device.sh <DEVICE_ID> <NAME>
 ```
 
 Update a device's status.  Both the simple and detailed status are updated.

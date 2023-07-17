@@ -46,7 +46,7 @@ curl -s -k \
     -d "${BODY}"
 )
 
-if [ "${HTTP_STATUS}" == "200" ] || [ "${HTTP_STATUS}" == "201" ] ; then
+if [ "${HTTP_STATUS}" == "200" ] || [ "${HTTP_STATUS}" == "202" ] ; then
     cat "$BODY_FILE"
 else
     echo "Device move failed" >&2
