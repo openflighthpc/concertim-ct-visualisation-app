@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_08_093904) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_17_150318) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -139,17 +139,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_08_093904) do
   end
 
   create_table "fleece_configs", id: :bigint, default: -> { "nextval('fleece_configs_id_seq'::regclass)" }, force: :cascade do |t|
-    t.string "host_name", limit: 255, null: false
-    t.inet "host_ip", null: false
-    t.string "username", limit: 255, null: false
-    t.string "password", limit: 255, null: false
-    t.integer "port", default: 5000, null: false
-    t.string "project_name", limit: 255, null: false
-    t.string "domain_name", limit: 255, null: false
+    t.string "admin_user_id", limit: 255, null: false
+    t.string "admin_password", limit: 255, null: false
+    t.string "admin_project_id", limit: 255, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_handler_port", default: 42356, null: false
     t.integer "cluster_builder_port", default: 42378, null: false
+    t.string "host_url", limit: 255, null: false
+    t.string "internal_auth_url", limit: 255, null: false
   end
 
   create_table "good_job_batches", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

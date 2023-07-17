@@ -10,19 +10,9 @@
   <h4>Cloud environment configuration</h4>
   <dl>
 
-    <dt>Host name</dt>
+    <dt>Host URL</dt>
     <dd>
-      <span><%= @config.host_name %></span>
-    </dd>
-
-    <dt>Host IP</dt>
-    <dd>
-      <span><%= @config.host_ip %></span>
-    </dd>
-
-    <dt>Port</dt>
-    <dd>
-      <span><%= @config.port %></span>
+      <span><%= @config.host_url %></span>
     </dd>
 
     <dt>User handler port</dt>
@@ -35,26 +25,20 @@
       <span><%= @config.cluster_builder_port %></span>
     </dd>
 
-    <dt>Username</dt>
+    <dt>Admin User ID</dt>
     <dd>
-      <span><%= @config.username %></span>
+      <span><%= @config.admin_user_id %></span>
     </dd>
 
-    <dt>Password</dt>
+    <dt>Admin Password</dt>
     <dd>
       <code>XXXXXXX</code>
-      <button class="button small secondary copyToClipboard" data-text="<%= @config.password %>">Copy</button>
+      <button class="button small secondary copyToClipboard" data-text="<%= @config.admin_password %>">Copy</button>
     </dd>
 
-    <dt>Admin project name</dt>
+    <dt>Admin project ID</dt>
     <dd>
-      <span><%= @config.project_name %></span>
+      <span><%= @config.admin_project_id %></span>
     </dd>
-
-    <dt>Domain name</dt>
-    <dd>
-      <span><%= @config.domain_name %></span>
-    </dd>
-
   </dl>
 </div>
