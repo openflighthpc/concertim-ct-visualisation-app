@@ -119,7 +119,7 @@ Validator.Image = function(data) {
   if (data.sliceWidth == null) { data.sliceWidth  = data.img.width; }
   if (data.sliceHeight == null) { data.sliceHeight = data.img.height; }
   if (data.width == null) { data.width       = data.sliceWidth; }
-  if (data.height == null) { return data.height      = data.sliceHeight; }
+  if (data.height == null) { data.height      = data.sliceHeight; }
 };
 
 

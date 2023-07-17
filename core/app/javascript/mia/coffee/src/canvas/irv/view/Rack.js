@@ -350,7 +350,7 @@ class Rack extends RackObject {
     }));
 
     // add a fade if in metric view mode
-    if ((RackObject.MODEL.viewMode !== undefined) && (RackObject.MODEL.viewMode() === ViewModel.VIEW_MODE_METRICS) && Rack.FADE_IN_METRIC_MODE) {
+    if (RackObject.MODEL.displayingMetrics() && !RackObject.MODEL.displayingImages() && Rack.FADE_IN_METRIC_MODE) {
       this.assets.push(RackObject.RACK_GFX.addRect({ fx: 'source-atop', x: this.x, y: this.y, width: this.width, height: this.height, fill: RackObject.METRIC_FADE_FILL, alpha: RackObject.METRIC_FADE_ALPHA })); 
     }
 

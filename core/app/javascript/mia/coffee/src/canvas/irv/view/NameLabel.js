@@ -35,18 +35,17 @@ class NameLabel {
   draw() {
     if (this.label != null) { this.gfxLayer.remove(this.label); }
     const fontSize = this.fontSize();
-    this.label = this.gfxLayer.addText({
+    const defn = {
       x         : this.rackObject.x + (this.rackObject.width / 2) + NameLabel.OFFSET_X,
       y         : this.yPos(),
       caption   : this.labelText(),
       font      : fontSize + 'px ' + NameLabel.FONT,
       align     : NameLabel.ALIGN,
-      fill      : NameLabel.COLOUR,
-      bgFill    : NameLabel.BG_FILL,
-      bgAlpha   : NameLabel.BG_ALPHA,
-      bgPadding : NameLabel.BG_PADDING,
-      maxWidth  : this.rackObject.width - (NameLabel.BG_PADDING * 2)
-    });
+      fill      : this.fill(),
+      maxWidth  : this.rackObject.width - (NameLabel.BG_PADDING * 2),
+    }
+    Object.assign(defn, this.textBg(), this.textShadow());
+    this.label = this.gfxLayer.addText(defn);
   }
 
   remove() {
@@ -54,6 +53,22 @@ class NameLabel {
       this.gfxLayer.remove(this.label);
       this.label = null;
     }
+  }
+
+  textBg() {
+    return {
+      bgFill    : NameLabel.BG_FILL,
+      bgAlpha   : NameLabel.BG_ALPHA,
+      bgPadding : NameLabel.BG_PADDING,
+    };
+  }
+
+  textShadow() {
+    return {};
+  }
+
+  fill() {
+    return NameLabel.COLOUR;
   }
 
   fontSize() {
