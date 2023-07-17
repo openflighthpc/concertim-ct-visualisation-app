@@ -1,6 +1,5 @@
 object @device
 attribute description: "Description"
-attribute status: "Status"
 
 child :template, root: 'Template'  do
   attribute name: 'Name'

@@ -1,5 +1,4 @@
 object @rack
-attribute status: "Status"
 
 child :user, root: "Owner", if: current_user.root? do |rack|
   attribute name: "Name"

@@ -152,6 +152,7 @@ class Rack extends RackObject {
     }
 
     this.owner = def.owner;
+    this.buildStatus = def.buildStatus;
 
     Profiler.end(Profiler.DEBUG);
   }
