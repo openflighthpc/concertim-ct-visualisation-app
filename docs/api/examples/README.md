@@ -158,6 +158,12 @@ Update a device's name.
 ./update-rack.sh <DEVICE_ID> <NAME>
 ```
 
+Update a device's status.  Both the simple and detailed status are updated.
+
+```
+./update-device-status.sh <DEVICE_ID> <SIMPLE_STATUS> <DETAILED_STATUS>
+```
+
 Delete a device.
 
 ```
