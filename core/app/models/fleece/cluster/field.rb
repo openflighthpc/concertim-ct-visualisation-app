@@ -97,7 +97,7 @@ class Fleece::Cluster::Field
 
   def get_constraint_details(name)
     target_hash = constraints[name]
-    target_hash ? target_hash[:details].clone : {}
+    target_hash ? target_hash[:details] : {}
   end
 
   private
@@ -208,7 +208,7 @@ class Fleece::Cluster::Field
 
   def validate_constraint_formats
     constraint_names.each do |constraint_name|
-      self.send("validate_#{constraint_name}_constraint")
+      self.send("validate_#{constraint_name}_constraint") if self.respond_to?("validate_#{constraint_name}_constraint", true)
     end
   end
 

@@ -66,7 +66,7 @@ class Fleece::SyncAllClusterTypesJob < ApplicationJob
       Fleece::ClusterType.maximum(:version)&.httpdate
     end
 
-    def order_fields(fields)
+    def ordered_fields(fields)
       return unless fields
 
       fields.keys.each_with_index do |field_name, index|
@@ -81,17 +81,16 @@ class Fleece::SyncAllClusterTypesJob < ApplicationJob
         type = Fleece::ClusterType.find_or_initialize_by(foreign_id: type_details["id"])
         type.name = type_details["title"]
         type.description = type_details["description"]
-        type.fields = order_fields(type_details["parameters"])
+        type.fields = ordered_fields(type_details["parameters"])
         type.version = type_details["last_modified"]
         unless type.save
-          display_name = type.name ? "#{type.name} (#{type.foreign_id})" : type.foreign_id
-          errors << "Unable to #{type.persisted? ? "update" : "create"} type '#{display_name}': #{type.errors.full_messages.join("; ")}"
+          errors << "Unable to #{type.persisted? ? "update" : "create"} type '#{type.descriptive_name}': #{type.errors.full_messages.join("; ")}"
         end
       end
 
       Fleece::ClusterType.where.not(foreign_id: types.map { |type| type["id"] }).each do |to_remove|
         unless to_remove.destroy
-          errors << "Unable to remove type '#{type.foreign_id}': #{type.errors.full_messages.join("; ")}"
+          errors << "Unable to remove type '#{to_remove.descriptive_name}': #{to_remove.errors.full_messages.join("; ")}"
         end
       end
       errors

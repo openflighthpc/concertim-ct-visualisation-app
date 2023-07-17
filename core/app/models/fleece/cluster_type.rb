@@ -122,6 +122,10 @@ class Fleece::ClusterType < ApplicationRecord
     foreign_id
   end
 
+  def descriptive_name
+    name ? "#{name} (#{foreign_id})" : foreign_id
+  end
+
   private
 
   # ####################################

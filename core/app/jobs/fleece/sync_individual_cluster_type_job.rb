@@ -34,10 +34,10 @@ class Fleece::SyncIndividualClusterTypeJob < Fleece::SyncAllClusterTypesJob
     def sync_data(type_details)
       @cluster_type.name = type_details["title"]
       @cluster_type.description = type_details["description"]
-      @cluster_type.fields = order_fields(type_details["parameters"])
+      @cluster_type.fields = ordered_fields(type_details["parameters"])
       @cluster_type.version = type_details["last_modified"]
       unless @cluster_type.save
-        ["Unable to update type '#{@cluster_type.foreign_id}': #{@cluster_type.errors.full_messages.join("; ")}"]
+        ["Unable to update type '#{@cluster_type.descriptive_name}': #{@cluster_type.errors.full_messages.join("; ")}"]
       else
         []
       end

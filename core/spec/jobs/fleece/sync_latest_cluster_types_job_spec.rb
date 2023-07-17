@@ -69,8 +69,8 @@ RSpec.describe Fleece::SyncAllClusterTypesJob, type: :job do
                   description: "db_name must begin with a letter and contain only alphanumeric characters\n"
                 }
               ],
-              default: "wordpress",
-              description: "WordPress database name",
+              default: "records",
+              description: "Cluster database name",
               type: "string"
             },
             db_password: {
@@ -88,7 +88,7 @@ RSpec.describe Fleece::SyncAllClusterTypesJob, type: :job do
                 }
               ],
               default: "admin",
-              description: "The WordPress database admin account password",
+              description: "The database admin account password",
               hidden: true,
               type: "string"
             },

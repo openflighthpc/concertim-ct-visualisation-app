@@ -41,10 +41,10 @@ module Fleece
           class: 'new-cluster-field',
           name: "fleece_cluster[cluster_params][#{id}]",
           id: "fleece_cluster_cluster_params_#{id}"
-        }
+        }.with_indifferent_access
         unless allowed_values?
           options[:placeholder] = form_placeholder
-          options = options.merge(min_max).merge(required_length).merge(step).merge(allowed_pattern)
+          options = options.merge(required_length).merge(step).merge(min_max).merge(allowed_pattern)
         end
         options
       end

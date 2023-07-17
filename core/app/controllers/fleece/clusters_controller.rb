@@ -11,7 +11,7 @@ class Fleece::ClustersController < ApplicationController
     @cluster_type = Fleece::ClusterType.find_by_foreign_id!(params[:cluster_type_foreign_id])
     use_cache = params[:use_cache] != "false"
     result = Fleece::SyncIndividualClusterTypeJob.perform_now(@config, @cluster_type, use_cache)
-    if !result.success?
+    unless result.success?
       flash[:alert] = result.error_message
       redirect_to fleece_cluster_types_path(use_cache: false)
       return
