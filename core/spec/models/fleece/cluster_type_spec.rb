@@ -32,6 +32,7 @@ RSpec.describe Fleece::ClusterType, type: :model do
         description: 'A test cluster type.  It exists only for test purposes.',
         foreign_id: 'test-cluster',
         fields: fields,
+        version: Time.current
       )
       expect(cluster_type).to be_valid
     end
