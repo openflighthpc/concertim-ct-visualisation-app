@@ -85,11 +85,9 @@ RSpec.describe Fleece::CreateClusterJob, type: :job do
     it "contains the correct config and user details" do
       expect(subject[:cloud_env]).to eq({
                                           "auth_url" => config.internal_auth_url,
-                                          "username" => user.login,
+                                          "user_id" => user.cloud_user_id,
                                           "password" => user.fixme_encrypt_this_already_plaintext_password,
-                                          "project_id" => user.project_id,
-                                          "user_domain_name" => 'default',
-                                          "project_domain_name" => 'default',
+                                          "project_id" => user.project_id
                                         })
     end
   end
