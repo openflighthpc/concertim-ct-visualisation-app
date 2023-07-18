@@ -1,7 +1,7 @@
 <h4>Actions</h4>
 
 <%=
-  render_lhm_actions("bob") do |actions|
+  render_lhm_actions("Cluster actions") do |actions|
     actions.add title: "Re-select cluster type", path: fleece_cluster_types_path
     actions.add title: "Check for cluster type updates", path: new_fleece_cluster_type_cluster_path(@cluster_type, use_cache: false)
   end
