@@ -25,11 +25,11 @@ class Fleece::Config < ApplicationRecord
     validates :cluster_builder_port,
               numericality: { only_integer: true, greater_than_or_equal_to: 1, less_than_or_equal_to: 65535 }
 
-    validates :host_url,
-              format: { with: URI.regexp, message: 'must be a valid url' }
+    validates :host_url, presence: true
+    validates :host_url, format: { with: URI.regexp, message: 'must be a valid url' }, allow_blank: true
 
-    validates :internal_auth_url,
-              format: { with: URI.regexp, message: 'must be a valid url' }
+    validates :internal_auth_url, presence: true
+    validates :internal_auth_url, format: { with: URI.regexp, message: 'must be a valid url' }, allow_blank: true
 
     ############################
     #

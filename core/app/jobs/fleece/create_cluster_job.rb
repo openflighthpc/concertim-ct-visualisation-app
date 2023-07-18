@@ -71,8 +71,8 @@ class Fleece::CreateClusterJob < ApplicationJob
     def cloud_env_details
       {
         auth_url: @fleece_config.internal_auth_url,
-        user_domain_name: @fleece_config.domain_name,
-        project_domain_name: @fleece_config.domain_name,
+        user_domain_name: 'default',
+        project_domain_name: 'default',
         username: @user.login,
         password: @user.fixme_encrypt_this_already_plaintext_password,
         project_id: @user.project_id

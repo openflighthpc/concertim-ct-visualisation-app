@@ -6,74 +6,52 @@ RSpec.describe Fleece::Config, type: :model do
   describe 'validations' do
     it "is valid with valid attributes" do
       config = described_class.new(
-        host_name: 'hostname',
-        host_ip: '8.8.8.8',
-        username: 'username',
-        password: 'REDACTED',
-        port: 443,
-        project_name: 'my-project-name',
-        domain_name: 'my-project-name',
+        host_url: "http://testing.com",
+        internal_auth_url: "https://example.com",
+        admin_user_id: 'admin',
+        admin_password: 'REDACTED',
+        user_handler_port: '1234',
+        cluster_builder_port: '5678',
+        admin_project_id: 'my-project-id'
       )
       expect(config).to be_valid
     end
 
-    describe "host_name" do
-      it "is not valid without a host_name" do
-        subject.host_name = nil
-        expect(subject).to have_error(:host_name, :blank)
+    describe "host_url" do
+      it "is not valid without a host_url" do
+        subject.host_url = nil
+        expect(subject).to have_error(:host_url, :blank)
       end
 
-      it "is not valid with a badly formatted host_name" do
-        subject.host_name = "spaces are not valid"
-        expect(subject).to have_error(:host_name, :invalid)
-      end
-    end
-
-    describe "domain_name" do
-      it "is not valid without a domain_name" do
-        subject.domain_name = nil
-        expect(subject).to have_error(:domain_name, :blank)
-      end
-
-      it "is not valid with a badly formatted domain_name" do
-        subject.domain_name = "spaces are not valid"
-        expect(subject).to have_error(:domain_name, :invalid)
+      it "is not valid with a badly formatted host_url" do
+        subject.host_url = "not a url"
+        expect(subject).to have_error(:host_url, :invalid)
       end
     end
 
-    describe "host_ip" do
-      it "is not valid without a host_ip" do
-        subject.host_ip = nil
-        expect(subject).to have_error(:host_ip, :blank)
+    describe "internal_auth_url" do
+      it "is not valid without an internal_auth_url" do
+        subject.internal_auth_url = nil
+        expect(subject).to have_error(:internal_auth_url, :blank)
       end
 
-      it "is valid with an IPv4 IP" do
-        subject.host_ip = "8.8.8.8"
-        expect(subject).not_to have_error(:host_ip)
-      end
-
-      it "is valid with an IPv6 IP" do
-        subject.host_ip = "2001:0db8:85a3:0000:0000:8a2e:0370:7334"
-        expect(subject).not_to have_error(:host_ip)
-      end
-
-      it "is not valid with junk value" do
-        subject.host_ip = "not.a.valid.ip"
-        expect(subject).to have_error(:host_ip, :blank)
+      it "is not valid with a badly formatted host_url" do
+        subject.internal_auth_url = "not a url"
+        expect(subject).to have_error(:internal_auth_url, :invalid)
       end
     end
 
-    it "is not valid without a username" do
-      subject.username = nil
-      expect(subject).to have_error(:username, :blank)
+    it "is not valid without an admin user id" do
+      subject.admin_user_id = nil
+      expect(subject).to have_error(:admin_user_id, :blank)
     end
 
-    it "is not valid without a password" do
-      subject.password = nil
-      expect(subject).to have_error(:password, :blank)
+    it "is not valid without an admin password" do
+      subject.admin_password = nil
+      expect(subject).to have_error(:admin_password, :blank)
     end
 
-    %w(port user_handler_port cluster_builder_port).each do |port|
+    %w(user_handler_port cluster_builder_port).each do |port|
       describe port do
         it "is not valid without a #{port}" do
           subject.send("#{port}=", nil)
@@ -97,22 +75,23 @@ RSpec.describe Fleece::Config, type: :model do
       end
     end
 
-    it "is not valid without a project_name" do
-      subject.project_name = nil
-      expect(subject).to have_error(:project_name, :blank)
-    end
-  end
-
-  describe "auth_url" do
-    it "is as expected" do
-      expect(subject.auth_url).to eq "http://#{subject.host_ip}:#{subject.port}/v3"
+    it "is not valid without an admin project_id" do
+      subject.admin_project_id = nil
+      expect(subject).to have_error(:admin_project_id, :blank)
     end
   end
 
   describe "user_handler_url" do
     it "is as expected" do
-      expected_url = "http://#{subject.host_ip}:#{subject.user_handler_port}/create_user_project"
+      expected_url = "#{subject.host_url[0...-5]}:#{subject.user_handler_port}/create_user_project"
       expect(subject.user_handler_url).to eq expected_url
+    end
+  end
+
+  describe "cluster_builder_url" do
+    it "is as expected" do
+      expected_url = "#{subject.host_url[0...-5]}:#{subject.cluster_builder_port}"
+      expect(subject.cluster_builder_base_url).to eq expected_url
     end
   end
 end
