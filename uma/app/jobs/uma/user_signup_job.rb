@@ -51,12 +51,10 @@ class Uma::UserSignupJob < Uma::ApplicationJob
     def body
       {
         cloud_env: {
-          auth_url: @fleece_config.auth_url,
-          username: "admin",
-          password: @fleece_config.password,
-          project_name: @fleece_config.project_name,
-          user_domain_name: @fleece_config.domain_name,
-          project_domain_name: @fleece_config.domain_name,
+          auth_url: @fleece_config.internal_auth_url,
+          user_id: @fleece_config.admin_user_id,
+          password: @fleece_config.admin_password,
+          project_id: @fleece_config.admin_project_id,
         },
         username: @user.login,
         password: @user.fixme_encrypt_this_already_plaintext_password,

@@ -39,14 +39,13 @@ RSpec.describe "Api::V1::Fleece::Configs", type: :request do
         it "contains the config in the response body" do
           get url_under_test, headers: headers, as: :json
 
-          expect(parsed_config["host_name"]).to eq fleece_config.host_name
-          expect(parsed_config["host_ip"]).to eq fleece_config.host_ip.to_s
-          expect(parsed_config["username"]).to eq fleece_config.username
-          expect(parsed_config["password"]).to eq fleece_config.password
-          expect(parsed_config["port"]).to eq fleece_config.port
+          expect(parsed_config["host_url"]).to eq fleece_config.host_url
+          expect(parsed_config["internal_auth_url"]).to eq fleece_config.internal_auth_url
+          expect(parsed_config["admin_user_id"]).to eq fleece_config.admin_user_id
+          expect(parsed_config["admin_password"]).to eq fleece_config.admin_password
+          expect(parsed_config["admin_project_id"]).to eq fleece_config.admin_project_id
           expect(parsed_config["user_handler_port"]).to eq fleece_config.user_handler_port
-          expect(parsed_config["project_name"]).to eq fleece_config.project_name
-          expect(parsed_config["domain_name"]).to eq fleece_config.domain_name
+          expect(parsed_config["cluster_builder_port"]).to eq fleece_config.cluster_builder_port
         end
       end
     end

@@ -16,7 +16,7 @@ RSpec.describe Fleece::CreateClusterJob, type: :job do
     end
 
     it "uses the ip and port given in the config" do
-      expect(subject.connection.url_prefix.to_s).to eq "http://#{config.host_ip}:#{config.cluster_builder_port}/"
+      expect(subject.connection.url_prefix.to_s).to eq "#{config.host_url[0...-5]}:#{config.cluster_builder_port}/"
     end
 
     it "uses a hard-coded path" do
@@ -27,7 +27,7 @@ RSpec.describe Fleece::CreateClusterJob, type: :job do
   describe "#perform" do
     context "when request is successful" do
       before(:each) do
-        stubs.post("http://#{config.host_ip}:#{config.cluster_builder_port}/clusters/") { |env| [ 200, {}, ""] }
+        stubs.post("#{config.host_url[0...-5]}:#{config.cluster_builder_port}/clusters/") { |env| [ 200, {}, ""] }
       end
 
       it "returns a successful result" do
@@ -38,7 +38,7 @@ RSpec.describe Fleece::CreateClusterJob, type: :job do
 
     context "when request is not successful" do
       before(:each) do
-        stubs.post("http://#{config.host_ip}:#{config.cluster_builder_port}/clusters/") { |env| [ 404, {}, "404 Not Found"] }
+        stubs.post("#{config.host_url[0...-5]}:#{config.cluster_builder_port}/clusters/") { |env| [ 404, {}, "404 Not Found"] }
       end
 
       it "returns an unsuccessful result" do
@@ -55,7 +55,7 @@ RSpec.describe Fleece::CreateClusterJob, type: :job do
 
     context "when request times out" do
       before(:each) do
-        stubs.post("http://#{config.host_ip}:#{config.cluster_builder_port}/clusters/") { |env| sleep timeout * 2 ; [ 200, {}, ""] }
+        stubs.post("#{config.host_url[0...-5]}:#{config.cluster_builder_port}/clusters/") { |env| sleep timeout * 2 ; [ 200, {}, ""] }
       end
       let(:timeout) { 0.1 }
 
@@ -84,12 +84,10 @@ RSpec.describe Fleece::CreateClusterJob, type: :job do
 
     it "contains the correct config and user details" do
       expect(subject[:cloud_env]).to eq({
-                                          "auth_url" => config.auth_url,
-                                          "username" => user.login,
+                                          "auth_url" => config.internal_auth_url,
+                                          "user_id" => user.cloud_user_id,
                                           "password" => user.fixme_encrypt_this_already_plaintext_password,
-                                          "project_id" => user.project_id,
-                                          "user_domain_name" => config.domain_name,
-                                          "project_domain_name" => config.domain_name,
+                                          "project_id" => user.project_id
                                         })
     end
   end

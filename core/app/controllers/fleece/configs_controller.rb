@@ -37,7 +37,7 @@ class Fleece::ConfigsController < ApplicationController
 
   private
 
-  PERMITTED_PARAMS = %w[host_name host_ip username password port user_handler_port project_name domain_name cluster_builder_port]
+  PERMITTED_PARAMS = %w[admin_user_id admin_password admin_project_id host_url internal_auth_url user_handler_port cluster_builder_port]
   def config_params
     params.require(:fleece_config).permit(*PERMITTED_PARAMS)
   end

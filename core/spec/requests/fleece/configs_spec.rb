@@ -79,7 +79,7 @@ RSpec.describe "Fleece::Configs", type: :request do
         {fleece_config: attributes_for(:fleece_config)}
       end
       let(:invalid_attributes) do
-        {fleece_config: {host_ip: -1}}
+        {fleece_config: {host_url: -1}}
       end
 
       let(:param_key) { model_under_test.model_name.param_key }
@@ -146,13 +146,13 @@ RSpec.describe "Fleece::Configs", type: :request do
       let(:valid_attributes) do
         {
           fleece_config: {
-            host_name: fleece_config.host_name + ".updated",
-            domain_name: fleece_config.domain_name + ".updated",
+            host_url: fleece_config.host_url + ".updated",
+            internal_auth_url: fleece_config.internal_auth_url + ".updated",
           }
         }
       end
       let(:invalid_attributes) do
-        {fleece_config: {host_ip: -1}}
+        {fleece_config: {host_url: -1}}
       end
 
       let(:param_key) { object_under_test.model_name.param_key }

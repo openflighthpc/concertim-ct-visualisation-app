@@ -15,7 +15,7 @@ RSpec.describe Uma::UserSignupJob, type: :job do
     subject { super().send(:url) }
 
     it "uses the correct ip, port and path" do
-      expect(subject).to eq "http://#{config.host_ip}:#{config.user_handler_port}#{user_service_path}"
+      expect(subject).to eq "#{config.host_url[0...-5]}:#{config.user_handler_port}#{user_service_path}"
     end
   end
 
@@ -66,12 +66,10 @@ RSpec.describe Uma::UserSignupJob, type: :job do
 
     it "contains the correct cloud environment config" do
       expect(subject[:cloud_env]).to eq({
-        "auth_url" => config.auth_url,
-        "username" => "admin",
-        "password" => config.password,
-        "project_name" => config.project_name,
-        "user_domain_name" => config.domain_name,
-        "project_domain_name" => config.domain_name,
+        "auth_url" => config.internal_auth_url,
+        "user_id" => config.admin_user_id,
+        "password" => config.admin_password,
+        "project_id" => config.admin_project_id
       })
     end
   end

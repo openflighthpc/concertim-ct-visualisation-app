@@ -2,14 +2,12 @@ require 'faker'
 
 FactoryBot.define do
   factory :fleece_config, class: 'Fleece::Config' do
-    host_name { Faker::Internet.domain_name }
-    host_ip { IPAddr.new(Faker::Internet.ip_v4_address) }
-    username { Faker::Internet.username }
-    password { Faker::Internet.password }
-    port { rand(1...65535) }
+    host_url { "http://#{Faker::Internet.domain_name}:5000" }
+    internal_auth_url { "http://#{Faker::Internet.domain_name}:5000" }
+    admin_user_id { Faker::Internet.username }
+    admin_password { Faker::Internet.password }
     user_handler_port { rand(1...65535) }
     cluster_builder_port { rand(1...65535) }
-    project_name { "project-#{Faker::Alphanumeric.alphanumeric}" }
-    domain_name { Faker::Internet.domain_name }
+    admin_project_id { "project-#{Faker::Alphanumeric.alphanumeric}" }
   end
 end
