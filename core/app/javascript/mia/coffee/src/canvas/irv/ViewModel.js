@@ -24,9 +24,10 @@ class ViewModel extends CanvasViewModel {
     this.INIT_SHOW_FILTER_BAR     = true;
     this.INIT_METRIC         = null;
 
-    this.VIEW_MODE_BOTH     = 'Images and bars';
-    this.VIEW_MODE_IMAGES   = 'Images only';
-    this.VIEW_MODE_METRICS  = 'Bars only';
+    this.VIEW_MODE_BOTH         = 'Images and bars';
+    this.VIEW_MODE_IMAGES       = 'Images only';
+    this.VIEW_MODE_METRICS      = 'Bars only';
+    this.VIEW_MODE_BUILD_STATUS = 'Build status';
 
     this.METRIC_LEVEL_DEVICES  = 'devices';
     this.METRIC_LEVEL_CHASSIS  = 'chassis';
@@ -55,7 +56,7 @@ class ViewModel extends CanvasViewModel {
     // display mode settings
     // view mode dictates wether metrics and images are drawn
     this.viewMode  = ko.observable(ViewModel.INIT_VIEW_MODE);
-    this.viewModes = ko.observable([ViewModel.VIEW_MODE_IMAGES, ViewModel.VIEW_MODE_METRICS, ViewModel.VIEW_MODE_BOTH]);
+    this.viewModes = ko.observable([ViewModel.VIEW_MODE_IMAGES, ViewModel.VIEW_MODE_METRICS, ViewModel.VIEW_MODE_BOTH, ViewModel.VIEW_MODE_BUILD_STATUS]);
 
     // string, metric level determines wether to display chassis or device level metrics.
     this.metricLevel = ko.observable(ViewModel.INIT_METRIC_LEVEL);
@@ -227,6 +228,20 @@ class ViewModel extends CanvasViewModel {
       return (metrics != null) && (metrics.length > 0);
     }
     , this);
+  }
+
+  displayingMetrics() {
+    return this.viewMode() === ViewModel.VIEW_MODE_METRICS
+      || this.viewMode() === ViewModel.VIEW_MODE_BOTH;
+  }
+
+  displayingImages() {
+    return this.viewMode() === ViewModel.VIEW_MODE_IMAGES
+      || this.viewMode() === ViewModel.VIEW_MODE_BOTH;
+  }
+
+  displayingBuildStatus() {
+    return this.viewMode() == ViewModel.VIEW_MODE_BUILD_STATUS;
   }
 
   validMetric(metric) {

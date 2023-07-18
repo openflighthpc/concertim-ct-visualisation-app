@@ -51,9 +51,10 @@ BODY=$( jq --null-input  \
     "name": $name,
     "user_id": $user_id,
     "u_height": $u_height|(try tonumber catch ""),
+    "status": "IN_PROGRESS",
     "metadata": {
-      "key_one": "value_one",
-      "key_two": 2
+      "status": "IN_PROGRESS",
+      "stack_id": "92927d62-ebcf-4faf-a8ab-4068ca3911f3"
     }
   }
 }

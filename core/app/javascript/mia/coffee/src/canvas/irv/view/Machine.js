@@ -77,6 +77,7 @@ class Machine extends RackObject {
     }
 
     this.facing = this.parent().facing;
+    this.buildStatus = def.buildStatus;
   }
 
   destroy() {
@@ -170,7 +171,7 @@ class Machine extends RackObject {
     if (this.img != null) {
       this.assets.push(this.gfx.addImg({ img: this.img, x: this.x, y: this.y, alpha: this.included ? 1 : RackObject.EXCLUDED_ALPHA }));
       // add a fade if in metric view mode
-      if  ((RackObject.MODEL.viewMode !== undefined) && (RackObject.MODEL.viewMode() === ViewModel.VIEW_MODE_METRICS)) {
+      if (RackObject.MODEL.displayingMetrics() && !RackObject.MODEL.displayingImages()) {
         this.assets.push(this.gfx.addRect({ fx: 'source-atop', x: this.x, y: this.y, width: this.width, height: this.height, fill: RackObject.METRIC_FADE_FILL, alpha: RackObject.METRIC_FADE_ALPHA })); 
       }
     }
@@ -197,14 +198,39 @@ class Machine extends RackObject {
 
   setMetricVisibility() {
     const metric_level     = RackObject.MODEL.metricLevel();
-    const view_mode        = RackObject.MODEL.viewMode();
     const active_selection = RackObject.MODEL.activeSelection();
     const selected         = RackObject.MODEL.selectedDevices();
     const active_filter    = RackObject.MODEL.activeFilter();
     const filtered         = RackObject.MODEL.filteredDevices();
 
-    let visible = ((metric_level === this.group) || ((metric_level === ViewModel.METRIC_LEVEL_ALL) && (this.children.length === 0))) && this.viewableDevice() && (view_mode !== ViewModel.VIEW_MODE_IMAGES) && (!active_selection || selected[this.group][this.id]) && (!active_filter || filtered[this.group][this.id]);
-    if ((this.placedInHoldingArea() === true) && (RackObject.MODEL.showHoldingArea() === false)) { visible = false; }
+    let visible = true;
+
+    if (!this.viewableDevice) {
+      visible = false;
+    }
+
+    if (!RackObject.MODEL.displayingMetrics()) {
+      visible = false;
+    }
+
+    const applicableMetricLevel = ((metric_level === this.group) || ((metric_level === ViewModel.METRIC_LEVEL_ALL) && (this.children.length === 0)));
+    if (!applicableMetricLevel) {
+      visible = false;
+    }
+
+    // Not included in active selection.
+    if (active_selection && !selected[this.group][this.id]) {
+      visible = false;
+    }
+
+    // Not included in active filter.
+    if (active_filter && !filtered[this.group][this.id]) {
+      visible = false;
+    }
+
+    if ((this.placedInHoldingArea() === true) && (RackObject.MODEL.showHoldingArea() === false)) {
+      visible = false;
+    }
 
     return this.metric.setActive(visible);
   }

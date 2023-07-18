@@ -15,6 +15,7 @@ RSpec.describe Ivy::Device, type: :model do
       device = described_class.new(
         chassis: chassis,
         name: 'device-0',
+        status: 'IN_PROGRESS',
       )
       expect(device).to be_valid
     end
@@ -61,5 +62,14 @@ RSpec.describe Ivy::Device, type: :model do
       expect(new_device).not_to have_error(:name)
     end
 
+    it "is not vaild without a status" do
+      subject.status = nil
+      expect(subject).to have_error(:status, :blank)
+    end
+
+    it "is not vaild with an invalid status" do
+      subject.status = "SNAFU"
+      expect(subject).to have_error(:status, :inclusion)
+    end
   end
 end

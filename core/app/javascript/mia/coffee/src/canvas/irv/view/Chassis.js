@@ -17,6 +17,7 @@ import ViewModel from 'canvas/irv/ViewModel';
 import RackObject from 'canvas/irv/view/RackObject';
 import Machine from 'canvas/irv/view/Machine';
 import Highlight from 'canvas/irv/view/Highlight';
+import ChassisLabel from 'canvas/irv/view/ChassisLabel';
 import Profiler from 'Profiler';
 
 
@@ -117,13 +118,14 @@ class Chassis extends RackObject {
     }
 
     this.comparisonName = __guard__(this.nameToShow(), x => x.toLowerCase());
+    this.nameLabel = new ChassisLabel(this.infoGfx, this, RackObject.MODEL);
   }
 
   destroy() {
     if (this.highlight != null) { this.highlight.destroy(); }
     this.metric.destroy();
     super.destroy();
-    return this.showNameLabel(false);
+    this.showNameLabel(false);
   }
 
   setCoords(x, y) {
@@ -179,7 +181,10 @@ class Chassis extends RackObject {
     }
   }
 
-  draw(show_u_labels, show_name_label) {
+  draw(show_name_label) {
+    if (show_name_label == null) {
+      show_name_label = RackObject.MODEL.displayingBuildStatus();
+    }
     Profiler.begin(Profiler.DEBUG, this.name);
     // clear
     for (var asset of Array.from(this.assets)) { this.gfx.remove(asset); }
@@ -232,7 +237,7 @@ class Chassis extends RackObject {
       this.assets.push(this.gfx.addImg({ img: this.img, x: this.x, y: this.y, alpha: img_alpha }));
 
       // add a fade if in metric view mode
-      if ((RackObject.MODEL.viewMode !== undefined) && (RackObject.MODEL.viewMode() === ViewModel.VIEW_MODE_METRICS)) {
+      if (RackObject.MODEL.displayingMetrics() && !RackObject.MODEL.displayingImages()) {
         this.assets.push(this.gfx.addRect({ fx: 'source-atop', x: this.x, y: this.y, width: this.width, height: this.height, fill: RackObject.METRIC_FADE_FILL, alpha: RackObject.METRIC_FADE_ALPHA }));
       }
     } else {
@@ -243,7 +248,6 @@ class Chassis extends RackObject {
     super.draw();
     return Profiler.end(Profiler.DEBUG);
   }
-
 
   select() {
     if (this.highlight == null) {
@@ -280,7 +284,15 @@ class Chassis extends RackObject {
     if (this.complex) {
       return this.name;
     } else if (this.children[0] != null) {
-      return this.children[0].name;
+      return this.children[0].buildStatus;
+    }
+  }
+
+  buildStatus() {
+    if (this.complex) {
+      throw "not supported for complex chassis";
+    } else if (this.children[0] != null) {
+      return this.children[0].buildStatus;
     }
   }
 
@@ -366,17 +378,43 @@ class Chassis extends RackObject {
   }
 
 
+  // Return whether the metric should be shown or not.
   showMetric() {
     const selected         = RackObject.MODEL.selectedDevices();
     const metric_level     = RackObject.MODEL.metricLevel();
-    const view_mode        = RackObject.MODEL.viewMode();
     const active_selection = RackObject.MODEL.activeSelection();
     const active_filter    = RackObject.MODEL.activeFilter();
     const filtered         = RackObject.MODEL.filteredDevices();
 
-    let visible = this.viewableDevice() && ((metric_level === this.group) || ((metric_level === ViewModel.METRIC_LEVEL_ALL) && (this.children.length === 0))) && (view_mode !== ViewModel.VIEW_MODE_IMAGES) && (!active_selection || (selected[this.group] != null ? selected[this.group][this.id] : undefined)) && (!active_filter || filtered[this.group][this.id]);
-    if ((this.placedInHoldingArea() === true) && (RackObject.MODEL.showHoldingArea() === false)) { visible = false; }
-    return visible;
+    if (!this.viewableDevice()) {
+      return false;
+    }
+
+    if (!RackObject.MODEL.displayingMetrics()) {
+      return false;
+    }
+
+    const applicableMetricLevel = ((metric_level === this.group) || ((metric_level === ViewModel.METRIC_LEVEL_ALL) && (this.children.length === 0)));
+    if (!applicableMetricLevel) {
+      return false;
+    }
+
+    // Not included in active selection.
+    const inCurrentSelection = selected[this.group] != null ? selected[this.group][this.id] : undefined;
+    if (active_selection && !inCurrentSelection) {
+      return false;
+    }
+
+    // Not included in active filter.
+    if (active_filter && !filtered[this.group][this.id]) {
+      return false;
+    }
+
+    if ((this.placedInHoldingArea() === true) && (RackObject.MODEL.showHoldingArea() === false)) {
+      return false;
+    }
+
+    return true;
   }
 
 

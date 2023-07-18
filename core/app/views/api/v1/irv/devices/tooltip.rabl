@@ -1,17 +1,17 @@
 object @device
 attribute description: "Description"
 
-glue(:template) do
+child :template, root: 'Template'  do
+  attribute name: 'Name'
+  attribute description: 'Description'
+end
+
+child :template, root: 'Resources' do
   attribute vcpus: "VCPUs"
   attribute ram: "RAM (GB)"
   attribute disk: "Disk (GB)"
 end
 
-node do |device|
-  device.metadata.transform_keys { |key| key.humanize }
-end
-
-node do |device|
-  attrs = device.template.attributes.slice("name", "description")
-  attrs.transform_keys { |key| "Template #{key}" }
+node "Metadata", if: current_user.root? do |device|
+  device.metadata
 end

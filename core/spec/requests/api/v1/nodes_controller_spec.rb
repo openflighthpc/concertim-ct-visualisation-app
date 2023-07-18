@@ -30,7 +30,8 @@ RSpec.describe "Api::V1::NodesControllers", type: :request do
               start_u: 1,
               facing: 'f',
             },
-            metadata: { "foo" => "bar", "baz" => "qux" }
+            metadata: { "foo" => "bar", "baz" => "qux" },
+            status: 'IN_PROGRESS',
           }
         }
       }
@@ -39,6 +40,7 @@ RSpec.describe "Api::V1::NodesControllers", type: :request do
           template_id: device_template.id,
           device: {
             name: "not a valid name",
+            status: 'not a valid status',
           }
         }
       }
@@ -77,6 +79,7 @@ RSpec.describe "Api::V1::NodesControllers", type: :request do
           expect(parsed_device["description"]).to eq valid_attributes[:device][:description]
           expect(parsed_device["location"]).to eq expected_location
           expect(parsed_device["metadata"]).to eq valid_attributes[:device][:metadata]
+          expect(parsed_device["status"]).to eq valid_attributes[:device][:status]
         end
       end
 

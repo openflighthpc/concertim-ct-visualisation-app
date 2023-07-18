@@ -16,6 +16,7 @@ module Ivy
 
     DEFAULT_TEMPLATE_ID = 1
     SPACE_USED_METRIC_KEY = 'ct.capacity.rack.space_used'
+    VALID_STATUSES = %w(IN_PROGRESS FAILED ACTIVE STOPPED)
 
 
     ############################
@@ -55,6 +56,9 @@ module Ivy
     validates :u_depth, numericality: { only_integer: true, greater_than: 0 }
     validates :u_height, numericality: { only_integer: true, greater_than: 0, less_than: 73 }
     validate :u_height_greater_than_highest_occupied_u?, unless: :new_record?
+    validates :status,
+      presence: true,
+      inclusion: { in: VALID_STATUSES, message: "must be one of #{VALID_STATUSES.to_sentence(last_word_connector: ' or ')}" }
     validate :rack_limit, if: :new_record?
     validate :metadata_format
 

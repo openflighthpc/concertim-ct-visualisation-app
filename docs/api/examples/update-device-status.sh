@@ -15,18 +15,31 @@ BASE_URL="https://${CONCERTIM_HOST}/api/v1"
 AUTH_TOKEN=${AUTH_TOKEN:-$("${SCRIPT_DIR}"/get-auth-token.sh)}
 
 DEVICE_ID=${1}
-FACING=${3}
-START_U=${4}
+SIMPLE_STATUS=${2}
+DETAILED_STATUS=${3}
+
+# The metadata below contains a hardcoded value for
+# `metadata.openstack_instance`. Currently, there is a limitation that all
+# metadata fields must be sent on every metadata update.  For the purpose of
+# this example, let's pretend that the UUID is correct and has been fetched
+# previously.
+#
+# The `metadata.status` value is sent as an array of three values.  It can be
+# set in any way that the concertim-openstack-service finds easiest.  An array,
+# or a string that is teated as a comma separated list.  The only consumer of
+# this value is `concertim-openstack-service` itself.  For the purposes of this
+# example script, only the first value is set.
 
 BODY=$(jq --null-input \
-    --arg facing "${FACING}" \
-    --arg start_u "${START_U}" \
+    --arg status "${SIMPLE_STATUS}" \
+    --arg detailed_status "${DETAILED_STATUS}" \
     '
 {
     "device": {
-        "location": {
-            "facing": $facing,
-            "start_u": $start_u|tonumber
+        "status": $status,
+        "metadata": {
+          "openstack_instance": "8f4e9068-5a39-4717-8a83-6b95e01031eb",
+          "status": [$detailed_status, "", ""]
         }
     }
 }
@@ -49,7 +62,8 @@ curl -s -k \
 if [ "${HTTP_STATUS}" == "200" ] || [ "${HTTP_STATUS}" == "202" ] ; then
     cat "$BODY_FILE"
 else
-    echo "Device move failed" >&2
+    echo "Device update failed" >&2
     cat "$BODY_FILE" >&2
     exit 1
 fi
+

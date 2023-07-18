@@ -34,6 +34,7 @@ import ImageLink from 'canvas/irv/view/ImageLink';
 import HoldingArea from 'canvas/irv/view/HoldingArea';
 import DragPolicy from 'canvas/irv/util/DragPolicy';
 import Profiler from 'Profiler';
+import NameLabel from 'canvas/irv/view/NameLabel';
 
 class RackSpace extends CanvasSpace {
   static initClass() {
@@ -290,7 +291,7 @@ class RackSpace extends CanvasSpace {
     }
 
     if (this.model.showingFullIrv()) {
-      this.tallestRack += Rack.NAME_LBL_SIZE + Rack.NAME_LBL_OFFSET_Y;
+      this.tallestRack += NameLabel.SIZE + NameLabel.OFFSET_Y;
     }
 
     this.rowHeight   = (RackSpace.PADDING * 2) + this.tallestRack;
@@ -1734,6 +1735,12 @@ class RackSpace extends CanvasSpace {
         if (rack instanceof Rack) { rack.showOwnerLabel(show_owner_label); }
         rack.showNameLabel(show_name_label);
         if (rack instanceof Rack) { rack.showULabels(show_u_labels, this.targetScale); }
+
+        for (var child of rack.children) {
+          if (child instanceof Chassis) {
+            child.nameLabel.redraw();
+          }
+        }
       }
     }
 
@@ -2173,7 +2180,7 @@ class RackSpace extends CanvasSpace {
 
   // viewMode model value subscriber, redraws rack view to reflect new view mode
   switchView() {
-    return this.draw();
+    this.draw();
   }
 
   redraw() {

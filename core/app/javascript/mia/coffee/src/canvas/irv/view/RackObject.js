@@ -35,22 +35,6 @@ class RackObject extends RackSpaceObject {
     this.ALERT_GFX  = null;
     this.MODEL      = null;
     this.HOLDING_AREA_GFX  = null;
-
-    this.NAME_LBL_OFFSET_MAX_WIDTH  = 0;
-    this.NAME_LBL_FONT              = 'Karla';
-    this.NAME_LBL_COLOUR            = 'white';
-    this.NAME_LBL_ALIGN             = 'center';
-    this.NAME_LBL_BG_FILL           = 'black';
-    this.NAME_LBL_BG_PADDING        = 4;
-    this.NAME_LBL_BG_ALPHA          = .4;
-
-    this.NAME_LBL_OFFSET_X          = 0;
-    this.NAME_LBL_OFFSET_Y          = 22;
-    this.NAME_LBL_MIN_SIZE          = 13;
-    this.NAME_LBL_SIZE              = 60;
-
-    this.CAPTION_FRONT  = '[ front ]';
-    this.CAPTION_REAR   = '[ rear ]';
   }
 
   constructor(def, group, parent1) {
@@ -201,37 +185,11 @@ class RackObject extends RackSpaceObject {
   }
 
   showNameLabel(visible) {
+    if (this.nameLabel == null) { return; }
     if (visible) {
-      if (this.nameLbl != null) { RackObject.INFO_GFX.remove(this.nameLbl); }
-
-      let size = RackObject.NAME_LBL_SIZE * RackObject.INFO_GFX.scale;
-      if (size < RackObject.NAME_LBL_MIN_SIZE) { size = RackObject.NAME_LBL_MIN_SIZE; }
-
-      let name = `${this.nameToShow()} ${RackObject.MODEL.face() === ViewModel.FACE_FRONT ? RackObject.CAPTION_FRONT : RackObject.CAPTION_REAR}`;
-      if (RackObject.MODEL.showingRacks() && !RackObject.MODEL.showingFullIrv()) {
-        if ((this.face === ViewModel.FACE_FRONT) || (this.bothView === ViewModel.FACE_FRONT)) {
-          name = "Front View";
-        } else {
-          name = "Rear View";
-        }
-      }
-    
-      return this.nameLbl = RackObject.INFO_GFX.addText({
-        x         : this.x + (this.width / 2) + RackObject.NAME_LBL_OFFSET_X,
-        y         : this.y + RackObject.NAME_LBL_OFFSET_Y,
-        caption   : name,
-        font      : size + 'px ' + RackObject.NAME_LBL_FONT,
-        align     : RackObject.NAME_LBL_ALIGN,
-        fill      : RackObject.NAME_LBL_COLOUR,
-        bgFill    : RackObject.NAME_LBL_BG_FILL,
-        bgAlpha   : RackObject.NAME_LBL_BG_ALPHA,
-        bgPadding : RackObject.NAME_LBL_BG_PADDING,
-        maxWidth  : this.width - (RackObject.NAME_LBL_BG_PADDING * 2)
-      });
-
-    } else if (!visible && (this.nameLbl != null)) {
-      RackObject.INFO_GFX.remove(this.nameLbl);
-      return this.nameLbl = null;
+      this.nameLabel.draw()
+    } else {
+      this.nameLabel.remove()
     }
   }
 

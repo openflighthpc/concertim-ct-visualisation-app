@@ -13,7 +13,6 @@ BASE_URL="https://${CONCERTIM_HOST}/api/v1"
 # generated LOGIN and PASSWORD environment variables must be set.
 AUTH_TOKEN=${AUTH_TOKEN:-$("${SCRIPT_DIR}"/get-auth-token.sh)}
 
-
 curl -s -k \
   -H 'Accept: application/json' \
   -H "Authorization: Bearer ${AUTH_TOKEN}" \

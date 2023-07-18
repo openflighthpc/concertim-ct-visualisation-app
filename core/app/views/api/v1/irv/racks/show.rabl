@@ -1,6 +1,6 @@
 object @rack
 attributes :id, :name
-attribute :u_height => :uHeight
+attributes u_height: :uHeight, status: :buildStatus
 
 child :user, root: 'owner' do
   extends 'api/v1/users/show'
@@ -29,7 +29,11 @@ child(:chassis, root: 'Chassis') do |foo|
       id: chassis.device.id,
       col: 1,
       row: 1,
-      Machine: {id: chassis.device.id, name: chassis.device.name},
+      Machine: {
+        id: chassis.device.id,
+        name: chassis.device.name,
+        buildStatus: chassis.device.status
+      },
     }
   end
 end

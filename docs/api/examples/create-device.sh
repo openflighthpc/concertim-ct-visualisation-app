@@ -40,9 +40,10 @@ BODY=$(jq --null-input \
             "rack_id": $rack_id|tonumber,
             "start_u": $start_u|tonumber
         },
+        "status": "IN_PROGRESS",
         "metadata": {
-          "key_one": "value_one",
-          "key_two": 2
+          "openstack_instance": "8f4e9068-5a39-4717-8a83-6b95e01031eb",
+          "status": ["build", "scheduling", ""]
         }
     }
 }

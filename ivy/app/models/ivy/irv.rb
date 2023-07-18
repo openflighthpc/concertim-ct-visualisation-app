@@ -58,7 +58,7 @@ module Ivy
 
 ret = (<<SQL)
 WITH sorted_racks AS (
-        SELECT racks.id AS id, racks.name AS name, racks.u_height AS u_height, racks.template_id AS template_id, racks.user_id AS user_id
+        SELECT racks.id AS id, racks.name AS name, racks.u_height AS u_height, racks.status AS status, racks.template_id AS template_id, racks.user_id AS user_id
           FROM racks
           JOIN uma.users as users ON racks.user_id = users.id
       ORDER BY LOWER(users.name)
@@ -72,6 +72,7 @@ SELECT
         XmlAttributes( R.id AS "id",
                        R.name AS "name",
                        R.u_height AS "uHeight" ,
+                       R.status AS "buildStatus" ,
                        ( SELECT id FROM sorted_racks OFFSET (SELECT row_num FROM (SELECT id,row_number() OVER () AS row_num FROM sorted_racks) t WHERE id=R.id) LIMIT 1) AS "nextRackId"),
                        ( SELECT XmlElement( name "owner", XmlAttributes (O.id, O.name, O.login))
                            FROM uma.users O WHERE O.id = R.user_id LIMIT 1 
@@ -109,7 +110,8 @@ SELECT
                                                                                          ),
                                                                             ( SELECT XmlAgg( XmlElement( name "Machine",
                                                                                                XmlAttributes( D.id AS "id",
-                                                                                                              D.name AS "name" 
+                                                                                                              D.name AS "name",
+                                                                                                              D.status AS "buildStatus" 
                                                                                                             )
                                                                                            ))
                                                                                 FROM devices D WHERE D.id = S.id

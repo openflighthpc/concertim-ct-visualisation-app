@@ -29,9 +29,10 @@ BODY=$(jq --null-input \
     "device": {
         "name": $name,
         "description": $description,
+        "status": "ACTIVE",
         "metadata": {
-          "key_one": "value_one.updated",
-          "key_three": [4,5,6]
+          "openstack_instance": "8f4e9068-5a39-4717-8a83-6b95e01031eb",
+          "status": ["active", "", ""]
         }
     }
 }
@@ -51,7 +52,7 @@ curl -s -k \
     -d "${BODY}"
 )
 
-if [ "${HTTP_STATUS}" == "200" ] || [ "${HTTP_STATUS}" == "201" ] ; then
+if [ "${HTTP_STATUS}" == "200" ] || [ "${HTTP_STATUS}" == "202" ] ; then
     cat "$BODY_FILE"
 else
     echo "Device update failed" >&2

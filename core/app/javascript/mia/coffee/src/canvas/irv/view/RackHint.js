@@ -63,6 +63,7 @@ class RackHint extends Hint {
       caption = Util.substitutePhrase(caption, 'metric_mean', metric_mean);
       caption = Util.substitutePhrase(caption, 'metric_total', metric_total);
       caption = Util.substitutePhrase(caption, 'metric_value', metric_value);
+      caption = Util.substitutePhrase(caption, 'buildStatus', device.buildStatus);
 
       caption = Util.cleanUpSubstitutions(caption);
     } else if (device instanceof Chassis) {
@@ -112,6 +113,7 @@ class RackHint extends Hint {
       caption = Util.substitutePhrase(caption, 'metric_mean', metric_mean);
       caption = Util.substitutePhrase(caption, 'metric_total', metric_total);
       caption = Util.substitutePhrase(caption, 'metric_value', metric_value);
+      caption = Util.substitutePhrase(caption, 'buildStatus', device.buildStatus);
 
       caption = Util.cleanUpSubstitutions(caption);
     }
@@ -135,14 +137,25 @@ class RackHint extends Hint {
 
   appendData(data) {
     if (this.visible) {
-      let append = '';
-      for (var datum in data) {
-        if ((data[datum] != null) && (data[datum] !== '')) { append += datum + ': ' + data[datum] + '<br>'; }
-      }
-
+      const append = this.buildAppend(data, 0);
       this.hintEl.innerHTML += append;
       return this.refreshPosition();
     }
+  }
+
+  buildAppend(data, indent) {
+    let append = '';
+    for (const [key, value] of Object.entries(data)) {
+      if (value == null || value === "") {
+        continue;
+      } else if (typeof value === "object" && !Array.isArray(value)) {
+        append += `<strong>${key}:</strong><br>`;
+        append += this.buildAppend(value, indent+1);
+      } else {
+        append += `<span style="padding-left: ${indent * 10}px">${key}: ${value}</span><br>`;
+      }
+    }
+    return append;
   }
 };
 RackHint.initClass();

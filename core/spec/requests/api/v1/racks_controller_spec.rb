@@ -185,6 +185,7 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
           rack: {
             u_height: 20,
             user_id: rack_owner.id,
+            status: 'IN_PROGRESS',
             metadata: { "foo" => "bar" }
           }
         }
@@ -193,6 +194,7 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
         {
           rack: {
             u_height: -1,
+            status: 'not a valid status',
             metadata: "should be an object"
           }
         }
@@ -223,6 +225,7 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
           expect(parsed_rack["u_height"]).to eq valid_attributes[:rack][:u_height]
           expect(parsed_rack["owner"]["id"]).to eq valid_attributes[:rack][:user_id]
           expect(parsed_rack["metadata"]).to eq valid_attributes[:rack][:metadata]
+          expect(parsed_rack["status"]).to eq valid_attributes[:rack][:status]
         end
       end
 
@@ -251,7 +254,13 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
   describe "PATCH :update" do
     let(:url_under_test) { urls.api_v1_rack_path(rack) }
     let!(:rack) {
-      create(:rack, user: rack_owner, template: template, metadata: initial_rack_metadata, u_height: initial_u_height)
+      create(:rack,
+        user: rack_owner,
+        template: template,
+        metadata: initial_rack_metadata,
+        u_height: initial_u_height,
+        status: 'IN_PROGRESS',
+      )
     }
     let(:initial_rack_metadata) { {} }
     let(:initial_u_height) { 20 }
@@ -261,6 +270,7 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
         {
           rack: {
             u_height: initial_u_height + 2,
+            status: 'ACTIVE',
             metadata: initial_rack_metadata.merge("foo" => "bar")
           }
         }
@@ -298,6 +308,7 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
           parsed_rack = JSON.parse(response.body)
           expect(parsed_rack["u_height"]).to eq valid_attributes[:rack][:u_height]
           expect(parsed_rack["metadata"]).to eq valid_attributes[:rack][:metadata]
+          expect(parsed_rack["status"]).to eq valid_attributes[:rack][:status]
         end
       end
 
