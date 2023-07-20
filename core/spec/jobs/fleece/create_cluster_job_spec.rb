@@ -4,7 +4,7 @@ RSpec.describe Fleece::CreateClusterJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
   let(:config) { create(:fleece_config) }
   let(:cluster) { build(:fleece_cluster) }
-  let(:user) { create(:user) }
+  let(:user) { create(:user, :with_openstack_details) }
   subject { Fleece::CreateClusterJob::Runner.new(cluster: cluster, fleece_config: config, user: user) }
 
   describe "url" do
@@ -85,7 +85,7 @@ RSpec.describe Fleece::CreateClusterJob, type: :job do
     it "contains the correct config and user details" do
       expect(subject[:cloud_env]).to eq({
                                           "auth_url" => config.internal_auth_url,
-                                          "user_id" => user.cloud_user_id,
+                                          "user_id" => user.cloud_user_id.gsub(/-/, ''),
                                           "password" => user.fixme_encrypt_this_already_plaintext_password,
                                           "project_id" => user.project_id
                                         })
