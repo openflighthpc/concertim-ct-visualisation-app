@@ -74,7 +74,13 @@ module Uma
       @password = new_password
       if @password.present?
         self.encrypted_password = password_digest(@password)
-        self.fixme_encrypt_this_already_plaintext_password = @password
+        # Currently, we only want this set once.  This restriction will be
+        # removed when the openstack user handler supports updating the
+        # openstack user's password, at which point concertim will need to
+        # inform user handler to do so.
+        if self.fixme_encrypt_this_already_plaintext_password.blank?
+          self.fixme_encrypt_this_already_plaintext_password = @password
+        end
       end
     end
 
