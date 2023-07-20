@@ -14,8 +14,10 @@ RSpec.describe Fleece::SyncIndividualClusterTypeJob, type: :job do
       end
     end
 
-    it "uses the ip and port given in the config" do
-      expect(subject.connection.url_prefix.to_s).to eq "http://#{config.host_ip}:#{config.cluster_builder_port}/"
+    it "uses the host URL and cluster build port given in the config" do
+      expected_url = URI(config.host_url)
+      expected_url.port = config.cluster_builder_port
+      expect(subject.connection.url_prefix).to eq expected_url
     end
 
     it "uses a hard-coded path plus cluster type foreign id" do
@@ -60,7 +62,9 @@ RSpec.describe Fleece::SyncIndividualClusterTypeJob, type: :job do
       let(:response) { cluster_details.as_json }
 
       before(:each) do
-        stubs.get("http://#{config.host_ip}:#{config.cluster_builder_port}/cluster-types/#{cluster_type.foreign_id}") do |env|
+        url = URI(config.host_url)
+        url.port = config.cluster_builder_port
+        stubs.get("#{url.to_s}/cluster-types/#{cluster_type.foreign_id}") do |env|
           [ 200, {}, response]
         end
       end
@@ -88,7 +92,9 @@ RSpec.describe Fleece::SyncIndividualClusterTypeJob, type: :job do
 
     context "when request returns a 304" do
       before(:each) do
-        stubs.get("http://#{config.host_ip}:#{config.cluster_builder_port}/cluster-types/#{cluster_type.foreign_id}") do |env|
+        url = URI(config.host_url)
+        url.port = config.cluster_builder_port
+        stubs.get("#{url.to_s}/cluster-types/#{cluster_type.foreign_id}") do |env|
           [ 304, {}, ""]
         end
       end
@@ -109,7 +115,9 @@ RSpec.describe Fleece::SyncIndividualClusterTypeJob, type: :job do
 
     context "when request is not successful" do
       before(:each) do
-        stubs.get("http://#{config.host_ip}:#{config.cluster_builder_port}/cluster-types/#{cluster_type.foreign_id}") do |env|
+        url = URI(config.host_url)
+        url.port = config.cluster_builder_port
+        stubs.get("#{url.to_s}/cluster-types/#{cluster_type.foreign_id}") do |env|
           [ 404, {}, "404 Not Found"]
         end
       end
@@ -128,7 +136,9 @@ RSpec.describe Fleece::SyncIndividualClusterTypeJob, type: :job do
 
     context "when request times out" do
       before(:each) do
-        stubs.get("http://#{config.host_ip}:#{config.cluster_builder_port}/cluster-types/#{cluster_type.foreign_id}") do |env|
+        url = URI(config.host_url)
+        url.port = config.cluster_builder_port
+        stubs.get("#{url.to_s}/cluster-types/#{cluster_type.foreign_id}") do |env|
           sleep timeout * 2 ; [ 200, {}, []]
         end
       end

@@ -1,3 +1,5 @@
+require 'faker'
+
 FactoryBot.define do
   factory :user, class: 'Uma::User' do
     sequence(:login) { |n| "user-#{n}" }
@@ -8,6 +10,11 @@ FactoryBot.define do
     root { false }
 
     password { SecureRandom.alphanumeric }
+  end
+
+  trait :with_openstack_details do
+    project_id { Faker::Internet.uuid.gsub(/-/, '') }
+    cloud_user_id { Faker::Internet.uuid }
   end
 
   trait :admin do
