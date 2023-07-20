@@ -12,6 +12,6 @@ child :template, root: 'Resources' do
   attribute disk: "Disk (GB)"
 end
 
-node "Metadata", if: current_user.root? do |device|
+node "Metadata" do |device|
   device.metadata
 end

@@ -5,6 +5,6 @@ child :user, root: "Owner", if: current_user.root? do |rack|
   attribute login: "Username"
 end
 
-node "Metadata", if: current_user.root? do |rack|
+node "Metadata" do |rack|
   rack.metadata
 end
