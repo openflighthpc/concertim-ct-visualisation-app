@@ -1,5 +1,6 @@
 object @rack
 attributes :id, :name, :u_height, :metadata, :status
+attributes formatted_cost: :cost
 
 child :user, root: 'owner', if: current_user.root? do
   extends 'api/v1/users/show'

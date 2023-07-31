@@ -156,6 +156,7 @@ class Rack extends RackObject {
 
     this.owner = def.owner;
     this.buildStatus = def.buildStatus;
+    this.cost = def.cost;
     this.nameLabel = new RackNameLabel(this.infoGfx, this, RackObject.MODEL);
     this.ownerLabel = new RackOwnerLabel(this.infoGfx, this, RackObject.MODEL);
 

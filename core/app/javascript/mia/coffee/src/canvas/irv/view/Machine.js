@@ -78,6 +78,7 @@ class Machine extends RackObject {
 
     this.facing = this.parent().facing;
     this.buildStatus = def.buildStatus;
+    this.cost = def.cost;
   }
 
   destroy() {
