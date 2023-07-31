@@ -43,6 +43,11 @@ fieldset legend {
 }
 
 
+.error-message {
+  color: $pastel-red;
+  display: block;
+  margin: 0 0 0.5em 0;
+}
 
 /**************************************
   form structure
@@ -50,7 +55,7 @@ fieldset legend {
 
 form {
 
-  .fieldWithErrors {
+  .fieldWithErrors, .field_with_errors {
     display: inline;
   }
 
@@ -118,11 +123,13 @@ form {
     width: auto;
   }
 
-  .fieldWithErrors input, .fieldWithErrors textarea, .fieldWithErrors select {
+  .fieldWithErrors input, .fieldWithErrors textarea, .fieldWithErrors select,
+  .field_with_errors input, .field_with_errors textarea, .field_with_errors select {
     border: solid 2px $pastel-red;
   }
 
-  .labelWithErrors label {
+  .labelWithErrors label,
+  label.label_with_errors {
     color: $pastel-red;
   }
 

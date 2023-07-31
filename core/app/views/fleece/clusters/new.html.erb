@@ -8,19 +8,19 @@
 
 <%= form_for(@cluster, url: fleece_cluster_type_clusters_path(@cluster_type)) do |f| %>
   <% if @cluster.errors.any? %>
-    <div id="error_explanation">
-      <h2>There <%= "#{@cluster.errors.count == 1 ? 'is' : 'are'}" %> <%= pluralize(@cluster.errors.count, "error") %>:</h2>
-   
-      <ul>
-      <% @cluster.errors.each do |error| %>
-        <li><%= "#{error.attribute.capitalize}: #{error.type}" %></li>
-      <% end %>
-      </ul>
+    <div class="alert-box alert">
+      Please correct the <%= pluralize(@cluster.errors.count, "error") %> below and try again.
     </div>
   <% end %>
 
   <div class="formItem">
-    <%= f.label :name, "Cluster name", class: 'required_field' %>
+    <% has_error = @cluster.errors.include?(:name) %>
+    <%= f.label :name, "Cluster name", class: "required_field #{has_error ? 'label_with_errors' : nil}" %>
+    <% if has_error %>
+      <span class="error-message">
+        Cluster name <%= @cluster.errors.messages_for(:name).to_sentence %>
+      </span>
+    <% end %>
     <%= f.text_field :name, autocomplete: :off, required: true,
                      minlength: 6, maxlength: 255, pattern: "^[a-zA-Z][a-zA-Z0-9\\-_]*$",
                      class: "new-cluster-field" %>
@@ -35,6 +35,7 @@
     <%= f.fields_for :cluster_params, field do |cluster_param| %>
       <div class="formItem">
         <%= field.form_label(cluster_param) %>
+        <%= field.error_message(cluster_param) %>
         <%= field.form_input(cluster_param) %>
         <%= field.constraint_text %>
       </div>

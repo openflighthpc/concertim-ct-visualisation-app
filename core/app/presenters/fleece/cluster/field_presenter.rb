@@ -17,7 +17,14 @@ module Fleece
       end
 
       def form_label(form)
-        form.label id.to_sym, label, class: 'required_field', title: form_description
+        classes = %w(required_field)
+        classes << 'label_with_errors' unless o.valid?
+        form.label id.to_sym, label, class: classes.join(' '), title: form_description
+      end
+
+      def error_message(form)
+        return nil if o.valid?
+        h.tag.span(o.errors.messages_for(:value).to_sentence, class: 'error-message')
       end
 
       def form_input(form)
