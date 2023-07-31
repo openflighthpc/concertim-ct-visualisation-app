@@ -41,7 +41,9 @@ module Uma
       uniqueness: true,
       allow_nil: true,
       allow_blank: true
-
+    validates :cost,
+      numericality: { greater_than_or_equal_to: 0 },
+      allow_blank: true
 
     ####################################
     #

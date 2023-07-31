@@ -46,6 +46,9 @@ module Ivy
     validates :status,
       presence: true,
       inclusion: { in: VALID_STATUSES, message: "must be one of #{VALID_STATUSES.to_sentence(last_word_connector: ' or ')}" }
+    validates :cost,
+      numericality: { greater_than_or_equal_to: 0 },
+      allow_blank: true
     validate :name_validator
     validate :device_limit, if: :new_record? 
     validate :metadata_format

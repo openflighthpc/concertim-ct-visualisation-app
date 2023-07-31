@@ -5,7 +5,7 @@
 module Api::V1
   class RackPresenter < Emma::Presenter
     # Be selective about what attributes and methods we expose.
-    delegate :id, :name, :u_height, :metadata, :status,
+    delegate :id, :name, :u_height, :metadata, :status, :cost,
       to: :o
 
     def devices
@@ -14,6 +14,10 @@ module Api::V1
 
     def user
       @user ||= Api::V1::UserPresenter.new(o.user)
+    end
+
+    def formatted_cost
+      "$#{'%.2f' % cost}"
     end
   end
 end
