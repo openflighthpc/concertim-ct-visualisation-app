@@ -16,6 +16,7 @@ class Api::V1::RacksController < Api::V1::ApplicationController
     @rack = Ivy::HwRackServices::Create.call(rack_params.to_h, current_user)
 
     if @rack.persisted?
+      @rack = Api::V1::RackPresenter.new(@rack)
       render action: :show
     else
       render json: @rack.errors.as_json, status: :unprocessable_entity
@@ -24,6 +25,7 @@ class Api::V1::RacksController < Api::V1::ApplicationController
 
   def update
     if @rack.update(rack_params)
+      @rack = Api::V1::RackPresenter.new(@rack)
       render action: :show
     else
       render json: @rack.errors.as_json, status: :unprocessable_entity
