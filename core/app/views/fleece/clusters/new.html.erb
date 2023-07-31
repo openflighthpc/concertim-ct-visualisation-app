@@ -11,6 +11,16 @@
     <div class="alert-box alert">
       Please correct the <%= pluralize(@cluster.errors.count, "error") %> below and try again.
     </div>
+  <% elsif @cluster.fields.any? { |f| !f.errors.empty? } %>
+    <%
+        error_count = @cluster.fields
+          .select { |f| !f.errors.empty? }
+          .map { |f| f.errors.count }
+          .sum
+    %>
+    <div class="alert-box alert">
+      Please correct the <%= pluralize(error_count, "error") %> below and try again.
+    </div>
   <% end %>
 
   <div class="formItem">
