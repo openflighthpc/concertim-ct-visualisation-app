@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_31_104932) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_01_150414) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -235,6 +235,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_31_104932) do
     t.string "fixme_encrypt_this_already_plaintext_password", limit: 128, default: ""
     t.uuid "cloud_user_id"
     t.decimal "cost", default: "0.0", null: false
+    t.date "billing_period_start"
+    t.date "billing_period_end"
     t.index ["email"], name: "index_uma.users_on_email", unique: true
     t.index ["login"], name: "index_uma.users_on_login", unique: true
     t.index ["project_id"], name: "index_uma.users_on_project_id", unique: true, where: "(NOT NULL::boolean)"

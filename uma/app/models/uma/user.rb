@@ -44,6 +44,9 @@ module Uma
     validates :cost,
       numericality: { greater_than_or_equal_to: 0 },
       allow_blank: true
+    validates :billing_period_end, comparison: { greater_than: :billing_period_start },
+              unless: -> { billing_period_start.blank? || billing_period_end.blank? }
+    validate :complete_billing_period
 
     ####################################
     #
@@ -86,6 +89,15 @@ module Uma
       end
     end
 
+    def billing_period
+      return unless billing_period_start && billing_period_end
+
+      "#{billing_period_start.strftime("%Y/%m/%d")} - #{billing_period_end.strftime("%Y/%m/%d")}"
+    end
+
+    def strip_project_id
+      self.project_id = nil if self.project_id.blank?
+    end
 
     ####################################
     #
@@ -93,8 +105,12 @@ module Uma
     #
     ####################################
 
-    def strip_project_id
-      self.project_id = nil if self.project_id.blank?
+    private
+
+    def complete_billing_period
+      unless !!billing_period_start == !!billing_period_end
+        errors.add(:billing_period, 'must have a start date and end date, or neither')
+      end
     end
   end
 end

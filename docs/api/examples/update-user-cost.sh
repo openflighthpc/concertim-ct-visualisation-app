@@ -16,10 +16,20 @@ AUTH_TOKEN=${AUTH_TOKEN:-$("${SCRIPT_DIR}"/get-auth-token.sh)}
 
 USER_ID=${1}
 USER_COST=${2}
+BILLING_PERIOD_START=${3}
+BILLING_PERIOD_END=${4}
 
 BODY=$(jq --null-input \
     --arg cost "${USER_COST}" \
-    '{"user": {"cost": $cost}}'
+    --arg billing_period_start "${BILLING_PERIOD_START}" \
+    --arg billing_period_end "${BILLING_PERIOD_END}" \
+    '
+      {
+        "user": {
+          "cost": $cost, "billing_period_start": $billing_period_start, "billing_period_end": $billing_period_end
+        }
+      }
+    '
 )
 
 # Run curl with funky redirection to capture response body and status code.

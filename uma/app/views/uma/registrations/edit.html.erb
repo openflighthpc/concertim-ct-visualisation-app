@@ -29,11 +29,14 @@
     </div>
   <% end %>
 
-  <% unless current_user.root? %>
+  <% unless current_user.root? || !current_user.billing_period %>
     <div class="formItem">
-      <%
-        tooltip = "Total cumualative costs accrued so far this billing period"
-      %>
+      <%= f.label :billing_period, "Current billing period" %>
+      <%= f.text_field :billing_period, autocomplete: :off, disabled: true %>
+    </div>
+
+    <div class="formItem">
+      <% tooltip = "Total cumulative costs accrued so far this billing period" %>
       <%= f.label :cost, "Costs this billing period (USD)", title: tooltip %>
       <%= f.text_field :cost, autocomplete: :off, disabled: true %>
     </div>
