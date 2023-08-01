@@ -5,3 +5,5 @@ node :fullname do |user|
 end
 attribute :cloud_user_id, if: ->(user) { !user.root? }
 attribute :project_id, if: ->(user) { !user.root? }
+attribute formatted_cost: :cost, if: ->(user) { !user.root? }
+attribute root?: :root

@@ -4,6 +4,11 @@ SimpleNavigation::Configuration.run do |navigation|
   navigation.items do |primary|
 
     if user_signed_in?
+      if current_user.project_id && !current_user.root?
+        primary.item :user_cost, "Total cost so far this billing period: $#{'%.2f' % current_user.cost}", nil,
+                     align: :right
+      end
+
       primary.item :youraccount, "#{current_user.name}", '#',
         align: :right,
         icon: :youraccount,
@@ -25,7 +30,6 @@ SimpleNavigation::Configuration.run do |navigation|
           icon: :racks,
           highlights_on: /\/cloud-env\/(cluster-types|clusters)/
       end
-
     else
       primary.item :login, 'Log in', uma_engine.new_user_session_path,
         icon: :login,
