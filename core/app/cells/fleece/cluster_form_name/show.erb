@@ -1,0 +1,15 @@
+<div class="formItem">
+  <%= f.label attribute, label_text, class: label_classes %>
+  <% if has_errors? %>
+    <span class="error-message">
+      <%= label_text %> <%= error_message %>
+    </span>
+  <% end %>
+  <%= f.text_field attribute, autocomplete: :off, required: true,
+                   minlength: 6, maxlength: 255, pattern: "^[a-zA-Z][a-zA-Z0-9\\-_]*$",
+                   class: "new-cluster-field" %>
+  <div class="constraint-text">
+     Must be between 6 and 255 characters. Can contain only alphanumeric
+     characters, hyphens and underscores.
+  </div>
+</div>

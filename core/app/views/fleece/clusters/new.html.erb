@@ -7,37 +7,8 @@
 <p><%= @cluster_type.description %></p>
 
 <%= form_for(@cluster, url: fleece_cluster_type_clusters_path(@cluster_type)) do |f| %>
-  <% if @cluster.errors.any? %>
-    <div class="alert-box alert">
-      Please correct the <%= pluralize(@cluster.errors.count, "error") %> below and try again.
-    </div>
-  <% elsif @cluster.fields.any? { |f| !f.errors.empty? } %>
-    <%
-        error_count = @cluster.fields
-          .select { |f| !f.errors.empty? }
-          .map { |f| f.errors.count }
-          .sum
-    %>
-    <div class="alert-box alert">
-      Please correct the <%= pluralize(error_count, "error") %> below and try again.
-    </div>
-  <% end %>
-
-  <div class="formItem">
-    <% has_error = @cluster.errors.include?(:name) %>
-    <%= f.label :name, "Cluster name", class: "required_field #{has_error ? 'label_with_errors' : nil}" %>
-    <% if has_error %>
-      <span class="error-message">
-        Cluster name <%= @cluster.errors.messages_for(:name).to_sentence %>
-      </span>
-    <% end %>
-    <%= f.text_field :name, autocomplete: :off, required: true,
-                     minlength: 6, maxlength: 255, pattern: "^[a-zA-Z][a-zA-Z0-9\\-_]*$",
-                     class: "new-cluster-field" %>
-    <div class="constraint-text">
-     Must be between 6 and 255 characters. Can contain only alphanumeric characters, hyphens and underscores.
-    </div>
-  </div>
+  <%= cell('fleece/cluster_form_errors').(:show, @cluster) %>
+  <%= cell('fleece/cluster_form_name').(:show, @cluster, f) %>
 
   <h4>Cluster Parameters</h4>
   <% @cluster.fields.each do |field| %>
