@@ -8,6 +8,8 @@
 # categories, e.g., `device_presenter/location`.
 module Api::V1
   class DevicePresenter < Emma::Presenter
+    include Emma::Costed
+
     # Be selective about what attributes and methods we expose.
     delegate :id, :name, :description, :metadata, :status, :cost,
       to: :o
@@ -44,10 +46,6 @@ module Api::V1
     def template
       # XXX Consider using a presenter here too.
       o.template
-    end
-
-    def formatted_cost
-      "$#{'%.2f' % (cost || 0)}"
     end
   end
 end
