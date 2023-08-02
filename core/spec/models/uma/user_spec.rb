@@ -10,7 +10,10 @@ RSpec.describe Uma::User, type: :model do
         name: "name",
         email: "an@email.com",
         login: "login",
-        password: "password"
+        password: "password",
+        cost: 99.99,
+        billing_period_start: Date.current,
+        billing_period_end: Date.current + 3.days
       )
       expect(user).to be_valid
     end
@@ -39,6 +42,16 @@ RSpec.describe Uma::User, type: :model do
     it "must have a unique login" do
       new_user = build(:user, login: user.login)
       expect(new_user).to have_error(:login, :taken)
+    end
+
+    it "is not valid with a negative cost" do
+      subject.cost = -99
+      expect(subject).to have_error(:cost, :greater_than_or_equal_to)
+    end
+
+    it "is valid with no cost" do
+      subject.cost = nil
+      expect(subject).to be_valid
     end
 
     describe "project_id" do
@@ -76,6 +89,31 @@ RSpec.describe Uma::User, type: :model do
 
         new_user = build(:user, cloud_user_id: user.cloud_user_id)
         expect(new_user).not_to have_error(:cloud_user_id, :taken)
+      end
+    end
+
+    describe "billing period dates" do
+      it 'is not valid if has only a start or only an end' do
+        user.billing_period_start = Date.current
+        expect(user).to have_error(:billing_period, 'must have a start date and end date, or neither')
+
+        user.billing_period_end = Date.current + 2.days
+        expect(user).to be_valid
+
+        user.billing_period_end = nil
+        expect(user).to have_error(:billing_period, 'must have a start date and end date, or neither')
+
+        user.billing_period_start = nil
+        expect(user).to be_valid
+      end
+
+      it 'is not valid if end not after start' do
+        user.billing_period_start = Date.current
+        user.billing_period_end = Date.current
+        expect(user).to have_error(:billing_period_end, :greater_than,)
+
+        user.billing_period_end = Date.current - 2.days
+        expect(user).to have_error(:billing_period_end, :greater_than,)
       end
     end
   end
