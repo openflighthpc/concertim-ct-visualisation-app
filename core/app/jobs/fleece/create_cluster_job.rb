@@ -55,7 +55,8 @@ class Fleece::CreateClusterJob < ApplicationJob
       Result.new(false, error_message, $!.response[:status], non_field_error)
 
     rescue Faraday::Error
-      Result.new(false, $!.message, $!.response[:status])
+      status_code = $!.response[:status] rescue 0
+      Result.new(false, $!.message, status_code)
     end
 
     private
