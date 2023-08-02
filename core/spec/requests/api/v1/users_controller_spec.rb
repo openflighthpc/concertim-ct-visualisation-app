@@ -23,7 +23,13 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
         it "includes a single admin user" do
           get url_under_test, headers: headers, as: :json
           expect(parsed_users.length).to eq 1
-          expect(parsed_users.first['id']).to eq authenticated_user.id
+          result = parsed_users.first
+          expect(result['id']).to eq authenticated_user.id
+          expect(result['root']).to eq true
+          expect(result['name']).to eq authenticated_user.name
+          expect(result.keys.include?('cost')).to eq false
+          expect(result.keys.include?('billing_period_start')).to eq false
+          expect(result.keys.include?('billing_period_end')).to eq false
         end
       end
 
@@ -35,6 +41,13 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
         it "includes two users" do
           get url_under_test, headers: headers, as: :json
           expect(parsed_users.length).to eq 2
+          result = parsed_users.first
+          expect(result['id']).to eq other_user.id
+          expect(result['root']).to eq false
+          expect(result['cost']).to eq '$0.00'
+          expect(result['name']).to eq other_user.name
+          expect(result.keys.include?('billing_period_start')).to eq true
+          expect(result.keys.include?('billing_period_end')).to eq true
         end
 
         it "includes the expected racks" do
@@ -225,6 +238,83 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
       end
     end
 
+    shared_examples "can update user's cost" do
+      include_examples "update generic JSON API endpoint examples" do
+        let(:object_under_test) { user }
+        let(:valid_attributes) {
+          {
+            user: { cost: 100.001 }
+          }
+        }
+        let(:invalid_attributes) {
+          {
+            user: { }
+          }
+        }
+      end
+    end
+
+    shared_examples "cannot update user's cost" do
+      include_examples "cannot update generic JSON API endpoint examples" do
+        let(:object_under_test) { user }
+        let(:valid_attributes) {
+          {
+            user: { cost: 100.001 }
+          }
+        }
+        let(:invalid_attributes) {
+          {
+            user: { }
+          }
+        }
+      end
+    end
+
+    %w( billing_period_start billing_period_end ).each do |attr_under_test|
+      shared_examples "can update user's #{attr_under_test}" do
+        before(:each) do
+          user.billing_period_start = Date.current - 1.month
+          user.billing_period_end = Date.current
+          user.save!
+        end
+      
+        include_examples "update generic JSON API endpoint examples" do
+          let(:object_under_test) { user }
+          let(:valid_attributes) {
+            {
+              user: { attr_under_test => user.send(attr_under_test) + 1.day}
+            }
+          }
+          let(:invalid_attributes) {
+            {
+              user: { }
+            }
+          }
+        end
+      end
+
+      shared_examples "cannot update user's #{attr_under_test}" do
+        before(:each) do
+          user.billing_period_start = Date.current - 1.month
+          user.billing_period_end = Date.current
+          user.save!
+        end
+        include_examples "cannot update generic JSON API endpoint examples" do
+          let(:object_under_test) { user }
+          let(:valid_attributes) {
+            {
+              user: { attr_under_test => user.send(attr_under_test) + 1.day}
+            }
+          }
+         let(:invalid_attributes) {
+           {
+             user: { }
+           }
+          }
+        end
+      end
+    end
+
     context "when not logged in" do
       include_examples "unauthorised JSON response" do
         let(:request_method) { :patch }
@@ -236,6 +326,9 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
       let(:user) { authenticated_user }
       it_behaves_like "cannot update user's project_id"
       it_behaves_like "cannot update user's cloud_user_id"
+      it_behaves_like "cannot update user's cost"
+      it_behaves_like "cannot update user's billing_period_start"
+      it_behaves_like "cannot update user's billing_period_end"
     end
 
     context "when logged in as some other non-admin user" do
@@ -249,6 +342,9 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
       include_context "Logged in as admin"
       it_behaves_like "can update user's project_id"
       it_behaves_like "can update user's cloud_user_id"
+      it_behaves_like "can update user's cost"
+      it_behaves_like "can update user's billing_period_start"
+      it_behaves_like "can update user's billing_period_end"
     end
   end
 end
