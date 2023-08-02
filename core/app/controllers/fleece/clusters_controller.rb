@@ -56,7 +56,7 @@ class Fleece::ClustersController < ApplicationController
       end
       render action: :new
     else
-      flash.now.alert = "Unable to send cluster configuration: #{result.error_message}"
+      flash.now.alert = "Unable to send cluster configuration: #{result.error_message}. Please contact an admin"
       render action: :new
     end
   end
