@@ -53,6 +53,17 @@ class Fleece::Cluster
     end
   end
 
+  def add_field_error(field_or_id, error)
+    field =
+      if field_or_id.is_a?(String)
+        fields.detect { |f| f.id == field_id }
+      else
+        field_or_id
+      end
+    return nil if field.nil?
+    field.errors.add(:value, error)
+  end
+
   private
 
   ####################################
