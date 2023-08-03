@@ -89,12 +89,6 @@ module Uma
       end
     end
 
-    def billing_period
-      return unless billing_period_start && billing_period_end
-
-      "#{billing_period_start.strftime("%Y/%m/%d")} - #{billing_period_end.strftime("%Y/%m/%d")}"
-    end
-
     def strip_project_id
       self.project_id = nil if self.project_id.blank?
     end

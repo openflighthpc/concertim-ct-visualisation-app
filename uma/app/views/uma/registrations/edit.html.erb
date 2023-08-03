@@ -29,10 +29,10 @@
     </div>
   <% end %>
 
-  <% unless current_user.root? || !current_user.billing_period %>
+  <% unless current_user.root? %>
     <div class="formItem">
       <%= f.label :billing_period, "Current billing period" %>
-      <%= f.text_field :billing_period, autocomplete: :off, disabled: true %>
+      <%= f.text_field :billing_period, autocomplete: :off, disabled: true, value: user_presenter(current_user).billing_period %>
     </div>
 
     <div class="formItem">
