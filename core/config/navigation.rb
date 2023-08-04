@@ -5,8 +5,9 @@ SimpleNavigation::Configuration.run do |navigation|
 
     if user_signed_in?
       if !current_user.root?
-        primary.item :user_cost, "Total cost so far this billing period: $#{'%.2f' % current_user.cost}", nil,
-                     :link_html => {:title => "Current billing period: #{user_presenter(current_user).billing_period}"},
+        user = user_presenter(current_user)
+        primary.item :user_cost, "Total cost so far this billing period: #{user.cost}", nil,
+                     :link_html => {:title => "Current billing period: #{user.billing_period}"},
                      align: :right
       end
 
