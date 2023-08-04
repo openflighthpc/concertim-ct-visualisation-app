@@ -24,6 +24,7 @@ class ContextMenu {
     this.VERBOSE              = true;
     this.SPACER               = '<br>';
     this.ASPECT_MAP           = { front: 'f', rear: 'r' };
+    this.ACTION_PATHS         = {};
   }
 
 
@@ -108,13 +109,16 @@ class ContextMenu {
             view_devices = "View devices";
           }
         }
-
+        
         for (var option of Array.from(total_options)) {
-
           // If the option has the attribute RBAC defined, then query the @model.RBAC object 
           // to see if such permission has been granted. Otherwise, continue to the next option.
           if (option.RBAC != null) {
             if (!this.model.RBAC.can_i(option.RBAC.action,option.RBAC.resource)) { continue; }
+          }
+
+          if (option.availableToBuildStatuses !== undefined && option.availableToBuildStatuses.indexOf(device.buildStatus) === -1) {
+            continue;
           }
 
           var div_class  = (option.class != null) ? option.class : "";

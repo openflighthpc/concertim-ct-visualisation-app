@@ -495,13 +495,39 @@
           {
             "caption" : "Focus",
             "url"     : "internal::focusOn,devices,[[device_id]]"
+          },
+          {
+            "caption" : "Switch off",
+            "url"     : "internal::statusChangeRequest,off,devices,[[device_id]],[[device_name]]",
+            "availableToBuildStatuses": ["ACTIVE"]
+          },
+          {
+            "caption" : "Switch on",
+            "url"     : "internal::statusChangeRequest,on,devices,[[device_id]],[[device_name]]",
+            "availableToBuildStatuses": ["STOPPED"]
+          },
+          {
+            "caption" : "Destroy",
+            "url"     : "internal::statusChangeRequest,destroy,devices,[[device_id]],[[device_name]]",
+            "availableToBuildStatuses": ["STOPPED", "ACTIVE"]
           }
         ],
 
         "common":
         [
         ]
+      },
+
+      "actionPaths":
+      {
+        "devices":
+        {
+          "off": "/api/v1/devices/[[device_id]]/off",
+          "on": "/api/v1/devices/[[device_id]]/on",
+          "destroy": "/api/v1/devices/[[device_id]]/destroy"
+        }
       }
+
     },
 
     "HINT":

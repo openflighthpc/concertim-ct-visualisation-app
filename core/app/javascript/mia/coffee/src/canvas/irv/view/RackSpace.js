@@ -1976,6 +1976,8 @@ class RackSpace extends CanvasSpace {
     switch (params[0]) {
       case 'focusOn':
         return this.focusOn(params[1], params[2]);
+      case 'statusChangeRequest':
+        return this.requestStatusChange(params[1], params[2], params[3], params[4]);
       case 'reset':
         return Events.dispatchEvent(this.rackEl, 'rackSpaceReset');
       case 'clearDeselected':
@@ -2043,6 +2045,11 @@ class RackSpace extends CanvasSpace {
       }
       return result;
     })();
+  }
+
+  requestStatusChange(action, type, id, name) {
+    console.log(`Make post request for ${action} for ${type} ${id} (${name})`);
+    console.log(ContextMenu.ACTION_PATHS[type][action]);
   }
 
 
