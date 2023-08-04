@@ -24,7 +24,8 @@ RSpec.describe "Api::V1::Irv::RacksControllers", type: :request do
 
           it "includes zero racks" do
             get url_under_test, headers: headers, as: :json
-           expect(parsed_racks).to be_empty
+            expect(parsed_racks).to be_a Array
+            expect(parsed_racks).to be_empty
           end
         end
 
@@ -37,18 +38,19 @@ RSpec.describe "Api::V1::Irv::RacksControllers", type: :request do
 
           include_examples "successful JSON response"
 
-          it "includes one rack" do
+          it "includes one rack in an array" do
             get url_under_test, headers: headers, as: :json
-            expect(parsed_racks).not_to be_a Array
+            expect(parsed_racks).to be_a Array
             expect(parsed_racks).not_to be_nil
           end
 
           it "has the correct attributes" do
             get url_under_test, headers: headers, as: :json
-            expect(parsed_racks["id"].to_i).to eq rack.id
-            expect(parsed_racks["name"]).to eq rack.name
-            expect(parsed_racks["uHeight"].to_i).to eq rack.u_height
-            expect(parsed_racks["cost"]).to eq "$9.99"
+            parsed_rack = parsed_racks.first
+            expect(parsed_rack["id"].to_i).to eq rack.id
+            expect(parsed_rack["name"]).to eq rack.name
+            expect(parsed_rack["uHeight"].to_i).to eq rack.u_height
+            expect(parsed_rack["cost"]).to eq "$9.99"
           end
 
           it "includes the rack's template" do
@@ -58,7 +60,7 @@ RSpec.describe "Api::V1::Irv::RacksControllers", type: :request do
               depth: (strings? ? template.depth.to_s : template.depth),
               name: template.name,
             }.stringify_keys
-            expect(parsed_racks["template"].slice(*expected_template.keys)).to eq expected_template
+            expect(parsed_racks.first["template"].slice(*expected_template.keys)).to eq expected_template
           end
 
           it "includes the rack's owner" do
@@ -68,7 +70,7 @@ RSpec.describe "Api::V1::Irv::RacksControllers", type: :request do
               login: user.login,
               name: user.name,
             }.stringify_keys
-            expect(parsed_racks["owner"].slice(*expected_owner.keys)).to eq expected_owner
+            expect(parsed_racks.first["owner"].slice(*expected_owner.keys)).to eq expected_owner
           end
         end
 
@@ -83,6 +85,7 @@ RSpec.describe "Api::V1::Irv::RacksControllers", type: :request do
 
           it "includes two racks" do
             get url_under_test, headers: headers, as: :json
+            expect(parsed_racks).to be_a Array
             expect(parsed_racks.length).to eq racks.length
           end
 
