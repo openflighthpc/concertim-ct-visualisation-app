@@ -5,7 +5,7 @@ node :fullname do |user|
 end
 attribute :cloud_user_id, if: ->(user) { !user.root? }
 attribute :project_id, if: ->(user) { !user.root? }
-attribute formatted_cost: :cost, if: ->(user) { !user.root? }
+attribute :cost, if: ->(user) { !user.root? }
 attribute :billing_period_start, if: ->(user) { !user.root? }
 attribute :billing_period_end, if: ->(user) { !user.root? }
 attribute root?: :root

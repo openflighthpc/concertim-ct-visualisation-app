@@ -11,7 +11,7 @@ module Api::V1
     include Emma::Costed
 
     # Be selective about what attributes and methods we expose.
-    delegate :id, :name, :description, :metadata, :status, :cost,
+    delegate :id, :name, :description, :metadata, :status,
       to: :o
 
     # location returns the location of the device.  For devices in simple

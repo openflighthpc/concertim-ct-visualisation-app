@@ -23,12 +23,11 @@ module Emma
 
   end
 
-  # Is there a better place for this?
   module Costed
     extend ActiveSupport::Concern
 
-    def formatted_cost
-      "$#{'%.2f' % cost}"
+    def cost
+      "$#{'%.2f' % o.cost}"
     end
   end
 end

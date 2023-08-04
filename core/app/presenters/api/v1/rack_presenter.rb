@@ -7,7 +7,7 @@ module Api::V1
     include Emma::Costed
 
     # Be selective about what attributes and methods we expose.
-    delegate :id, :name, :u_height, :metadata, :status, :cost, :template, :rack_start_u, :rack_end_u,
+    delegate :id, :name, :u_height, :metadata, :status, :template, :rack_start_u, :rack_end_u,
       to: :o
 
     def devices
