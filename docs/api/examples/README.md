@@ -65,6 +65,14 @@ Update cloud user ID and/or project ID for a given user.  Setting
 ./update-user.sh <USER_ID> <CLOUD_USER_ID> <PROJECT_ID>
 ```
 
+Update cost for the current billing period, the billing_period_start and the billing_period_end for a given user.
+Billing period start and end should be date strings, e.g. 2023/01/01 and 2023/01/31. These dates can be
+left blank to set them as nil (must both be present or both blank). Cost cannot be blank.
+
+```
+./update-user-cost.sh <USER_ID> <COST> <BILLING_PERIOD_START> <BILLING_PERIOD_END>
+```
+
 ### Racks
 
 List all racks.
@@ -90,6 +98,12 @@ Update a rack's name and height.
 
 ```
 ./update-rack.sh <RACK_ID> <NAME> <HEIGHT>
+```
+
+Update a rack's cost for the current billing period.
+
+```
+./update-rack-cost.sh <RACK_ID> <COST>
 ```
 
 Delete a rack.  If recurse is given, any nodes in the rack are deleted.  If
@@ -162,6 +176,12 @@ Update a device's status.  Both the simple and detailed status are updated.
 
 ```
 ./update-device-status.sh <DEVICE_ID> <SIMPLE_STATUS> <DETAILED_STATUS>
+```
+
+Update a device's cost for the current billing period.
+
+```
+./update-device-cost.sh <DEVICE_ID> <SIMPLE_STATUS> <DETAILED_STATUS>
 ```
 
 Delete a device.
