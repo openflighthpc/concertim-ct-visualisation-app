@@ -65,9 +65,11 @@ Update cloud user ID and/or project ID for a given user.  Setting
 ./update-user.sh <USER_ID> <CLOUD_USER_ID> <PROJECT_ID>
 ```
 
-Update cost for the current billing period, the billing_period_start and the billing_period_end for a given user.
-Billing period start and end should be date strings, e.g. 2023/01/01 and 2023/01/31. These dates can be
-left blank to set them as nil (must both be present or both blank). Cost cannot be blank.
+Update cost for the current billing period, the billing period start date and the billing period end date for a given user.
+Billing period start and end should be date strings, e.g. 2023/01/01 and 2023/01/31. The end date must be
+later than the start date. Start date must be less than or equal to today, and end date must be greater than
+or equal to today. Alternatively, these dates can be left blank to set them as nil (must both be present or both blank).
+Cost cannot be blank.
 
 ```
 ./update-user-cost.sh <USER_ID> <COST> <BILLING_PERIOD_START> <BILLING_PERIOD_END>

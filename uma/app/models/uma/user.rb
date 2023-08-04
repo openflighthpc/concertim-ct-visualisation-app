@@ -46,6 +46,10 @@ module Uma
       allow_blank: true
     validates :billing_period_end, comparison: { greater_than: :billing_period_start },
               unless: -> { billing_period_start.blank? || billing_period_end.blank? }
+    validates :billing_period_start, comparison: { less_than_or_equal_to: Date.current },
+              if: -> { billing_period_start && billing_period_start_changed? }
+    validates :billing_period_end, comparison: { greater_than_or_equal_to: Date.current },
+              if: -> { billing_period_start && billing_period_end_changed? }
     validate :complete_billing_period
 
     ####################################
