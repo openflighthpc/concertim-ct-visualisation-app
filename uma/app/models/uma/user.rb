@@ -41,7 +41,16 @@ module Uma
       uniqueness: true,
       allow_nil: true,
       allow_blank: true
-
+    validates :cost,
+      numericality: { greater_than_or_equal_to: 0 },
+      allow_blank: true
+    validates :billing_period_end, comparison: { greater_than: :billing_period_start },
+              unless: -> { billing_period_start.blank? || billing_period_end.blank? }
+    validates :billing_period_start, comparison: { less_than_or_equal_to: Date.current },
+              if: -> { billing_period_start && billing_period_start_changed? }
+    validates :billing_period_end, comparison: { greater_than_or_equal_to: Date.current },
+              if: -> { billing_period_start && billing_period_end_changed? }
+    validate :complete_billing_period
 
     ####################################
     #
@@ -84,15 +93,22 @@ module Uma
       end
     end
 
-
     ####################################
     #
     # Private Instance Methods
     #
     ####################################
 
+    private
+
     def strip_project_id
       self.project_id = nil if self.project_id.blank?
+    end
+
+    def complete_billing_period
+      unless !!billing_period_start == !!billing_period_end
+        errors.add(:billing_period, 'must have a start date and end date, or neither')
+      end
     end
   end
 end

@@ -22,4 +22,12 @@ module Emma
     end
 
   end
+
+  module Costed
+    extend ActiveSupport::Concern
+
+    def cost
+      "$#{'%.2f' % o.cost}"
+    end
+  end
 end

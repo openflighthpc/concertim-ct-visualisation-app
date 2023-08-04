@@ -11,6 +11,7 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
       expect(parsed_rack["id"]).to eq rack.id
       expect(parsed_rack["name"]).to eq rack.name
       expect(parsed_rack["u_height"]).to eq rack.u_height
+      expect(parsed_rack["cost"]).to eq "$#{'%.2f' % rack.cost}"
     end
 
     it "has the correct owner" do
@@ -225,7 +226,7 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
           expect(parsed_rack["u_height"]).to eq valid_attributes[:rack][:u_height]
           expect(parsed_rack["owner"]["id"]).to eq valid_attributes[:rack][:user_id]
           expect(parsed_rack["metadata"]).to eq valid_attributes[:rack][:metadata]
-          expect(parsed_rack["status"]).to eq valid_attributes[:rack][:status]
+          expect(parsed_rack["cost"]).to eq "$0.00"
         end
       end
 
@@ -271,7 +272,8 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
           rack: {
             u_height: initial_u_height + 2,
             status: 'ACTIVE',
-            metadata: initial_rack_metadata.merge("foo" => "bar")
+            metadata: initial_rack_metadata.merge("foo" => "bar"),
+            cost: 99.99
           }
         }
       }
@@ -279,7 +281,8 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
         {
           rack: {
             u_height: -1,
-            metadata: "should be an object"
+            metadata: "should be an object",
+            cost: -1
           }
         }
       }
@@ -309,6 +312,7 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
           expect(parsed_rack["u_height"]).to eq valid_attributes[:rack][:u_height]
           expect(parsed_rack["metadata"]).to eq valid_attributes[:rack][:metadata]
           expect(parsed_rack["status"]).to eq valid_attributes[:rack][:status]
+          expect(parsed_rack["cost"]).to eq  "$#{'%.2f' % valid_attributes[:rack][:cost]}"
         end
       end
 

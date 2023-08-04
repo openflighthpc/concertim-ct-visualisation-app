@@ -6,6 +6,11 @@ class Api::V1::UsersController < Api::V1::ApplicationController
     render
   end
 
+  def show
+    @user = Api::V1::UserPresenter.new(@user)
+    render
+  end
+
   def current
     authorize! :read, current_user
     @user = Api::V1::UserPresenter.new(current_user)
@@ -14,6 +19,7 @@ class Api::V1::UsersController < Api::V1::ApplicationController
 
   def update
     if @user.update(user_params)
+      @user = Api::V1::UserPresenter.new(@user)
       render action: :show
     else
       render json: @user.errors.as_json, status: :unprocessable_entity
@@ -57,10 +63,7 @@ class Api::V1::UsersController < Api::V1::ApplicationController
   private
 
   def user_params
-    permitted_params = [].tap do |a|
-      a << :project_id if current_user.root?
-      a << :cloud_user_id if current_user.root?
-    end
+    permitted_params = current_user.root? ? [:project_id, :cloud_user_id, :cost, :billing_period_start, :billing_period_end] : []
     params.require(:user).permit(*permitted_params)
   end
 end

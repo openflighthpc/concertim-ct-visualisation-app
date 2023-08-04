@@ -4,6 +4,13 @@ SimpleNavigation::Configuration.run do |navigation|
   navigation.items do |primary|
 
     if user_signed_in?
+      if !current_user.root?
+        user = user_presenter(current_user)
+        primary.item :user_cost, "Total cost so far this billing period: #{user.cost}", nil,
+                     :link_html => {:title => "Current billing period: #{user.billing_period}"},
+                     align: :right
+      end
+
       primary.item :youraccount, "#{current_user.name}", '#',
         align: :right,
         icon: :youraccount,
@@ -25,7 +32,6 @@ SimpleNavigation::Configuration.run do |navigation|
           icon: :racks,
           highlights_on: /\/cloud-env\/(cluster-types|clusters)/
       end
-
     else
       primary.item :login, 'Log in', uma_engine.new_user_session_path,
         icon: :login,

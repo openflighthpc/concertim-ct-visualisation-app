@@ -16,6 +16,7 @@ RSpec.describe Ivy::Device, type: :model do
         chassis: chassis,
         name: 'device-0',
         status: 'IN_PROGRESS',
+        cost: 99.99
       )
       expect(device).to be_valid
     end
@@ -70,6 +71,11 @@ RSpec.describe Ivy::Device, type: :model do
     it "is not vaild with an invalid status" do
       subject.status = "SNAFU"
       expect(subject).to have_error(:status, :inclusion)
+    end
+
+    it "is not valid with a negative cost" do
+      subject.cost = -99
+      expect(subject).to have_error(:cost, :greater_than_or_equal_to)
     end
   end
 end

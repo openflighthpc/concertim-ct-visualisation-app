@@ -347,6 +347,18 @@ $topbar-arrows: true !default; //Set false to remove the triangle icon from the 
                 color: $topbar-link-color-active-hover;
           }
         }
+
+        > span {
+            display: block;
+            width: 100%;
+            color: $topbar-link-color;
+            padding: 12px 0 12px 0;
+            padding-#{$default-float}: $topbar-link-padding;
+            font-family: $topbar-link-font-family;
+            font-size: $topbar-link-font-size;
+            font-weight: $topbar-link-weight;
+            text-transform: $topbar-link-text-transform;
+        }
       }
 
       // Add some extra padding for list items contains buttons
@@ -470,6 +482,12 @@ $topbar-arrows: true !default; //Set false to remove the triangle icon from the 
           li {
             float: $default-float;
             .js-generated { display: none; }
+
+            > span {
+              padding: 0 $topbar-link-padding;
+              line-height: $topbar-height;
+              background: $topbar-link-bg;
+            }
           }
         }
 

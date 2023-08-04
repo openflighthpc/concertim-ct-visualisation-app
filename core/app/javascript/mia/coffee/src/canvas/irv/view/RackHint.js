@@ -64,6 +64,7 @@ class RackHint extends Hint {
       caption = Util.substitutePhrase(caption, 'metric_total', metric_total);
       caption = Util.substitutePhrase(caption, 'metric_value', metric_value);
       caption = Util.substitutePhrase(caption, 'buildStatus', device.buildStatus);
+      caption = Util.substitutePhrase(caption, 'cost', device.cost);
 
       caption = Util.cleanUpSubstitutions(caption);
     } else if (device instanceof Chassis) {
@@ -114,6 +115,7 @@ class RackHint extends Hint {
       caption = Util.substitutePhrase(caption, 'metric_total', metric_total);
       caption = Util.substitutePhrase(caption, 'metric_value', metric_value);
       caption = Util.substitutePhrase(caption, 'buildStatus', device.buildStatus);
+      caption = Util.substitutePhrase(caption, 'cost', device.cost);
 
       caption = Util.cleanUpSubstitutions(caption);
     }

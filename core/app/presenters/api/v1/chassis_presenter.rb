@@ -5,6 +5,11 @@
 #
 module Api::V1
   class ChassisPresenter < Emma::Presenter
+    delegate :id, :name, :facing, :rack_end_u, :rack_start_u, :template, to: :o
+
+    def device
+      @device ||= Api::V1::DevicePresenter.new(o.device)
+    end
 
     #
     # location returns the location of the presented chassis relative to its

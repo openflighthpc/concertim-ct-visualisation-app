@@ -15,7 +15,7 @@ class Api::V1::Irv::RacksController < Api::V1::Irv::BaseController
       # This is the slow and easy to understand method.  We do jump through
       # some hoops to have the output wrapped in `{"Racks": {"Rack": <the rabl
       # template>}}`.
-      @racks = Ivy::HwRack.all
+      @racks = Ivy::HwRack.all.map { |rack| Api::V1::RackPresenter.new(rack) }
       renderer = Rabl::Renderer.new('api/v1/irv/racks/index', @racks, view_path: 'app/views', format: 'hash')
       render json: {Racks: {Rack: renderer.render}}
 
@@ -76,6 +76,7 @@ class Api::V1::Irv::RacksController < Api::V1::Irv::BaseController
 
       # We have a single rack defined.
       fix_images(structure['Racks']['Rack'])
+      structure['Racks']['Rack'] = [structure['Racks']['Rack']]
     end
   end
 

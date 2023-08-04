@@ -19,7 +19,7 @@ class Api::V1::Irv::DevicesController < Api::V1::Irv::BaseController
   def update_slot
     @device     = Ivy::Device.find(params[:id])
     new_slot    = Ivy::Slot.find(params[:slot_id])
-    authorize!:move, @device
+    authorize! :move, @device
 
     begin
       @device = Ivy::DeviceServices::MoveBlade.call(@device, new_slot)

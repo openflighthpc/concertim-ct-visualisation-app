@@ -8,6 +8,8 @@
 # categories, e.g., `device_presenter/location`.
 module Api::V1
   class DevicePresenter < Emma::Presenter
+    include Emma::Costed
+
     # Be selective about what attributes and methods we expose.
     delegate :id, :name, :description, :metadata, :status,
       to: :o

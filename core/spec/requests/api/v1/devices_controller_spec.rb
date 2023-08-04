@@ -13,6 +13,7 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
       expect(parsed_device["id"]).to eq device.id
       expect(parsed_device["name"]).to eq device.name
       expect(parsed_device["metadata"]).to eq device.metadata
+      expect(parsed_device["cost"]).to eq "$#{'%.2f' % device.cost}"
     end
   end
 
@@ -138,6 +139,7 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
             name: device.name + "-updated",
             metadata: device.metadata.merge("kate" => "kate"),
             status: "ACTIVE",
+            cost: 99.99,
           }
         }
       }
@@ -147,6 +149,7 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
             name: "so not valid",
             metadata: "should be an object",
             status: 'not a valid status',
+            cost: -1,
           }
         }
       }
@@ -179,6 +182,7 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
           expect(parsed_device["name"]).to eq valid_attributes[:device][:name]
           expect(parsed_device["metadata"]).to eq valid_attributes[:device][:metadata]
           expect(parsed_device["status"]).to eq valid_attributes[:device][:status]
+          expect(parsed_device["cost"]).to eq "$#{'%.2f' % valid_attributes[:device][:cost]}"
         end
       end
 
