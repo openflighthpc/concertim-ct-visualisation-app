@@ -34,6 +34,11 @@ BODY=$(jq --null-input \
         "metadata": {
           "status": "CREATE_COMPLETED",
           "stack_id": "92927d62-ebcf-4faf-a8ab-4068ca3911f3"
+        },
+        "creation_output": "Creation tasks complete",
+        "network_details": {
+          "id": "abc",
+          "router": "router 66"
         }
     }
 }
