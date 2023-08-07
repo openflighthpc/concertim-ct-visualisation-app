@@ -3,6 +3,7 @@ class Api::V1::DevicesController < Api::V1::ApplicationController
 
   def index
     @devices = @devices.occupying_rack_u.map {|d| Api::V1::DevicePresenter.new(d) }
+    @include_template_details = true
     render
   end
 
@@ -22,6 +23,7 @@ class Api::V1::DevicesController < Api::V1::ApplicationController
 
     if @device.valid? && chassis.valid? && location.valid?
       @device = Api::V1::DevicePresenter.new(@device)
+      @include_template_details = true
       render action: :show
     else
       failed_object = [@device, location, chassis].detect { |o| !o.valid? }
