@@ -38,7 +38,7 @@ BODY=$(jq --null-input \
         "public_ips": "208.65.153.238, 208.65.153.251",
         "ssh_key": "abc123",
         "login_user": "admin",
-        "volume": {
+        "volume_details": {
           "id": "volume1"
         }
     }

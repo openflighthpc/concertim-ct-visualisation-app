@@ -14,5 +14,5 @@ node("Network Details", :unless => lambda { |r| r.network_details.blank? }) do |
 end
 
 node("Creation Output", :unless => lambda { |r| r.creation_output.blank? }) do |rack|
-  rack.creation_output
+  { result: rack.creation_output }
 end

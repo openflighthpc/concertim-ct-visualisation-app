@@ -8,6 +8,7 @@ class Api::V1::Irv::DevicesController < Api::V1::Irv::BaseController
     authorize! :read, @device
 
     error_for('Device') if @device.nil?
+    @device = Api::V1::DevicePresenter.new(@device)
   end
 
   # 

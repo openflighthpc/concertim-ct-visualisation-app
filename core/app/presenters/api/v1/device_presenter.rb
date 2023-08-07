@@ -47,5 +47,9 @@ module Api::V1
       # XXX Consider using a presenter here too.
       o.template
     end
+
+    def has_login_details?
+      public_ips || private_ips || ssh_key || login_user
+    end
   end
 end

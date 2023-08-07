@@ -12,11 +12,13 @@ child :template, root: 'Resources' do
   attribute disk: "Disk (GB)"
 end
 
-attribute "Login" do |device|
-  attribute public_ips: "Public IPs"
-  attribute private_ips: "Private IPs"
-  attribute ssh_key: "SSH Key"
-  attribute login_user: "Login username"
+node("Login", :if => lambda { |d| d.has_login_details? }) do |device|
+  {
+    "Public IPs" => device.public_ips,
+    "Private IPs" => device.private_ips,
+    "SSH Key" => device.ssh_key,
+    "Login username" => device.login_user
+  }
 end
 
 node("Volume Details", :unless => lambda { |d| d.volume_details.blank? }) do |device|
