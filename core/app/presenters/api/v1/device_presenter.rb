@@ -11,8 +11,8 @@ module Api::V1
     include Emma::Costed
 
     # Be selective about what attributes and methods we expose.
-    delegate :id, :name, :description, :metadata, :status,
-      to: :o
+    delegate :id, :name, :description, :metadata, :status, :public_ips, :private_ips,
+             :ssh_key, :login_user, :volume_details, to: :o
 
     # location returns the location of the device.  For devices in simple
     # chassis, the chassis's location is returned. Devices in complex chassis,

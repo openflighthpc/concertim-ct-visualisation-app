@@ -33,6 +33,13 @@ BODY=$(jq --null-input \
         "metadata": {
           "openstack_instance": "8f4e9068-5a39-4717-8a83-6b95e01031eb",
           "status": ["active", "", ""]
+        },
+        "private_ips": "10.0.0.0, 10.255.255.255",
+        "public_ips": "208.65.153.238, 208.65.153.251",
+        "ssh_key": "abc123",
+        "login_user": "admin",
+        "volume": {
+          "id": "volume1"
         }
     }
 }
