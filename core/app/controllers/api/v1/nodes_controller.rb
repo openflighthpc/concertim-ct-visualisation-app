@@ -12,7 +12,7 @@ class Api::V1::NodesController < Api::V1::ApplicationController
     if result.success?
       device = result.chassis.device
       @device = Api::V1::DevicePresenter.new(device)
-      @include_template_details = true
+      @include_full_template_details = true
       render template: 'api/v1/devices/show'
     else
       render json: result.failed_record.errors.details, status: :unprocessable_entity

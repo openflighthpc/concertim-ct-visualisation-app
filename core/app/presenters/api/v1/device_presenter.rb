@@ -48,6 +48,10 @@ module Api::V1
       o.template
     end
 
+    def template_id
+      template.id
+    end
+
     def has_login_details?
       public_ips || private_ips || ssh_key || login_user
     end
