@@ -2049,9 +2049,25 @@ class RackSpace extends CanvasSpace {
 
   requestStatusChange(action, type, id, name) {
     console.log(`Make post request for ${action} for ${type} ${id} (${name})`);
-    console.log(ContextMenu.ACTION_PATHS[type][action]);
+    let target = Util.substitutePhrase(ContextMenu.ACTION_PATHS[type], 'device_id', id);
+    target = Util.substitutePhrase(target, 'action', action);
+    console.log(target);
+    // show some sort of loading message to user
+    // make post request
+    // show result
+    return new Request.JSON({
+      headers    : {'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content')},
+      url: target,
+      method: 'post',
+      onSuccess: this.showSuccess,
+      onFail: null,
+      onError: null
+    }).send();
   }
 
+  showSuccess(result) {
+    console.log(result)
+  }
 
   // creates a selection containing a specific device and (recursively) all of its children and zooms the view on to that device
   // @param  group   the category/id pool to which the device belongs (rack, chassis etc.)

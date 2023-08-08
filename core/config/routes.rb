@@ -64,6 +64,7 @@ Rails.application.routes.draw do
             member do
               get :tooltip
               post :update_slot
+              post :request_status_change
             end
           end
           resources :rackview_presets, only: [:index, :create, :update, :destroy]

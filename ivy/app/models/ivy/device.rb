@@ -13,7 +13,12 @@ module Ivy
     ############################
 
     VALID_STATUSES = %w(IN_PROGRESS FAILED ACTIVE STOPPED)
-
+    VALID_STATUS_ACTION_MAPPINGS = {
+      "IN_PROGRESS" => [],
+      "FAILED" => [],
+      "ACTIVE" => %w(destroy off),
+      "STOPPED" => %w(destroy on)
+    }
 
     ####################################
     #
@@ -110,6 +115,10 @@ module Ivy
 
       # Set metrics to its default unless already set.
       data[:metrics] ||= {}
+    end
+
+    def valid_action?(action)
+      VALID_STATUS_ACTION_MAPPINGS[status].include?(action)
     end
 
 

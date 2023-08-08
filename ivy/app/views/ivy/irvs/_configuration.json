@@ -520,14 +520,8 @@
 
       "actionPaths":
       {
-        "devices":
-        {
-          "off": "/api/v1/devices/[[device_id]]/off",
-          "on": "/api/v1/devices/[[device_id]]/on",
-          "destroy": "/api/v1/devices/[[device_id]]/destroy"
-        }
+        "devices": "/api/v1/irv/devices/[[device_id]]/request_status_change?task=[[action]]"
       }
-
     },
 
     "HINT":

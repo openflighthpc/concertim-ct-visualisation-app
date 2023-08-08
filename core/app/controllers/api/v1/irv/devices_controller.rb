@@ -31,6 +31,20 @@ class Api::V1::Irv::DevicesController < Api::V1::Irv::BaseController
 
   end
 
+  def request_status_change
+    @device = Ivy::Device.find(params[:id])
+    authorize! :update, @device
+
+    action = params[:task] # action is already used as a param by rails
+    unless @device.valid_action?(action)
+      render :json => { success: false, errors: {action: ["cannot perform action '#{action}' on this device"]}}
+      return
+    end
+
+    # replace below with result of a new job
+    render :json => { success: true }
+  end
+
   private
 
   #
