@@ -2055,18 +2055,41 @@ class RackSpace extends CanvasSpace {
     // show some sort of loading message to user
     // make post request
     // show result
-    return new Request.JSON({
-      headers    : {'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content')},
-      url: target,
-      method: 'post',
-      onSuccess: this.showSuccess,
-      onFail: null,
-      onError: null
-    }).send();
+    fetch(target, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content')
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        this.updateRequestFlash(data, action, type, name);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      }
+    );
   }
 
-  showSuccess(result) {
-    console.log(result)
+  updateRequestFlash(result, action, recordType, name) {
+    const template = document.getElementById('flash-template');
+    let newFlash = template.clone();
+    let type = result.success ? "info" : "alert";
+    newFlash.id = `${type}Container`;
+    if (!result.success) {
+      newFlash.removeClass('info');
+      newFlash.addClass('alert');
+    }
+    const capitalizedAction = action.charAt(0).toUpperCase() + action.slice(1);
+    let content = "";
+    if (result.success) {
+      content = `${capitalizedAction} request submitted for ${recordType.slice(0, -1)} ${name}`;
+    } else {
+      content = `${capitalizedAction} request failed for ${recordType.slice(0, -1)} ${name}: ${result.errors.join('; ')}`;
+    }
+    newFlash.getElementsByClassName('flash-content')[0].innerHTML = content;
+    document.getElementById('flash-messages').append(newFlash);
   }
 
   // creates a selection containing a specific device and (recursively) all of its children and zooms the view on to that device

@@ -12,10 +12,11 @@ class FlashCell < Cell::ViewModel
 
   attr_reader :level, :content
 
-  def show(context, level, text=nil, help_text=nil)
+  def show(context, level, text=nil, help_text=nil, hidden=false)
     check_level(level) if Rails.env.development?
     @context    = context
     @level      = level
+    @hidden     = hidden
     @content    = generate_flash_content(level, text, help_text)
     render
   end
