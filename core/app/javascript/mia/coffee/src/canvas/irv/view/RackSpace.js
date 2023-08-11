@@ -2049,7 +2049,8 @@ class RackSpace extends CanvasSpace {
 
   requestStatusChange(action, type, id, name) {
     console.log(`Make post request for ${action} for ${type} ${id} (${name})`);
-    let target = Util.substitutePhrase(ContextMenu.ACTION_PATHS[type], 'device_id', id);
+    const typeName = type.slice(0, -1);
+    let target = Util.substitutePhrase(ContextMenu.ACTION_PATHS[type], `${typeName}_id`, id);
     target = Util.substitutePhrase(target, 'action', action);
     console.log(target);
     // show some sort of loading message to user

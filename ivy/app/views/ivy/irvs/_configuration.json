@@ -473,6 +473,21 @@
           {
             "caption" : "Focus",
             "url"     : "internal::focusOn,racks,[[rack_id]]"
+          },
+          {
+            "caption" : "Switch all off",
+            "url"     : "internal::statusChangeRequest,off,racks,[[rack_id]],[[rack_name]]",
+            "availableToBuildStatuses": ["ACTIVE"]
+          },
+          {
+            "caption" : "Switch all on",
+            "url"     : "internal::statusChangeRequest,on,racks,[[rack_id]],[[rack_name]]",
+            "availableToBuildStatuses": ["STOPPED"]
+          },
+          {
+            "caption" : "Destroy",
+            "url"     : "internal::statusChangeRequest,destroy,racks,[[rack_id]],[[rack_name]]",
+            "availableToBuildStatuses": ["STOPPED", "ACTIVE"]
           }
         ],
 
@@ -520,7 +535,8 @@
 
       "actionPaths":
       {
-        "devices": "/api/v1/irv/devices/[[device_id]]/request_status_change?task=[[action]]"
+        "devices": "/api/v1/irv/devices/[[device_id]]/request_status_change?task=[[action]]",
+        "racks": "/api/v1/irv/racks/[[rack_id]]/request_status_change?task=[[action]]"
       }
     },
 

@@ -68,14 +68,13 @@ class Ivy::RequestDeviceStatusChangeJob < ApplicationJob
             password: @user.fixme_encrypt_this_already_plaintext_password,
             project_id: @user.project_id
           },
-        device_id: @device.id,
         action: @action
       }
     end
 
     # tbd, once added to Concertim Openstack Service
     def url
-      "http://10.0.2.2:5000"
+      "http://10.151.0.184:42356/update_status/devices/#{@device.id}"
     end
 
     def error_description
