@@ -2068,7 +2068,7 @@ class RackSpace extends CanvasSpace {
         this.updateRequestFlash(data, action, type, name);
       })
       .catch(error => {
-        console.error('Error:', error);
+        this.updateRequestFlash({success: false, errors: [`Unknown server error`]}, action, type, name);
       }
     );
   }

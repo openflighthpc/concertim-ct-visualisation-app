@@ -121,6 +121,10 @@ module Ivy
       VALID_STATUS_ACTION_MAPPINGS[status].include?(action)
     end
 
+    def openstack_instance_id
+      metadata['openstack_instance']
+    end
+
 
     ############################
     #

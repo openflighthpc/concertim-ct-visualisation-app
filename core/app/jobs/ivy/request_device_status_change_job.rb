@@ -53,8 +53,13 @@ class Ivy::RequestDeviceStatusChangeJob < ApplicationJob
       end
 
       Result.new(true, nil)
-    rescue Faraday::Error
-      Result.new(false, "#{error_description}: #{$!.message}")
+    rescue Faraday::Error => e
+      error_message = e.message
+      if e.response && e.response[:body] && e.response[:headers]['content-type']&.include?('application/json')
+        message = JSON.parse(e.response[:body])["message"]
+        error_message = message if message
+      end
+      Result.new(false, "#{error_description}: #{error_message}")
     end
 
     private
@@ -74,7 +79,7 @@ class Ivy::RequestDeviceStatusChangeJob < ApplicationJob
 
     # tbd, once added to Concertim Openstack Service
     def url
-      "http://10.151.0.184:42356/update_status/devices/#{@device.id}"
+      "#{@fleece_config.user_handler_base_url}/update_status/devices/#{@device.openstack_instance_id}"
     end
 
     def error_description
