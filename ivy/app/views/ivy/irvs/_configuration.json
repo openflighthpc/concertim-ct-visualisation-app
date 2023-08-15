@@ -522,9 +522,19 @@
             "availableToBuildStatuses": ["STOPPED"]
           },
           {
+            "caption" : "Suspend",
+            "url"     : "internal::statusChangeRequest,suspend,devices,[[device_id]],[[device_name]]",
+            "availableToBuildStatuses": ["ACTIVE"]
+          },
+          {
+            "caption" : "Resume",
+            "url"     : "internal::statusChangeRequest,resume,devices,[[device_id]],[[device_name]]",
+            "availableToBuildStatuses": ["SUSPENDED"]
+          },
+          {
             "caption" : "Destroy",
             "url"     : "internal::statusChangeRequest,destroy,devices,[[device_id]],[[device_name]]",
-            "availableToBuildStatuses": ["STOPPED", "ACTIVE"]
+            "availableToBuildStatuses": ["STOPPED", "ACTIVE", "SUSPENDED"]
           }
         ],
 

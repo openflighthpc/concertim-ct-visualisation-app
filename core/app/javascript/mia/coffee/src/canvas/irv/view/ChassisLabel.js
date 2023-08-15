@@ -15,6 +15,7 @@ class ChassisLabel extends NameLabel {
     IN_PROGRESS: 'orange',
     ACTIVE: 'green',
     FAILED: 'red',
+    SUSPENDED: "blue",
   };
 
   static buildStatusImage(buildStatus) {
@@ -73,5 +74,6 @@ AssetManager.get("/images/irv/tmp/inline-loading.gif", (img) => { ChassisLabel.D
 AssetManager.get("/images/irv/tmp/inline-loading.gif", (img) => { ChassisLabel.BUILD_STATE_IMAGES['IN_PROGRESS'] = img; });
 AssetManager.get("/images/irv/tmp/green-tick.png", (img) => { ChassisLabel.BUILD_STATE_IMAGES['ACTIVE'] = img; });
 AssetManager.get("/images/irv/tmp/red-cross.png", (img) => { ChassisLabel.BUILD_STATE_IMAGES['FAILED'] = img; });
+AssetManager.get("/images/irv/tmp/pause.png", (img) => { ChassisLabel.BUILD_STATE_IMAGES['SUSPENDED'] = img; });
 
 export default ChassisLabel;
