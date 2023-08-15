@@ -54,7 +54,7 @@ class Api::V1::Irv::DevicesController < Api::V1::Irv::BaseController
       return
     end
 
-    result = Ivy::RequestDeviceStatusChangeJob.perform_now(@device, action, @config, current_user)
+    result = Ivy::RequestStatusChangeJob.perform_now(@device, "devices", action, @config, current_user)
 
     if result.success?
       render json: { success: true }

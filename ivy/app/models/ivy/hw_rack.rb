@@ -17,7 +17,12 @@ module Ivy
     DEFAULT_TEMPLATE_ID = 1
     SPACE_USED_METRIC_KEY = 'ct.capacity.rack.space_used'
     VALID_STATUSES = %w(IN_PROGRESS FAILED ACTIVE STOPPED)
-
+    VALID_STATUS_ACTION_MAPPINGS = {
+      "IN_PROGRESS" => [],
+      "FAILED" => [],
+      "ACTIVE" => %w(destroy suspend),
+      "STOPPED" => %w(destroy resume)
+    }
 
     ############################
     #
@@ -108,6 +113,20 @@ module Ivy
 
     def self.get_canvas_config
       JSON.parse(File.read(Engine.root.join("app/views/ivy/racks/_configuration.json")))
+    end
+
+    ############################
+    #
+    # Instance Methods
+    #
+    ############################
+
+    def valid_action?(action)
+      VALID_STATUS_ACTION_MAPPINGS[status].include?(action)
+    end
+
+    def openstack_id
+      metadata["stack_id"]
     end
 
     ############################

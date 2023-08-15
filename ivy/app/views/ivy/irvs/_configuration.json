@@ -475,13 +475,13 @@
             "url"     : "internal::focusOn,racks,[[rack_id]]"
           },
           {
-            "caption" : "Switch all off",
-            "url"     : "internal::statusChangeRequest,off,racks,[[rack_id]],[[rack_name]]",
+            "caption" : "Suspend",
+            "url"     : "internal::statusChangeRequest,suspend,racks,[[rack_id]],[[rack_name]]",
             "availableToBuildStatuses": ["ACTIVE"]
           },
           {
-            "caption" : "Switch all on",
-            "url"     : "internal::statusChangeRequest,on,racks,[[rack_id]],[[rack_name]]",
+            "caption" : "Resume",
+            "url"     : "internal::statusChangeRequest,resume,racks,[[rack_id]],[[rack_name]]",
             "availableToBuildStatuses": ["STOPPED"]
           },
           {

@@ -1,11 +1,12 @@
 require 'faraday'
 
-class Ivy::RequestDeviceStatusChangeJob < ApplicationJob
+class Ivy::RequestStatusChangeJob < ApplicationJob
   queue_as :default
 
-  def perform(device, action, fleece_config, user, **options)
+  def perform(target, type, action, fleece_config, user, **options)
     runner = Runner.new(
-      device: device,
+      target: target,
+      type: type,
       action: action,
       user: user,
       fleece_config: fleece_config,
@@ -34,16 +35,17 @@ class Ivy::RequestDeviceStatusChangeJob < ApplicationJob
 
   class Runner < Emma::Faraday::JobRunner
 
-    def initialize(device:, action:, user:, **kwargs)
-      @device = device
+    def initialize(target:, type:, action:, user:, **kwargs)
+      @target = target
+      @type = type
       @action = action
       @user = user
       super(**kwargs)
     end
 
     def call
-      unless @device.valid_action?(@action)
-        return Result.new(false, "#{@action} is not a valid action for #{@device.name}")
+      unless @target.valid_action?(@action)
+        return Result.new(false, "#{@action} is not a valid action for #{@target.name}")
       end
 
       response = connection.post(url, body)
@@ -79,7 +81,7 @@ class Ivy::RequestDeviceStatusChangeJob < ApplicationJob
 
     # tbd, once added to Concertim Openstack Service
     def url
-      "#{@fleece_config.user_handler_base_url}/update_status/devices/#{@device.openstack_instance_id}"
+      "#{@fleece_config.user_handler_base_url}/update_status/#{@type}/#{@target.openstack_id}"
     end
 
     def error_description

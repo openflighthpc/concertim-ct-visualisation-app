@@ -44,6 +44,7 @@ Rails.application.routes.draw do
           resources :racks, only: [:index] do
             member do
               get :tooltip
+              post :request_status_change
             end
             collection do 
               get :modified
