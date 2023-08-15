@@ -1977,7 +1977,9 @@ class RackSpace extends CanvasSpace {
       case 'focusOn':
         return this.focusOn(params[1], params[2]);
       case 'statusChangeRequest':
-        return this.requestStatusChange(params[1], params[2], params[3], params[4]);
+        if (params[1] !== 'destroy' || confirm(`Are you sure you want to destroy ${params[4]}? This cannot be undone.`)) {
+          return this.requestStatusChange(params[1], params[2], params[3], params[4]);
+        }
       case 'reset':
         return Events.dispatchEvent(this.rackEl, 'rackSpaceReset');
       case 'clearDeselected':
@@ -2048,14 +2050,9 @@ class RackSpace extends CanvasSpace {
   }
 
   requestStatusChange(action, type, id, name) {
-    console.log(`Make post request for ${action} for ${type} ${id} (${name})`);
     const typeName = type.slice(0, -1);
     let target = Util.substitutePhrase(ContextMenu.ACTION_PATHS[type], `${typeName}_id`, id);
     target = Util.substitutePhrase(target, 'action', action);
-    console.log(target);
-    // show some sort of loading message to user
-    // make post request
-    // show result
     fetch(target, {
       method: 'POST',
       headers: {
