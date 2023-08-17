@@ -41,7 +41,7 @@ class Api::V1::Irv::DevicesController < Api::V1::Irv::BaseController
       return
     end
 
-    unless current_user.project_id
+    unless current_user.project_id || current_user.root?
       render json: {
         success: false, errors: ["You do not yet have a project id. This will be added automatically shortly"]
       }, status: 403
