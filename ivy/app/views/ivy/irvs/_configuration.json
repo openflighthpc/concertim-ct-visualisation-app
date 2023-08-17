@@ -471,20 +471,6 @@
             "content" : "<h1>Rack [[rack_name]]</h1>"
           },
           {
-            "caption" : "Focus",
-            "url"     : "internal::focusOn,racks,[[rack_id]]"
-          },
-          {
-            "caption" : "Suspend",
-            "url"     : "internal::statusChangeRequest,suspend,racks,[[rack_id]],[[rack_name]]",
-            "availableToBuildStatuses": ["ACTIVE"]
-          },
-          {
-            "caption" : "Resume",
-            "url"     : "internal::statusChangeRequest,resume,racks,[[rack_id]],[[rack_name]]",
-            "availableToBuildStatuses": ["STOPPED"]
-          },
-          {
             "caption" : "Destroy",
             "url"     : "internal::statusChangeRequest,destroy,racks,[[rack_id]],[[rack_name]]",
             "availableToBuildStatuses": ["STOPPED", "ACTIVE"]
