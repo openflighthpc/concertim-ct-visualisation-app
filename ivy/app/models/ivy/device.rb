@@ -12,8 +12,14 @@ module Ivy
     #
     ############################
 
-    VALID_STATUSES = %w(IN_PROGRESS FAILED ACTIVE STOPPED)
-
+    VALID_STATUSES = %w(IN_PROGRESS FAILED ACTIVE STOPPED SUSPENDED)
+    VALID_STATUS_ACTION_MAPPINGS = {
+      "IN_PROGRESS" => [],
+      "FAILED" => [],
+      "ACTIVE" => %w(destroy off suspend),
+      "STOPPED" => %w(destroy on),
+      "SUSPENDED" => %w(destroy resume)
+    }
 
     ####################################
     #
@@ -110,6 +116,14 @@ module Ivy
 
       # Set metrics to its default unless already set.
       data[:metrics] ||= {}
+    end
+
+    def valid_action?(action)
+      VALID_STATUS_ACTION_MAPPINGS[status].include?(action)
+    end
+
+    def openstack_id
+      metadata['openstack_instance']
     end
 
 

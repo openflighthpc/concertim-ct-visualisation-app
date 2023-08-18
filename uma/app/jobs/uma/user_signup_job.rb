@@ -45,7 +45,7 @@ class Uma::UserSignupJob < Uma::ApplicationJob
     private
 
     def url
-      @fleece_config.user_handler_url
+      "#{@fleece_config.user_handler_base_url}/create_user_project"
     end
 
     def body

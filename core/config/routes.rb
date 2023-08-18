@@ -44,6 +44,7 @@ Rails.application.routes.draw do
           resources :racks, only: [:index] do
             member do
               get :tooltip
+              post :request_status_change
             end
             collection do 
               get :modified
@@ -64,6 +65,7 @@ Rails.application.routes.draw do
             member do
               get :tooltip
               post :update_slot
+              post :request_status_change
             end
           end
           resources :rackview_presets, only: [:index, :create, :update, :destroy]

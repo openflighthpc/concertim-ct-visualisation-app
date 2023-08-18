@@ -1,3 +1,7 @@
-<% flash.keys.each do |level| %>
-  <%= flash_box(level) %>
-<% end %>
+<div id="flash-messages">
+  <% flash.keys.each do |level| %>
+    <%= flash_box(level) %>
+  <% end %>
+
+  <%= flash_box("info", nil, nil, true) %>
+</div>

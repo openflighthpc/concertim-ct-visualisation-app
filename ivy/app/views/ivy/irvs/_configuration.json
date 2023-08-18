@@ -471,8 +471,9 @@
             "content" : "<h1>Rack [[rack_name]]</h1>"
           },
           {
-            "caption" : "Focus",
-            "url"     : "internal::focusOn,racks,[[rack_id]]"
+            "caption" : "Destroy",
+            "url"     : "internal::statusChangeRequest,destroy,racks,[[rack_id]],[[rack_name]]",
+            "availableToBuildStatuses": ["STOPPED", "ACTIVE"]
           }
         ],
 
@@ -495,12 +496,43 @@
           {
             "caption" : "Focus",
             "url"     : "internal::focusOn,devices,[[device_id]]"
+          },
+          {
+            "caption" : "Switch off",
+            "url"     : "internal::statusChangeRequest,off,devices,[[device_id]],[[device_name]]",
+            "availableToBuildStatuses": ["ACTIVE"]
+          },
+          {
+            "caption" : "Switch on",
+            "url"     : "internal::statusChangeRequest,on,devices,[[device_id]],[[device_name]]",
+            "availableToBuildStatuses": ["STOPPED"]
+          },
+          {
+            "caption" : "Suspend",
+            "url"     : "internal::statusChangeRequest,suspend,devices,[[device_id]],[[device_name]]",
+            "availableToBuildStatuses": ["ACTIVE"]
+          },
+          {
+            "caption" : "Resume",
+            "url"     : "internal::statusChangeRequest,resume,devices,[[device_id]],[[device_name]]",
+            "availableToBuildStatuses": ["SUSPENDED"]
+          },
+          {
+            "caption" : "Destroy",
+            "url"     : "internal::statusChangeRequest,destroy,devices,[[device_id]],[[device_name]]",
+            "availableToBuildStatuses": ["STOPPED", "ACTIVE", "SUSPENDED"]
           }
         ],
 
         "common":
         [
         ]
+      },
+
+      "actionPaths":
+      {
+        "devices": "/api/v1/irv/devices/[[device_id]]/request_status_change?task=[[action]]",
+        "racks": "/api/v1/irv/racks/[[rack_id]]/request_status_change?task=[[action]]"
       }
     },
 

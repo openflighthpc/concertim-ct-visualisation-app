@@ -3,7 +3,7 @@ FactoryBot.define do
     sequence(:name) { |n| "Rack-#{n}" }
     u_height { 40 }
     u_depth { 2 }
-    metadata { {} }
+    metadata { {stack_id: "abc123"} }
     status { 'IN_PROGRESS' }
 
     association :user

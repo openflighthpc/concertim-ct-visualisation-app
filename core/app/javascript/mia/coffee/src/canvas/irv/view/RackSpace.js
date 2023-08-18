@@ -1976,6 +1976,10 @@ class RackSpace extends CanvasSpace {
     switch (params[0]) {
       case 'focusOn':
         return this.focusOn(params[1], params[2]);
+      case 'statusChangeRequest':
+        if (params[1] !== 'destroy' || confirm(`Are you sure you want to destroy ${params[4]}? This cannot be undone.`)) {
+          return this.requestStatusChange(params[1], params[2], params[3], params[4]);
+        }
       case 'reset':
         return Events.dispatchEvent(this.rackEl, 'rackSpaceReset');
       case 'clearDeselected':
@@ -2045,6 +2049,46 @@ class RackSpace extends CanvasSpace {
     })();
   }
 
+  requestStatusChange(action, type, id, name) {
+    const typeName = type.slice(0, -1);
+    let target = Util.substitutePhrase(ContextMenu.ACTION_PATHS[type], `${typeName}_id`, id);
+    target = Util.substitutePhrase(target, 'action', action);
+    fetch(target, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content')
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        this.updateRequestFlash(data, action, type, name);
+      })
+      .catch(error => {
+        this.updateRequestFlash({success: false, errors: [`Unknown server error`]}, action, type, name);
+      }
+    );
+  }
+
+  updateRequestFlash(result, action, recordType, name) {
+    const template = document.getElementById('flash-template');
+    let newFlash = template.clone();
+    let type = result.success ? "info" : "alert";
+    newFlash.id = `${type}Container`;
+    if (!result.success) {
+      newFlash.removeClass('info');
+      newFlash.addClass('alert');
+    }
+    const capitalizedAction = action.charAt(0).toUpperCase() + action.slice(1);
+    let content = "";
+    if (result.success) {
+      content = `${capitalizedAction} request submitted for ${recordType.slice(0, -1)} ${name}`;
+    } else {
+      content = `${capitalizedAction} request failed for ${recordType.slice(0, -1)} ${name}: ${result.errors.join('; ')}`;
+    }
+    newFlash.getElementsByClassName('flash-content')[0].innerHTML = content;
+    document.getElementById('flash-messages').append(newFlash);
+  }
 
   // creates a selection containing a specific device and (recursively) all of its children and zooms the view on to that device
   // @param  group   the category/id pool to which the device belongs (rack, chassis etc.)

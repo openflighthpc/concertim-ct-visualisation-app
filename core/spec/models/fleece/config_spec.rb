@@ -81,10 +81,10 @@ RSpec.describe Fleece::Config, type: :model do
     end
   end
 
-  describe "user_handler_url" do
+  describe "user_handler_base_url" do
     it "is as expected" do
-      expected_url = "#{subject.host_url[0...-5]}:#{subject.user_handler_port}/create_user_project"
-      expect(subject.user_handler_url).to eq expected_url
+      expected_url = "#{subject.host_url[0...-5]}:#{subject.user_handler_port}"
+      expect(subject.user_handler_base_url).to eq expected_url
     end
   end
 

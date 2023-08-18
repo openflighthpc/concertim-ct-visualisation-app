@@ -1,5 +1,5 @@
-<div class="alert-box <%= @level %>" data-alert="true" id="<%= "#{@level}Container" %>">
+<div class="alert-box <%= @level %>" data-alert="true" id="<%= @hidden ? 'flash-template' : "#{@level}Container" %>">
   <span class="icon-info"></span>
-  <%= @content %>
+  <span class="flash-content"><%= @content %></span>
   <a class="close" href="#">&times;</a>
 </div>

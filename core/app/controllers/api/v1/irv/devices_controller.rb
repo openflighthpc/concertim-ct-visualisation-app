@@ -31,6 +31,38 @@ class Api::V1::Irv::DevicesController < Api::V1::Irv::BaseController
 
   end
 
+  def request_status_change
+    @device = Ivy::Device.find(params[:id])
+    authorize! :update, @device
+
+    @config = Fleece::Config.last
+    if @config.nil?
+      render json: { success: false, errors: ["No cloud configuration has been set. Please contact an admin"] }, status: 403
+      return
+    end
+
+    unless current_user.project_id || current_user.root?
+      render json: {
+        success: false, errors: ["You do not yet have a project id. This will be added automatically shortly"]
+      }, status: 403
+      return
+    end
+
+    action = params["task"] # action is already used as a param by rails
+    unless @device.valid_action?(action)
+      render json: { success: false, errors: ["cannot perform action '#{action}' on this device"]}, status: 400
+      return
+    end
+
+    result = Ivy::RequestStatusChangeJob.perform_now(@device, "devices", action, @config, current_user)
+
+    if result.success?
+      render json: { success: true }
+    else
+      render json: { success: false, errors: [result.error_message] }, status: 400
+    end
+  end
+
   private
 
   #
