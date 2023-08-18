@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_07_102710) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_18_133856) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -31,6 +31,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_07_102710) do
   connection.execute "CREATE SEQUENCE meca.rackview_presets_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
   connection.execute "CREATE SEQUENCE public.fleece_cluster_types_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
   connection.execute "CREATE SEQUENCE public.fleece_configs_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
+  connection.execute "CREATE SEQUENCE public.fleece_key_pairs_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
   connection.execute "CREATE SEQUENCE uma.users_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
 
   create_table "ivy.base_chassis", id: :bigint, default: -> { "nextval('base_chassis_id_seq'::regclass)" }, force: :cascade do |t|
@@ -162,6 +163,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_07_102710) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "fleece_key_pairs", id: :bigint, default: -> { "nextval('fleece_key_pairs_id_seq'::regclass)" }, force: :cascade do |t|
+    t.string "name", limit: 255, null: false
+    t.string "key_type", limit: 255, null: false
+    t.text "private_key", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_fleece_key_pairs_on_user_id"
+  end
+
   create_table "good_job_batches", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -256,4 +267,5 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_07_102710) do
   add_foreign_key "ivy.locations", "racks", on_update: :cascade, on_delete: :restrict
   add_foreign_key "ivy.racks", "templates", on_update: :cascade, on_delete: :restrict
   add_foreign_key "ivy.racks", "users", on_update: :cascade, on_delete: :restrict
+  add_foreign_key "fleece_key_pairs", "users", on_update: :cascade, on_delete: :restrict
 end

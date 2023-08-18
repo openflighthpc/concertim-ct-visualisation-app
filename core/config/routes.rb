@@ -22,6 +22,12 @@ Rails.application.routes.draw do
     end
   end
 
+  scope module: :fleece do
+    resources :users, only: [] do
+      resources :key_pairs, only: [:new, :create]
+    end
+  end
+
   # API routes
   #
   # Some of these have been done in a non-railsy way (you have "posts" where you should have 

@@ -1,0 +1,26 @@
+<%= form_for(@key_pair, url: user_key_pairs_path) do |f| %>
+
+  <% if @key_pair.errors.any? %>
+    <div id="error_explanation">
+      <h2>There <%= "#{@key_pair.errors.count == 1 ? 'is' : 'are'}" %> <%= pluralize(@key_pair.errors.count, "error") %>:</h2>
+   
+      <ul>
+      <% @key_pair.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="formItem">
+    <%= f.label :name, "Key name", class: 'required_field' %>
+    <%= f.text_field :name, autocomplete: :off %>
+  </div>
+
+  <div class="formItem">
+    <%= f.label :key_type, "Key type", class: 'required_field' %>
+    <%= f.select :key_type, ["SSH Key", "X509 Certificate"] %>
+  </div>
+
+  <%= f.submit 'Create' %>
+<% end %>
