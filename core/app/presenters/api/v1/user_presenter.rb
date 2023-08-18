@@ -7,7 +7,7 @@ module Api::V1
     include Emma::Costed
 
     # Be selective about what attributes and methods we expose.
-    delegate :id, :login, :name, :cloud_user_id, :project_id, :root?,
+    delegate :id, :login, :name, :email, :cloud_user_id, :project_id, :root?,
              :billing_period_start, :billing_period_end,
              to: :o
 

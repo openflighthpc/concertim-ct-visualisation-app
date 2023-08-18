@@ -14,6 +14,11 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
       expect(parsed_device["name"]).to eq device.name
       expect(parsed_device["metadata"]).to eq device.metadata
       expect(parsed_device["cost"]).to eq "$#{'%.2f' % device.cost}"
+      if full_template_details
+        expect(parsed_device["template"]["id"]).to eq device_template.id
+      else
+        expect(parsed_device["template_id"]).to eq device_template.id
+      end
     end
   end
 
@@ -21,6 +26,7 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
     let(:url_under_test) { urls.api_v1_devices_path }
     let(:parsed_body) { JSON.parse(response.body) }
     let(:parsed_devices) { parsed_body }
+    let(:full_template_details) { false }
 
     context "when not logged in" do
       let(:rack_owner) { create(:user) }
@@ -93,7 +99,7 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
     let!(:device) { create(:device, chassis: chassis) }
     let(:chassis) { create(:chassis, template: device_template, location: location) }
     let(:location) { create(:location, rack: rack) }
-
+    let(:full_template_details) { true }
 
     context "when not logged in" do
       let(:rack_owner) { create(:user) }
@@ -131,6 +137,7 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
     let!(:device) { create(:device, chassis: chassis) }
     let(:chassis) { create(:chassis, template: device_template, location: location) }
     let(:location) { create(:location, rack: rack) }
+    let(:full_template_details) { true }
 
     shared_examples "authorized user updating device" do
       let(:valid_attributes) {
@@ -140,6 +147,11 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
             metadata: device.metadata.merge("kate" => "kate"),
             status: "ACTIVE",
             cost: 99.99,
+            public_ips: "1.1.1.1",
+            private_ips: "2.2.2.2",
+            ssh_key: "abc",
+            login_user: "Billy Bob",
+            volume_details: { id: "abc" }
           }
         }
       }
@@ -183,6 +195,12 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
           expect(parsed_device["metadata"]).to eq valid_attributes[:device][:metadata]
           expect(parsed_device["status"]).to eq valid_attributes[:device][:status]
           expect(parsed_device["cost"]).to eq "$#{'%.2f' % valid_attributes[:device][:cost]}"
+          expect(parsed_device["public_ips"]).to eq valid_attributes[:device][:public_ips]
+          expect(parsed_device["private_ips"]).to eq valid_attributes[:device][:private_ips]
+          expect(parsed_device["ssh_key"]).to eq valid_attributes[:device][:ssh_key]
+          expect(parsed_device["login_user"]).to eq valid_attributes[:device][:login_user]
+          expect(parsed_device["volume_details"]["id"]).to eq valid_attributes[:device][:volume_details][:id]
+          expect(parsed_device["template"]["id"]).to eq device_template.id
         end
       end
 

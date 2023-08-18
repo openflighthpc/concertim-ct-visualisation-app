@@ -58,6 +58,7 @@ class Uma::UserSignupJob < Uma::ApplicationJob
         },
         username: @user.login,
         password: @user.fixme_encrypt_this_already_plaintext_password,
+        email: @user.email
       }.tap do |h|
           h[:cloud_user_id] = @user.cloud_user_id unless @user.cloud_user_id.blank?
           h[:project_id] = @user.project_id unless @user.project_id.blank?

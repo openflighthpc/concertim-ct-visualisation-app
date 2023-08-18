@@ -30,6 +30,12 @@ RSpec.describe "Api::V1::NodesControllers", type: :request do
               start_u: 1,
               facing: 'f',
             },
+            cost: 77.77,
+            public_ips: "1.1.1.1, 2.2.2.2",
+            private_ips: "3.3.3.3, 4.4.4.4",
+            ssh_key: "abc",
+            login_user: "Billy Bob",
+            volume_details: {id: "abc"},
             metadata: { "foo" => "bar", "baz" => "qux" },
             status: 'IN_PROGRESS',
           }
@@ -80,6 +86,13 @@ RSpec.describe "Api::V1::NodesControllers", type: :request do
           expect(parsed_device["location"]).to eq expected_location
           expect(parsed_device["metadata"]).to eq valid_attributes[:device][:metadata]
           expect(parsed_device["status"]).to eq valid_attributes[:device][:status]
+          expect(parsed_device["template"]["id"]).to eq valid_attributes[:template_id]
+          expect(parsed_device["cost"]).to eq "$#{'%.2f' % valid_attributes[:device][:cost]}"
+          expect(parsed_device["public_ips"]).to eq valid_attributes[:device][:public_ips]
+          expect(parsed_device["private_ips"]).to eq valid_attributes[:device][:private_ips]
+          expect(parsed_device["ssh_key"]).to eq valid_attributes[:device][:ssh_key]
+          expect(parsed_device["login_user"]).to eq valid_attributes[:device][:login_user]
+          expect(parsed_device["volume_details"]["id"]).to eq valid_attributes[:device][:volume_details][:id]
         end
       end
 

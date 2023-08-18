@@ -30,6 +30,10 @@ RSpec.describe Uma::UserSignupJob, type: :job do
       expect(subject["password"]).to eq user.password
     end
 
+    it "contains the user's email address" do
+      expect(subject["email"]).to eq user.email
+    end
+
     context "when the user has a project id" do
       let(:user) { create(:user, project_id: Faker::Internet.uuid) }
 

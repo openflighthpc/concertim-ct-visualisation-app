@@ -8,7 +8,7 @@ class Api::V1::DevicesController < Api::V1::ApplicationController
 
   def show
     @device = Api::V1::DevicePresenter.new(@device)
-    @include_template_details = true
+    @include_full_template_details = true
     render
   end
 
@@ -22,6 +22,7 @@ class Api::V1::DevicesController < Api::V1::ApplicationController
 
     if @device.valid? && chassis.valid? && location.valid?
       @device = Api::V1::DevicePresenter.new(@device)
+      @include_full_template_details = true
       render action: :show
     else
       failed_object = [@device, location, chassis].detect { |o| !o.valid? }
@@ -52,7 +53,9 @@ class Api::V1::DevicesController < Api::V1::ApplicationController
     end
   end
 
-  PERMITTED_PARAMS = ["name", "description", "status", "cost", "location" => %w[rack_id start_u facing]] << {metadata: {}}
+  PERMITTED_PARAMS = [
+    "name", "description", "status", "cost", "public_ips", "private_ips", "ssh_key", "login_user", "location" => %w[rack_id start_u facing]
+  ] << {metadata: {}, volume_details: {}}
   def permitted_params
     params.require(:device).permit(*PERMITTED_PARAMS)
   end
