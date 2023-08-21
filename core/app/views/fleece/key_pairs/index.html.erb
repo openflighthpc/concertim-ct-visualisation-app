@@ -1,0 +1,12 @@
+<% set_title 'Your Key Pairs' -%>
+
+<p>Your key-pairs</p>
+<ul>
+  <% @key_pairs.each do |key_pair| %>
+    <li><%= key_pair.name %>: <%= key_pair.key_type %></li>
+  <% end %>
+</ul>
+
+<div>
+  <a href=<%= new_key_pair_path %>>+ Create new key-pair</a>
+</div>

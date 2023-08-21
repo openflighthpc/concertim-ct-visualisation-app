@@ -1,7 +1,7 @@
 class Fleece::KeyPairsController < ApplicationController
   def new
     authorize! :create, Fleece::KeyPair
-    @user = Uma::User.find(params[:user_id])
+    @user = current_user
     @config = Fleece::Config.first
     if @config.nil?
       flash[:alert] = "Unable to create key pairs: cloud environment config not set"
@@ -11,10 +11,20 @@ class Fleece::KeyPairsController < ApplicationController
     @key_pair = Fleece::KeyPair.new(user: @user)
   end
 
+  def index
+    @config = Fleece::Config.first
+    # at the moment this job does not work due to an error with openstack
+    # result = Fleece::GetUserKeyPairsJob.perform_now(@config, current_user)
+    # if result.success?
+    #   @key_pairs = result.key_pairs
+    # end
+    @key_pairs = current_user.key_pairs
+  end
+
   def create
     authorize! :create, Fleece::KeyPair
     @config = Fleece::Config.first
-    @user = Uma::User.find(params[:user_id])
+    @user = current_user
     @key_pair = @key_pair = Fleece::KeyPair.new(user: @user, name: key_pair_params[:name], key_type: key_pair_params[:key_type])
 
     if @config.nil?
@@ -45,17 +55,5 @@ class Fleece::KeyPairsController < ApplicationController
   PERMITTED_PARAMS = %w[name key_type]
   def key_pair_params
     params.require(:fleece_key_pair).permit(*PERMITTED_PARAMS)
-  end
-
-  def load_config
-    @config = Fleece::Config.first
-
-    if params[:action] == 'new'
-      @config ||= Fleece::Config.new
-    end
-    if params[:action] == 'create'
-      raise "Only a single config is supported" unless @config.nil?
-      @config = Fleece::Config.new
-    end
   end
 end
