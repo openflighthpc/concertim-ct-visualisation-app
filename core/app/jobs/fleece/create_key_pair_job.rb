@@ -81,7 +81,7 @@ class Fleece::CreateKeyPairJob < ApplicationJob
       {
         name: @key_pair.name,
         key_type: @key_pair.key_type,
-        private_key: nil
+        public_key: @key_pair.public_key
       }
     end
 

@@ -13,7 +13,7 @@ class Fleece::KeyPairsController < ApplicationController
 
   def index
     @config = Fleece::Config.first
-    # at the moment this job does not work due to an error with openstack
+    #at the moment this job does not work due to an error with openstack
     # result = Fleece::GetUserKeyPairsJob.perform_now(@config, current_user)
     # if result.success?
     #   @key_pairs = result.key_pairs
@@ -25,7 +25,8 @@ class Fleece::KeyPairsController < ApplicationController
     authorize! :create, Fleece::KeyPair
     @config = Fleece::Config.first
     @user = current_user
-    @key_pair = @key_pair = Fleece::KeyPair.new(user: @user, name: key_pair_params[:name], key_type: key_pair_params[:key_type])
+    @key_pair = @key_pair = Fleece::KeyPair.new(user: @user, name: key_pair_params[:name], key_type: key_pair_params[:key_type],
+                                                public_key: key_pair_params[:public_key])
 
     if @config.nil?
       flash.now.alert = "Unable to send cluster configuration: cloud environment config not set. Please contact an admin"
@@ -45,15 +46,16 @@ class Fleece::KeyPairsController < ApplicationController
     if result.success?
       flash[:success] = "key pair created"
     else
-      flash[:error] = result.error_message
+      flash[:alert] = result.error_message
       redirect_to key_pairs_path
+      return
     end
     render action: :success
   end
 
   private
 
-  PERMITTED_PARAMS = %w[name key_type]
+  PERMITTED_PARAMS = %w[name key_type public_key]
   def key_pair_params
     params.require(:fleece_key_pair).permit(*PERMITTED_PARAMS)
   end
