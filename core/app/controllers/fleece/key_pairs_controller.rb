@@ -46,8 +46,9 @@ class Fleece::KeyPairsController < ApplicationController
       flash[:success] = "key pair created"
     else
       flash[:error] = result.error_message
+      redirect_to key_pairs_path
     end
-    render action: :new
+    render action: :success
   end
 
   private

@@ -11,10 +11,7 @@ class Fleece::KeyPair < ApplicationRecord
 
   validates :key_type,
             presence: true,
-            inclusion: { in: ["SSH Key", "X509 Certificate"], message: "%{value} is not a valid type" }
-
-  validates :private_key,
-            presence: true
+            inclusion: { in: ["ssh_key", "x509"], message: "%{value} is not a valid type" }
 
   ####################################
   #
@@ -23,6 +20,14 @@ class Fleece::KeyPair < ApplicationRecord
   ####################################
 
   belongs_to :user, class_name: "Uma::User"
+
+  ####################################
+  #
+  # Attributes
+  #
+  ####################################
+
+  attr_accessor :private_key
 
   ############################
   #

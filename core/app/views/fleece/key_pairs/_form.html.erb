@@ -19,7 +19,7 @@
 
   <div class="formItem">
     <%= f.label :key_type, "Key type", class: 'required_field' %>
-    <%= f.select :key_type, ["SSH Key", "X509 Certificate"] %>
+    <%= f.select :key_type, [["SSH Key", "ssh_key"], ["X509 Certificate", "x509"]] %>
   </div>
 
   <%= f.submit 'Create' %>

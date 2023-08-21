@@ -1,12 +1,19 @@
-<% set_title 'Your Key Pairs' -%>
+<% set_title 'Your key-pairs' -%>
 
-<p>Your key-pairs</p>
-<ul>
-  <% @key_pairs.each do |key_pair| %>
-    <li><%= key_pair.name %>: <%= key_pair.key_type %></li>
-  <% end %>
-</ul>
+<% if @key_pairs.any? %>
+  <h4>Current key-pairs</h4>
+
+  <ul>
+    <% @key_pairs.each do |key_pair| %>
+      <li><%= key_pair.name %>: <%= key_pair.key_type %></li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>
+    You currently have no key-pairs.
+  </p>
+<% end %>
 
 <div>
-  <a href=<%= new_key_pair_path %>>+ Create new key-pair</a>
+  <a href=<%= new_key_pair_path %> class="button">+ Create new key-pair</a>
 </div>
