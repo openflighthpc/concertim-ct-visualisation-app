@@ -119,13 +119,13 @@ RSpec.describe Uma::User, type: :model do
       it 'is not valid if start later than today' do
         user.billing_period_start = Date.current + 1.month
         user.billing_period_end = Date.current + 2.months
-        expect(user).to have_error(:billing_period_start, :less_than_or_equal_to)
+        expect(user).to have_error(:billing_period_start, "must be today or earlier")
       end
 
       it 'is not valid if end earlier than today' do
         user.billing_period_start = Date.current - 1.month
         user.billing_period_end = Date.current - 2.days
-        expect(user).to have_error(:billing_period_end, :greater_than_or_equal_to)
+        expect(user).to have_error(:billing_period_end, "must be today or later")
       end
     end
   end
