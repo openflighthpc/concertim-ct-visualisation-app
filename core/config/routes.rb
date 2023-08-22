@@ -22,6 +22,19 @@ Rails.application.routes.draw do
     end
   end
 
+  scope module: :fleece do
+    resources :users, only: [] do
+      collection do
+        resources :key_pairs, only: [:index, :new, :create] do
+          collection do
+            get '/success', to: 'key_pairs#success'
+            delete '/:id', to: 'key_pairs#delete'
+          end
+        end
+      end
+    end
+  end
+
   # API routes
   #
   # Some of these have been done in a non-railsy way (you have "posts" where you should have 

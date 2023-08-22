@@ -161,6 +161,7 @@ table.show th span.desc,
 .icon-active-consoles,
 .icon-console { @include icon("\e481"); }
 .icon-logout {  @include icon("\e37c"); }
+.icon-key { @include icon("\e98d"); }
 
 /*** Log in icons ***/
 .icon-session,

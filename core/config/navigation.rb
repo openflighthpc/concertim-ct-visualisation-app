@@ -16,6 +16,10 @@ SimpleNavigation::Configuration.run do |navigation|
         icon: :youraccount,
         highlights_on: /\/users/ do |acc|
           acc.item :acc_details, 'Account details', uma_engine.edit_user_registration_path, :icon => :details, :link => {:class => 'details'}
+          unless current_user.root?
+            acc.item :acc_details, 'Manage key-pairs', Rails.application.routes.url_helpers.key_pairs_path,
+                     :icon => :key, :link => {:class => 'details'}
+          end
           acc.item :acc_logout, 'Log out', uma_engine.destroy_user_session_path, :icon => :logout, :link => {:class => 'logout'}
         end
 

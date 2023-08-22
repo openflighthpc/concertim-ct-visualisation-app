@@ -1,0 +1,8 @@
+<% content_for(:head) do %>
+  <%= javascript_import_module_tag "key_pairs/new" %>
+<% end %>
+
+<%
+  set_title 'New key-pair'
+-%>
+<%= render 'form' %>
