@@ -1,12 +1,16 @@
 <% set_title 'Key-pair created' -%>
 
-<h5> Please ensure you make a copy of the private key, as you will not be able to retrieve it after leaving
-  this page.</h5>
+<% if @key_pair.private_key %>
+  <h5>
+    Please ensure you make a copy of the private key, as you will not be able to retrieve it after leaving
+  this page.
+  </h5>
+<% end %>
 
 <%= form_for(@key_pair, url: '') do |f| %>
   <div class="formItem">
     <%= f.label :name, "Key name", class: 'required_field' %>
-    <%= f.text_field :name, autocomplete: :off, disabled: true %>
+    <%= f.text_field :name, disabled: true %>
   </div>
 
   <div class="formItem">
@@ -15,7 +19,22 @@
   </div>
 
   <div class="formItem">
-    <%= f.label :private_key, "Private key" %>
-    <%= f.text_area :private_key, disabled: true %>
+    <%= f.label :fingerprint, "Fingerprint" %>
+    <%= f.text_field :fingerprint, disabled: true %>
   </div>
+
+
+  <% if @key_pair.private_key %>
+    <div class="formItem">
+      <%= f.label :private_key, "Private key" %>
+      <%= f.text_area :private_key, disabled: true %>
+    </div>
+  <% end %>
+
+  <% if @key_pair.public_key %>
+    <div class="formItem">
+      <%= f.label :public_key, "Public key" %>
+      <%= f.text_area :public_key, disabled: true %>
+    </div>
+  <% end %>
 <% end %>

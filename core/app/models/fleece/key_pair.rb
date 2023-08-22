@@ -9,6 +9,10 @@ class Fleece::KeyPair < ApplicationRecord
             presence: true,
             length: { maximum: 255 }
 
+  validates :fingerprint,
+            presence: true,
+            length: { maximum: 255 }
+
   validates :key_type,
             presence: true,
             inclusion: { in: ["ssh", "x509"], message: "%{value} is not a valid type" }

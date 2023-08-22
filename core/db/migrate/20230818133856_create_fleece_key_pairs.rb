@@ -7,6 +7,7 @@ class CreateFleeceKeyPairs < ActiveRecord::Migration[7.0]
     create_table :fleece_key_pairs do |t|
       t.string :name,     limit: 255, null: false
       t.string :key_type, limit: 255, null: false
+      t.string :fingerprint, limit: 255, null: false
 
       t.timestamps
     end

@@ -3,11 +3,20 @@
 <% if @key_pairs.any? %>
   <h4>Current key-pairs</h4>
 
-  <ul>
+  <table>
+    <tr>
+      <th>Name</th>
+      <th>Type</th>
+      <th>Fingerprint</th>
+    </tr>
     <% @key_pairs.each do |key_pair| %>
-      <li><%= key_pair.name %>: <%= key_pair.key_type %></li>
+      <tr>
+        <td><%= key_pair.name %></td>
+        <td><%= key_pair.key_type %></td>
+        <td><%= key_pair.fingerprint %></td>
+      </tr>
     <% end %>
-  </ul>
+  </table>
 <% else %>
   <p>
     You currently have no key-pairs.

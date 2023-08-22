@@ -44,20 +44,18 @@ class Fleece::CreateKeyPairJob < ApplicationJob
         return Result.new(false, "#{error_description}: #{response.reason_phrase || "Unknown error"}")
       end
 
-      @key_pair.private_key = response.body["private_key"]
+      details = response.body["key_pair"]
+      @key_pair.private_key = details["private_key"]
+      @key_pair.fingerprint = details["fingerprint"]
       if @key_pair.save
         return Result.new(true, "")
       else
         return Result.new(false, "Unable to create keypair: #{@key_pair.errors.full_messages.join("; ")}")
       end
-    rescue Faraday::BadRequestError
-      errors = Emma::Jsonapi::Errors.parse($!.response_body)
-      error_message = errors.full_details.to_sentence
-      Result.new(false, error_message, $!.response[:status])
-
     rescue Faraday::Error
-      status_code = $!.response[:status] rescue 0
-      Result.new(false, $!.message, status_code)
+      body = $!.response[:body]
+      errors = body ? JSON.parse(body)["message"] : $!.response[:reason_phrase]
+      Result.new(false, errors, $!.response[:status])
     end
 
     private
