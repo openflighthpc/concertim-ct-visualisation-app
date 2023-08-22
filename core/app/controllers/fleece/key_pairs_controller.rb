@@ -45,7 +45,7 @@ class Fleece::KeyPairsController < ApplicationController
     result = Fleece::CreateKeyPairJob.perform_now(@key_pair, @config, current_user)
 
     if result.success?
-      flash[:success] = "key pair created"
+      flash.now[:success] = "key pair created"
     else
       flash[:alert] = result.error_message
       redirect_to key_pairs_path
