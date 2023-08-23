@@ -126,7 +126,7 @@ module Ivy
     end
 
     def openstack_id
-      metadata["stack_id"]
+      metadata["openstack_stack_id"]
     end
 
     ############################
