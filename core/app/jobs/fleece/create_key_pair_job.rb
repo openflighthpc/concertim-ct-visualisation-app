@@ -53,9 +53,14 @@ class Fleece::CreateKeyPairJob < ApplicationJob
         return Result.new(false, "Unable to create keypair: #{@key_pair.errors.full_messages.join("; ")}")
       end
     rescue Faraday::Error
-      body = $!.response[:body]
-      errors = body ? JSON.parse(body)["message"] : $!.response[:reason_phrase]
-      Result.new(false, errors, $!.response[:status])
+      errors = if $!.response && $!.response[:headers].fetch("Content-Type", nil) && $!.response[:headers]["Content-Type"].include?("application/json")
+        body = $!.response[:body]
+        JSON.parse(body)["message"]
+      else
+        $!.message
+      end
+      status_code = $!.response[:status] rescue 0
+      Result.new(false, errors, status_code)
     end
 
     private
