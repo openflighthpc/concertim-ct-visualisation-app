@@ -39,14 +39,19 @@ class Fleece::GetUserKeyPairsJob < ApplicationJob
     end
 
     def call
-      response = connection.get(path, params)
+      response = connection.get(path) do |req|
+        req.body = body
+      end
       unless response.success?
         return Result.new(false, [], "#{error_description}: #{response.reason_phrase || "Unknown error"}")
       end
 
-      # check response is valid
-      # if so, collate keypairs into suitable form
-      # add result creation
+      results = response.body
+      key_pairs = results["key_pairs"].map do |key_pair|
+        details = key_pair["keypair"]
+        Fleece::KeyPair.new(name: details["name"], fingerprint: details["fingerprint"], key_type: details["type"] || "ssh")
+      end
+      return Result.new(true, key_pairs, "")
 
     rescue Faraday::Error
       status_code = $!.response[:status] rescue 0
@@ -62,14 +67,15 @@ class Fleece::GetUserKeyPairsJob < ApplicationJob
     def path
       "/key_pairs"
     end
-
-    # not sure if this is very secure
-    def params
+    
+    def body
       {
-        auth_url: @fleece_config.internal_auth_url,
-        user_id: @user.cloud_user_id.gsub(/-/, ''),
-        password: @user.fixme_encrypt_this_already_plaintext_password,
-        project_id: @user.project_id
+        cloud_env: {
+          auth_url: @fleece_config.internal_auth_url,
+          user_id: @user.cloud_user_id.gsub(/-/, ''),
+          password: @user.fixme_encrypt_this_already_plaintext_password,
+          project_id: @user.project_id
+        }
       }
     end
   end
