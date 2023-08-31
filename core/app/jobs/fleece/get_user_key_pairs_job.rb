@@ -49,7 +49,7 @@ class Fleece::GetUserKeyPairsJob < ApplicationJob
       results = response.body
       key_pairs = results["key_pairs"].map do |key_pair|
         details = key_pair["keypair"]
-        Fleece::KeyPair.new(name: details["name"], fingerprint: details["fingerprint"], key_type: details["type"] || "ssh")
+        Fleece::KeyPair.new(user: @user, name: details["name"], fingerprint: details["fingerprint"], key_type: details["type"] || "ssh")
       end
       return Result.new(true, key_pairs, "")
 

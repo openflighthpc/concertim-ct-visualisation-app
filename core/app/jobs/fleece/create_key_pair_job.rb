@@ -47,7 +47,7 @@ class Fleece::CreateKeyPairJob < ApplicationJob
       details = response.body["key_pair"]
       @key_pair.private_key = details["private_key"]
       @key_pair.fingerprint = details["fingerprint"]
-      if @key_pair.save
+      if @key_pair.valid?
         return Result.new(true, "")
       else
         return Result.new(false, "Unable to create keypair: #{@key_pair.errors.full_messages.join("; ")}")

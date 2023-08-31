@@ -5,7 +5,7 @@ RSpec.describe Fleece::CreateKeyPairJob, type: :job do
   let(:config) { create(:fleece_config) }
   let(:user) { create(:user, :with_openstack_details) }
   let(:path) { "#{config.host_url[0...-5]}:#{config.user_handler_port}/key_pairs" }
-  let(:key_pair) { build(:key_pair) }
+  let(:key_pair) { build(:key_pair, user: user) }
   subject { Fleece::CreateKeyPairJob::Runner.new(key_pair: key_pair, fleece_config: config, user: user) }
 
   describe "url" do
@@ -36,9 +36,8 @@ RSpec.describe Fleece::CreateKeyPairJob, type: :job do
         expect(result).to be_success
       end
 
-      it 'saves and populates private key' do
+      it 'populates private key' do
         result = described_class.perform_now(key_pair, config, user, test_stubs: stubs)
-        expect(key_pair.persisted?).to eq true
         expect(key_pair.private_key).to eq "abc"
       end
     end

@@ -4,4 +4,6 @@ FactoryBot.define do
     user { create(:user) }
     key_type { "ssh" }
   end
+
+  initialize_with { new(**attributes) }
 end
