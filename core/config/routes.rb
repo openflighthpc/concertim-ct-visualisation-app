@@ -28,7 +28,7 @@ Rails.application.routes.draw do
         resources :key_pairs, only: [:index, :new, :create] do
           collection do
             get '/success', to: 'key_pairs#success'
-            delete '/:id', to: 'key_pairs#delete'
+            delete '/:name', to: 'key_pairs#destroy', as: :delete
           end
         end
       end

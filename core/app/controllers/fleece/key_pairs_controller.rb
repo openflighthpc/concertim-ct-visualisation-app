@@ -4,7 +4,7 @@ class Fleece::KeyPairsController < ApplicationController
     @user = current_user
     @config = Fleece::Config.first
     if @config.nil?
-      flash[:alert] = "Unable to create key pairs: cloud environment config not set"
+      flash[:alert] = "Unable to create key-pairs: cloud environment config not set"
       redirect_to root_path
       return
     end
@@ -15,13 +15,13 @@ class Fleece::KeyPairsController < ApplicationController
     @config = Fleece::Config.first
     # add checks config is set and user had project, etc.
     if @config.nil?
-       flash[:alert] = "Unable to check key pairs: cloud environment config not set. Please contact an admin"
+       flash[:alert] = "Unable to check key-pairs: cloud environment config not set. Please contact an admin"
        redirect_to uma_engine.edit_user_registration_path
        return
     end
 
     unless current_user.project_id
-      flash[:alert] = "Unable to check key pairs: you do not yet have a project id. " \
+      flash[:alert] = "Unable to check key-pairs: you do not yet have a project id. " \
                         "This will be added automatically shortly."
       redirect_to uma_engine.edit_user_registration_path
       return
@@ -46,28 +46,52 @@ class Fleece::KeyPairsController < ApplicationController
     authorize! :create, @key_pair
 
     if @config.nil?
-      flash.now.alert = "Unable to send cluster configuration: cloud environment config not set. Please contact an admin"
-      render action: :new
+      flash[:alert] = "Unable to send key-pair requests: cloud environment config not set. Please contact an admin"
+      redirect_to uma_engine.edit_user_registration_path
       return
     end
 
     unless current_user.project_id
-      flash.now.alert = "Unable to send key pair request: you do not yet have a project id. " \
+      flash[:alert] = "Unable to send key-pair request: you do not yet have a project id. " \
                         "This will be added automatically shortly."
-      render action: :new
+      redirect_to uma_engine.edit_user_registration_path
       return
     end
 
     result = Fleece::CreateKeyPairJob.perform_now(@key_pair, @config, current_user)
 
     if result.success?
-      flash.now[:success] = "key pair created"
+      render action: :success
     else
       flash[:alert] = result.error_message
       redirect_to key_pairs_path
+    end
+  end
+
+  def destroy
+    @config = Fleece::Config.first
+    @user = current_user
+    if @config.nil?
+      flash[:alert] = "Unable to send key-pair requests: cloud environment config not set. Please contact an admin"
+      redirect_to uma_engine.edit_user_registration_path
       return
     end
-    render action: :success
+
+    unless current_user.project_id
+      flash[:alert] = "Unable to send key-pair deletion request: you do not yet have a project id. " \
+                        "This will be added automatically shortly."
+      redirect_to uma_engine.edit_user_registration_path
+      return
+    end
+
+    result = Fleece::DeleteKeyPairJob.perform_now(params[:name], @config, current_user)
+
+    if result.success?
+      flash[:success] = "Key-pair '#{params[:name]}' deleted"
+    else
+      flash[:alert] = result.error_message
+    end
+    redirect_to key_pairs_path
   end
 
   private

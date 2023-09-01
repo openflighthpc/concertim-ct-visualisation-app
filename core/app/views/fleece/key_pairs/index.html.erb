@@ -14,6 +14,13 @@
         <td><%= key_pair.name %></td>
         <td><%= key_pair.key_type %></td>
         <td><%= key_pair.fingerprint %></td>
+        <td>
+          <%= form_for(key_pair, url: delete_key_pairs_path(name: key_pair.name), method: :delete,
+                       html: {class: "delete-key-pair-form",
+                       onsubmit: "return confirm('Are you sure you want to delete #{key_pair.name}? This cannot be undone.')"}) do |f| %>
+            <%= f.submit 'Delete' %>
+          <% end %>
+        </td>
       </tr>
     <% end %>
   </table>
