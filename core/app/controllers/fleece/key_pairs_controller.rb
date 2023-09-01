@@ -13,7 +13,6 @@ class Fleece::KeyPairsController < ApplicationController
 
   def index
     @config = Fleece::Config.first
-    # add checks config is set and user had project, etc.
     if @config.nil?
        flash[:alert] = "Unable to check key-pairs: cloud environment config not set. Please contact an admin"
        redirect_to uma_engine.edit_user_registration_path
@@ -22,7 +21,7 @@ class Fleece::KeyPairsController < ApplicationController
 
     unless current_user.project_id
       flash[:alert] = "Unable to check key-pairs: you do not yet have a project id. " \
-                        "This will be added automatically shortly."
+                      "This will be added automatically shortly."
       redirect_to uma_engine.edit_user_registration_path
       return
     end
@@ -53,7 +52,7 @@ class Fleece::KeyPairsController < ApplicationController
 
     unless current_user.project_id
       flash[:alert] = "Unable to send key-pair request: you do not yet have a project id. " \
-                        "This will be added automatically shortly."
+                      "This will be added automatically shortly."
       redirect_to uma_engine.edit_user_registration_path
       return
     end
@@ -69,6 +68,7 @@ class Fleece::KeyPairsController < ApplicationController
   end
 
   def destroy
+    authorize! :destroy, Fleece::KeyPair.new(user: current_user)
     @config = Fleece::Config.first
     @user = current_user
     if @config.nil?
@@ -79,7 +79,7 @@ class Fleece::KeyPairsController < ApplicationController
 
     unless current_user.project_id
       flash[:alert] = "Unable to send key-pair deletion request: you do not yet have a project id. " \
-                        "This will be added automatically shortly."
+                      "This will be added automatically shortly."
       redirect_to uma_engine.edit_user_registration_path
       return
     end
