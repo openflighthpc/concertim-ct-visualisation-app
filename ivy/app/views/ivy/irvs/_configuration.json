@@ -473,7 +473,7 @@
           {
             "caption" : "Destroy",
             "url"     : "internal::statusChangeRequest,destroy,racks,[[rack_id]],[[rack_name]]",
-            "availableToBuildStatuses": ["STOPPED", "ACTIVE"]
+            "availableToBuildStatuses": ["STOPPED", "ACTIVE", "FAILED"]
           }
         ],
 
@@ -520,7 +520,7 @@
           {
             "caption" : "Destroy",
             "url"     : "internal::statusChangeRequest,destroy,devices,[[device_id]],[[device_name]]",
-            "availableToBuildStatuses": ["STOPPED", "ACTIVE", "SUSPENDED"]
+            "availableToBuildStatuses": ["STOPPED", "ACTIVE", "SUSPENDED", "FAILED"]
           }
         ],
 
