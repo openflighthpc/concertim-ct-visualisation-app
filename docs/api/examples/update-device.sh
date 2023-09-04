@@ -31,7 +31,7 @@ BODY=$(jq --null-input \
         "description": $description,
         "status": "ACTIVE",
         "metadata": {
-          "openstack_instance": "8f4e9068-5a39-4717-8a83-6b95e01031eb",
+          "openstack_instance_id": "8f4e9068-5a39-4717-8a83-6b95e01031eb",
           "status": ["active", "", ""]
         },
         "private_ips": "10.0.0.0, 10.255.255.255",

@@ -37,7 +37,7 @@ BODY=$(jq --null-input \
         "status": $status,
         "metadata": {
           "status": $detailed_status,
-          "stack_id": "92927d62-ebcf-4faf-a8ab-4068ca3911f3"
+          "openstack_stack_id": "92927d62-ebcf-4faf-a8ab-4068ca3911f3"
         }
     }
 }
