@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_31_104057) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_04_161048) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -244,6 +244,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_31_104057) do
     t.decimal "cost", default: "0.0", null: false
     t.date "billing_period_start"
     t.date "billing_period_end"
+    t.string "openstack_password"
     t.index ["email"], name: "index_uma.users_on_email", unique: true
     t.index ["login"], name: "index_uma.users_on_login", unique: true
     t.index ["project_id"], name: "index_uma.users_on_project_id", unique: true, where: "(NOT NULL::boolean)"
