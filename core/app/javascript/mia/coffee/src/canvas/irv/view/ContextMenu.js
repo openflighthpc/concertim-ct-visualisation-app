@@ -41,7 +41,6 @@ class ContextMenu {
 
   show(device, x, y, available_slot) {
     let aspect, chassis_id, chassis_name, child, device_id, device_name, empty_column, empty_row, empty_u, rack_id, rack_name, slot_id;
-    this.visible    = true;
     const option_keys = ['common'];
 
     if (device != null) {
@@ -201,6 +200,7 @@ class ContextMenu {
 
     // if there is something to click, then show the context menu
     if (total_clickable_options_added > 0) {
+      this.visible = true;
       parsed = parsed.reverse();
       this.menuEl.innerHTML = parsed.join(ContextMenu.SPACER);
 
