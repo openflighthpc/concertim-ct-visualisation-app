@@ -92,7 +92,7 @@ class Fleece::CreateKeyPairJob < ApplicationJob
       {
         auth_url: @fleece_config.internal_auth_url,
         user_id: @user.cloud_user_id.gsub(/-/, ''),
-        password: @user.fixme_encrypt_this_already_plaintext_password,
+        password: @user.openstack_password,
         project_id: @user.project_id
       }
     end

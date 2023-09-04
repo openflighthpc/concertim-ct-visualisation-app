@@ -57,7 +57,7 @@ class Uma::UserSignupJob < Uma::ApplicationJob
           project_id: @fleece_config.admin_project_id,
         },
         username: @user.login,
-        password: @user.fixme_encrypt_this_already_plaintext_password,
+        password: @user.openstack_password,
         email: @user.email
       }.tap do |h|
           h[:cloud_user_id] = @user.cloud_user_id unless @user.cloud_user_id.blank?

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_04_161048) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_04_165156) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -239,7 +239,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_04_161048) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "project_id", limit: 255
-    t.string "fixme_encrypt_this_already_plaintext_password", limit: 128, default: ""
     t.uuid "cloud_user_id"
     t.decimal "cost", default: "0.0", null: false
     t.date "billing_period_start"
