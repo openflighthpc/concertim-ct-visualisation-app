@@ -54,7 +54,7 @@ RSpec.describe Ivy::RequestStatusChangeJob, type: :job do
         expect(subject[:cloud_env]).to eq({
                                             "auth_url" => config.internal_auth_url,
                                             "user_id" => config.admin_user_id.gsub("-", ""),
-                                            "password" => config.admin_password,
+                                            "password" => config.admin_openstack_password,
                                             "project_id" => config.admin_project_id
                                           })
       end

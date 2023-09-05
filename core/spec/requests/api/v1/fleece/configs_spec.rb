@@ -42,7 +42,7 @@ RSpec.describe "Api::V1::Fleece::Configs", type: :request do
           expect(parsed_config["host_url"]).to eq fleece_config.host_url
           expect(parsed_config["internal_auth_url"]).to eq fleece_config.internal_auth_url
           expect(parsed_config["admin_user_id"]).to eq fleece_config.admin_user_id
-          expect(parsed_config["admin_password"]).to eq fleece_config.admin_password
+          expect(parsed_config["admin_openstack_password"]).to eq fleece_config.admin_openstack_password
           expect(parsed_config["admin_project_id"]).to eq fleece_config.admin_project_id
           expect(parsed_config["user_handler_port"]).to eq fleece_config.user_handler_port
           expect(parsed_config["cluster_builder_port"]).to eq fleece_config.cluster_builder_port

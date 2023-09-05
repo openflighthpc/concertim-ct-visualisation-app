@@ -72,7 +72,7 @@ class Ivy::RequestStatusChangeJob < ApplicationJob
           {
             auth_url: @fleece_config.internal_auth_url,
             user_id: (@user.root? ? @fleece_config.admin_user_id : @user.cloud_user_id).gsub(/-/, ''),
-            password: @user.root? ? @fleece_config.admin_password : @user.openstack_password,
+            password: @user.root? ? @fleece_config.admin_openstack_password : @user.openstack_password,
             project_id: @user.root? ? @fleece_config.admin_project_id : @user.project_id
           },
         action: @action

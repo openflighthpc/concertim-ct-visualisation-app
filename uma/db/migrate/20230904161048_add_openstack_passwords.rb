@@ -3,7 +3,7 @@ class AddOpenstackPasswords < ActiveRecord::Migration[7.0]
     Uma::User.reset_column_information
     Uma::User.all.each do |user|
       user.openstack_password = user.fixme_encrypt_this_already_plaintext_password
-      user.save
+      user.save!
     end
   end
 

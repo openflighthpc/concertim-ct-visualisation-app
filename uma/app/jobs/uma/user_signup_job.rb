@@ -53,7 +53,7 @@ class Uma::UserSignupJob < Uma::ApplicationJob
         cloud_env: {
           auth_url: @fleece_config.internal_auth_url,
           user_id: @fleece_config.admin_user_id,
-          password: @fleece_config.admin_password,
+          password: @fleece_config.admin_openstack_password,
           project_id: @fleece_config.admin_project_id,
         },
         username: @user.login,
