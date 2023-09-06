@@ -19,7 +19,7 @@ module Ivy
     VALID_STATUSES = %w(IN_PROGRESS FAILED ACTIVE STOPPED)
     VALID_STATUS_ACTION_MAPPINGS = {
       "IN_PROGRESS" => [],
-      "FAILED" => [],
+      "FAILED" => %w(destroy),
       "ACTIVE" => %w(destroy),
       "STOPPED" => %w(destroy)
     }

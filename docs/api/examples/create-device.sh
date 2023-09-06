@@ -42,7 +42,7 @@ BODY=$(jq --null-input \
         },
         "status": "IN_PROGRESS",
         "metadata": {
-          "openstack_instance": "8f4e9068-5a39-4717-8a83-6b95e01031eb",
+          "openstack_instance_id": "8f4e9068-5a39-4717-8a83-6b95e01031eb",
           "status": ["build", "scheduling", ""]
         }
     }
