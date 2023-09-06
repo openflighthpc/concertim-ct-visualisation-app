@@ -29,6 +29,7 @@
       <%= f.label :private_key, "Private key" %>
       <%= f.text_area :private_key, disabled: true %>
     </div>
+    <div class="button small copyToClipboard" data-text="<%= @key_pair.private_key %>">Copy</div>
   <% end %>
 
   <% if @key_pair.public_key %>

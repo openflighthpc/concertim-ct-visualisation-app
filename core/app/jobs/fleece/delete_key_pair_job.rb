@@ -1,11 +1,11 @@
 require 'faraday'
 
-class Fleece::CreateKeyPairJob < ApplicationJob
+class Fleece::DeleteKeyPairJob < ApplicationJob
   queue_as :default
 
-  def perform(key_pair, fleece_config, user, **options)
+  def perform(key_pair_name, fleece_config, user, **options)
     runner = Runner.new(
-      key_pair: key_pair,
+      key_pair_name: key_pair_name,
       user: user,
       fleece_config: fleece_config,
       logger: logger,
@@ -32,33 +32,29 @@ class Fleece::CreateKeyPairJob < ApplicationJob
   end
 
   class Runner < Emma::Faraday::JobRunner
-    def initialize(key_pair:, user:, **kwargs)
-      @key_pair = key_pair
+    def initialize(key_pair_name:, user:, **kwargs)
+      @key_pair_name = key_pair_name
       @user = user
       super(**kwargs)
     end
 
     def call
-      response = connection.post(path, body)
+      response = connection.delete(path) do |req|
+        req.body = body
+      end
+
       unless response.success?
         return Result.new(false, "#{error_description}: #{response.reason_phrase || "Unknown error"}")
       end
 
-      details = response.body["key_pair"]
-      @key_pair.private_key = details["private_key"]
-      @key_pair.fingerprint = details["fingerprint"]
-      if @key_pair.valid?
-        return Result.new(true, "")
-      else
-        return Result.new(false, "Unable to create keypair: #{@key_pair.errors.full_messages.join("; ")}")
-      end
+      Result.new(true, "")
     rescue Faraday::Error
       errors = if $!.response && $!.response[:headers].fetch("Content-Type", nil) && $!.response[:headers]["Content-Type"].include?("application/json")
-        body = $!.response[:body]
-        JSON.parse(body)["message"]
-      else
-        $!.message
-      end
+                 body = $!.response[:body]
+                 JSON.parse(body)["message"]
+               else
+                 $!.message
+               end
       status_code = $!.response[:status] rescue 0
       Result.new(false, errors, status_code)
     end
@@ -76,15 +72,7 @@ class Fleece::CreateKeyPairJob < ApplicationJob
     def body
       {
         cloud_env: cloud_env_details,
-        key_pair: key_pair_details
-      }
-    end
-
-    def key_pair_details
-      {
-        name: @key_pair.name,
-        key_type: @key_pair.key_type,
-        public_key: @key_pair.public_key
+        keypair_name: @key_pair_name
       }
     end
 

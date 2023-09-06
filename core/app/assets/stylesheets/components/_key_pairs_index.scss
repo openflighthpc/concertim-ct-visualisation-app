@@ -1,0 +1,18 @@
+.delete-key-pair-form {
+  background-color: inherit;
+  border: 0;
+  padding: 0;
+
+  input {
+    margin: 0;
+    background-color: #b35d5d;
+
+    &:hover {
+      background-color: #e82727;
+    }
+
+    &:focus {
+      background-color: #b35d5d;
+    }
+  }
+}

@@ -44,6 +44,7 @@ class Ability
 
     can :read, Fleece::KeyPair, user: user
     can :create, Fleece::KeyPair, user: user
+    can :destroy, Fleece::KeyPair, user: user
 
     can [:read, :update], Uma::User, id: user.id
   end

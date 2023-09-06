@@ -1,4 +1,6 @@
-class Fleece::KeyPair < ApplicationRecord
+class Fleece::KeyPair
+  include ActiveModel::API
+
   ############################
   #
   # Validations
@@ -17,13 +19,8 @@ class Fleece::KeyPair < ApplicationRecord
             presence: true,
             inclusion: { in: ["ssh", "x509"], message: "%{value} is not a valid type" }
 
-  ####################################
-  #
-  # Associations
-  #
-  ####################################
-
-  belongs_to :user, class_name: "Uma::User"
+  validates :user,
+            presence: true
 
   ####################################
   #
@@ -31,7 +28,7 @@ class Fleece::KeyPair < ApplicationRecord
   #
   ####################################
 
-  attr_accessor :private_key, :public_key
+  attr_accessor :name, :fingerprint, :key_type, :private_key, :public_key, :user
 
   ############################
   #
@@ -39,4 +36,12 @@ class Fleece::KeyPair < ApplicationRecord
   #
   ############################
 
+  def initialize(user:, name: nil, fingerprint: nil, key_type: "ssh", public_key: nil, private_key: nil)
+    @user = user
+    @name = name
+    @fingerprint = fingerprint
+    @key_type = key_type
+    @public_key = public_key
+    @private_key = private_key
+  end
 end
