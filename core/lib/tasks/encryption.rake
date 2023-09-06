@@ -11,11 +11,10 @@ namespace :encryption do
       match = encryption.match(start_pattern)
       if match
         encryption = encryption[match.begin(0)..-1]
+        `EDITOR='echo "#{encryption}" >> ' rails credentials:edit`
       else
-        return "unable to obtain encryption keys"
+        puts "unable to obtain encryption keys"
       end
-
-      `EDITOR='echo "#{encryption}" >> ' rails credentials:edit`
     end
   end
 end
