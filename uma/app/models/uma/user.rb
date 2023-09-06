@@ -81,8 +81,7 @@ module Uma
       @__ability = ::Ability.new(self)
     end
 
-    # Also store decryptable format, for use in the cloud environment. In future this MUST be
-    # encrypted.
+    # Also store in a decryptable format, for use in the cloud environment.
     def password=(new_password)
       @password = new_password
       if @password.present?
