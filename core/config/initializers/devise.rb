@@ -292,7 +292,7 @@ Devise.setup do |config|
   #     mount MyEngine, at: '/my_engine'
   #
   # The router that invoked `devise_for`, in the example above, would be:
-  config.router_name = :uma_engine
+  # config.router_name = :my_engine
   #
   # When using OmniAuth, Devise cannot automatically set OmniAuth path,
   # so you need to do it manually. For the users scope, it would be:
@@ -315,7 +315,7 @@ Devise.setup do |config|
 
   # Configuration for devise-jwt
   config.jwt do |jwt|
-    jwt.secret = Uma.config.jwt_secret
+    jwt.secret = Rails.application.config.jwt_secret
     jwt.request_formats = { user: [:json] }
     jwt.expiration_time = 1.day
   end

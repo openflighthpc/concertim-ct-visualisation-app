@@ -23,6 +23,11 @@ module CtApp
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
+    #
+    #
+    config.jwt_secret_file = Pathname('/opt/concertim/etc/secret')
+    config.jwt_secret = config.jwt_secret_file.read.chomp
+    config.jwt_aud = 'alces-ct'
   end
 end
 

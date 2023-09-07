@@ -15,12 +15,12 @@ SimpleNavigation::Configuration.run do |navigation|
         align: :right,
         icon: :youraccount,
         highlights_on: /\/users/ do |acc|
-          acc.item :acc_details, 'Account details', uma_engine.edit_user_registration_path, :icon => :details, :link => {:class => 'details'}
+          acc.item :acc_details, 'Account details', Rails.application.routes.url_helpers.edit_user_registration_path, :icon => :details, :link => {:class => 'details'}
           unless current_user.root?
             acc.item :acc_details, 'Manage key-pairs', Rails.application.routes.url_helpers.key_pairs_path,
                      :icon => :key, :link => {:class => 'details'}
           end
-          acc.item :acc_logout, 'Log out', uma_engine.destroy_user_session_path, :icon => :logout, :link => {:class => 'logout'}
+          acc.item :acc_logout, 'Log out', Rails.application.routes.url_helpers.destroy_user_session_path, :icon => :logout, :link => {:class => 'logout'}
         end
 
       primary.item :infra_racks_list, 'Rack view', ivy_engine.irv_path, icon: :infra_racks, :link => {class: 'infra_racks'}
@@ -37,7 +37,7 @@ SimpleNavigation::Configuration.run do |navigation|
           highlights_on: /\/cloud-env\/(cluster-types|clusters)/
       end
     else
-      primary.item :login, 'Log in', uma_engine.new_user_session_path,
+      primary.item :login, 'Log in', Rails.application.routes.url_helpers.new_user_session_path,
         icon: :login,
         align: :right,
         highlights_on: /\/users\/sign_in/

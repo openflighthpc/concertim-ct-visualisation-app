@@ -2,9 +2,12 @@ Rails.application.routes.draw do
   # Engines
   mount Ivy::Engine  => '/', as: :ivy_engine
   mount Meca::Engine => '/', as: :meca_engine
-  mount Uma::Engine  => '/', as: :uma_engine
   authenticate :user, ->(user) { user.root? } do
     mount GoodJob::Engine => 'good_job'
+  end
+
+  scope module: :uma do
+    devise_for :users, class_name: "Uma::User", only: [:sessions, :registrations]
   end
 
   # We need to redirect here, otherwise the devise redirections will take us to

@@ -15,14 +15,14 @@ class Fleece::KeyPairsController < ApplicationController
     @config = Fleece::Config.first
     if @config.nil?
        flash[:alert] = "Unable to check key-pairs: cloud environment config not set. Please contact an admin"
-       redirect_to uma_engine.edit_user_registration_path
+       redirect_to edit_user_registration_path
        return
     end
 
     unless current_user.project_id
       flash[:alert] = "Unable to check key-pairs: you do not yet have a project id. " \
                       "This will be added automatically shortly."
-      redirect_to uma_engine.edit_user_registration_path
+      redirect_to edit_user_registration_path
       return
     end
 
@@ -31,7 +31,7 @@ class Fleece::KeyPairsController < ApplicationController
       @key_pairs = result.key_pairs
     else
       flash[:alert] = "Unable to get key-pairs: #{result.error_message}"
-      redirect_to uma_engine.edit_user_registration_path
+      redirect_to edit_user_registration_path
       return
     end
   end
@@ -46,14 +46,14 @@ class Fleece::KeyPairsController < ApplicationController
 
     if @config.nil?
       flash[:alert] = "Unable to send key-pair requests: cloud environment config not set. Please contact an admin"
-      redirect_to uma_engine.edit_user_registration_path
+      redirect_to edit_user_registration_path
       return
     end
 
     unless current_user.project_id
       flash[:alert] = "Unable to send key-pair request: you do not yet have a project id. " \
                       "This will be added automatically shortly."
-      redirect_to uma_engine.edit_user_registration_path
+      redirect_to edit_user_registration_path
       return
     end
 
@@ -73,14 +73,14 @@ class Fleece::KeyPairsController < ApplicationController
     @user = current_user
     if @config.nil?
       flash[:alert] = "Unable to send key-pair requests: cloud environment config not set. Please contact an admin"
-      redirect_to uma_engine.edit_user_registration_path
+      redirect_to edit_user_registration_path
       return
     end
 
     unless current_user.project_id
       flash[:alert] = "Unable to send key-pair deletion request: you do not yet have a project id. " \
                       "This will be added automatically shortly."
-      redirect_to uma_engine.edit_user_registration_path
+      redirect_to edit_user_registration_path
       return
     end
 
