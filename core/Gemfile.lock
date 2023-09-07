@@ -12,11 +12,6 @@ PATH
       pg (~> 1.1)
       rails (>= 7.0.4)
 
-PATH
-  remote: ../uma
-  specs:
-    uma (0.1.0)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -370,7 +365,6 @@ DEPENDENCIES
   stimulus-rails
   turbo-rails
   tzinfo-data
-  uma (= 0.1.0)!
   web-console
   webdrivers
 
