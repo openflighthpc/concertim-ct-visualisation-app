@@ -14,7 +14,8 @@ class Fleece::Config < ApplicationRecord
               length: { maximum: 255 }
 
     validates :admin_foreign_password,
-              presence: true
+              presence: true,
+              length: { maximum: 255 }
 
     validates :admin_project_id,
               presence: true,
