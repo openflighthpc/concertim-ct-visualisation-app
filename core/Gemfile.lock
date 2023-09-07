@@ -16,11 +16,6 @@ PATH
   remote: ../uma
   specs:
     uma (0.1.0)
-      cancancan (~> 3.4.0)
-      devise (~> 4.9.0)
-      devise-jwt (>= 0.10.0)
-      pg (~> 1.1)
-      rails (>= 7.0.4)
 
 GEM
   remote: https://rubygems.org/
@@ -299,6 +294,7 @@ GEM
       actionpack (>= 5.2)
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
+    sqlite3 (1.6.4-x86_64-linux)
     stimulus-rails (1.2.1)
       railties (>= 6.0.0)
     temple (0.10.0)
@@ -370,6 +366,7 @@ DEPENDENCIES
   selenium-webdriver
   simple-navigation (~> 4.4)
   sprockets-rails
+  sqlite3
   stimulus-rails
   turbo-rails
   tzinfo-data
