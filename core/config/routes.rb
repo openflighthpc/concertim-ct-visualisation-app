@@ -49,10 +49,6 @@ Rails.application.routes.draw do
         resources :nodes, only: [:create]
         resources :devices, only: [:index, :show, :update, :destroy]
 
-        namespace :fleece, path: 'cloud-env' do
-          resource :config, only: [:show]
-        end
-
         namespace :irv do
           resources :racks, only: [:index] do
             member do
