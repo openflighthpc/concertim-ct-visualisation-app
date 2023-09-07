@@ -159,7 +159,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_05_094853) do
     t.string "internal_auth_url", limit: 255, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "admin_openstack_password"
+    t.string "admin_foreign_password"
   end
 
   create_table "good_job_batches", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -243,7 +243,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_05_094853) do
     t.decimal "cost", default: "0.0", null: false
     t.date "billing_period_start"
     t.date "billing_period_end"
-    t.string "openstack_password"
+    t.string "foreign_password"
     t.index ["email"], name: "index_uma.users_on_email", unique: true
     t.index ["login"], name: "index_uma.users_on_login", unique: true
     t.index ["project_id"], name: "index_uma.users_on_project_id", unique: true, where: "(NOT NULL::boolean)"

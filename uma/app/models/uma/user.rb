@@ -2,7 +2,7 @@ module Uma
   class User < ApplicationRecord
 
     self.table_name = "users"
-    encrypts :openstack_password
+    encrypts :foreign_password
 
     ####################################
     #
@@ -90,8 +90,8 @@ module Uma
         # removed when the openstack user handler supports updating the
         # openstack user's password, at which point concertim will need to
         # inform user handler to do so.
-        if self.openstack_password.blank?
-          self.openstack_password = @password
+        if self.foreign_password.blank?
+          self.foreign_password = @password
         end
       end
     end

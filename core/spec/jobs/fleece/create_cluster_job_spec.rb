@@ -86,7 +86,7 @@ RSpec.describe Fleece::CreateClusterJob, type: :job do
       expect(subject[:cloud_env]).to eq({
                                           "auth_url" => config.internal_auth_url,
                                           "user_id" => user.cloud_user_id.gsub(/-/, ''),
-                                          "password" => user.openstack_password,
+                                          "password" => user.foreign_password,
                                           "project_id" => user.project_id
                                         })
     end

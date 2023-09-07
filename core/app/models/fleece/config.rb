@@ -1,7 +1,7 @@
 require 'resolv'
 
 class Fleece::Config < ApplicationRecord
-    encrypts :admin_openstack_password
+    encrypts :admin_foreign_password
 
     ############################
     #
@@ -13,7 +13,7 @@ class Fleece::Config < ApplicationRecord
               presence: true,
               length: { maximum: 255 }
 
-    validates :admin_openstack_password,
+    validates :admin_foreign_password,
               presence: true
 
     validates :admin_project_id,
