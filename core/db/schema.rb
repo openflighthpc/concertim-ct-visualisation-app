@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_31_104057) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_05_094853) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -152,7 +152,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_31_104057) do
 
   create_table "fleece_configs", id: :bigint, default: -> { "nextval('fleece_configs_id_seq'::regclass)" }, force: :cascade do |t|
     t.string "admin_user_id", limit: 255, null: false
-    t.string "admin_password", limit: 255, null: false
     t.string "admin_project_id", limit: 255, null: false
     t.integer "user_handler_port", default: 42356, null: false
     t.integer "cluster_builder_port", default: 42378, null: false
@@ -160,6 +159,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_31_104057) do
     t.string "internal_auth_url", limit: 255, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "admin_foreign_password"
   end
 
   create_table "good_job_batches", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -239,11 +239,11 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_31_104057) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "project_id", limit: 255
-    t.string "fixme_encrypt_this_already_plaintext_password", limit: 128, default: ""
     t.uuid "cloud_user_id"
     t.decimal "cost", default: "0.0", null: false
     t.date "billing_period_start"
     t.date "billing_period_end"
+    t.string "foreign_password"
     t.index ["email"], name: "index_uma.users_on_email", unique: true
     t.index ["login"], name: "index_uma.users_on_login", unique: true
     t.index ["project_id"], name: "index_uma.users_on_project_id", unique: true, where: "(NOT NULL::boolean)"

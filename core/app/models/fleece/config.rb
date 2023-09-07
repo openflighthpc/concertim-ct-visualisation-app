@@ -1,6 +1,8 @@
 require 'resolv'
 
 class Fleece::Config < ApplicationRecord
+    encrypts :admin_foreign_password
+
     ############################
     #
     # Validations
@@ -11,7 +13,7 @@ class Fleece::Config < ApplicationRecord
               presence: true,
               length: { maximum: 255 }
 
-    validates :admin_password,
+    validates :admin_foreign_password,
               presence: true,
               length: { maximum: 255 }
 

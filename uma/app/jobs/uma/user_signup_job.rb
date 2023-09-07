@@ -53,11 +53,11 @@ class Uma::UserSignupJob < Uma::ApplicationJob
         cloud_env: {
           auth_url: @fleece_config.internal_auth_url,
           user_id: @fleece_config.admin_user_id,
-          password: @fleece_config.admin_password,
+          password: @fleece_config.admin_foreign_password,
           project_id: @fleece_config.admin_project_id,
         },
         username: @user.login,
-        password: @user.fixme_encrypt_this_already_plaintext_password,
+        password: @user.foreign_password,
         email: @user.email
       }.tap do |h|
           h[:cloud_user_id] = @user.cloud_user_id unless @user.cloud_user_id.blank?

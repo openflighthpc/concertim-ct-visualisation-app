@@ -9,7 +9,7 @@ RSpec.describe Fleece::Config, type: :model do
         host_url: "http://testing.com",
         internal_auth_url: "https://example.com",
         admin_user_id: 'admin',
-        admin_password: 'REDACTED',
+        admin_foreign_password: 'REDACTED',
         user_handler_port: '1234',
         cluster_builder_port: '5678',
         admin_project_id: 'my-project-id'
@@ -47,8 +47,8 @@ RSpec.describe Fleece::Config, type: :model do
     end
 
     it "is not valid without an admin password" do
-      subject.admin_password = nil
-      expect(subject).to have_error(:admin_password, :blank)
+      subject.admin_foreign_password = nil
+      expect(subject).to have_error(:admin_foreign_password, :blank)
     end
 
     %w(user_handler_port cluster_builder_port).each do |port|

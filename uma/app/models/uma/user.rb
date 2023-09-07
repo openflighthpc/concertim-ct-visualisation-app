@@ -2,6 +2,7 @@ module Uma
   class User < ApplicationRecord
 
     self.table_name = "users"
+    encrypts :foreign_password
 
     ####################################
     #
@@ -80,8 +81,7 @@ module Uma
       @__ability = ::Ability.new(self)
     end
 
-    # Also store password in plaintext, for use in the cloud environment. In future this MUST be
-    # encrypted.
+    # Also store in a decryptable format, for use in the cloud environment.
     def password=(new_password)
       @password = new_password
       if @password.present?
@@ -90,8 +90,8 @@ module Uma
         # removed when the openstack user handler supports updating the
         # openstack user's password, at which point concertim will need to
         # inform user handler to do so.
-        if self.fixme_encrypt_this_already_plaintext_password.blank?
-          self.fixme_encrypt_this_already_plaintext_password = @password
+        if self.foreign_password.blank?
+          self.foreign_password = @password
         end
       end
     end
