@@ -112,7 +112,7 @@ module Ivy
     ############################
 
     def self.get_canvas_config
-      JSON.parse(File.read(Engine.root.join("app/views/ivy/racks/_configuration.json")))
+      JSON.parse(File.read(Rails.root.join("app/views/ivy/racks/_configuration.json")))
     end
 
     ############################

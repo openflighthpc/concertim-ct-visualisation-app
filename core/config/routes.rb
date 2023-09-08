@@ -1,6 +1,5 @@
 Rails.application.routes.draw do
   # Engines
-  mount Ivy::Engine  => '/', as: :ivy_engine
   authenticate :user, ->(user) { user.root? } do
     mount GoodJob::Engine => 'good_job'
   end
@@ -12,6 +11,12 @@ Rails.application.routes.draw do
   # We need to redirect here, otherwise the devise redirections will take us to
   # the legacy sign up page.
   root to: redirect('/irv')
+
+  scope module: :ivy do
+    resource :irv, only: :show do
+      get :configuration
+    end
+  end
 
   namespace :fleece, path: 'cloud-env' do
     resource :config do
