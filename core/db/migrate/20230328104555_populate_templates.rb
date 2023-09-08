@@ -57,7 +57,7 @@ class PopulateTemplates < ActiveRecord::Migration[7.0]
   private
 
   def templates
-    template_dir = ::Ivy::Engine.root.join('db/fixtures/chassis_templates/')
+    template_dir = Rails.root.join('db/fixtures/chassis_templates/')
     template_dir.glob('*.yaml')
       .map{ |path| [path.basename('.yaml').to_s, YAML.load_file(path)] }
       .map{ |name, data| data.deep_symbolize_keys.reverse_merge(name: name) }
