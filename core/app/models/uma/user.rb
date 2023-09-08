@@ -1,6 +1,5 @@
 module Uma
   class User < ApplicationRecord
-
     self.table_name = "users"
     encrypts :foreign_password
 

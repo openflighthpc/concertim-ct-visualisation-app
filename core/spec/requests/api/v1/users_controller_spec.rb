@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe "Api::V1::UsersControllers", type: :request do
   let(:headers) { {} }
   let(:urls) { Rails.application.routes.url_helpers }
+  let(:param_key) { "user" }
 
   describe "GET :index" do
     let(:url_under_test) { urls.api_v1_users_path }
@@ -132,6 +133,7 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
             end
 
             let(:object_under_test) { user }
+            let(:param_key) { "user" }
             let(:valid_attributes) {
               {
                 user: { attr_under_test => SecureRandom.uuid }
@@ -150,6 +152,7 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
             before(:each) { user.send("#{attr_under_test}=", SecureRandom.uuid); user.save! }
 
             let(:object_under_test) { user }
+            let(:param_key) { "user" }
             let(:valid_attributes) {
               {
                 user: { attr_under_test => nil }
@@ -168,6 +171,7 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
             before(:each) { user.send("#{attr_under_test}=", SecureRandom.uuid); user.save! }
 
             let(:object_under_test) { user }
+            let(:param_key) { "user" }
             let(:valid_attributes) {
               {
                 user: { attr_under_test => SecureRandom.uuid }
@@ -190,6 +194,7 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
             end
 
             let(:object_under_test) { user }
+            let(:param_key) { "user" }
             let(:valid_attributes) {
               {
                 user: { attr_under_test => SecureRandom.uuid }
@@ -207,6 +212,7 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
           include_examples "cannot update generic JSON API endpoint examples" do
             before(:each) { user.send("#{attr_under_test}=", SecureRandom.uuid); user.save! }
             let(:object_under_test) { user }
+            let(:param_key) { "user" }
             let(:valid_attributes) {
               {
                 user: { attr_under_test => nil }
@@ -225,6 +231,7 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
             before(:each) { user.send("#{attr_under_test}=", SecureRandom.uuid); user.save! }
 
             let(:object_under_test) { user }
+            let(:param_key) { "user" }
             let(:valid_attributes) {
               {
                 user: { attr_under_test => SecureRandom.uuid }
@@ -243,6 +250,7 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
     shared_examples "can update user's cost" do
       include_examples "update generic JSON API endpoint examples" do
         let(:object_under_test) { user }
+        let(:param_key) { "user" }
         let(:valid_attributes) {
           {
             user: { cost: 100.001 }
@@ -259,6 +267,7 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
     shared_examples "cannot update user's cost" do
       include_examples "cannot update generic JSON API endpoint examples" do
         let(:object_under_test) { user }
+        let(:param_key) { "user" }
         let(:valid_attributes) {
           {
             user: { cost: 100.001 }
@@ -282,6 +291,7 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
       
         include_examples "update generic JSON API endpoint examples" do
           let(:object_under_test) { user }
+          let(:param_key) { "user" }
           let(:valid_attributes) {
             {
               user: { attr_under_test => user.send(attr_under_test) + 1.day}
@@ -303,6 +313,7 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
         end
         include_examples "cannot update generic JSON API endpoint examples" do
           let(:object_under_test) { user }
+          let(:param_key) { "user" }
           let(:valid_attributes) {
             {
               user: { attr_under_test => user.send(attr_under_test) + 1.day}
