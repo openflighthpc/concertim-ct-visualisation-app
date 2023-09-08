@@ -5,13 +5,6 @@ PATH
       pg (~> 1.1)
       rails (>= 7.0.4)
 
-PATH
-  remote: ../meca
-  specs:
-    meca (0.1.0)
-      pg (~> 1.1)
-      rails (>= 7.0.4)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -352,7 +345,6 @@ DEPENDENCIES
   importmap-rails
   ivy (= 0.1.0)!
   jbuilder
-  meca (= 0.1.0)!
   pg (~> 1.1)
   puma (~> 5.0)
   rabl (~> 0.16.1)

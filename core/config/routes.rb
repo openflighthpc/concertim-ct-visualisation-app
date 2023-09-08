@@ -1,7 +1,6 @@
 Rails.application.routes.draw do
   # Engines
   mount Ivy::Engine  => '/', as: :ivy_engine
-  mount Meca::Engine => '/', as: :meca_engine
   authenticate :user, ->(user) { user.root? } do
     mount GoodJob::Engine => 'good_job'
   end

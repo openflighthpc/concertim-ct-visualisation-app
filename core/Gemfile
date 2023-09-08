@@ -28,7 +28,6 @@ gem "bootsnap", require: false
 ###################################
 
 gem "ivy",  '0.1.0', :require => "ivy",   :path => "../ivy"
-gem "meca", '0.1.0', :require => "meca",   :path => "../meca"
 
 ###################################
 #
