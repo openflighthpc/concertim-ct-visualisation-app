@@ -19,7 +19,7 @@ FactoryBot.define do
     after(:create) do
       max_id = Ivy::Template.pluck(:id).max
       Ivy::Template.connection.execute <<-SQL
-        ALTER SEQUENCE ivy.templates_id_seq RESTART WITH #{max_id + 1}
+        ALTER SEQUENCE templates_id_seq RESTART WITH #{max_id + 1}
       SQL
     end
   end

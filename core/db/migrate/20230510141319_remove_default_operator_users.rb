@@ -14,14 +14,12 @@ class RemoveDefaultOperatorUsers < ActiveRecord::Migration[7.0]
   end
 
   def up
-    execute 'SET search_path TO ivy,uma,public'
     Uma::User.reset_column_information
     remove_unused_user(Uma::User.find_by(login: 'operator_one'))
     remove_unused_user(Uma::User.find_by(login: 'operator_two'))
   end
 
   def down
-    execute 'SET search_path TO ivy,uma,public'
     Uma::User.reset_column_information
     Uma::User.create!(
       login: 'operator_one',

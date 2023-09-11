@@ -46,7 +46,7 @@ class PopulateTemplates < ActiveRecord::Migration[7.0]
     # The rack template is created with a specific ID, doing skips the
     # sequence, so we update it here.
     execute <<-SQL
-      SELECT setval('ivy.templates_id_seq', (SELECT max(id) FROM ivy.templates))
+      SELECT setval('templates_id_seq', (SELECT max(id) FROM templates))
     SQL
   end
 

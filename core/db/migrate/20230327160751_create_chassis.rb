@@ -1,9 +1,5 @@
 class CreateChassis < ActiveRecord::Migration[7.0]
   def change
-    reversible do |dir|
-      dir.up   { execute 'SET search_path TO ivy,public' }
-    end
-
     create_table 'base_chassis' do |t|
       t.string :name, limit: 255, null: false, default: ''
       t.integer :u_height, null: false, default: 1
@@ -26,9 +22,5 @@ class CreateChassis < ActiveRecord::Migration[7.0]
     add_reference 'base_chassis', 'template',
       null: false,
       foreign_key: { on_update: :cascade, on_delete: :restrict }
-
-    reversible do |dir|
-      dir.down { execute 'SET search_path TO ivy,public' }
-    end
   end
 end

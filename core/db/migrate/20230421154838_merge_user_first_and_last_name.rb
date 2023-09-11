@@ -7,10 +7,6 @@ class MergeUserFirstAndLastName < ActiveRecord::Migration[7.0]
 
   def change
     reversible do |dir|
-      dir.up   { execute 'SET search_path TO uma,public' }
-    end
-
-    reversible do |dir|
       dir.up do
         # Append surname to new firstname column.
         Uma::User.reset_column_information
@@ -41,10 +37,6 @@ class MergeUserFirstAndLastName < ActiveRecord::Migration[7.0]
 
     change_table :users do |t|
       t.remove :surname, limit: 56, null: true
-    end
-
-    reversible do |dir|
-      dir.down { execute 'SET search_path TO uma,public' }
     end
   end
 end

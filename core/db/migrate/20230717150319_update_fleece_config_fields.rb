@@ -1,9 +1,5 @@
 class UpdateFleeceConfigFields < ActiveRecord::Migration[7.0]
   def change
-    reversible do |dir|
-      dir.up   { execute 'SET search_path TO public' }
-    end
-
     drop_table :fleece_configs
 
     create_table :fleece_configs do |t|
@@ -16,10 +12,6 @@ class UpdateFleeceConfigFields < ActiveRecord::Migration[7.0]
       t.string "internal_auth_url", limit: 255, null: false
 
       t.timestamps
-
-      reversible do |dir|
-        dir.down { execute 'SET search_path TO public' }
-      end
     end
   end
 end

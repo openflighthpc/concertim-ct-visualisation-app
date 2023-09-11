@@ -15,25 +15,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_05_094853) do
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
-  connection.execute "CREATE SCHEMA IF NOT EXISTS public"
-  connection.execute "CREATE SCHEMA IF NOT EXISTS uma"
-  connection.execute "CREATE SCHEMA IF NOT EXISTS meca"
-  connection.execute "CREATE SCHEMA IF NOT EXISTS ivy"
-
-  connection.schema_search_path = "public,uma,meca,ivy"
-
-  connection.execute "CREATE SEQUENCE ivy.base_chassis_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
-  connection.execute "CREATE SEQUENCE ivy.data_source_maps_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
-  connection.execute "CREATE SEQUENCE ivy.devices_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
-  connection.execute "CREATE SEQUENCE ivy.locations_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
-  connection.execute "CREATE SEQUENCE ivy.racks_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
-  connection.execute "CREATE SEQUENCE ivy.templates_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
-  connection.execute "CREATE SEQUENCE meca.rackview_presets_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
-  connection.execute "CREATE SEQUENCE public.fleece_cluster_types_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
-  connection.execute "CREATE SEQUENCE public.fleece_configs_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
-  connection.execute "CREATE SEQUENCE uma.users_id_seq START WITH 1 INCREMENT BY 1 NO MINVALUE NO MAXVALUE CACHE 1"
-
-  create_table "ivy.base_chassis", id: :bigint, default: -> { "nextval('base_chassis_id_seq'::regclass)" }, force: :cascade do |t|
+  create_table "base_chassis", force: :cascade do |t|
     t.string "name", limit: 255, default: "", null: false
     t.integer "modified_timestamp", default: 0, null: false
     t.boolean "show_in_dcrv", default: false, null: false
@@ -45,7 +27,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_05_094853) do
     t.index ["template_id"], name: "index_base_chassis_on_template_id"
   end
 
-  create_table "ivy.data_source_maps", id: :bigint, default: -> { "nextval('data_source_maps_id_seq'::regclass)" }, force: :cascade do |t|
+  create_table "data_source_maps", force: :cascade do |t|
     t.string "map_to_grid", limit: 56, null: false
     t.string "map_to_cluster", limit: 56, null: false
     t.string "map_to_host", limit: 150, null: false
@@ -55,7 +37,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_05_094853) do
     t.index ["device_id"], name: "index_data_source_maps_on_device_id"
   end
 
-  create_table "ivy.devices", id: :bigint, default: -> { "nextval('devices_id_seq'::regclass)" }, force: :cascade do |t|
+  create_table "devices", force: :cascade do |t|
     t.string "name", limit: 255, null: false
     t.string "description", limit: 255
     t.boolean "hidden", default: false, null: false
@@ -74,73 +56,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_05_094853) do
     t.index ["base_chassis_id"], name: "index_devices_on_base_chassis_id"
   end
 
-  create_table "ivy.locations", id: :bigint, default: -> { "nextval('locations_id_seq'::regclass)" }, force: :cascade do |t|
-    t.integer "u_depth", default: 2, null: false
-    t.integer "u_height", default: 1, null: false
-    t.integer "start_u", null: false
-    t.integer "end_u", null: false
-    t.string "facing", default: "f", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "rack_id", null: false
-    t.index ["rack_id"], name: "index_locations_on_rack_id"
-  end
-
-  create_table "ivy.racks", id: :bigint, default: -> { "nextval('racks_id_seq'::regclass)" }, force: :cascade do |t|
-    t.string "name", limit: 255, null: false
-    t.integer "u_height", default: 42, null: false
-    t.integer "u_depth", default: 2, null: false
-    t.integer "modified_timestamp", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "template_id", null: false
-    t.bigint "user_id", null: false
-    t.jsonb "metadata", default: {}, null: false
-    t.string "status", null: false
-    t.decimal "cost", default: "0.0", null: false
-    t.string "creation_output"
-    t.jsonb "network_details", default: {}, null: false
-    t.index ["template_id"], name: "index_racks_on_template_id"
-    t.index ["user_id"], name: "index_racks_on_user_id"
-  end
-
-  create_table "ivy.templates", id: :bigint, default: -> { "nextval('templates_id_seq'::regclass)" }, force: :cascade do |t|
-    t.string "name", limit: 255, default: "", null: false
-    t.integer "height", null: false
-    t.integer "depth", null: false
-    t.integer "version", default: 1, null: false
-    t.string "template_type", limit: 255, null: false
-    t.integer "rackable", default: 1, null: false
-    t.boolean "simple", default: true, null: false
-    t.string "description", limit: 255
-    t.jsonb "images", default: {}, null: false
-    t.integer "rows"
-    t.integer "columns"
-    t.integer "padding_left", default: 0, null: false
-    t.integer "padding_bottom", default: 0, null: false
-    t.integer "padding_right", default: 0, null: false
-    t.integer "padding_top", default: 0, null: false
-    t.string "model", limit: 255
-    t.string "rack_repeat_ratio", limit: 255
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "foreign_id"
-    t.integer "vcpus"
-    t.integer "ram"
-    t.integer "disk"
-  end
-
-  create_table "meca.rackview_presets", id: :bigint, default: -> { "nextval('rackview_presets_id_seq'::regclass)" }, force: :cascade do |t|
-    t.string "name", limit: 255, null: false
-    t.boolean "default", default: false, null: false
-    t.jsonb "values"
-    t.integer "user_id"
-    t.boolean "global", default: false, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "fleece_cluster_types", id: :bigint, default: -> { "nextval('fleece_cluster_types_id_seq'::regclass)" }, force: :cascade do |t|
+  create_table "fleece_cluster_types", force: :cascade do |t|
     t.string "name", limit: 255, null: false
     t.string "description", limit: 1024, null: false
     t.string "foreign_id", null: false
@@ -150,7 +66,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_05_094853) do
     t.datetime "version"
   end
 
-  create_table "fleece_configs", id: :bigint, default: -> { "nextval('fleece_configs_id_seq'::regclass)" }, force: :cascade do |t|
+  create_table "fleece_configs", force: :cascade do |t|
     t.string "admin_user_id", limit: 255, null: false
     t.string "admin_project_id", limit: 255, null: false
     t.integer "user_handler_port", default: 42356, null: false
@@ -221,7 +137,73 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_05_094853) do
     t.index ["scheduled_at"], name: "index_good_jobs_on_scheduled_at", where: "(finished_at IS NULL)"
   end
 
-  create_table "uma.users", id: :bigint, default: -> { "nextval('users_id_seq'::regclass)" }, force: :cascade do |t|
+  create_table "locations", force: :cascade do |t|
+    t.integer "u_depth", default: 2, null: false
+    t.integer "u_height", default: 1, null: false
+    t.integer "start_u", null: false
+    t.integer "end_u", null: false
+    t.string "facing", default: "f", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "rack_id", null: false
+    t.index ["rack_id"], name: "index_locations_on_rack_id"
+  end
+
+  create_table "racks", force: :cascade do |t|
+    t.string "name", limit: 255, null: false
+    t.integer "u_height", default: 42, null: false
+    t.integer "u_depth", default: 2, null: false
+    t.integer "modified_timestamp", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "template_id", null: false
+    t.bigint "user_id", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.string "status", null: false
+    t.decimal "cost", default: "0.0", null: false
+    t.string "creation_output"
+    t.jsonb "network_details", default: {}, null: false
+    t.index ["template_id"], name: "index_racks_on_template_id"
+    t.index ["user_id"], name: "index_racks_on_user_id"
+  end
+
+  create_table "rackview_presets", force: :cascade do |t|
+    t.string "name", limit: 255, null: false
+    t.boolean "default", default: false, null: false
+    t.jsonb "values"
+    t.integer "user_id"
+    t.boolean "global", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "templates", force: :cascade do |t|
+    t.string "name", limit: 255, default: "", null: false
+    t.integer "height", null: false
+    t.integer "depth", null: false
+    t.integer "version", default: 1, null: false
+    t.string "template_type", limit: 255, null: false
+    t.integer "rackable", default: 1, null: false
+    t.boolean "simple", default: true, null: false
+    t.string "description", limit: 255
+    t.jsonb "images", default: {}, null: false
+    t.integer "rows"
+    t.integer "columns"
+    t.integer "padding_left", default: 0, null: false
+    t.integer "padding_bottom", default: 0, null: false
+    t.integer "padding_right", default: 0, null: false
+    t.integer "padding_top", default: 0, null: false
+    t.string "model", limit: 255
+    t.string "rack_repeat_ratio", limit: 255
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "foreign_id"
+    t.integer "vcpus"
+    t.integer "ram"
+    t.integer "disk"
+  end
+
+  create_table "users", force: :cascade do |t|
     t.string "login", limit: 80, null: false
     t.string "name", limit: 56, null: false
     t.text "email", default: "", null: false
@@ -244,16 +226,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_05_094853) do
     t.date "billing_period_start"
     t.date "billing_period_end"
     t.string "foreign_password"
-    t.index ["email"], name: "index_uma.users_on_email", unique: true
-    t.index ["login"], name: "index_uma.users_on_login", unique: true
-    t.index ["project_id"], name: "index_uma.users_on_project_id", unique: true, where: "(NOT NULL::boolean)"
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["login"], name: "index_users_on_login", unique: true
+    t.index ["project_id"], name: "index_users_on_project_id", unique: true, where: "(NOT NULL::boolean)"
   end
 
-  add_foreign_key "ivy.base_chassis", "locations", on_update: :cascade, on_delete: :restrict
-  add_foreign_key "ivy.base_chassis", "templates", on_update: :cascade, on_delete: :restrict
-  add_foreign_key "ivy.data_source_maps", "devices", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "ivy.devices", "base_chassis", on_update: :cascade, on_delete: :cascade
-  add_foreign_key "ivy.locations", "racks", on_update: :cascade, on_delete: :restrict
-  add_foreign_key "ivy.racks", "templates", on_update: :cascade, on_delete: :restrict
-  add_foreign_key "ivy.racks", "users", on_update: :cascade, on_delete: :restrict
+  add_foreign_key "base_chassis", "locations", on_update: :cascade, on_delete: :restrict
+  add_foreign_key "base_chassis", "templates", on_update: :cascade, on_delete: :restrict
+  add_foreign_key "data_source_maps", "devices", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "devices", "base_chassis", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "locations", "racks", on_update: :cascade, on_delete: :restrict
+  add_foreign_key "racks", "templates", on_update: :cascade, on_delete: :restrict
+  add_foreign_key "racks", "users", on_update: :cascade, on_delete: :restrict
 end

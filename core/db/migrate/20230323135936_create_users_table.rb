@@ -1,6 +1,6 @@
 class CreateUsersTable < ActiveRecord::Migration[7.0]
   def change
-    create_table 'uma.users' do |t|
+    create_table 'users' do |t|
       t.string :login, limit: 80, null: false
       t.string :firstname, limit: 56, null: false
       t.string :surname, limit: 56, null: false
@@ -19,7 +19,7 @@ class CreateUsersTable < ActiveRecord::Migration[7.0]
 
       t.timestamps
     end
-    add_index 'uma.users', :login, unique: true
-    add_index 'uma.users', :email, unique: true
+    add_index 'users', :login, unique: true
+    add_index 'users', :email, unique: true
   end
 end

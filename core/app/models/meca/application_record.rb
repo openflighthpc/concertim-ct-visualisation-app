@@ -1,9 +1,5 @@
 module Meca
   class ApplicationRecord < ActiveRecord::Base
-    unless Rails.env.test?
-      establish_connection :meca
-    end
-
     self.abstract_class = true
 
     # ensure JSON comes out as {{"ID:1... as opposed to {{"device":{"id:1

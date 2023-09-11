@@ -22,10 +22,6 @@ class RacksAreNotDevices < ActiveRecord::Migration[7.0]
   end
 
   def change
-    reversible do |dir|
-      dir.up   { execute 'SET search_path TO ivy,public' }
-    end
-
     change_column_null :racks, :tagged_device_id, true
 
     reversible do |dir|
@@ -66,10 +62,6 @@ class RacksAreNotDevices < ActiveRecord::Migration[7.0]
 
     change_table :racks do |t|
       t.remove :tagged_device_id, type: :integer, null: true
-    end
-
-    reversible do |dir|
-      dir.down { execute 'SET search_path TO ivy,public' }
     end
   end
 end

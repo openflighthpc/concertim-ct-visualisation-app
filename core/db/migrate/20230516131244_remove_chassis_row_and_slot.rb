@@ -1,7 +1,5 @@
 class RemoveChassisRowAndSlot < ActiveRecord::Migration[7.0]
   def up
-    execute 'SET search_path TO ivy,public'
-
     remove_reference 'devices', 'slot',
       null: true,
       foreign_key: { on_update: :cascade, on_delete: :cascade }

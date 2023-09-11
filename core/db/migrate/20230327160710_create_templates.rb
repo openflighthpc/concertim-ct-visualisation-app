@@ -1,9 +1,5 @@
 class CreateTemplates < ActiveRecord::Migration[7.0]
   def change
-    reversible do |dir|
-      dir.up   { execute 'SET search_path TO ivy,public' }
-    end
-
     create_table 'templates' do |t|
       t.string :name, limit: 255, null: false, default: ''
       t.integer :height, null: false
@@ -26,10 +22,6 @@ class CreateTemplates < ActiveRecord::Migration[7.0]
       t.string :rack_repeat_ratio, limit: 255
 
       t.timestamps
-    end
-
-    reversible do |dir|
-      dir.down { execute 'SET search_path TO ivy,public' }
     end
   end
 end
