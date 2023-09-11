@@ -53,7 +53,7 @@ class Api::V1::Irv::RacksController < Api::V1::Irv::BaseController
     @rack = Ivy::HwRack.find(params[:id])
     authorize! :update, @rack
 
-    @config = Fleece::Config.last
+    @config = Config.last
     if @config.nil?
       render json: { success: false, errors: ["No cloud configuration has been set. Please contact an admin"] }, status: 403
       return

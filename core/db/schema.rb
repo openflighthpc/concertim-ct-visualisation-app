@@ -27,6 +27,28 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_05_094853) do
     t.index ["template_id"], name: "index_base_chassis_on_template_id"
   end
 
+  create_table "cluster_types", force: :cascade do |t|
+    t.string "name", limit: 255, null: false
+    t.string "description", limit: 1024, null: false
+    t.string "foreign_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.jsonb "fields", default: {}, null: false
+    t.datetime "version"
+  end
+
+  create_table "configs", force: :cascade do |t|
+    t.string "admin_user_id", limit: 255, null: false
+    t.string "admin_project_id", limit: 255, null: false
+    t.integer "user_handler_port", default: 42356, null: false
+    t.integer "cluster_builder_port", default: 42378, null: false
+    t.string "host_url", limit: 255, null: false
+    t.string "internal_auth_url", limit: 255, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string "admin_foreign_password"
+  end
+
   create_table "data_source_maps", force: :cascade do |t|
     t.string "map_to_grid", limit: 56, null: false
     t.string "map_to_cluster", limit: 56, null: false
@@ -54,28 +76,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_05_094853) do
     t.string "login_user"
     t.jsonb "volume_details", default: {}, null: false
     t.index ["base_chassis_id"], name: "index_devices_on_base_chassis_id"
-  end
-
-  create_table "fleece_cluster_types", force: :cascade do |t|
-    t.string "name", limit: 255, null: false
-    t.string "description", limit: 1024, null: false
-    t.string "foreign_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.jsonb "fields", default: {}, null: false
-    t.datetime "version"
-  end
-
-  create_table "fleece_configs", force: :cascade do |t|
-    t.string "admin_user_id", limit: 255, null: false
-    t.string "admin_project_id", limit: 255, null: false
-    t.integer "user_handler_port", default: 42356, null: false
-    t.integer "cluster_builder_port", default: 42378, null: false
-    t.string "host_url", limit: 255, null: false
-    t.string "internal_auth_url", limit: 255, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string "admin_foreign_password"
   end
 
   create_table "good_job_batches", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

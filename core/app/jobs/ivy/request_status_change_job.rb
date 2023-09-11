@@ -3,13 +3,13 @@ require 'faraday'
 class Ivy::RequestStatusChangeJob < ApplicationJob
   queue_as :default
 
-  def perform(target, type, action, fleece_config, user, **options)
+  def perform(target, type, action, config, user, **options)
     runner = Runner.new(
       target: target,
       type: type,
       action: action,
       user: user,
-      fleece_config: fleece_config,
+      config: config,
       logger: logger,
       **options
     )
@@ -70,17 +70,17 @@ class Ivy::RequestStatusChangeJob < ApplicationJob
       {
         cloud_env:
           {
-            auth_url: @fleece_config.internal_auth_url,
-            user_id: (@user.root? ? @fleece_config.admin_user_id : @user.cloud_user_id).gsub(/-/, ''),
-            password: @user.root? ? @fleece_config.admin_foreign_password : @user.foreign_password,
-            project_id: @user.root? ? @fleece_config.admin_project_id : @user.project_id
+            auth_url: @config.internal_auth_url,
+            user_id: (@user.root? ? @config.admin_user_id : @user.cloud_user_id).gsub(/-/, ''),
+            password: @user.root? ? @config.admin_foreign_password : @user.foreign_password,
+            project_id: @user.root? ? @config.admin_project_id : @user.project_id
           },
         action: @action
       }
     end
 
     def url
-      "#{@fleece_config.user_handler_base_url}/update_status/#{@type}/#{@target.openstack_id}"
+      "#{@config.user_handler_base_url}/update_status/#{@type}/#{@target.openstack_id}"
     end
 
     def error_description

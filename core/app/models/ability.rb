@@ -21,8 +21,8 @@ class Ability
   def root_abilities(user)
     can :manage, :all
 
-    cannot :read, Fleece::ClusterType
-    cannot :create, Fleece::Cluster
+    cannot :read, ClusterType
+    cannot :create, Cluster
   end
 
   # Abilities for non-root users.
@@ -39,12 +39,12 @@ class Ability
     can :manage, Ivy::HwRack, user: user
     can :manage, Meca::RackviewPreset, user: user
 
-    can :read, Fleece::ClusterType
-    can :create, Fleece::Cluster
+    can :read, ClusterType
+    can :create, Cluster
 
-    can :read, Fleece::KeyPair, user: user
-    can :create, Fleece::KeyPair, user: user
-    can :destroy, Fleece::KeyPair, user: user
+    can :read, KeyPair, user: user
+    can :create, KeyPair, user: user
+    can :destroy, KeyPair, user: user
 
     can [:read, :update], Uma::User, id: user.id
   end

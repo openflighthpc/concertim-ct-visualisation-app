@@ -1,15 +1,15 @@
 class PopulateEncryptedAdminPasswords < ActiveRecord::Migration[7.0]
   def up
-    Fleece::Config.reset_column_information
-    Fleece::Config.all.each do |config|
+    Config.reset_column_information
+    Config.all.each do |config|
       config.admin_foreign_password = config.admin_password
       config.save!
     end
   end
 
   def down
-    Fleece::Config.reset_column_information
-    Fleece::Config.all.each do |config|
+    Config.reset_column_information
+    Config.all.each do |config|
       config.admin_foreign_password = nil
       config.save(validate: false)
     end

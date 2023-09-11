@@ -26,13 +26,13 @@ SimpleNavigation::Configuration.run do |navigation|
       primary.item :infra_racks_list, 'Rack view', Rails.application.routes.url_helpers.irv_path, icon: :infra_racks, :link => {class: 'infra_racks'}
 
       if current_user.root?
-        primary.item :fleece_config, 'Cloud environment', Rails.application.routes.url_helpers.fleece_config_path,
+        primary.item :config, 'Cloud environment', Rails.application.routes.url_helpers.config_path,
           icon: :config,
           highlights_on: /\/cloud-env\/configs/
       end
 
-      if current_user.can?(:create, Fleece::Cluster)
-        primary.item :fleece_cluster_types, 'Launch cluster', Rails.application.routes.url_helpers.fleece_cluster_types_path,
+      if current_user.can?(:create, Cluster)
+        primary.item :cluster_types, 'Launch cluster', Rails.application.routes.url_helpers.cluster_types_path,
           icon: :racks,
           highlights_on: /\/cloud-env\/(cluster-types|clusters)/
       end

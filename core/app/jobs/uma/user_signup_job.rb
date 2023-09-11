@@ -6,10 +6,10 @@ class Uma::UserSignupJob < Uma::ApplicationJob
   retry_on ::Faraday::Error, wait: :exponentially_longer, attempts: 10
   retry_on ::ActiveModel::ValidationError, wait: :exponentially_longer, attempts: 10
 
-  def perform(user, fleece_config, **options)
+  def perform(user, config, **options)
     runner = Runner.new(
       user: user,
-      fleece_config: fleece_config,
+      config: config,
       logger: logger,
       **options
     )
@@ -45,16 +45,16 @@ class Uma::UserSignupJob < Uma::ApplicationJob
     private
 
     def url
-      "#{@fleece_config.user_handler_base_url}/create_user_project"
+      "#{@config.user_handler_base_url}/create_user_project"
     end
 
     def body
       {
         cloud_env: {
-          auth_url: @fleece_config.internal_auth_url,
-          user_id: @fleece_config.admin_user_id,
-          password: @fleece_config.admin_foreign_password,
-          project_id: @fleece_config.admin_project_id,
+          auth_url: @config.internal_auth_url,
+          user_id: @config.admin_user_id,
+          password: @config.admin_foreign_password,
+          project_id: @config.admin_project_id,
         },
         username: @user.login,
         password: @user.foreign_password,

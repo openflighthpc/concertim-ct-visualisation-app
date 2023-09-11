@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Ivy::RequestStatusChangeJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
-  let(:config) { create(:fleece_config, admin_project_id: Faker::Internet.uuid, admin_user_id: Faker::Internet.uuid) }
+  let(:config) { create(:config, admin_project_id: Faker::Internet.uuid, admin_user_id: Faker::Internet.uuid) }
   let(:customer_user) { create(:user, project_id: Faker::Internet.uuid, cloud_user_id: Faker::Internet.uuid) }
   let(:admin) { create(:user, :admin) }
   let(:user) { customer_user }
@@ -18,7 +18,7 @@ RSpec.describe Ivy::RequestStatusChangeJob, type: :job do
   let(:user_service_path) { "/update_status" }
 
   subject(:job_runner) {
-    Ivy::RequestStatusChangeJob::Runner.new(user: user, type: type, target: target, action: action, fleece_config: config, test_stubs: stubs)
+    Ivy::RequestStatusChangeJob::Runner.new(user: user, type: type, target: target, action: action, config: config, test_stubs: stubs)
   }
 
   describe "url" do

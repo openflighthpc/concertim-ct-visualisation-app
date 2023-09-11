@@ -13,10 +13,6 @@ module Uma
       class_name: 'Ivy::HwRack',
       dependent: :destroy
 
-    has_many :key_pairs,
-      class_name: 'Fleece::KeyPair',
-      dependent: :destroy
-
     ####################################
     #
     # Hooks

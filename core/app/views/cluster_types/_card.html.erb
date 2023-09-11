@@ -1,0 +1,13 @@
+<% cluster_type = card %>
+
+<div class="cluster-type-card">
+  <div class="card-divider">
+    <h4><%= cluster_type.name %></h4>
+  </div>
+  <div class="card-section">
+    <p><%= cluster_type.description %></p>
+  </div>
+  <div class="card-section">
+    <%= link_to "Select", new_cluster_type_cluster_path(cluster_type) %>
+  </div>
+</div>

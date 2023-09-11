@@ -20,8 +20,8 @@ module Emma
     class JobRunner
       DEFAULT_TIMEOUT = 5
 
-      def initialize(fleece_config:, logger:nil, timeout:nil, test_stubs:nil)
-        @fleece_config = fleece_config
+      def initialize(config:, logger:nil, timeout:nil, test_stubs:nil)
+        @config = config
         @timeout = timeout || DEFAULT_TIMEOUT
         @logger = logger || GoodJob.logger
         @test_stubs = test_stubs

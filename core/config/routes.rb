@@ -18,7 +18,7 @@ Rails.application.routes.draw do
     end
   end
 
-  namespace :fleece, path: 'cloud-env' do
+  scope '/cloud-env' do
     resource :config do
       member do
         post :send_config, as: 'send', path: 'send'
@@ -29,14 +29,12 @@ Rails.application.routes.draw do
     end
   end
 
-  scope module: :fleece do
-    resources :users, only: [] do
-      collection do
-        resources :key_pairs, only: [:index, :new, :create] do
-          collection do
-            get '/success', to: 'key_pairs#success'
-            delete '/:name', to: 'key_pairs#destroy', as: :delete
-          end
+  resources :users, only: [] do
+    collection do
+      resources :key_pairs, only: [:index, :new, :create] do
+        collection do
+          get '/success', to: 'key_pairs#success'
+          delete '/:name', to: 'key_pairs#destroy', as: :delete
         end
       end
     end
