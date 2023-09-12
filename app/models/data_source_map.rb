@@ -71,7 +71,7 @@ class DataSourceMap < ApplicationRecord
     if device.respond_to?(:generate_dsm)
       device.generate_dsm
     else
-      "hacor:#{device.class.name.demodulize.downcase}:#{device.id}"
+      "#{device.class.name.demodulize.downcase}:#{device.id}"
     end
   end
 

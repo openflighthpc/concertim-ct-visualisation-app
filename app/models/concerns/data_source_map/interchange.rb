@@ -57,7 +57,7 @@ module DataSourceMap::Interchange
       h = instance.map_to_host
       map[g] ||= {}
       map[g][c] ||= {}
-      map[g][c][h] = "hacor:#{type}:#{instance.device_id}" unless h.nil?
+      map[g][c][h] = "#{type}:#{instance.device_id}" unless h.nil?
     end
 
     # Remove stale instance from the interchange map.  Either because the
