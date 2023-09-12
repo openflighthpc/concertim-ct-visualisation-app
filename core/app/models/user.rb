@@ -1,7 +1,4 @@
 class User < ApplicationRecord
-  # ensure JSON comes out as {{"ID:1... as opposed to {{"device":{"id:1
-  self.include_root_in_json = false
-
   encrypts :foreign_password
 
   ####################################
@@ -11,7 +8,7 @@ class User < ApplicationRecord
   ####################################
 
   has_many :racks,
-    class_name: 'Ivy::HwRack',
+    class_name: 'HwRack',
     dependent: :destroy
 
   ####################################

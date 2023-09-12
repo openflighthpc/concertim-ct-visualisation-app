@@ -1,41 +1,35 @@
 class PopulateLocationModel < ActiveRecord::Migration[7.0]
-  module Ivy
-    class Chassis < ActiveRecord::Base
-      self.store_full_sti_class = false
-      self.table_name = "base_chassis"
-    end
+  class Chassis < ActiveRecord::Base
+     self.table_name = "base_chassis"
+  end
 
-    class Chassis::RackChassis < Chassis
-    end
+  class Chassis::RackChassis < Chassis
+  end
 
-    class ChassisRow < ActiveRecord::Base
-      self.table_name = 'chassis_rows'
-      belongs_to :chassis, foreign_key: :base_chassis_id
-    end
+  class ChassisRow < ActiveRecord::Base
+    belongs_to :chassis, foreign_key: :base_chassis_id
+  end
 
-    class Slot < ActiveRecord::Base
-      self.table_name = "slots"
-      belongs_to :chassis_row
-    end
+  class Slot < ActiveRecord::Base
+    belongs_to :chassis_row
+  end
 
-    class Location < ActiveRecord::Base
-      has_one :chassis
-    end
+  class Location < ActiveRecord::Base
+    has_one :chassis
+  end
 
-    class Device < ActiveRecord::Base
-      self.table_name = "devices"
-      belongs_to :slot
-    end
+  class Device < ActiveRecord::Base
+    belongs_to :slot
+  end
 
-    class Chassis
-      belongs_to :location
-    end
+  class Chassis
+    belongs_to :location
   end
 
   def up
     say "Creating locations for all devices"
-    Ivy::Device.reset_column_information
-    Ivy::Device.all.each do |device|
+    Device.reset_column_information
+    Device.all.each do |device|
       chassis = device&.slot&.chassis_row&.chassis
       if chassis.nil?
         say "Skipping device #{device.id}:#{device.name} it has no chassis", true
@@ -63,7 +57,7 @@ class PopulateLocationModel < ActiveRecord::Migration[7.0]
     say "Deleting locations for all devices"
     change_column_null :base_chassis, :location_id, true
     execute "UPDATE base_chassis SET location_id = NULL"
-    Ivy::Location.destroy_all
+    Location.destroy_all
 
     say "Nullifying devices.base_chassis_id for all devices"
     change_column_null :devices, :base_chassis_id, true

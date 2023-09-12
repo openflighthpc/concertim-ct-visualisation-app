@@ -1,5 +1,5 @@
 class Api::V1::GroupsController < Api::V1::ApplicationController
-  load_and_authorize_resource :group, :class => Ivy::Group
+  load_and_authorize_resource :group, :class => Group
 
   before_action :check_params, :only=>[:show]
 

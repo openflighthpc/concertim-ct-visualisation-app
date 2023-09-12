@@ -4,7 +4,7 @@ class Api::V1::Irv::DevicesController < Api::V1::Irv::BaseController
   # GET /-/api/v1/irv/devices/:id/tooltip/
   #
   def tooltip
-    @device = Ivy::Device.find_by_id(params[:id])
+    @device = Device.find_by_id(params[:id])
     authorize! :read, @device
 
     error_for('Device') if @device.nil?
@@ -18,12 +18,12 @@ class Api::V1::Irv::DevicesController < Api::V1::Irv::BaseController
   #
   # XXX Can we remove this???
   def update_slot
-    @device     = Ivy::Device.find(params[:id])
-    new_slot    = Ivy::Slot.find(params[:slot_id])
+    @device     = Device.find(params[:id])
+    new_slot    = Slot.find(params[:slot_id])
     authorize! :move, @device
 
     begin
-      @device = Ivy::DeviceServices::MoveBlade.call(@device, new_slot)
+      @device = DeviceServices::MoveBlade.call(@device, new_slot)
       render :json => { success: true }
     rescue StandardError => e
       error(e.message) and return
@@ -32,7 +32,7 @@ class Api::V1::Irv::DevicesController < Api::V1::Irv::BaseController
   end
 
   def request_status_change
-    @device = Ivy::Device.find(params[:id])
+    @device = Device.find(params[:id])
     authorize! :update, @device
 
     @config = Config.last
@@ -54,7 +54,7 @@ class Api::V1::Irv::DevicesController < Api::V1::Irv::BaseController
       return
     end
 
-    result = Ivy::RequestStatusChangeJob.perform_now(@device, "devices", action, @config, current_user)
+    result = RequestStatusChangeJob.perform_now(@device, "devices", action, @config, current_user)
 
     if result.success?
       render json: { success: true }

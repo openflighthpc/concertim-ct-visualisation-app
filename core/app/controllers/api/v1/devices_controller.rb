@@ -1,5 +1,5 @@
 class Api::V1::DevicesController < Api::V1::ApplicationController
-  load_and_authorize_resource :device, :class => Ivy::Device
+  load_and_authorize_resource :device, :class => Device
 
   def index
     @devices = @devices.occupying_rack_u.map {|d| Api::V1::DevicePresenter.new(d) }
@@ -13,7 +13,7 @@ class Api::V1::DevicesController < Api::V1::ApplicationController
   end
 
   def update
-    @device, chassis, location = Ivy::DeviceServices::Update.call(
+    @device, chassis, location = DeviceServices::Update.call(
       @device,
       device_params.to_h,
       location_params.to_h,
@@ -34,7 +34,7 @@ class Api::V1::DevicesController < Api::V1::ApplicationController
   # DELETE /devices/1
   # 
   def destroy
-    if Ivy::DeviceServices::Destroy.call(@device)
+    if DeviceServices::Destroy.call(@device)
       render json: {}, status: :ok
     else
       render json: @device.errors.details, status: :unprocessable_entity

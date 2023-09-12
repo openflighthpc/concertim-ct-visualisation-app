@@ -10,10 +10,8 @@ Rails.application.routes.draw do
   # the legacy sign up page.
   root to: redirect('/irv')
 
-  scope module: :ivy do
-    resource :irv, only: :show do
-      get :configuration
-    end
+  resource :irv, only: :show do
+    get :configuration
   end
 
   scope '/cloud-env' do

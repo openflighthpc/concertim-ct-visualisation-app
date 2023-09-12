@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :rack, class: "Ivy::HwRack" do
+  factory :rack, class: "HwRack" do
     sequence(:name) { |n| "Rack-#{n}" }
     u_height { 40 }
     u_depth { 2 }

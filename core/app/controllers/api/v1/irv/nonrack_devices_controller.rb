@@ -1,7 +1,7 @@
 # XXX This is completely broken !!!
 class Api::V1::Irv::NonrackDevicesController < Api::V1::Irv::BaseController
   def index
-    authorize! :index, Ivy::Chassis
+    authorize! :index, Chassis
     rackableNonRackChassis = []
     dcrvShowableNonRackChassis = []
     assetList = []
@@ -11,19 +11,19 @@ class Api::V1::Irv::NonrackDevicesController < Api::V1::Irv::BaseController
     # if params["rackable_non_rack_ids"]
     #   rackable_non_rack_ids = params["rackable_non_rack_ids"].map{|r| r.to_i}
     #   if !rackable_non_rack_ids.empty?      
-    #     rackableNonRackChassis = Ivy::Chassis::NonRackChassis.rackable_non_showable.select!{|r| rackable_non_rack_ids.include? r.id}
+    #     rackableNonRackChassis = Chassis::NonRackChassis.rackable_non_showable.select!{|r| rackable_non_rack_ids.include? r.id}
     #   end
     # else
-    #   rackableNonRackChassis = Ivy::Chassis::NonRackChassis.rackable_non_showable
+    #   rackableNonRackChassis = Chassis::NonRackChassis.rackable_non_showable
     # end
     #
     # if params["non_rack_ids"]
     #   non_rack_ids = params["non_rack_ids"].map{|r| r.to_i}
     #   if !non_rack_ids.empty?
-    #     dcrvShowableNonRackChassis = Ivy::Chassis::NonRackChassis.dcrvshowable.select!{|d| non_rack_ids.include? d.id}
+    #     dcrvShowableNonRackChassis = Chassis::NonRackChassis.dcrvshowable.select!{|d| non_rack_ids.include? d.id}
     #   end
     # else
-    #   dcrvShowableNonRackChassis = Ivy::Chassis::NonRackChassis.dcrvshowable
+    #   dcrvShowableNonRackChassis = Chassis::NonRackChassis.dcrvshowable
     # end
     #
     # rackableNonRackChassis = rackableNonRackChassis.sort_by{|oneN| oneN.name}.map{ |oneNRC| chassis_to_hash(oneNRC) }
@@ -39,14 +39,14 @@ class Api::V1::Irv::NonrackDevicesController < Api::V1::Irv::BaseController
   end
 
   def modified
-    authorize! :index, Ivy::Chassis
+    authorize! :index, Chassis
     render :json => { :timestamp => Time.new.to_i, :added => [], :modified => [], :deleted => [] }
 
   #   non_rack_ids = Array(params[:non_rack_ids]).collect(&:to_i)
   #   timestamp = params[:modified_timestamp]
   #   suppressAdditions = params[:suppress_additions]
   # 
-  #   accessible_chassis = Ivy::Chassis::NonRackChassis.accessible_by(current_ability).dcrvshowable
+  #   accessible_chassis = Chassis::NonRackChassis.accessible_by(current_ability).dcrvshowable
   #   filtered_chassis = accessible_chassis.where(id: non_rack_ids)
   #
   #   @added = suppressAdditions == "true" ? [] : accessible_chassis.excluding_ids(non_rack_ids).pluck(:id)

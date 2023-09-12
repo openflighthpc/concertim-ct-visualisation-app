@@ -28,15 +28,13 @@ class Ability
   # Abilities for non-root users.
   def non_root_abilities(user)
     # This method will eventually get large and/or complex.  When this happens
-    # we can separate it into multiple files.  Perhaps one per module (e.g.,
-    # Ivy, Meca, Uma, etc.), or perhaps one per resource (e.g., Ivy::HwRack,
-    # Ivy::Device, etc.).
-    can :read, Ivy::Irv
+    # we can separate it into multiple files.
+    can :read, Irv
 
-    can :read, Ivy::Template
-    can :manage, Ivy::Chassis, location: {rack: {user: user}}
-    can :manage, Ivy::Device, chassis: {location: {rack: {user: user}}}
-    can :manage, Ivy::HwRack, user: user
+    can :read, Template
+    can :manage, Chassis, location: {rack: {user: user}}
+    can :manage, Device, chassis: {location: {rack: {user: user}}}
+    can :manage, HwRack, user: user
     can :manage, RackviewPreset, user: user
 
     can :read, ClusterType

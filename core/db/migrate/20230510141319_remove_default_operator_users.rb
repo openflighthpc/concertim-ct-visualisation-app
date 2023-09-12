@@ -1,14 +1,12 @@
 class RemoveDefaultOperatorUsers < ActiveRecord::Migration[7.0]
-  module Ivy
-    class HwRack < ActiveRecord::Base
-      self.table_name = "racks"
-    end
+  class HwRack < ActiveRecord::Base
+    self.table_name = "racks"
   end
 
   class User < ActiveRecord::Base
     devise :database_authenticatable
 
-    has_many :racks, class_name: 'Ivy::HwRack'
+    has_many :racks, class_name: 'RemoveDefaultOperatorUsers::HwRack'
   end
 
   def up

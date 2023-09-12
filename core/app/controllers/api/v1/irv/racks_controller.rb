@@ -1,7 +1,7 @@
 class Api::V1::Irv::RacksController < Api::V1::Irv::BaseController
 
   def index
-    authorize! :index, Ivy::HwRack
+    authorize! :index, HwRack
     # New legacy moved from using Rabl to render the response to having
     # postgresql generate XML and convert that to JSON.  Part of that was due
     # to issues with Rabl and DataMapper.  We no longer use DataMapper.
@@ -15,25 +15,25 @@ class Api::V1::Irv::RacksController < Api::V1::Irv::BaseController
       # This is the slow and easy to understand method.  We do jump through
       # some hoops to have the output wrapped in `{"Racks": {"Rack": <the rabl
       # template>}}`.
-      @racks = Ivy::HwRack.all.map { |rack| Api::V1::RackPresenter.new(rack) }
+      @racks = HwRack.all.map { |rack| Api::V1::RackPresenter.new(rack) }
       renderer = Rabl::Renderer.new('api/v1/irv/racks/index', @racks, view_path: 'app/views', format: 'hash')
       render json: {Racks: {Rack: renderer.render}}
 
     else
       # The fast and awkward to understand method.
-      irv_rack_structure = Crack::XML.parse(Ivy::Irv.get_structure(params[:rack_ids], current_user))
+      irv_rack_structure = Crack::XML.parse(Irv.get_structure(params[:rack_ids], current_user))
       fix_structure(irv_rack_structure)
       render :json => irv_rack_structure.to_json
     end
   end
 
   def modified
-    authorize! :index, Ivy::HwRack
+    authorize! :index, HwRack
     rack_ids = Array(params[:rack_ids]).collect(&:to_i)
     timestamp = params[:modified_timestamp]
     suppressAdditions = params[:suppress_additions]
 
-    accessible_racks = Ivy::HwRack.accessible_by(current_ability)
+    accessible_racks = HwRack.accessible_by(current_ability)
     filtered_racks = accessible_racks.where(id: rack_ids)
 
     @added = suppressAdditions == "true" ? [] : accessible_racks.excluding_ids(rack_ids)
@@ -42,15 +42,15 @@ class Api::V1::Irv::RacksController < Api::V1::Irv::BaseController
   end
 
   def tooltip
-    @rack = Ivy::HwRack.find_by_id(params[:id])
-    authorize! :read, Ivy::HwRack
+    @rack = HwRack.find_by_id(params[:id])
+    authorize! :read, HwRack
 
     error_for('Rack') if @rack.nil?
     @rack = Api::V1::RackPresenter.new(@rack)
   end
 
   def request_status_change
-    @rack = Ivy::HwRack.find(params[:id])
+    @rack = HwRack.find(params[:id])
     authorize! :update, @rack
 
     @config = Config.last
@@ -72,7 +72,7 @@ class Api::V1::Irv::RacksController < Api::V1::Irv::BaseController
       return
     end
 
-    result = Ivy::RequestStatusChangeJob.perform_now(@rack, "racks", action, @config, current_user)
+    result = RequestStatusChangeJob.perform_now(@rack, "racks", action, @config, current_user)
 
     if result.success?
       render json: { success: true }

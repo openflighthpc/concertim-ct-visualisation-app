@@ -40,7 +40,7 @@ to let them know about the comment.
 
   * If serveral services all pertain to one model (e.g. you find yourself
     implementing "DestroyDevice", "CreateDevice", "UpdateDevice"... then group the 
-    classes under a namespace such as "Ivy::DeviceServices::Destroy".
+    classes under a namespace such as "DeviceServices::Destroy".
   
   * Service classes should implement a single public class method, "call"
 

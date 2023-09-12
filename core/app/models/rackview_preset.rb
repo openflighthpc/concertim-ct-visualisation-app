@@ -1,9 +1,6 @@
 require 'yaml'
 
 class RackviewPreset < ApplicationRecord
-  self.table_name = 'rackview_presets'
-  # ensure JSON comes out as {{"ID:1... as opposed to {{"device":{"id:1
-  self.include_root_in_json = false
 
   ############################
   #

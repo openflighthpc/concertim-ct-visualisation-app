@@ -32,8 +32,8 @@ class RBAC {
     return {
       permissions:
         {
-          manage: ["Ivy::HwRack", "Ivy::Device", "Ivy::Chassis"],
-          move:   ["Ivy::Device", "Ivy::Chassis"],
+          manage: ["HwRack", "Device", "Chassis"],
+          move:   ["Device", "Chassis"],
           view:   ["all"]
         }
     };
@@ -44,11 +44,11 @@ class RBAC {
   }
 
   can_i_move_devices() {
-    return this.can_i("move", "Ivy::Device") || this.can_i("move", "Ivy::Chassis");
+    return this.can_i("move", "Device") || this.can_i("move", "Chassis");
   }
 
   can_i_manage_devices() {
-    return this.can_i("manage", "Ivy::Device") || this.can_i("manage", "Ivy::Chassis");
+    return this.can_i("manage", "Device") || this.can_i("manage", "Chassis");
   }
 };
 

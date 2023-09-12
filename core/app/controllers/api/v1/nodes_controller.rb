@@ -2,8 +2,8 @@ class Api::V1::NodesController < Api::V1::ApplicationController
 
   # create a single node based on a simple chassis template
   def create
-    authorize! :create, Ivy::Device
-    result = Ivy::TemplatePersister.new(
+    authorize! :create, Device
+    result = TemplatePersister.new(
       find_template,
       location_params.to_h,
       device_params.to_h,
@@ -23,7 +23,7 @@ class Api::V1::NodesController < Api::V1::ApplicationController
 
   def find_template
     template_id = params.require(:template_id)
-    Ivy::Template.find(template_id)
+    Template.find(template_id)
   end
 
   def device_params

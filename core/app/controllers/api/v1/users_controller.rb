@@ -33,14 +33,14 @@ class Api::V1::UsersController < Api::V1::ApplicationController
   # cancan ability checker - used to check yourself and your own abilities.
   #
   def can_i?
-    # On the permissions params, this action should recieve a structure of the
+    # On the permissions params, this action should receive a structure of the
     # following form
     #
     # {
     #   "permissions" => {
-    #     "manage" => {"0" => "Ivy::HwRack", "1" => "Ivy::Device"},
-    #     "read" => {"0" => "Ivy::Device"},
-    #     "move" => {"0" => "Ivy::Device"},
+    #     "manage" => {"0" => "HwRack", "1" => "Device"},
+    #     "read" => {"0" => "Device"},
+    #     "move" => {"0" => "Device"},
     #   }
     # }
 

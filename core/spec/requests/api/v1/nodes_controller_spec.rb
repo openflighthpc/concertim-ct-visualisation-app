@@ -62,7 +62,7 @@ RSpec.describe "Api::V1::NodesControllers", type: :request do
         it "creates a new device" do
           expect {
             send_request
-          }.to change(Ivy::Device, :count).by(1)
+          }.to change(Device, :count).by(1)
         end
 
         it "renders a successful response" do
@@ -107,7 +107,7 @@ RSpec.describe "Api::V1::NodesControllers", type: :request do
         it "does not create a new device" do
           expect {
             send_request
-          }.not_to change(Ivy::Device, :count)
+          }.not_to change(Device, :count)
         end
 
         it "renders an unprocessable entity response" do

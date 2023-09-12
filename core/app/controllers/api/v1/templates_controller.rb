@@ -1,5 +1,5 @@
 class Api::V1::TemplatesController < Api::V1::ApplicationController
-  load_and_authorize_resource :template, :class => Ivy::Template
+  load_and_authorize_resource :template, :class => Template
 
   def index
     @templates = @templates.rackable
@@ -7,7 +7,7 @@ class Api::V1::TemplatesController < Api::V1::ApplicationController
   end
 
   def create
-    @template = Ivy::TemplateServices::Create.call(template_params.to_h)
+    @template = TemplateServices::Create.call(template_params.to_h)
 
     if @template.persisted?
       render action: :show

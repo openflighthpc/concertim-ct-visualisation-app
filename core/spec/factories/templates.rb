@@ -1,5 +1,5 @@
 FactoryBot.define do
-  factory :template, class: 'Ivy::Template' do
+  factory :template, class: 'Template' do
     sequence(:name) { |n| "Template #{n}" }
     depth { 2 }
     description { "" }
@@ -11,14 +11,14 @@ FactoryBot.define do
   end
 
   trait :rack_template do
-    id { Ivy::HwRack::DEFAULT_TEMPLATE_ID }
+    id { HwRack::DEFAULT_TEMPLATE_ID }
     template_type { "HwRack" }
     rackable { "nonrackable" }
     height { 40 }
 
     after(:create) do
-      max_id = Ivy::Template.pluck(:id).max
-      Ivy::Template.connection.execute <<-SQL
+      max_id = Template.pluck(:id).max
+      Template.connection.execute <<-SQL
         ALTER SEQUENCE templates_id_seq RESTART WITH #{max_id + 1}
       SQL
     end

@@ -216,7 +216,7 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
         it "creates a new rack" do
           expect {
             send_request
-          }.to change(Ivy::HwRack, :count).by(1)
+          }.to change(HwRack, :count).by(1)
         end
 
         it "renders a successful response" do
@@ -247,7 +247,7 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
         it "does not create a new rack" do
           expect {
             send_request
-          }.not_to change(Ivy::HwRack, :count)
+          }.not_to change(HwRack, :count)
         end
 
         it "renders an unprocessable entity response" do

@@ -1,14 +1,14 @@
 class Api::V1::Irv::ChassisController < Api::V1::Irv::BaseController
 
   def tooltip
-    @chassis = Ivy::Chassis.find_by_id(params[:id])
+    @chassis = Chassis.find_by_id(params[:id])
     authorize! :read, @chassis 
 
     not_found_error('Chassis') if @chassis.nil?
   end
 
   def update_position
-    @chassis = Ivy::Chassis.find_by_id(params[:id])
+    @chassis = Chassis.find_by_id(params[:id])
     authorize! :move, @chassis
 
     if @chassis.nil?
@@ -17,7 +17,7 @@ class Api::V1::Irv::ChassisController < Api::V1::Irv::BaseController
     end
 
     location_params = params.permit(%w[rack_id start_u facing type])
-    Ivy::DeviceServices::Move.call(@chassis.location, location_params, current_user)
+    DeviceServices::Move.call(@chassis.location, location_params, current_user)
     render json: {success: @chassis.location.save}
   end
 

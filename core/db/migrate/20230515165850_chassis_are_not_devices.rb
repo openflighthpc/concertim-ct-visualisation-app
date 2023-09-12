@@ -1,20 +1,16 @@
 class ChassisAreNotDevices < ActiveRecord::Migration[7.0]
-  module Ivy
-    class Device < ActiveRecord::Base
-      self.store_full_sti_class = false
-      self.table_name = "devices"
-    end
+  class Device < ActiveRecord::Base
+  end
 
-    class Device::ChassisTaggedDevice < Device
-    end
+  class Device::ChassisTaggedDevice < Device
   end
 
   def change
     reversible do |dir|
       dir.up do
         say "Removing chassis tagged devices"
-        Ivy::Device::ChassisTaggedDevice.reset_column_information
-        Ivy::Device::ChassisTaggedDevice.destroy_all
+        Device::ChassisTaggedDevice.reset_column_information
+        Device::ChassisTaggedDevice.destroy_all
       end
 
       dir.down do
