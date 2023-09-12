@@ -11,7 +11,7 @@ module Meca
     #
     ############################
 
-    belongs_to :user, class_name: 'Uma::User'
+    belongs_to :user, class_name: 'User'
 
 
     ####################################

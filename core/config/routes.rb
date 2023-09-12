@@ -4,9 +4,7 @@ Rails.application.routes.draw do
     mount GoodJob::Engine => 'good_job'
   end
 
-  scope module: :uma do
-    devise_for :users, class_name: "Uma::User", only: [:sessions, :registrations]
-  end
+  devise_for :users, only: [:sessions, :registrations], controllers: { sessions: "sessions", registrations: "registrations" }
 
   # We need to redirect here, otherwise the devise redirections will take us to
   # the legacy sign up page.

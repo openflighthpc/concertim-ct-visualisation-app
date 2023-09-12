@@ -5,23 +5,21 @@ class RemoveDefaultOperatorUsers < ActiveRecord::Migration[7.0]
     end
   end
 
-  module Uma
-    class User < ActiveRecord::Base
-      devise :database_authenticatable
+  class User < ActiveRecord::Base
+    devise :database_authenticatable
 
-      has_many :racks, class_name: 'Ivy::HwRack'
-    end
+    has_many :racks, class_name: 'Ivy::HwRack'
   end
 
   def up
-    Uma::User.reset_column_information
-    remove_unused_user(Uma::User.find_by(login: 'operator_one'))
-    remove_unused_user(Uma::User.find_by(login: 'operator_two'))
+    User.reset_column_information
+    remove_unused_user(User.find_by(login: 'operator_one'))
+    remove_unused_user(User.find_by(login: 'operator_two'))
   end
 
   def down
-    Uma::User.reset_column_information
-    Uma::User.create!(
+    User.reset_column_information
+    User.create!(
       login: 'operator_one',
       firstname: 'Operator',
       surname: 'One',
@@ -30,7 +28,7 @@ class RemoveDefaultOperatorUsers < ActiveRecord::Migration[7.0]
       password: 'operator_one',
       password_confirmation: 'operator_one'
     )
-    Uma::User.create!(
+    User.create!(
       login: 'operator_two',
       firstname: 'Operator',
       surname: 'Two',

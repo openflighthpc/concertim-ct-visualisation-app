@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Uma::SessionsController < Devise::SessionsController
+class SessionsController < Devise::SessionsController
   # before_action :configure_sign_in_params, only: [:create]
 
   protect_from_forgery unless: -> { request.format.json? }

@@ -1,4 +1,4 @@
-module Uma
+module Users
   module WardenJWTAuth
     module TokenEncoder
       # warden-jwt_auth will happily allow claims with a `null` value.  For the
@@ -20,4 +20,4 @@ module Uma
   end
 end
 
-Warden::JWTAuth::TokenEncoder.prepend(Uma::WardenJWTAuth::TokenEncoder::NullClaimsFix)
+Warden::JWTAuth::TokenEncoder.prepend(Users::WardenJWTAuth::TokenEncoder::NullClaimsFix)

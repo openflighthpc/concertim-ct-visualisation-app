@@ -1,16 +1,14 @@
 class MergeUserFirstAndLastName < ActiveRecord::Migration[7.0]
-  module Uma
-    class User < ActiveRecord::Base
-      devise :database_authenticatable
-    end
+  class User < ActiveRecord::Base
+    devise :database_authenticatable
   end
 
   def change
     reversible do |dir|
       dir.up do
         # Append surname to new firstname column.
-        Uma::User.reset_column_information
-        Uma::User.all.each do |user|
+        User.reset_column_information
+        User.all.each do |user|
           say "Updating user #{user.firstname} #{user.surname}"
           user.firstname += " #{user.surname}"
           user.save!
@@ -19,8 +17,8 @@ class MergeUserFirstAndLastName < ActiveRecord::Migration[7.0]
 
       dir.down do
         # Extract surname from name column as best we can.
-        Uma::User.reset_column_information
-        Uma::User.all.each do |user|
+        User.reset_column_information
+        User.all.each do |user|
           say "Updating user #{user.firstname}"
           parts = user.firstname.slit(' ')
           user.firstname = parts[0...-1].join(' ')

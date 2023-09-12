@@ -1,12 +1,12 @@
 require 'rails_helper'
 
-RSpec.describe Uma::UserSignupJob, type: :job do
+RSpec.describe UserSignupJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
   let(:config) { create(:config) }
   let(:user) { create(:user) }
 
   subject(:job_runner) {
-    Uma::UserSignupJob::Runner.new(user: user, config: config, test_stubs: stubs)
+    UserSignupJob::Runner.new(user: user, config: config, test_stubs: stubs)
   }
 
   describe "url" do

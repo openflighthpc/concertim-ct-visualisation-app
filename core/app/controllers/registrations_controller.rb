@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Uma::RegistrationsController < Devise::RegistrationsController
+class RegistrationsController < Devise::RegistrationsController
   before_action :configure_permitted_parameters
 
   def create
@@ -8,9 +8,9 @@ class Uma::RegistrationsController < Devise::RegistrationsController
     if @user.persisted?
       config = Config.first
       if config.present?
-        Uma::UserSignupJob.perform_later(@user, config)
+        UserSignupJob.perform_later(@user, config)
       else
-        Rails.logger.info("Unable to schedule Uma::UserSignupJob: Config has not been created")
+        Rails.logger.info("Unable to schedule UserSignupJob: Config has not been created")
       end
     end
   end

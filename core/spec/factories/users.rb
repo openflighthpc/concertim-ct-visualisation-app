@@ -1,7 +1,7 @@
 require 'faker'
 
 FactoryBot.define do
-  factory :user, class: 'Uma::User' do
+  factory :user, class: 'User' do
     sequence(:login) { |n| "user-#{n}" }
     sequence(:name) { |n| "User #{n}" }
     email { "#{login}@example.com" }

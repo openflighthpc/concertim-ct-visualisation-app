@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Uma::User, type: :model do
+RSpec.describe User, type: :model do
   subject { user }
   let!(:user) { create(:user) }
 

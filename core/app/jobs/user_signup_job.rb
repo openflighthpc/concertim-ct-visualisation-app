@@ -1,6 +1,6 @@
 require 'faraday'
 
-class Uma::UserSignupJob < Uma::ApplicationJob
+class UserSignupJob < ApplicationJob
   queue_as :default
 
   retry_on ::Faraday::Error, wait: :exponentially_longer, attempts: 10

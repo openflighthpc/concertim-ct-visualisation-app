@@ -1,5 +1,5 @@
 class Api::V1::UsersController < Api::V1::ApplicationController
-  load_and_authorize_resource :user, :class => Uma::User, except: [:current, :can_i?]
+  load_and_authorize_resource :user, :class => User, except: [:current, :can_i?]
 
   def index
     @users = @users.map {|user| Api::V1::UserPresenter.new(user)}

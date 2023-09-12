@@ -1,13 +1,11 @@
 class AdjustDefaultUsers < ActiveRecord::Migration[7.0]
-  module Uma
-    class User < ActiveRecord::Base
-      devise :database_authenticatable
-    end
+  class User < ActiveRecord::Base
+    devise :database_authenticatable
   end
 
   def up
-    Uma::User.find_by(login: 'operator').destroy!
-    Uma::User.create!(
+    User.find_by(login: 'operator').destroy!
+    User.create!(
       login: 'operator_one',
       firstname: 'Operator',
       surname: 'One',
@@ -16,7 +14,7 @@ class AdjustDefaultUsers < ActiveRecord::Migration[7.0]
       password: 'operator_one',
       password_confirmation: 'operator_one'
     )
-    Uma::User.create!(
+    User.create!(
       login: 'operator_two',
       firstname: 'Operator',
       surname: 'Two',
@@ -28,9 +26,9 @@ class AdjustDefaultUsers < ActiveRecord::Migration[7.0]
   end
 
   def down
-    Uma::User.find_by(login: 'operator_one').destroy!
-    Uma::User.find_by(login: 'operator_two').destroy!
-    Uma::User.create!(
+    User.find_by(login: 'operator_one').destroy!
+    User.find_by(login: 'operator_two').destroy!
+    User.create!(
       login: 'operator',
       firstname: 'Normal',
       surname: 'Operator',
