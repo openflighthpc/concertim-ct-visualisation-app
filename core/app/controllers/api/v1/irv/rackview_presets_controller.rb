@@ -3,9 +3,9 @@ class Api::V1::Irv::RackviewPresetsController < Api::V1::Irv::BaseController
   AUTH_FAILURE_MESSAGE = "You are not the owner of this preset. You can make your own version by loading a preset and re-saving."
 
   def index
-    authorize! :index, Meca::RackviewPreset
+    authorize! :index, RackviewPreset
     @user = current_user
-    @presets = Meca::RackviewPreset.accessible_by(current_ability)
+    @presets = RackviewPreset.accessible_by(current_ability)
   end
 
   # Example JSON request.
@@ -30,7 +30,7 @@ class Api::V1::Irv::RackviewPresetsController < Api::V1::Irv::BaseController
   #     }
   #   }
   def create
-    preset = Meca::RackviewPreset.new(permitted_params.merge(user_id: current_user.id))
+    preset = RackviewPreset.new(permitted_params.merge(user_id: current_user.id))
     if cannot? :create, preset
       return failure_response(preset, AUTH_FAILURE_MESSAGE)
     end
@@ -50,7 +50,7 @@ class Api::V1::Irv::RackviewPresetsController < Api::V1::Irv::BaseController
   def update
     preset =
       begin
-        Meca::RackviewPreset.find(params[:id])
+        RackviewPreset.find(params[:id])
       rescue ActiveRecord::RecordNotFound
         return error_for('preset')
       end
@@ -74,7 +74,7 @@ class Api::V1::Irv::RackviewPresetsController < Api::V1::Irv::BaseController
   def destroy
     preset =
       begin
-        Meca::RackviewPreset.find(params[:id])
+        RackviewPreset.find(params[:id])
       rescue ActiveRecord::RecordNotFound
         error_for('preset')
       end

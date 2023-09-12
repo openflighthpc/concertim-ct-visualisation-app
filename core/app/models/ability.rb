@@ -37,7 +37,7 @@ class Ability
     can :manage, Ivy::Chassis, location: {rack: {user: user}}
     can :manage, Ivy::Device, chassis: {location: {rack: {user: user}}}
     can :manage, Ivy::HwRack, user: user
-    can :manage, Meca::RackviewPreset, user: user
+    can :manage, RackviewPreset, user: user
 
     can :read, ClusterType
     can :create, Cluster
