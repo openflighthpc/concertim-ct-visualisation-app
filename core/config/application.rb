@@ -39,7 +39,7 @@ CtApp::Application::configure do
     # interchange.
     #
     if ENV['GOOD_JOB_WORKER'] && ENV['GOOD_JOB_WORKER'] == "true"
-      Emma::PreheatJob.set(priority: -10).perform_later(Ivy)
+      Emma::PreheatJob.set(priority: -10).perform_later
     end
   end
 end

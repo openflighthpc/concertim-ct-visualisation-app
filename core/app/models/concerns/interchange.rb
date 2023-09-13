@@ -20,7 +20,7 @@ module Interchange
     # interchange e.g., `hacor:devices`.
     def interchange_list_key
       mod, klass = [base_class.name.deconstantize, base_class.name.demodulize]
-      mod = 'Hacor' if mod == ''  # is this valid?
+      mod = 'Hacor' # not certain if mod logic still required
       [mod, klass.pluralize]
         .map { |i| i.downcase }
         .join(':')
