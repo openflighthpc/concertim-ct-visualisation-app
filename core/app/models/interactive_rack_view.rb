@@ -1,4 +1,4 @@
-class Irv
+class InteractiveRackView
 
   ############################
   #
@@ -15,7 +15,7 @@ class Irv
       begin
         xml = ApplicationRecord.connection.exec_query(sql).rows.join
       rescue
-        Rails.logger.debug("An exception occured whilst generating IRV structure")
+        Rails.logger.debug("An exception occurred whilst generating IRV structure")
         Rails.logger.debug($!.class)
         Rails.logger.debug($!.message)
         ['<error>Invalid SQL query</error>']
@@ -24,7 +24,7 @@ class Irv
 
     def get_canvas_config
       racks_config_hash = HwRack.get_canvas_config
-      irv_config_hash   = JSON.parse(File.read(Rails.root.join("app/views/irvs/_configuration.json")))
+      irv_config_hash   = JSON.parse(File.read(Rails.root.join("app/views/interactive_rack_views/_configuration.json")))
       racks_config_hash.each{|k,v| irv_config_hash[k] = irv_config_hash[k].merge(racks_config_hash[k]) }
       irv_config_hash
     end

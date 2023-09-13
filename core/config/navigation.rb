@@ -23,7 +23,7 @@ SimpleNavigation::Configuration.run do |navigation|
           acc.item :acc_logout, 'Log out', Rails.application.routes.url_helpers.destroy_user_session_path, :icon => :logout, :link => {:class => 'logout'}
         end
 
-      primary.item :infra_racks_list, 'Rack view', Rails.application.routes.url_helpers.irv_path, icon: :infra_racks, :link => {class: 'infra_racks'}
+      primary.item :infra_racks_list, 'Rack view', Rails.application.routes.url_helpers.interactive_rack_views_path, icon: :infra_racks, :link => {class: 'infra_racks'}
 
       if current_user.root?
         primary.item :config, 'Cloud environment', Rails.application.routes.url_helpers.config_path,

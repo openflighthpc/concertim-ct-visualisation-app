@@ -29,7 +29,7 @@ class Ability
   def non_root_abilities(user)
     # This method will eventually get large and/or complex.  When this happens
     # we can separate it into multiple files.
-    can :read, Irv
+    can :read, InteractiveRackView
 
     can :read, Template
     can :manage, Chassis, location: {rack: {user: user}}

@@ -8,11 +8,13 @@ Rails.application.routes.draw do
 
   # We need to redirect here, otherwise the devise redirections will take us to
   # the legacy sign up page.
-  root to: redirect('/irv')
+  root to: redirect('/racks')
 
-  resource :irv, only: :show do
+  resource :interactive_rack_views, only: [], path: '/irv' do
     get :configuration
   end
+
+  resource :interactive_rack_views, only: :show, path: '/racks'
 
   scope '/cloud-env' do
     resource :config do

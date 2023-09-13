@@ -21,7 +21,7 @@ class Api::V1::Irv::RacksController < Api::V1::Irv::BaseController
 
     else
       # The fast and awkward to understand method.
-      irv_rack_structure = Crack::XML.parse(Irv.get_structure(params[:rack_ids], current_user))
+      irv_rack_structure = Crack::XML.parse(InteractiveRackView.get_structure(params[:rack_ids], current_user))
       fix_structure(irv_rack_structure)
       render :json => irv_rack_structure.to_json
     end

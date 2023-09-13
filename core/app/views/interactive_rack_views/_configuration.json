@@ -1,6 +1,6 @@
 {
-  "*COMMENT*" : "IRV configuration: class statics are overwritten with these values. Class/package config",
-  "*COMMENT*" : "objects are in uppercase, config structure loosely mirrors IRV class heirachy.",
+  "*COMMENT*" : "IRV (interactive rack view) configuration: class statics are overwritten with these values.",
+  "*COMMENT*" : " Class/package config objects are in uppercase, config structure loosely mirrors IRV class heirachy.",
   "*COMMENT*" : "NOTES: canvas colours should be in the form '#RRGGBB' to allow for colour transformations",
   "*COMMENT*" : "       canvas co-ordinates are in px relative to natural scale/zoom (1)",
   "*COMMENT*" : "       canvas fonts should be in the form '[size]px [font]' e.g. '15px Karla'",

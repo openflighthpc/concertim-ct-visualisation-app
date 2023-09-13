@@ -49,7 +49,7 @@ class ClustersController < ApplicationController
 
     if result.success?
       flash[:success] = "Cluster configuration sent"
-      redirect_to irv_path
+      redirect_to interactive_rack_views_path
     elsif result.status_code == 400
       if result.non_field_error?
         flash.now.alert = "Unable to launch cluster: #{result.error_message}"
