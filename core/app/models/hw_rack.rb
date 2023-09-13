@@ -1,3 +1,4 @@
+# Hardware Rack - cannot call Rack as conflicts with the module defined in the Rack gem used by Rails
 class HwRack < ApplicationRecord
 
   self.table_name = "racks"
