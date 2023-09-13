@@ -43,8 +43,6 @@ class Metric
               :name => mname,
               :units => units,
               :range => :auto,
-              :type => :dynamic,
-              :selectable => true
             )
             MetricType.register(mt)
           end

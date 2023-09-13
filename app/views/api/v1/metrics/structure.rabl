@@ -1,5 +1,5 @@
 collection @definitions
-attributes :id, :name, :units, :range, :type, :selectable
+attributes :id, :name, :units
 node :format do |metric|
   metric.units != '' ? "%s #{metric.units}" : "%s"
 end

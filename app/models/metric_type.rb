@@ -1,22 +1,16 @@
 class MetricType
-  attr_accessor :name, :id, :range, :selectable, :units, :type, :prioritized
+  attr_accessor :name, :id, :range, :units
 
   def initialize(opts = {})
     self.name = opts[:name]
     self.id = opts[:id]
     self.range = opts[:range] || :none
-    self.selectable = (opts[:selectable] != false)
     self.units = opts[:units] || ""
-    self.type = opts[:type] || :dynamic
-    self.prioritized = (opts[:prioritized] == true)
   end
 
   class << self
-    def get(id, type=nil)
-      m = @registry[id]
-      return nil if m.nil?
-      return m   if type.nil?
-      return m   if m.type == type
+    def get(id)
+      @registry[id]
     end
 
     def register(metric_type)
