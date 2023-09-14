@@ -7,7 +7,7 @@
 #
 # See https://github.com/codeplant/simple-navigation/wiki/Custom-renderers
 #
-# Actual nav is specified in core/app/config/navigation.rb
+# Actual nav is specified in app/config/navigation.rb
 #
 class TopbarRenderer < SimpleNavigation::Renderer::Base
 
