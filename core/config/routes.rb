@@ -52,6 +52,7 @@ Rails.application.routes.draw do
         resources :nodes, only: [:create]
         resources :devices, only: [:index, :show, :update, :destroy]
 
+        # For use by the interactive rack view
         namespace :irv do
           resources :racks, only: [:index] do
             member do

@@ -34,7 +34,7 @@ No - use a presenter!
 * Presenters should be named XXXPresenter, where "XXX" is the name of 
   the model they are presenting.
 
-* Presenters should inherit from Emma::Presenter.
+* Presenters should inherit from Presenter.
 
 * Presenters are constructed by default with two arguments:
 

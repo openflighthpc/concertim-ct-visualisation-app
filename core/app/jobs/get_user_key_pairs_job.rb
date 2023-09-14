@@ -32,7 +32,7 @@ class GetUserKeyPairsJob < ApplicationJob
     end
   end
 
-  class Runner < Emma::Faraday::JobRunner
+  class Runner < HttpRequests::Faraday::JobRunner
     def initialize(user:, **kwargs)
       @user = user
       super(**kwargs)

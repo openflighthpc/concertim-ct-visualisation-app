@@ -1,7 +1,7 @@
 require 'faraday'
 require 'faraday/follow_redirects'
 
-module Emma
+module HttpRequests
   module Faraday
 
     # JobRunner makes a HTTP(S) POST request and returns the response.
@@ -77,7 +77,7 @@ module Emma
             f.response :json
             f.response :raise_error
             f.response :logger, @logger, {
-              formatter: Emma::Faraday::LogFormatter,
+              formatter: HttpRequests::Faraday::LogFormatter,
               headers: {request: true, response: true, errors: false},
               bodies: true,
               errors: true

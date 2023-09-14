@@ -21,7 +21,7 @@ are really doing is creating a wrapper for an existing object.
 * Facades should be named XXXFacade, where "XXX" is the name of 
   the subject being re-interfaced.
 
-* Facades should inherit from Emma::Facade.
+* Facades should inherit from Facade.
 
 * Presenters are constructed by default with one argument:
 

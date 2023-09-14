@@ -2,11 +2,6 @@ require_relative "boot"
 
 require "rails/all"
 
-# XXX What's the right way to do this.  We need to load it at some point so
-# that the autoloads it defines works.  This ought to be done after the load
-# paths have been set.
-require_relative "../app/lib/emma"
-
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
@@ -39,7 +34,7 @@ CtApp::Application::configure do
     # interchange.
     #
     if ENV['GOOD_JOB_WORKER'] && ENV['GOOD_JOB_WORKER'] == "true"
-      Emma::PreheatJob.set(priority: -10).perform_later
+      PreheatJob.set(priority: -10).perform_later
     end
   end
 end

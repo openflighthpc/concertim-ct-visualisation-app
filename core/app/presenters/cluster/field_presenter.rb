@@ -1,5 +1,5 @@
 class Cluster
-  class FieldPresenter < Emma::Presenter
+  class FieldPresenter < Presenter
     delegate_missing_to :o
 
     MAPPED_FIELD_TYPES = {

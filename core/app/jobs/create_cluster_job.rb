@@ -37,7 +37,7 @@ class CreateClusterJob < ApplicationJob
     end
   end
 
-  class Runner < Emma::Faraday::JobRunner
+  class Runner < HttpRequests::Faraday::JobRunner
     def initialize(cluster:, user:, **kwargs)
       @cluster = cluster
       @user = user
@@ -49,7 +49,7 @@ class CreateClusterJob < ApplicationJob
       Result.new(response.success?, response.reason_phrase || "Unknown error", response.status)
 
     rescue Faraday::BadRequestError
-      errors = Emma::Jsonapi::Errors.parse($!.response_body)
+      errors = HttpRequests::Jsonapi::Errors.parse($!.response_body)
       non_field_error = merge_errors_to_fields(errors)
       error_message = errors.full_details.to_sentence
       Result.new(false, error_message, $!.response[:status], non_field_error)

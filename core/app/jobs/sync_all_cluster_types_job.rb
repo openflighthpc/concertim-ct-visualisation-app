@@ -28,7 +28,7 @@ class SyncAllClusterTypesJob < ApplicationJob
     end
   end
 
-  class Runner < Emma::Faraday::JobRunner
+  class Runner < HttpRequests::Faraday::JobRunner
 
     def initialize(use_cache:true, **kwargs)
       @use_cache = use_cache

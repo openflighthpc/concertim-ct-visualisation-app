@@ -26,7 +26,7 @@ class UserSignupJob < ApplicationJob
     validates :project_id, presence: true
   end
 
-  class Runner < Emma::Faraday::JobRunner
+  class Runner < HttpRequests::Faraday::JobRunner
     def initialize(user:, **kwargs)
       @user = user
       super(**kwargs)

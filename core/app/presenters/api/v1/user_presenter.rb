@@ -3,8 +3,8 @@
 #
 # User Presenter for the API
 module Api::V1
-  class UserPresenter < Emma::Presenter
-    include Emma::Costed
+  class UserPresenter < Presenter
+    include Costed
 
     # Be selective about what attributes and methods we expose.
     delegate :id, :login, :name, :email, :cloud_user_id, :project_id, :root?,

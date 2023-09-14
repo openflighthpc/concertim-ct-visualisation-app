@@ -31,7 +31,7 @@ class DeleteKeyPairJob < ApplicationJob
     end
   end
 
-  class Runner < Emma::Faraday::JobRunner
+  class Runner < HttpRequests::Faraday::JobRunner
     def initialize(key_pair_name:, user:, **kwargs)
       @key_pair_name = key_pair_name
       @user = user

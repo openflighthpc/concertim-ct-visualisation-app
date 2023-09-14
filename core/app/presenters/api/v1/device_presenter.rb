@@ -7,8 +7,8 @@
 # into seperate files within a `device_presenter` folder, grouped into domain
 # categories, e.g., `device_presenter/location`.
 module Api::V1
-  class DevicePresenter < Emma::Presenter
-    include Emma::Costed
+  class DevicePresenter < Presenter
+    include Costed
 
     # Be selective about what attributes and methods we expose.
     delegate :id, :name, :description, :metadata, :status, :public_ips, :private_ips,

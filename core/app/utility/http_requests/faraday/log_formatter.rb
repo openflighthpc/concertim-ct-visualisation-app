@@ -1,6 +1,6 @@
 require 'faraday'
 
-module Emma
+module HttpRequests
   module Faraday
 
     # A faraday log formatter that logs exceptions but less verbosely than the

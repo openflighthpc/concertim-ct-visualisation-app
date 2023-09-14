@@ -3,7 +3,7 @@
 #
 # Memcache facade covering groups (whose keys are of the format 'hacor:group:1' etc.
 #
-class MemcacheGroupFacade < Emma::MemcacheValueFacade
+class MemcacheGroupFacade < MemcacheValueFacade
 
   UNKNOWN_GROUP = "Unknown Group"
 

@@ -3,6 +3,6 @@
 #
 # Generic Device Presenter
 #
-class DevicePresenter < Emma::Presenter
+class DevicePresenter < Presenter
   include DevicePresenter::Common
 end

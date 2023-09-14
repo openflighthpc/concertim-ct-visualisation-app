@@ -4,7 +4,7 @@
 # Chassis Presenter for API
 #
 module Api::V1
-  class ChassisPresenter < Emma::Presenter
+  class ChassisPresenter < Presenter
     delegate :id, :name, :facing, :rack_end_u, :rack_start_u, :template, to: :o
 
     def device

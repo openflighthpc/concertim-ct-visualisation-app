@@ -31,7 +31,7 @@ class CreateKeyPairJob < ApplicationJob
     end
   end
 
-  class Runner < Emma::Faraday::JobRunner
+  class Runner < HttpRequests::Faraday::JobRunner
     def initialize(key_pair:, user:, **kwargs)
       @key_pair = key_pair
       @user = user

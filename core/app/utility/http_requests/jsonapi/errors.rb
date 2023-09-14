@@ -1,4 +1,4 @@
-module Emma
+module HttpRequests
   module Jsonapi
     class InvalidError < RuntimeError; end
 

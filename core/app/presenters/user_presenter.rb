@@ -1,5 +1,5 @@
-class UserPresenter < Emma::Presenter
-  include Emma::Costed
+class UserPresenter < Presenter
+  include Costed
 
   def billing_period
     return "pending (awaiting update)" unless o.billing_period_start && o.billing_period_end
