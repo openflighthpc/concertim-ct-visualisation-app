@@ -60,6 +60,7 @@ class Chassis < ApplicationRecord
             .joins(:template)
             .where("templates.rackable = ?", 1)
         }
+  # dcrv: 'data centre rack view' that was in the original concertim
   scope :dcrvshowable, -> { where("rack_id is null and show_in_dcrv = true") }
   scope :occupying_rack_u, ->{ where(location: Location.occupying_rack_u) }
 
