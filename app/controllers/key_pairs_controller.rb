@@ -2,8 +2,8 @@ class KeyPairsController < ApplicationController
   def new
     authorize! :create, KeyPair
     @user = current_user
-    @config = CloudServiceConfig.first
-    if @config.nil?
+    @cloud_service_config = CloudServiceConfig.first
+    if @cloud_service_config.nil?
       flash[:alert] = "Unable to create key-pairs: cloud environment config not set"
       redirect_to root_path
       return
@@ -12,8 +12,8 @@ class KeyPairsController < ApplicationController
   end
 
   def index
-    @config = CloudServiceConfig.first
-    if @config.nil?
+    @cloud_service_config = CloudServiceConfig.first
+    if @cloud_service_config.nil?
        flash[:alert] = "Unable to check key-pairs: cloud environment config not set. Please contact an admin"
        redirect_to edit_user_registration_path
        return
@@ -26,7 +26,7 @@ class KeyPairsController < ApplicationController
       return
     end
 
-    result = GetUserKeyPairsJob.perform_now(@config, current_user)
+    result = GetUserKeyPairsJob.perform_now(@cloud_service_config, current_user)
     if result.success?
       @key_pairs = result.key_pairs
     else
@@ -37,14 +37,14 @@ class KeyPairsController < ApplicationController
   end
 
   def create
-    @config = CloudServiceConfig.first
+    @cloud_service_config = CloudServiceConfig.first
     @user = current_user
     public_key = key_pair_params[:public_key].blank? ? nil : key_pair_params[:public_key]
     @key_pair = @key_pair = KeyPair.new(user: @user, name: key_pair_params[:name], key_type: key_pair_params[:key_type],
                                                 public_key: public_key)
     authorize! :create, @key_pair
 
-    if @config.nil?
+    if @cloud_service_config.nil?
       flash[:alert] = "Unable to send key-pair requests: cloud environment config not set. Please contact an admin"
       redirect_to edit_user_registration_path
       return
@@ -57,7 +57,7 @@ class KeyPairsController < ApplicationController
       return
     end
 
-    result = CreateKeyPairJob.perform_now(@key_pair, @config, current_user)
+    result = CreateKeyPairJob.perform_now(@key_pair, @cloud_service_config, current_user)
 
     if result.success?
       render action: :success
@@ -69,9 +69,9 @@ class KeyPairsController < ApplicationController
 
   def destroy
     authorize! :destroy, KeyPair.new(user: current_user)
-    @config = CloudServiceConfig.first
+    @cloud_service_config = CloudServiceConfig.first
     @user = current_user
-    if @config.nil?
+    if @cloud_service_config.nil?
       flash[:alert] = "Unable to send key-pair requests: cloud environment config not set. Please contact an admin"
       redirect_to edit_user_registration_path
       return
@@ -84,7 +84,7 @@ class KeyPairsController < ApplicationController
       return
     end
 
-    result = DeleteKeyPairJob.perform_now(params[:name], @config, current_user)
+    result = DeleteKeyPairJob.perform_now(params[:name], @cloud_service_config, current_user)
 
     if result.success?
       flash[:success] = "Key-pair '#{params[:name]}' deleted"

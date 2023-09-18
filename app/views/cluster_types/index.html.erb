@@ -3,7 +3,7 @@
   <%= render 'actions' %>
 <% end %>
 
-<% if @config.nil? %>
+<% if @cloud_service_config.nil? %>
    <p>
      New clusters cannot be launched as the Cloud Environment has not yet been configured.
      <% if current_user.root %>

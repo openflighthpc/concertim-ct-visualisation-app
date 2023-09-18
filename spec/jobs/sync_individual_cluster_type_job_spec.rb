@@ -2,9 +2,9 @@ require 'rails_helper'
 
 RSpec.describe SyncIndividualClusterTypeJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
-  let(:config) { create(:cloud_service_config) }
+  let(:cloud_service_config) { create(:cloud_service_config) }
   let(:cluster_type) { create(:cluster_type) }
-  subject { SyncIndividualClusterTypeJob::Runner.new(config: config, cluster_type: cluster_type) }
+  subject { SyncIndividualClusterTypeJob::Runner.new(cloud_service_config: cloud_service_config, cluster_type: cluster_type) }
 
   describe "url" do
     before(:each) do
@@ -15,8 +15,8 @@ RSpec.describe SyncIndividualClusterTypeJob, type: :job do
     end
 
     it "uses the host URL and cluster build port given in the config" do
-      expected_url = URI(config.host_url)
-      expected_url.port = config.cluster_builder_port
+      expected_url = URI(cloud_service_config.host_url)
+      expected_url.port = cloud_service_config.cluster_builder_port
       expect(subject.connection.url_prefix).to eq expected_url
     end
 
@@ -62,15 +62,15 @@ RSpec.describe SyncIndividualClusterTypeJob, type: :job do
       let(:response) { cluster_details.as_json }
 
       before(:each) do
-        url = URI(config.host_url)
-        url.port = config.cluster_builder_port
+        url = URI(cloud_service_config.host_url)
+        url.port = cloud_service_config.cluster_builder_port
         stubs.get("#{url.to_s}/cluster-types/#{cluster_type.foreign_id}") do |env|
           [ 200, {}, response]
         end
       end
 
       it "returns a successful result" do
-        result = described_class.perform_now(config, cluster_type, test_stubs: stubs)
+        result = described_class.perform_now(cloud_service_config, cluster_type, test_stubs: stubs)
         expect(result).to be_success
       end
 
@@ -81,7 +81,7 @@ RSpec.describe SyncIndividualClusterTypeJob, type: :job do
 
         it 'updates changed cluster type' do
           expect(ClusterType.count).to eq 1
-          result = described_class.perform_now(config, cluster_type, test_stubs: stubs)
+          result = described_class.perform_now(cloud_service_config, cluster_type, test_stubs: stubs)
           expect(result).to be_success
           expect(ClusterType.count).to eq 1
           expect(cluster_type.reload.description).to eq "new description"
@@ -92,21 +92,21 @@ RSpec.describe SyncIndividualClusterTypeJob, type: :job do
 
     context "when request returns a 304" do
       before(:each) do
-        url = URI(config.host_url)
-        url.port = config.cluster_builder_port
+        url = URI(cloud_service_config.host_url)
+        url.port = cloud_service_config.cluster_builder_port
         stubs.get("#{url.to_s}/cluster-types/#{cluster_type.foreign_id}") do |env|
           [ 304, {}, ""]
         end
       end
 
       it "returns a successful result" do
-        result = described_class.perform_now(config, cluster_type, test_stubs: stubs)
+        result = described_class.perform_now(cloud_service_config, cluster_type, test_stubs: stubs)
         expect(result).to be_success
       end
 
       it 'does not alter existing type' do
         cluster_type.reload
-        result = described_class.perform_now(config, cluster_type, test_stubs: stubs)
+        result = described_class.perform_now(cloud_service_config, cluster_type, test_stubs: stubs)
         expect(result).to be_success
         expect(cluster_type.previous_changes.blank?).to eq true
         expect(cluster_type.destroyed?).to eq false
@@ -115,29 +115,29 @@ RSpec.describe SyncIndividualClusterTypeJob, type: :job do
 
     context "when request is not successful" do
       before(:each) do
-        url = URI(config.host_url)
-        url.port = config.cluster_builder_port
+        url = URI(cloud_service_config.host_url)
+        url.port = cloud_service_config.cluster_builder_port
         stubs.get("#{url.to_s}/cluster-types/#{cluster_type.foreign_id}") do |env|
           [ 404, {}, "404 Not Found"]
         end
       end
 
       it "returns an unsuccessful result" do
-        result = described_class.perform_now(config, cluster_type, test_stubs: stubs)
+        result = described_class.perform_now(cloud_service_config, cluster_type, test_stubs: stubs)
         expect(result).not_to be_success
       end
 
       it "returns a sensible error_message" do
         pending "faraday test adapter sets reason_phrase to nil"
-        result = described_class.perform_now(config, cluster_type, test_stubs: stubs)
+        result = described_class.perform_now(cloud_service_config, cluster_type, test_stubs: stubs)
         expect(result.error_message).to eq "404 Not Found"
       end
     end
 
     context "when request times out" do
       before(:each) do
-        url = URI(config.host_url)
-        url.port = config.cluster_builder_port
+        url = URI(cloud_service_config.host_url)
+        url.port = cloud_service_config.cluster_builder_port
         stubs.get("#{url.to_s}/cluster-types/#{cluster_type.foreign_id}") do |env|
           sleep timeout * 2 ; [ 200, {}, []]
         end
@@ -145,12 +145,12 @@ RSpec.describe SyncIndividualClusterTypeJob, type: :job do
       let(:timeout) { 0.1 }
 
       it "returns an unsuccessful result" do
-        result = described_class.perform_now(config, cluster_type, test_stubs: stubs, timeout: timeout)
+        result = described_class.perform_now(cloud_service_config, cluster_type, test_stubs: stubs, timeout: timeout)
         expect(result).not_to be_success
       end
 
       it "returns a sensible error_message" do
-        result = described_class.perform_now(config, cluster_type, test_stubs: stubs, timeout: timeout)
+        result = described_class.perform_now(cloud_service_config, cluster_type, test_stubs: stubs, timeout: timeout)
         expect(result.error_message).to eq "Unable to update cluster type: execution expired"
       end
     end

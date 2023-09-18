@@ -3,9 +3,9 @@ require 'faraday'
 class SyncIndividualClusterTypeJob < SyncAllClusterTypesJob
   queue_as :default
 
-  def perform(config, cluster_type, use_cache=true, **options)
+  def perform(cloud_service_config, cluster_type, use_cache=true, **options)
     runner = Runner.new(
-      config: config,
+      cloud_service_config: cloud_service_config,
       cluster_type: cluster_type,
       use_cache: use_cache,
       logger: logger,

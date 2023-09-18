@@ -3,9 +3,9 @@ require 'faraday'
 class SyncAllClusterTypesJob < ApplicationJob
   queue_as :default
 
-  def perform(config, use_cache=true, **options)
+  def perform(cloud_service_config, use_cache=true, **options)
     runner = Runner.new(
-      config: config,
+      cloud_service_config: cloud_service_config,
       use_cache: use_cache,
       logger: logger,
       **options
@@ -55,7 +55,7 @@ class SyncAllClusterTypesJob < ApplicationJob
     private
 
     def url
-      @config.cluster_builder_base_url
+      @cloud_service_config.cluster_builder_base_url
     end
 
     def path

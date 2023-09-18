@@ -20,8 +20,8 @@ module HttpRequests
     class JobRunner
       DEFAULT_TIMEOUT = 5
 
-      def initialize(config:, logger:nil, timeout:nil, test_stubs:nil)
-        @config = config
+      def initialize(cloud_service_config:, logger:nil, timeout:nil, test_stubs:nil)
+        @cloud_service_config = cloud_service_config
         @timeout = timeout || DEFAULT_TIMEOUT
         @logger = logger || GoodJob.logger
         @test_stubs = test_stubs

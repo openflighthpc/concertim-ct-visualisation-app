@@ -3,10 +3,10 @@ require 'faraday'
 class GetUserKeyPairsJob < ApplicationJob
   queue_as :default
 
-  def perform(config, user, **options)
+  def perform(cloud_service_config, user, **options)
     runner = Runner.new(
       user: user,
-      config: config,
+      cloud_service_config: cloud_service_config,
       logger: logger,
       **options
     )
@@ -61,7 +61,7 @@ class GetUserKeyPairsJob < ApplicationJob
     private
 
     def url
-      @config.user_handler_base_url
+      @cloud_service_config.user_handler_base_url
     end
 
     def path
@@ -71,7 +71,7 @@ class GetUserKeyPairsJob < ApplicationJob
     def body
       {
         cloud_env: {
-          auth_url: @config.internal_auth_url,
+          auth_url: @cloud_service_config.internal_auth_url,
           user_id: @user.cloud_user_id.gsub(/-/, ''),
           password: @user.foreign_password,
           project_id: @user.project_id

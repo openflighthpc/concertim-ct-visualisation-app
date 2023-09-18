@@ -53,8 +53,8 @@ class Api::V1::Irv::RacksController < Api::V1::Irv::BaseController
     @rack = HwRack.find(params[:id])
     authorize! :update, @rack
 
-    @config = CloudServiceConfig.last
-    if @config.nil?
+    @cloud_service_config = CloudServiceConfig.last
+    if @cloud_service_config.nil?
       render json: { success: false, errors: ["No cloud configuration has been set. Please contact an admin"] }, status: 403
       return
     end
@@ -72,7 +72,7 @@ class Api::V1::Irv::RacksController < Api::V1::Irv::BaseController
       return
     end
 
-    result = RequestStatusChangeJob.perform_now(@rack, "racks", action, @config, current_user)
+    result = RequestStatusChangeJob.perform_now(@rack, "racks", action, @cloud_service_config, current_user)
 
     if result.success?
       render json: { success: true }

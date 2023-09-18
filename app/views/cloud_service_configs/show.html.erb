@@ -12,38 +12,38 @@
 
     <dt>Host URL</dt>
     <dd>
-      <span><%= @config.host_url %></span>
+      <span><%= @cloud_service_config.host_url %></span>
     </dd>
 
     <dt>Internal Auth URL</dt>
     <dd>
-      <span><%= @config.internal_auth_url %></span>
+      <span><%= @cloud_service_config.internal_auth_url %></span>
     </dd>
 
     <dt>User handler port</dt>
     <dd>
-      <span><%= @config.user_handler_port %></span>
+      <span><%= @cloud_service_config.user_handler_port %></span>
     </dd>
 
     <dt>Cluster builder port</dt>
     <dd>
-      <span><%= @config.cluster_builder_port %></span>
+      <span><%= @cloud_service_config.cluster_builder_port %></span>
     </dd>
 
     <dt>Admin User ID</dt>
     <dd>
-      <span><%= @config.admin_user_id %></span>
+      <span><%= @cloud_service_config.admin_user_id %></span>
     </dd>
 
     <dt>Admin Password</dt>
     <dd>
       <code>XXXXXXX</code>
-      <button class="button small secondary copyToClipboard" data-text="<%= @config.admin_foreign_password %>">Copy</button>
+      <button class="button small secondary copyToClipboard" data-text="<%= @cloud_service_config.admin_foreign_password %>">Copy</button>
     </dd>
 
     <dt>Admin project ID</dt>
     <dd>
-      <span><%= @config.admin_project_id %></span>
+      <span><%= @cloud_service_config.admin_project_id %></span>
     </dd>
   </dl>
 </div>

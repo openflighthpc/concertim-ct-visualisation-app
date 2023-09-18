@@ -17,7 +17,7 @@ Rails.application.routes.draw do
   resource :interactive_rack_views, only: :show, path: '/racks'
 
   scope '/cloud-env' do
-    resource :cloud_service_config do
+    resource :cloud_service_config, path: '/config' do
       member do
         post :send_config, as: 'send', path: 'send'
       end

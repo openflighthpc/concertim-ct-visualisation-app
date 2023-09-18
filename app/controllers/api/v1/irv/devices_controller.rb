@@ -35,8 +35,8 @@ class Api::V1::Irv::DevicesController < Api::V1::Irv::BaseController
     @device = Device.find(params[:id])
     authorize! :update, @device
 
-    @config = CloudServiceConfig.last
-    if @config.nil?
+    @cloud_service_config = CloudServiceConfig.last
+    if @cloud_service_config.nil?
       render json: { success: false, errors: ["No cloud configuration has been set. Please contact an admin"] }, status: 403
       return
     end
@@ -54,7 +54,7 @@ class Api::V1::Irv::DevicesController < Api::V1::Irv::BaseController
       return
     end
 
-    result = RequestStatusChangeJob.perform_now(@device, "devices", action, @config, current_user)
+    result = RequestStatusChangeJob.perform_now(@device, "devices", action, @cloud_service_config, current_user)
 
     if result.success?
       render json: { success: true }

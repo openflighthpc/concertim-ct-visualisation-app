@@ -1,11 +1,11 @@
-<%= form_for(@config, url: cloud_service_config_path) do |f| %>
+<%= form_for(@cloud_service_config, url: cloud_service_config_path) do |f| %>
 
-  <% if @config.errors.any? %>
+  <% if @cloud_service_config.errors.any? %>
     <div id="error_explanation">
-      <h2>There <%= "#{@config.errors.count == 1 ? 'is' : 'are'}" %> <%= pluralize(@config.errors.count, "error") %>:</h2>
+      <h2>There <%= "#{@cloud_service_config.errors.count == 1 ? 'is' : 'are'}" %> <%= pluralize(@cloud_service_config.errors.count, "error") %>:</h2>
    
       <ul>
-      <% @config.errors.full_messages.each do |msg| %>
+      <% @cloud_service_config.errors.full_messages.each do |msg| %>
         <li><%= msg %></li>
       <% end %>
       </ul>
@@ -47,5 +47,5 @@
     <%= f.text_field :admin_project_id, autocomplete: :off %>
   </div>
 
-  <%= f.submit @config.persisted? ? 'Update' : 'Create' %>
+  <%= f.submit @cloud_service_config.persisted? ? 'Update' : 'Create' %>
 <% end %>

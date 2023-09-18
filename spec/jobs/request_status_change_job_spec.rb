@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe RequestStatusChangeJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
-  let(:config) { create(:cloud_service_config, admin_project_id: Faker::Internet.uuid, admin_user_id: Faker::Internet.uuid) }
+  let(:cloud_service_config) { create(:cloud_service_config, admin_project_id: Faker::Internet.uuid, admin_user_id: Faker::Internet.uuid) }
   let(:customer_user) { create(:user, project_id: Faker::Internet.uuid, cloud_user_id: Faker::Internet.uuid) }
   let(:admin) { create(:user, :admin) }
   let(:user) { customer_user }
@@ -18,7 +18,7 @@ RSpec.describe RequestStatusChangeJob, type: :job do
   let(:user_service_path) { "/update_status" }
 
   subject(:job_runner) {
-    RequestStatusChangeJob::Runner.new(user: user, type: type, target: target, action: action, config: config, test_stubs: stubs)
+    RequestStatusChangeJob::Runner.new(user: user, type: type, target: target, action: action,  cloud_service_config: cloud_service_config, test_stubs: stubs)
   }
 
   describe "url" do
@@ -26,7 +26,7 @@ RSpec.describe RequestStatusChangeJob, type: :job do
 
     shared_examples 'correct full url' do
       it "uses the correct ip, port and path" do
-        expect(subject).to eq "#{config.host_url[0...-5]}:#{config.user_handler_port}#{user_service_path}/#{type}/#{target.openstack_id}"
+        expect(subject).to eq "#{cloud_service_config.host_url[0...-5]}:#{cloud_service_config.user_handler_port}#{user_service_path}/#{type}/#{target.openstack_id}"
       end
     end
 
@@ -52,10 +52,10 @@ RSpec.describe RequestStatusChangeJob, type: :job do
       let(:user) { admin }
       it "contains the admin credentials from config" do
         expect(subject[:cloud_env]).to eq({
-                                            "auth_url" => config.internal_auth_url,
-                                            "user_id" => config.admin_user_id.gsub("-", ""),
-                                            "password" => config.admin_foreign_password,
-                                            "project_id" => config.admin_project_id
+                                            "auth_url" => cloud_service_config.internal_auth_url,
+                                            "user_id" => cloud_service_config.admin_user_id.gsub("-", ""),
+                                            "password" => cloud_service_config.admin_foreign_password,
+                                            "project_id" => cloud_service_config.admin_project_id
                                           })
       end
     end
@@ -64,7 +64,7 @@ RSpec.describe RequestStatusChangeJob, type: :job do
       let(:user) { customer_user }
       it "contains the user's credentials" do
         expect(subject[:cloud_env]).to eq({
-                                            "auth_url" => config.internal_auth_url,
+                                            "auth_url" => cloud_service_config.internal_auth_url,
                                             "user_id" => user.cloud_user_id.gsub("-", ""),
                                             "password" => user.foreign_password,
                                             "project_id" => user.project_id
@@ -78,14 +78,14 @@ RSpec.describe RequestStatusChangeJob, type: :job do
   end
 
   describe "#perform" do
-    let(:path) { "#{config.host_url[0...-5]}:#{config.user_handler_port}#{user_service_path}/#{type}/#{target.openstack_id}" }
+    let(:path) { "#{cloud_service_config.host_url[0...-5]}:#{cloud_service_config.user_handler_port}#{user_service_path}/#{type}/#{target.openstack_id}" }
 
     context 'given an invalid actions' do
       let(:target) { device }
       let(:action) { "deep fry" }
 
       it "returns a failure" do
-        result = described_class.perform_now(target, type, action, config, user, test_stubs: stubs)
+        result = described_class.perform_now(target, type, action, cloud_service_config, user, test_stubs: stubs)
         expect(result).not_to be_success
         expect(result.error_message).to eq "#{action} is not a valid action for #{target.name}"
       end
@@ -97,7 +97,7 @@ RSpec.describe RequestStatusChangeJob, type: :job do
       end
 
       it "returns a successful result" do
-        result = described_class.perform_now(target, type, action, config, user, test_stubs: stubs)
+        result = described_class.perform_now(target, type, action, cloud_service_config, user, test_stubs: stubs)
         expect(result).to be_success
       end
     end
@@ -108,12 +108,12 @@ RSpec.describe RequestStatusChangeJob, type: :job do
       end
 
       it "returns an unsuccessful result" do
-        result = described_class.perform_now(target, type, action, config, user, test_stubs: stubs)
+        result = described_class.perform_now(target, type, action, cloud_service_config, user, test_stubs: stubs)
         expect(result).not_to be_success
       end
 
       it "returns a sensible error_message" do
-        result = described_class.perform_now(target, type, action, config, user, test_stubs: stubs)
+        result = described_class.perform_now(target, type, action, cloud_service_config, user, test_stubs: stubs)
         expect(result.error_message).to eq "Unable to submit request: the server responded with status 404"
       end
     end
@@ -141,12 +141,12 @@ RSpec.describe RequestStatusChangeJob, type: :job do
       let(:timeout) { 0.1 }
 
       it "returns an unsuccessful result" do
-        result = described_class.perform_now(target, type, action, config, user, test_stubs: stubs, timeout: timeout)
+        result = described_class.perform_now(target, type, action, cloud_service_config, user, test_stubs: stubs, timeout: timeout)
         expect(result).not_to be_success
       end
 
       it "returns a sensible error_message" do
-        result = described_class.perform_now(target, type, action, config, user, test_stubs: stubs, timeout: timeout)
+        result = described_class.perform_now(target, type, action, cloud_service_config, user, test_stubs: stubs, timeout: timeout)
         expect(result.error_message).to eq "Unable to submit request: execution expired"
       end
     end

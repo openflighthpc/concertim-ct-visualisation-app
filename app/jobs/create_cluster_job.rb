@@ -3,11 +3,11 @@ require 'faraday'
 class CreateClusterJob < ApplicationJob
   queue_as :default
 
-  def perform(cluster, config, user, **options)
+  def perform(cluster, cloud_service_config, user, **options)
     runner = Runner.new(
       cluster: cluster,
       user: user,
-      config: config,
+      cloud_service_config: cloud_service_config,
       logger: logger,
       **options
     )
@@ -62,7 +62,7 @@ class CreateClusterJob < ApplicationJob
     private
 
     def url
-      @config.cluster_builder_base_url
+      @cloud_service_config.cluster_builder_base_url
     end
 
     def path
@@ -86,7 +86,7 @@ class CreateClusterJob < ApplicationJob
 
     def cloud_env_details
       {
-        auth_url: @config.internal_auth_url,
+        auth_url: @cloud_service_config.internal_auth_url,
         user_id: @user.cloud_user_id.gsub(/-/, ''),
         password: @user.foreign_password,
         project_id: @user.project_id

@@ -2,10 +2,10 @@ require 'rails_helper'
 
 RSpec.describe DeleteKeyPairJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
-  let(:config) { create(:cloud_service_config) }
+  let(:cloud_service_config) { create(:cloud_service_config) }
   let(:user) { create(:user, :with_openstack_details) }
-  let(:path) { "#{config.host_url[0...-5]}:#{config.user_handler_port}/key_pairs" }
-  subject { DeleteKeyPairJob::Runner.new(key_pair_name: "my_lovely_key_pair", config: config, user: user) }
+  let(:path) { "#{cloud_service_config.host_url[0...-5]}:#{cloud_service_config.user_handler_port}/key_pairs" }
+  subject { DeleteKeyPairJob::Runner.new(key_pair_name: "my_lovely_key_pair", cloud_service_config: cloud_service_config, user: user) }
 
   describe "url" do
     before(:each) do
@@ -16,7 +16,7 @@ RSpec.describe DeleteKeyPairJob, type: :job do
     end
 
     it "uses the ip and port given in the config" do
-      expect(subject.connection.url_prefix.to_s).to eq "#{config.host_url[0...-5]}:#{config.user_handler_port}/"
+      expect(subject.connection.url_prefix.to_s).to eq "#{cloud_service_config.host_url[0...-5]}:#{cloud_service_config.user_handler_port}/"
     end
 
     it "uses a hard-coded path" do
@@ -31,7 +31,7 @@ RSpec.describe DeleteKeyPairJob, type: :job do
       end
 
       it "returns a successful result" do
-        result = described_class.perform_now("my_lovely_key_pair", config, user, test_stubs: stubs)
+        result = described_class.perform_now("my_lovely_key_pair", cloud_service_config, user, test_stubs: stubs)
         expect(result).to be_success
       end
     end
@@ -42,12 +42,12 @@ RSpec.describe DeleteKeyPairJob, type: :job do
       end
 
       it "returns an unsuccessful result" do
-        result = described_class.perform_now("my_lovely_key_pair", config, user, test_stubs: stubs)
+        result = described_class.perform_now("my_lovely_key_pair", cloud_service_config, user, test_stubs: stubs)
         expect(result).not_to be_success
       end
 
       it "returns a sensible error_message" do
-        result = described_class.perform_now("my_lovely_key_pair", config, user, test_stubs: stubs)
+        result = described_class.perform_now("my_lovely_key_pair", cloud_service_config, user, test_stubs: stubs)
         expect(result.error_message).to eq "the server responded with status 404"
       end
     end
@@ -59,12 +59,12 @@ RSpec.describe DeleteKeyPairJob, type: :job do
       end
 
       it "returns an unsuccessful result" do
-        result = described_class.perform_now("my_lovely_key_pair", config, user, test_stubs: stubs)
+        result = described_class.perform_now("my_lovely_key_pair", cloud_service_config, user, test_stubs: stubs)
         expect(result).not_to be_success
       end
 
       it "returns a sensible error_message" do
-        result = described_class.perform_now("my_lovely_key_pair", config, user, test_stubs: stubs)
+        result = described_class.perform_now("my_lovely_key_pair", cloud_service_config, user, test_stubs: stubs)
         expect(result.error_message).to eq "Something happened"
       end
     end
@@ -76,12 +76,12 @@ RSpec.describe DeleteKeyPairJob, type: :job do
       let(:timeout) { 0.1 }
 
       it "returns an unsuccessful result" do
-        result = described_class.perform_now("my_lovely_key_pair", config, user, test_stubs: stubs, timeout: timeout)
+        result = described_class.perform_now("my_lovely_key_pair", cloud_service_config, user, test_stubs: stubs, timeout: timeout)
         expect(result).not_to be_success
       end
 
       it "returns a sensible error_message" do
-        result = described_class.perform_now("my_lovely_key_pair", config, user, test_stubs: stubs, timeout: timeout)
+        result = described_class.perform_now("my_lovely_key_pair", cloud_service_config, user, test_stubs: stubs, timeout: timeout)
         expect(result.error_message).to eq "execution expired"
       end
     end
@@ -96,7 +96,7 @@ RSpec.describe DeleteKeyPairJob, type: :job do
 
     it "contains the correct config and user details" do
       expect(subject[:cloud_env]).to eq({
-                                          "auth_url" => config.internal_auth_url,
+                                          "auth_url" => cloud_service_config.internal_auth_url,
                                           "user_id" => user.cloud_user_id.gsub(/-/, ''),
                                           "password" => user.foreign_password,
                                           "project_id" => user.project_id

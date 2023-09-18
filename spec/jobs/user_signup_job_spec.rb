@@ -2,11 +2,11 @@ require 'rails_helper'
 
 RSpec.describe UserSignupJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
-  let(:config) { create(:cloud_service_config) }
+  let(:cloud_service_config) { create(:cloud_service_config) }
   let(:user) { create(:user) }
 
   subject(:job_runner) {
-    UserSignupJob::Runner.new(user: user, config: config, test_stubs: stubs)
+    UserSignupJob::Runner.new(user: user, cloud_service_config: cloud_service_config, test_stubs: stubs)
   }
 
   describe "url" do
@@ -15,7 +15,7 @@ RSpec.describe UserSignupJob, type: :job do
     subject { super().send(:url) }
 
     it "uses the correct ip, port and path" do
-      expect(subject).to eq "#{config.host_url[0...-5]}:#{config.user_handler_port}#{user_service_path}"
+      expect(subject).to eq "#{cloud_service_config.host_url[0...-5]}:#{cloud_service_config.user_handler_port}#{user_service_path}"
     end
   end
 
@@ -70,10 +70,10 @@ RSpec.describe UserSignupJob, type: :job do
 
     it "contains the correct cloud environment config" do
       expect(subject[:cloud_env]).to eq({
-        "auth_url" => config.internal_auth_url,
-        "user_id" => config.admin_user_id,
-        "password" => config.admin_foreign_password,
-        "project_id" => config.admin_project_id
+        "auth_url" => cloud_service_config.internal_auth_url,
+        "user_id" => cloud_service_config.admin_user_id,
+        "password" => cloud_service_config.admin_foreign_password,
+        "project_id" => cloud_service_config.admin_project_id
       })
     end
   end
