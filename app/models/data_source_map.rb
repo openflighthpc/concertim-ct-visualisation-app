@@ -1,7 +1,5 @@
 class DataSourceMap < ApplicationRecord
 
-  include DataSourceMap::Interchange
-
   ######################################
   #
   # Validations
@@ -46,8 +44,6 @@ class DataSourceMap < ApplicationRecord
   before_validation :strip_attributes, :assign_map_to_host
 
   # before_update :update_metrics
-  # after_save :update_interchange
-  # after_destroy :remove_from_interchange
   # after_initialize :set_original_values
 
 

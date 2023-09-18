@@ -1,6 +1,5 @@
 class Device < ApplicationRecord
 
-  include Interchange
   include LiveUpdate::Device
 
 
@@ -93,28 +92,6 @@ class Device < ApplicationRecord
   # Instance Methods
   #
   ####################################
-
-  def metrics
-    interchange_data && interchange_data[:metrics] || {}
-  end
-
-  def to_interchange_format(data)
-    # Reload on creation, otherwise associations (e.g. chassis) may not work.
-    reload if created_at_previously_changed? || created_at_changed?
-
-    # Overwrite these if already set.
-    data.merge!(
-      name: name,
-      id: id,
-      hidden: false,
-      useful: model.nil? || model != 'Blank Panel',
-      map_to_host: data_source_map.nil? ? nil : data_source_map.map_to_host,
-      chassis_id: chassis.nil? ? nil : chassis.id,
-      )
-
-    # Set metrics to its default unless already set.
-    data[:metrics] ||= {}
-  end
 
   def valid_action?(action)
     VALID_STATUS_ACTION_MAPPINGS[status].include?(action)

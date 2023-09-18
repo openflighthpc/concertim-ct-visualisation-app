@@ -45,8 +45,6 @@ class TemplatePersister
       create_object_graph
       @user.ability.authorize!(:update, @chassis.rack)
     end
-    # Update the interchange now that the device is fully built.
-    @chassis.device.update_interchange
     Result.new(@chassis, true, nil)
   rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved
     Rails.logger.debug("Failed to save chassis: #{$!.message}")
