@@ -1,6 +1,6 @@
-class CreateConfigs < ActiveRecord::Migration[7.0]
+class CreateCloudServiceConfigs < ActiveRecord::Migration[7.0]
   def change
-    create_table :configs do |t|
+    create_table :cloud_service_configs do |t|
       t.string :host_name,    limit: 255, null: false
       t.inet :host_ip,                    null: false
       t.string :username,     limit: 255, null: false

@@ -35,7 +35,7 @@ class Api::V1::Irv::DevicesController < Api::V1::Irv::BaseController
     @device = Device.find(params[:id])
     authorize! :update, @device
 
-    @config = Config.last
+    @config = CloudServiceConfig.last
     if @config.nil?
       render json: { success: false, errors: ["No cloud configuration has been set. Please contact an admin"] }, status: 403
       return

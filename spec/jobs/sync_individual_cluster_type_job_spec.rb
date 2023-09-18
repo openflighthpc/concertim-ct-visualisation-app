@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe SyncIndividualClusterTypeJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
-  let(:config) { create(:config) }
+  let(:config) { create(:cloud_service_config) }
   let(:cluster_type) { create(:cluster_type) }
   subject { SyncIndividualClusterTypeJob::Runner.new(config: config, cluster_type: cluster_type) }
 

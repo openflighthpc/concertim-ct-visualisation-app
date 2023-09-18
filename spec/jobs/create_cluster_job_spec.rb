@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe CreateClusterJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
-  let(:config) { create(:config) }
+  let(:config) { create(:cloud_service_config) }
   let(:cluster) { build(:cluster) }
   let(:user) { create(:user, :with_openstack_details) }
   subject { CreateClusterJob::Runner.new(cluster: cluster, config: config, user: user) }

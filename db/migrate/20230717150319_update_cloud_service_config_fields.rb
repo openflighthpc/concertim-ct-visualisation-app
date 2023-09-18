@@ -1,8 +1,8 @@
-class UpdateConfigFields < ActiveRecord::Migration[7.0]
+class UpdateCloudServiceConfigFields < ActiveRecord::Migration[7.0]
   def change
-    drop_table :configs
+    drop_table :cloud_service_configs
 
-    create_table :configs do |t|
+    create_table :cloud_service_configs do |t|
       t.string "admin_user_id", limit: 255, null: false
       t.string "admin_password", limit: 255, null: false
       t.string "admin_project_id", limit: 255, null: false

@@ -7,7 +7,7 @@
    <p>
      New clusters cannot be launched as the Cloud Environment has not yet been configured.
      <% if current_user.root %>
-       Please <%= link_to 'set the configuration', config_path %> to continue.
+       Please <%= link_to 'set the configuration', cloud_service_config_path %> to continue.
      <% else %>
       Please contact an admin.
      <% end %>

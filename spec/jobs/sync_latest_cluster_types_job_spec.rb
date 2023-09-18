@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe SyncAllClusterTypesJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
-  let(:config) { create(:config) }
+  let(:config) { create(:cloud_service_config) }
   subject { SyncAllClusterTypesJob::Runner.new(config: config) }
 
   describe "url" do

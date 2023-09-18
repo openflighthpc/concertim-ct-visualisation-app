@@ -2,7 +2,7 @@ class KeyPairsController < ApplicationController
   def new
     authorize! :create, KeyPair
     @user = current_user
-    @config = Config.first
+    @config = CloudServiceConfig.first
     if @config.nil?
       flash[:alert] = "Unable to create key-pairs: cloud environment config not set"
       redirect_to root_path
@@ -12,7 +12,7 @@ class KeyPairsController < ApplicationController
   end
 
   def index
-    @config = Config.first
+    @config = CloudServiceConfig.first
     if @config.nil?
        flash[:alert] = "Unable to check key-pairs: cloud environment config not set. Please contact an admin"
        redirect_to edit_user_registration_path
@@ -37,7 +37,7 @@ class KeyPairsController < ApplicationController
   end
 
   def create
-    @config = Config.first
+    @config = CloudServiceConfig.first
     @user = current_user
     public_key = key_pair_params[:public_key].blank? ? nil : key_pair_params[:public_key]
     @key_pair = @key_pair = KeyPair.new(user: @user, name: key_pair_params[:name], key_type: key_pair_params[:key_type],
@@ -69,7 +69,7 @@ class KeyPairsController < ApplicationController
 
   def destroy
     authorize! :destroy, KeyPair.new(user: current_user)
-    @config = Config.first
+    @config = CloudServiceConfig.first
     @user = current_user
     if @config.nil?
       flash[:alert] = "Unable to send key-pair requests: cloud environment config not set. Please contact an admin"

@@ -1,7 +1,7 @@
 require 'faker'
 
 FactoryBot.define do
-  factory :config, class: 'Config' do
+  factory :cloud_service_config, class: 'CloudServiceConfig' do
     host_url { "http://#{Faker::Internet.domain_name}:5000" }
     internal_auth_url { "http://#{Faker::Internet.domain_name}:5000" }
     admin_user_id { Faker::Internet.username }

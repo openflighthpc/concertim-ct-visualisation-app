@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe DeleteKeyPairJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
-  let(:config) { create(:config) }
+  let(:config) { create(:cloud_service_config) }
   let(:user) { create(:user, :with_openstack_details) }
   let(:path) { "#{config.host_url[0...-5]}:#{config.user_handler_port}/key_pairs" }
   subject { DeleteKeyPairJob::Runner.new(key_pair_name: "my_lovely_key_pair", config: config, user: user) }

@@ -5,8 +5,8 @@ RSpec.describe "Configs", type: :request do
   let(:urls) { Rails.application.routes.url_helpers }
 
   describe "GET :show" do
-    let(:url_under_test) { urls.config_path }
-    before(:each) { create(:config) }
+    let(:url_under_test) { urls.cloud_service_config_path }
+    before(:each) { create(:cloud_service_config) }
 
     context "when not logged in" do
       include_examples "unauthorised HTML request"
@@ -24,7 +24,7 @@ RSpec.describe "Configs", type: :request do
   end
 
   describe "GET :new" do
-    let(:url_under_test) { urls.new_config_path }
+    let(:url_under_test) { urls.new_cloud_service_config_path }
 
     context "when logged in as admin" do
       include_context "Logged in as admin"
@@ -34,33 +34,33 @@ RSpec.describe "Configs", type: :request do
       end
 
       context "when there is already a config" do
-        before(:each) { create(:config) }
+        before(:each) { create(:cloud_service_config) }
 
         it "redirects to the edit page" do
           get url_under_test, headers: headers
-          expect(response).to redirect_to urls.edit_config_path
+          expect(response).to redirect_to urls.edit_cloud_service_config_path
         end
       end
     end
   end
 
   describe "GET :edit" do
-    let(:url_under_test) { urls.edit_config_path }
+    let(:url_under_test) { urls.edit_cloud_service_config_path }
 
     context "when logged in as admin" do
       include_context "Logged in as admin"
 
       context "when there is not yet a config" do
-        before(:each) { expect(Config.count).to eq 0 }
+        before(:each) { expect(CloudServiceConfig.count).to eq 0 }
 
         it "redirects to the new page" do
           get url_under_test, headers: headers
-          expect(response).to redirect_to urls.new_config_path
+          expect(response).to redirect_to urls.new_cloud_service_config_path
         end
       end
 
       context "when there is already a config" do
-        before(:each) { create(:config) }
+        before(:each) { create(:cloud_service_config) }
 
         include_examples "successful HTML response"
       end
@@ -71,15 +71,15 @@ RSpec.describe "Configs", type: :request do
     context "when logged in as admin" do
       include_context "Logged in as admin"
 
-      let(:url_under_test) { urls.config_path }
-      let(:model_under_test) { Config }
-      let(:expected_redirect_url) { urls.config_path }
+      let(:url_under_test) { urls.cloud_service_config_path }
+      let(:model_under_test) { CloudServiceConfig }
+      let(:expected_redirect_url) { urls.cloud_service_config_path }
 
       let(:valid_attributes) do
-        {config: attributes_for(:config)}
+        {cloud_service_config: attributes_for(:cloud_service_config)}
       end
       let(:invalid_attributes) do
-        {config: {host_url: -1}}
+        {cloud_service_config: {host_url: -1}}
       end
 
       let(:param_key) { model_under_test.model_name.param_key }
@@ -137,22 +137,22 @@ RSpec.describe "Configs", type: :request do
     context "when logged in as admin" do
       include_context "Logged in as admin"
 
-      let!(:config) { create(:config) }
+      let!(:config) { create(:cloud_service_config) }
 
-      let(:url_under_test) { urls.config_path }
+      let(:url_under_test) { urls.cloud_service_config_path }
       let(:object_under_test) { config }
-      let(:expected_redirect_url) { urls.config_path }
+      let(:expected_redirect_url) { urls.cloud_service_config_path }
 
       let(:valid_attributes) do
         {
-          config: {
+          cloud_service_config: {
             host_url: config.host_url + ".updated",
             internal_auth_url: config.internal_auth_url + ".updated",
           }
         }
       end
       let(:invalid_attributes) do
-        {config: {host_url: -1}}
+        {cloud_service_config: {host_url: -1}}
       end
 
       let(:param_key) { object_under_test.model_name.param_key }

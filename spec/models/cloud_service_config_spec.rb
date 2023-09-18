@@ -1,7 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe Config, type: :model do
-  subject { create(:config) }
+RSpec.describe CloudServiceConfig, type: :model do
+  subject { create(:cloud_service_config) }
 
   describe 'validations' do
     it "is valid with valid attributes" do

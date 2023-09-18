@@ -1,0 +1,6 @@
+<%=
+  render_action_dropdown 'Cloud environment actions' do |builder|
+    builder.add title: 'View', path: cloud_service_config_path
+    builder.add title: 'Edit', path: edit_cloud_service_config_path
+  end
+%>

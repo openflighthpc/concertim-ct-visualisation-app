@@ -1,6 +1,6 @@
 require 'resolv'
 
-class Config < ApplicationRecord
+class CloudServiceConfig < ApplicationRecord
     encrypts :admin_foreign_password
 
     ############################

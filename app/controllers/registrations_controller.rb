@@ -6,7 +6,7 @@ class RegistrationsController < Devise::RegistrationsController
   def create
     super
     if @user.persisted?
-      config = Config.first
+      config = CloudServiceConfig.first
       if config.present?
         UserSignupJob.perform_later(@user, config)
       else

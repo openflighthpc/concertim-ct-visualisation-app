@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe UserSignupJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
-  let(:config) { create(:config) }
+  let(:config) { create(:cloud_service_config) }
   let(:user) { create(:user) }
 
   subject(:job_runner) {

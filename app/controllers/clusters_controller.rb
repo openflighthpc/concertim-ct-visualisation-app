@@ -1,7 +1,7 @@
 class ClustersController < ApplicationController
   def new
     authorize! :create, Cluster
-    @config = Config.first
+    @config = CloudServiceConfig.first
     if @config.nil?
       flash[:alert] = "Unable to get latest cluster type details: cloud environment config not set"
       redirect_to root_path
@@ -21,7 +21,7 @@ class ClustersController < ApplicationController
 
   def create
     authorize! :create, Cluster
-    @config = Config.first
+    @config = CloudServiceConfig.first
     @cluster_type = ClusterType.find_by_foreign_id!(params[:cluster_type_foreign_id])
     @cluster = Cluster.new(
       cluster_type: @cluster_type, name: permitted_params[:name], cluster_params: permitted_params[:cluster_params]

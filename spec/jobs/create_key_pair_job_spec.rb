@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe CreateKeyPairJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
-  let(:config) { create(:config) }
+  let(:config) { create(:cloud_service_config) }
   let(:user) { create(:user, :with_openstack_details) }
   let(:path) { "#{config.host_url[0...-5]}:#{config.user_handler_port}/key_pairs" }
   let(:key_pair) { build(:key_pair, user: user) }
