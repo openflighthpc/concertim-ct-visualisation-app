@@ -32,15 +32,15 @@ the architecture of `ct-vis-app` has been kept deliberately similar to
 
 The following READMEs are worth reading:
 
-* [cells README](/core/app/cells/README.md): encapsulate view components.
-* [facades README](/core/app/facades/README): used to provide a simpler
+* [cells README](/app/cells/README.md): encapsulate view components.
+* [facades README](/app/facades/README): used to provide a simpler
   interface to the use of memcache as a data interchange.  This use of memcache
   should be removed and probably the use of facades too.
-* [models README](/core/app/models/README.md): README on model expectations.
-* [presenters README](/core/app/presenters/README): Used to simplify view
+* [models README](/app/models/README.md): README on model expectations.
+* [presenters README](/app/presenters/README): Used to simplify view
   logic.
-* [services README](/core/app/services/README):  Encapsulates business logic.
-* [utility README](/core/app/utility/README):  Utility classes.
+* [services README](/app/services/README):  Encapsulates business logic.
+* [utility README](/app/utility/README):  Utility classes.
 
 Much of the above struture was written to manage the complexity of the legacy
 and old-legacy code-bases.  They are perhaps not needed in the new simpler
@@ -91,13 +91,13 @@ ActiveJob backend.  It is ran in its own process.
 ## Starting the servers
 
 The rails server, `dartsass` and `good_job` can all be started by running
-`core/bin/dev`.
+`bin/dev`.
 
 
 ## Running tests
 
 Tests are to be ran on the vagrant vm.  First SSH into the VM (`vagrant ssh dev1`)
-and then change to the app directory (`cd /opt/concertim/dev/ct-visualisation-app/core`).
+and then change to the app directory (`cd /opt/concertim/dev/ct-visualisation-app`).
 
 - All tests:
   ```bash
