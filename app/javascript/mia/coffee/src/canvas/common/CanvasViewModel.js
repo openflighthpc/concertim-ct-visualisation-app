@@ -42,7 +42,7 @@ class CanvasViewModel {
   }
 
   faceBoth() {
-    return this.face() === CanvasViewModel.FACE_BOTH;
+    return this.face === CanvasViewModel.FACE_BOTH;
   }
 };
 CanvasViewModel.initClass();
