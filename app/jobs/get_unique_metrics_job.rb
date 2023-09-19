@@ -13,11 +13,13 @@ class GetUniqueMetricsJob < ApplicationJob
   end
 
   class Result
+    MetricType = Struct.new(:name, :id, :nature, :units, :min, :max, keyword_init: true)
+
     attr_reader :metrics, :status_code
 
     def initialize(success, metrics, error_message, status_code=nil)
       @success = !!success
-      @metrics = metrics
+      @metrics = parse_metrics(metrics)
       @error_message = error_message
       @status_code = status_code
     end
@@ -28,6 +30,21 @@ class GetUniqueMetricsJob < ApplicationJob
 
     def error_message
       success? ? nil : @error_message
+    end
+
+    private
+
+    def parse_metrics(body)
+      metric_types = body.map do |metric|
+        MetricType.new(
+          id: metric["id"],
+          name: metric["name"],
+          units: metric["units"].nil? ? nil : metric["units"].force_encoding('utf-8'),
+          nature: metric["nature"],
+          min: metric["min"],
+          max: metric["max"],
+        )
+      end
     end
   end
 
@@ -43,6 +60,8 @@ class GetUniqueMetricsJob < ApplicationJob
     rescue Faraday::Error
       status_code = $!.response[:status] rescue 0
       Result.new(false, [], "#{error_description}: #{$!.message}", status_code)
+    rescue TypeError
+      Result.new(false, [], "Parsing unique metrics failed: #{$!.message}", 0)
     end
 
     private
@@ -56,7 +75,7 @@ class GetUniqueMetricsJob < ApplicationJob
     end
 
     def error_description
-      "Unable to fetch metric definitions"
+      "Unable to fetch unique metrics"
     end
   end
 end

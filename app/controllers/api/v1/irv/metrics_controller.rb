@@ -1,5 +1,4 @@
 class Api::V1::Irv::MetricsController < Api::V1::Irv::BaseController
-  MetricValue = Struct.new(:id, :value, keyword_init: true)
   before_action :check_params, :only=>[:index, :show]
 
   def show
@@ -11,7 +10,6 @@ class Api::V1::Irv::MetricsController < Api::V1::Irv::BaseController
     result = GetValuesForDevicesWithMetricJob.perform_now(metric_name: @metric.name)
     if result.success?
       @devices = result.metric_values
-        .map { |mv| MetricValue.new(id: mv["id"].to_i, value: mv["value"]) }
         .select { |mv| device_ids.nil? || device_ids.include?(mv.id) }
     else
       render json: {success: false, errors: result.error_message}, status: 502
