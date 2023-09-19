@@ -1,0 +1,40 @@
+require_relative "boot"
+
+require "rails/all"
+
+# Require the gems listed in Gemfile, including any gems
+# you've limited to :test, :development, or :production.
+Bundler.require(*Rails.groups)
+
+module CtApp
+  class Application < Rails::Application
+    # Initialize configuration defaults for originally generated Rails version.
+    config.load_defaults 7.0
+
+    # Configuration for the application, engines, and railties goes here.
+    #
+    # These settings can be overridden in specific environments using the files
+    # in config/environments, which are processed later.
+    #
+    # config.time_zone = "Central Time (US & Canada)"
+    # config.eager_load_paths << Rails.root.join("extras")
+    #
+    #
+    config.jwt_secret_file = Pathname('/opt/concertim/etc/secret')
+    config.jwt_secret = config.jwt_secret_file.read.chomp
+    config.jwt_aud = 'alces-ct'
+  end
+end
+
+CtApp::Application::configure do
+  config.after_initialize do
+
+    #
+    # When the good job worker process starts enqueue a job to preheat the
+    # interchange.
+    #
+    if ENV['GOOD_JOB_WORKER'] && ENV['GOOD_JOB_WORKER'] == "true"
+      PreheatJob.set(priority: -10).perform_later
+    end
+  end
+end

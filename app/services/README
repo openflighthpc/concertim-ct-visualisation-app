@@ -1,0 +1,74 @@
+
+Service Classes 
+
+
+**********************************************************************
+1. Introduction
+
+The purpose of a "service" class is to perform a piece of business logic, 
+typically interactions between several models. Service classes are primarily 
+used to keep business logic out of controller actions, which is where a lot 
+of it it was written in mia.
+
+If you find a controller action is becoming more than 4 or 5 lines long, or that multiple
+models are being sent messages / interacting with each other within a controller action, 
+it's probably better to put that logic into a service class.
+
+Just because controllers are the most likely place you are to use a service object,
+that doesn't mean they're the only place. You could also use service objects from:
+
+  * Other service objects
+  * Delayed job
+  * Rake tasks
+  * The console
+
+Service objects should not be used where an activerecord callback or association 
+dependency would be more appropriate (e.g. for maintaining referential integrity, or
+for validation logic).
+
+The classic example of a service object is an "EmailComment" service, which
+would create a new comment against a blog post and email the owner of the post
+to let them know about the comment. 
+
+
+**********************************************************************
+2. Implementation
+
+  * Service classes are plain old ruby objects.
+
+  * Service classes should start with a verb (e.g. DestroyDevice, AcceptInvite)
+
+  * If serveral services all pertain to one model (e.g. you find yourself
+    implementing "DestroyDevice", "CreateDevice", "UpdateDevice"... then group the 
+    classes under a namespace such as "DeviceServices::Destroy".
+  
+  * Service classes should implement a single public class method, "call"
+
+  * The "call" method can return anything, but typically will end up returning either
+
+      => true / false
+      => a persisted model / nil
+      => a response object
+
+
+
+**********************************************************************
+3. Further Reading
+
+This implementation is heavily inspired by this article by Philippe Creux:
+http://brewhouse.io/blog/2014/04/30/gourmet-service-objects.html
+
+And the following RailsCast by Ryan Bates:
+http://railscasts.com/episodes/398-service-objects
+
+
+
+**********************************************************************
+4. Notes
+
+A lot of business logic was in the mia controllers. Some of it looks like
+it should probably not be in the controller at all, let alone in a service
+class, but for now I've just been taking any logic I find into a service
+class. We can make the decision about whether to push it to a callback later.
+
+

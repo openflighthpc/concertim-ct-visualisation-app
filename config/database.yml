@@ -1,0 +1,31 @@
+pg_base: &pg_base
+  encoding: unicode
+  # For details on connection pooling, see Rails configuration guide
+  # https://guides.rubyonrails.org/configuring.html#database-pooling
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  adapter: postgresql
+  username: www-data
+  # do not remove the below two comments as they are used for/ set during the deployment process
+  # host: localhost
+  # password:
+
+################################
+#
+# "Default" databases
+#
+################################
+
+development:
+  <<: *pg_base
+  database: ct-vis-dev
+
+# Warning: The database defined as "test" will be erased and
+# re-generated from your development database when you run "rake".
+# Do not set this db to the same as development or production.
+test:
+  <<: *pg_base
+  database: ct-vis-test
+
+production:
+  <<: *pg_base
+  database: ct-vis

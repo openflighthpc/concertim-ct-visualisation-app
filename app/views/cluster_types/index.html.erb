@@ -1,0 +1,23 @@
+<% set_title "Select cluster type" %>
+<% content_for(:side_content) do %>
+  <%= render 'actions' %>
+<% end %>
+
+<% if @cloud_service_config.nil? %>
+   <p>
+     New clusters cannot be launched as the Cloud Environment has not yet been configured.
+     <% if current_user.root %>
+       Please <%= link_to 'set the configuration', cloud_service_config_path %> to continue.
+     <% else %>
+      Please contact an admin.
+     <% end %>
+   </p>
+<% elsif @cluster_types.empty? %>
+  <p>There are no cluster types available at present.</p>
+<% else %>
+  <div style="display: flex; justify-content: space-evenly;">
+    <% @cluster_types.each do |cluster_type| %>
+      <%= render partial: 'card', object: cluster_type %>
+    <% end %>
+  </div>
+<% end %>
