@@ -114,7 +114,13 @@ module LiveUpdate
     # updated.
     def update_rack_modified_timestamp
       current_chassis = chassis
-      previous_chassis = base_chassis_id_previously_changed? ? Chassis.find(base_chassis_id_previously_was) : nil
+
+      previous_chassis =
+        if base_chassis_id_previously_changed? && !base_chassis_id_previously_was.nil?
+          ::Chassis.find(base_chassis_id_previously_was)
+        else
+          nil
+        end
 
       if current_chassis.present?
         current_chassis.update_modified_timestamp_of_chassis_or_rack
