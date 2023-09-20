@@ -1,3 +1,16 @@
+# DataSourceMap allows for configuring how to find metrics for a device.  A map
+# to the source of metric data if you will.
+#
+# Concertim uses ganglia to process it metrics.  Once ganglia has processed
+# them the metrics are available in a particular "grid", "cluster" and "host".
+# Here "grid", "cluster" and "host" are ganglia specific terms.
+#
+# If a device has a data source map of say, `{map_to_grid: "unspecified", map_to_cluster: "unspecified", map_to_host: "my-device"}`
+# then to find its output in the ganglia stream of metrics would involve
+# searching the grid with the name "unspecified", searching within that grid
+# for the cluster with the name "unspecified" and searching within that cluster
+# for the host with the name "my-device".
+#
 class DataSourceMap < ApplicationRecord
 
   ######################################
@@ -64,11 +77,7 @@ class DataSourceMap < ApplicationRecord
 
 
   def calculate_map_to_host
-    if device.respond_to?(:generate_dsm)
-      device.generate_dsm
-    else
-      "#{device.class.name.demodulize.downcase}:#{device.id}"
-    end
+    "#{device.class.name.demodulize.downcase}:#{device.id}"
   end
 
 
