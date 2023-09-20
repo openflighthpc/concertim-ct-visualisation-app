@@ -6,7 +6,7 @@
 
 import Util from 'canvas/common/util/Util';
 import Events from 'canvas/common/util/Events';
-import Profiler from 'Profiler';
+import Profiler from '../../../../../javascript/irv/Profiler';
 
 class PresetManager {
   // statics overwritten by config

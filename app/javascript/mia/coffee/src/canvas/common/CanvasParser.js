@@ -7,7 +7,7 @@
  */
 
 import Util from 'canvas/common/util/Util';
-import Profiler from 'Profiler';
+import Profiler from '../../../../javascript/irv/Profiler';
 
 // takes the various JSON structures, reformats if necessary and populates the view model
 class CanvasParser {
@@ -16,7 +16,7 @@ class CanvasParser {
   }
 
   parseRackDefs(rack_defs) {
-    Profiler.begin(Profiler.CRITICAL);
+    Profiler.begin(Profiler.CRITICAL, this.parseRackDefs);
     const groups        = this.model.groups();
     const filtered      = false;
     const device_lookup = { };
@@ -45,7 +45,7 @@ class CanvasParser {
     const asset_list = [];
     for (var asset in assets) { asset_list.push(asset); }
 
-    Profiler.end(Profiler.CRITICAL);
+    Profiler.end(Profiler.CRITICAL, this.parseRackDefs);
     return { filtered, assetList: asset_list, racks: rack_defs, deviceLookup: device_lookup };
   }
 
@@ -176,7 +176,7 @@ class CanvasParser {
 
 
   parseTemplate(item) {
-    Profiler.begin(Profiler.CRITICAL);
+    Profiler.begin(Profiler.CRITICAL, this.parseTemplate);
 
     item.template.id      = Number(item.template.id);
     item.template.rows    = Number(item.template.rows);
@@ -196,7 +196,7 @@ class CanvasParser {
     item.template.padding.top    = Number(item.template.padding_top);    delete item.template.padding_top;
     item.template.padding.bottom = Number(item.template.padding_bottom); delete item.template.padding_bottom;
 
-    return Profiler.end(Profiler.CRITICAL);
+    return Profiler.end(Profiler.CRITICAL, this.parseTemplate);
   }
 };
 

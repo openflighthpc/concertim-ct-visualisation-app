@@ -16,7 +16,7 @@ import Events from 'canvas/common/util/Events';
 import Easing from 'canvas/common/gfx/Easing';
 import RackSpaceObject from 'canvas/irv/view/RackSpaceObject';
 import ViewModel from 'canvas/irv/ViewModel';
-import Profiler from 'Profiler'
+import Profiler from '../../../../../javascript/irv/Profiler';
 
 class RackObject extends RackSpaceObject {
   static initClass() {
@@ -363,9 +363,9 @@ class RackObject extends RackSpaceObject {
   }
 
   draw() {
-    Profiler.begin(Profiler.DEBUG, this.name);
+    Profiler.begin(Profiler.DEBUG, this.draw, this.name);
     for (var child of Array.from(this.children)) { child.draw(); }
-    return Profiler.end(Profiler.DEBUG);
+    return Profiler.end(Profiler.DEBUG, this.draw);
   }
 
 

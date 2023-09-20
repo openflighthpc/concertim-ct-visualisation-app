@@ -7,6 +7,8 @@
 * adapted from Eric Waldheims MochiKit-based ComboBox
 */
 
+import Class from '../../contrib/mootools/base'
+
 if (RegExp.escape == undefined) {
     RegExp.escape = function(text) {
         return text.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');

@@ -9,7 +9,7 @@
 
 import Util from 'canvas/common/util/Util';
 import Easing from 'canvas/common/gfx/Easing';
-import Profiler from 'Profiler';
+import Profiler from '../../../../../javascript/irv/Profiler';
 
 class Metric {
   static initClass() {
@@ -148,7 +148,7 @@ class Metric {
 
 
   draw() {
-    Profiler.begin(Profiler.DEBUG);
+    Profiler.begin(Profiler.DEBUG, this.draw);
     // clear
     if (this.asset != null) { this.gfx.remove(this.asset); }
     const colour = '#' + this.getColour().toString(16);
@@ -164,7 +164,7 @@ class Metric {
         this.asset = this.gfx.addRect({ x: this.x, y: (this.y + this.height) - new_height, width: this.width, height: new_height, alpha: Metric.ALPHA, fill: colour });
       }
     }
-    return Profiler.end(Profiler.DEBUG);
+    return Profiler.end(Profiler.DEBUG, this.draw);
   }
 
 

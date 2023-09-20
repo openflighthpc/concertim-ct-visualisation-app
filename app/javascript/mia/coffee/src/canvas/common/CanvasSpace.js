@@ -14,7 +14,7 @@ import Rack from 'canvas/irv/view/Rack';
 import Chassis from 'canvas/irv/view/Chassis';
 import Machine from 'canvas/irv/view/Machine';
 import ViewModel from 'canvas/irv/ViewModel';
-import Profiler from 'Profiler'
+import Profiler from '../../../../javascript/irv/Profiler';
 
 class CanvasSpace {
   static initClass() {
@@ -75,9 +75,9 @@ class CanvasSpace {
 
   // draw all racks
   draw() {
-    Profiler.begin(Profiler.CRITICAL);
+    Profiler.begin(Profiler.CRITICAL, this.draw);
     for (var rack of Array.from(this.racks)) { rack.draw(false, false, false); }
-    return Profiler.end(Profiler.CRITICAL);
+    return Profiler.end(Profiler.CRITICAL, this.draw);
   }
 
   setUpRacks() {

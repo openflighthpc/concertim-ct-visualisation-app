@@ -33,7 +33,7 @@ import Link from 'canvas/irv/view/Link';
 import ImageLink from 'canvas/irv/view/ImageLink';
 import HoldingArea from 'canvas/irv/view/HoldingArea';
 import DragPolicy from 'canvas/irv/util/DragPolicy';
-import Profiler from 'Profiler';
+import Profiler from '../../../../../javascript/irv/Profiler';
 import NameLabel from 'canvas/irv/view/NameLabel';
 
 class RackSpace extends CanvasSpace {
@@ -104,7 +104,7 @@ class RackSpace extends CanvasSpace {
     this.chartEl = chartEl;
     this.model = model;
     this.rackParent = rackParent;
-    Profiler.begin(Profiler.DEBUG);
+    Profiler.begin(Profiler.DEBUG, this.constructor);
     this.zooming     = false;
     this.flipping    = false;
     this.highlighted = [];
@@ -194,7 +194,7 @@ class RackSpace extends CanvasSpace {
       }
     }
 
-    Profiler.end(Profiler.DEBUG);
+    Profiler.end(Profiler.DEBUG, this.constructor);
   }
 
   // creates instances of SimpleRenderer, one for each layer required
@@ -489,7 +489,7 @@ class RackSpace extends CanvasSpace {
 
   // draw all racks
   draw() {
-    Profiler.begin(Profiler.CRITICAL);
+    Profiler.begin(Profiler.CRITICAL, this.draw);
 
     if (this.racks == null || this.racks.length === 0) {
       $('zero-racks-message').removeClass('hidden');
@@ -507,7 +507,7 @@ class RackSpace extends CanvasSpace {
     if (this.model.showHoldingArea()) {
       this.holdingArea.draw();
     }
-    return Profiler.end(Profiler.CRITICAL);
+    return Profiler.end(Profiler.CRITICAL, this.draw);
   }
 
   // showHideHoldingArea 

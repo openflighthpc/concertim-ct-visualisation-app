@@ -20,7 +20,7 @@ import RackOwnerLabel from 'canvas/irv/view/RackOwnerLabel';
 import RackObject from 'canvas/irv/view/RackObject';
 import Chassis from 'canvas/irv/view/Chassis';
 import ImageLink from 'canvas/irv/view/ImageLink';
-import Profiler from 'Profiler'
+import Profiler from '../../../../../javascript/irv/Profiler';
 
 class Rack extends RackObject {
   static initClass() {
@@ -101,8 +101,8 @@ class Rack extends RackObject {
   }
 
   constructor(def) {
-    Profiler.begin(Profiler.DEBUG);
     super(def, 'racks');
+    Profiler.begin(Profiler.DEBUG, this.constructor);
     this.evSpaceHidden = this.evSpaceHidden.bind(this);
     if (Rack.IMAGES_BY_TEMPLATE[this.template.id] == null) { this.setImages(); }
     this.uHeight = def.uHeight;
@@ -160,7 +160,7 @@ class Rack extends RackObject {
     this.nameLabel = new RackNameLabel(this.infoGfx, this, RackObject.MODEL);
     this.ownerLabel = new RackOwnerLabel(this.infoGfx, this, RackObject.MODEL);
 
-    Profiler.end(Profiler.DEBUG);
+    Profiler.end(Profiler.DEBUG, this.constructor);
   }
 
   addImageLink() {
@@ -329,7 +329,7 @@ class Rack extends RackObject {
   }
 
   draw(show_u_labels, show_name_label, show_owner_label) {
-    Profiler.begin(Profiler.DEBUG);
+    Profiler.begin(Profiler.DEBUG, this.draw);
     // clear
     for (var asset of Array.from(this.assets)) { RackObject.RACK_GFX.remove(asset); }
     this.assets = [];
@@ -358,7 +358,7 @@ class Rack extends RackObject {
     // determine draw order according to current view
     this.children = this.face === ViewModel.FACE_FRONT ? this.rearFirst : this.frontFirst;
     super.draw();
-    return Profiler.end(Profiler.DEBUG);
+    return Profiler.end(Profiler.DEBUG, this.draw);
   }
 
   showOwnerLabel(visible) {

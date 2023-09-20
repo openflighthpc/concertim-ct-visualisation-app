@@ -28,7 +28,7 @@ import FilterBar from 'canvas/common/widgets/FilterBar';
 import ViewModel from 'canvas/irv/ViewModel';
 import Parser from 'canvas/irv/util/Parser';
 import PresetManager from 'canvas/common/util/PresetManager';
-import Profiler from 'Profiler';
+import Profiler from '../../../../javascript/irv/Profiler';
 import ComboBox from 'util/ComboBox';
 import Tooltip from 'canvas/irv/view/Tooltip';
 import PieCountdown from 'canvas/common/widgets/PieCountdown';

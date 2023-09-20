@@ -18,7 +18,7 @@ import RackObject from 'canvas/irv/view/RackObject';
 import Machine from 'canvas/irv/view/Machine';
 import Highlight from 'canvas/irv/view/Highlight';
 import ChassisLabel from 'canvas/irv/view/ChassisLabel';
-import Profiler from 'Profiler';
+import Profiler from '../../../../../javascript/irv/Profiler';
 
 
 class Chassis extends RackObject {
@@ -185,7 +185,7 @@ class Chassis extends RackObject {
     if (show_name_label == null) {
       show_name_label = RackObject.MODEL.displayingBuildStatus();
     }
-    Profiler.begin(Profiler.DEBUG, this.name);
+    Profiler.begin(Profiler.DEBUG, this.name, this.draw);
     // clear
     for (var asset of Array.from(this.assets)) { this.gfx.remove(asset); }
     this.assets = [];
@@ -246,7 +246,7 @@ class Chassis extends RackObject {
 
     this.alignMachines();
     super.draw();
-    return Profiler.end(Profiler.DEBUG);
+    return Profiler.end(Profiler.DEBUG,  this.draw);
   }
 
   select() {

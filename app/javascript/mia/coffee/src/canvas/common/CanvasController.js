@@ -13,7 +13,7 @@ import CanvasSpace from 'canvas/common/CanvasSpace';
 import Util from 'canvas/common/util/Util';
 import Configurator from 'canvas/irv/util/Configurator';
 import AssetManager from 'canvas/irv/util/AssetManager';
-import Profiler from 'Profiler';
+import Profiler from '../../../../javascript/irv/Profiler';
 
 class CanvasController {
   static initClass() {

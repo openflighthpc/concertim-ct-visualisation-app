@@ -35,7 +35,7 @@ import CanvasViewModel from 'canvas/common/CanvasViewModel';
 import ViewModel from 'canvas/irv/ViewModel';
 import StaticGroupManager from 'canvas/common/util/StaticGroupManager';
 import IRVChart from 'canvas/irv/view/IRVChart';
-import Profiler from 'Profiler';
+import Profiler from '../../../../../javascript/irv/Profiler';
 
 
 class Configurator {

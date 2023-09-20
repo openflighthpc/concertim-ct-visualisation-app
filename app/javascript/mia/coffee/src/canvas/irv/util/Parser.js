@@ -10,7 +10,7 @@
 
 import CanvasParser from 'canvas/common/CanvasParser';
 import Util from 'canvas/common/util/Util';
-import Profiler from 'Profiler';
+import Profiler from '../../../../../javascript/irv/Profiler';
 
 
 // takes the various JSON structures, reformats if necessary and populates the view model
@@ -28,7 +28,7 @@ class Parser extends CanvasParser {
 
 
   parseRackDefs(rack_defs, filter=null) {
-    Profiler.begin(Profiler.CRITICAL);
+    Profiler.begin(Profiler.CRITICAL, this.parseRackDefs);
     const apply_filter = filter === null ? false : true;
 
     // format data and create lookup table based on rack/chassis/device id
@@ -67,13 +67,13 @@ class Parser extends CanvasParser {
     const asset_list = [];
     for (var asset in assets) { asset_list.push(asset); }
 
-    Profiler.end(Profiler.CRITICAL);
+    Profiler.end(Profiler.CRITICAL, this.parseRackDefs);
     return { filtered, assetList: asset_list, racks: rack_defs, deviceLookup: device_lookup };
   }
 
   parseMetrics(metrics) {
     let group;
-    Profiler.begin(Profiler.CRITICAL);
+    Profiler.begin(Profiler.CRITICAL, this.parseMetrics);
     if (metrics == null) { metrics = { name: '', values: {}, selection: {} }; }
 
     metrics.metricId = metrics.name;
@@ -111,16 +111,16 @@ class Parser extends CanvasParser {
     metrics.values = values_obj;
     metrics.selection = sel_obj;
 
-    Profiler.end(Profiler.CRITICAL);
+    Profiler.end(Profiler.CRITICAL, this.parseMetrics);
     return metrics;
   }
 
 
   parseMetricTemplates(metric_templates) {
-    Profiler.begin(Profiler.CRITICAL);
+    Profiler.begin(Profiler.CRITICAL, this.parseMetricTemplates);
     const metric_obj = {};
     for (var metric of Array.from(metric_templates)) { metric_obj[metric.id] = metric; }
-    Profiler.end(Profiler.CRITICAL);
+    Profiler.end(Profiler.CRITICAL, this.parseMetricTemplates);
     return metric_obj;
   }
 
