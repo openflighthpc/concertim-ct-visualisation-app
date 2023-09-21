@@ -112,7 +112,7 @@ class RackSpace {
     this.chartEl = chartEl;
     this.model = model;
     this.rackParent = rackParent;
-    Profiler.begin(Profiler.DEBUG);
+    Profiler.begin(Profiler.DEBUG, this.constructor);
     this.zooming     = false;
     this.flipping    = false;
     this.highlighted = [];
@@ -202,7 +202,7 @@ class RackSpace {
       }
     }
 
-    Profiler.end(Profiler.DEBUG);
+    Profiler.end(Profiler.DEBUG, this.constructor);
   }
 
   // creates instances of SimpleRenderer, one for each layer required
@@ -539,7 +539,7 @@ class RackSpace {
 
   // draw all racks
   draw() {
-    Profiler.begin(Profiler.CRITICAL);
+    Profiler.begin(Profiler.CRITICAL, this.draw);
 
     if (this.racks == null || this.racks.length === 0) {
       $('zero-racks-message').removeClass('hidden');
@@ -557,7 +557,7 @@ class RackSpace {
     if (this.model.showHoldingArea()) {
       this.holdingArea.draw();
     }
-    return Profiler.end(Profiler.CRITICAL);
+    return Profiler.end(Profiler.CRITICAL, this.draw);
   }
 
   // showHideHoldingArea 
