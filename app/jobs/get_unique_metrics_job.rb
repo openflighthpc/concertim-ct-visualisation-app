@@ -67,7 +67,7 @@ class GetUniqueMetricsJob < ApplicationJob
     private
 
     def url
-      "http://localhost:3000"
+      Rails.application.config.metric_daemon_url
     end
 
     def path
