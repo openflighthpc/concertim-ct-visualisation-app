@@ -23,13 +23,6 @@ class HwRack
       devices.empty?
     end
 
-    #
-    # number_of_devices
-    #
-    def number_of_devices
-      group ? (MEMCACHE.get("hacor:group:#{group.id}")[:members].size rescue 0) : 0
-    end
-
     # Return the highest empty u for the given facing.
     # Half empty u will be included iff they are empty in the given facing.
     def highest_empty_u(facing = nil)
@@ -41,13 +34,6 @@ class HwRack
         # height = (u_height.nil? || u_height.blank?) ? 1 : u_height
         # first_empty_u( ( 1..height ).to_a.reverse, facing)
       end
-    end
-
-    #
-    # space_used
-    #
-    def space_used
-      value_for_metric(SPACE_USED_METRIC_KEY).to_i rescue 0
     end
 
     #

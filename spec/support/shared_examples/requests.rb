@@ -34,13 +34,15 @@ RSpec.shared_examples "forbidden HTML request" do
 end
 
 RSpec.shared_examples "successful JSON response" do
+  let(:request_method) { :get }
+
   it "renders a successful response" do
-    get url_under_test, headers: headers, as: :json
+    send(request_method, url_under_test, headers: headers, as: :json)
     expect(response).to be_successful
   end
 
   it "returns a JSON document" do
-    get url_under_test, headers: headers, as: :json
+    send(request_method, url_under_test, headers: headers, as: :json)
     expect{ JSON.parse(response.body) }.not_to raise_error
   end
 end

@@ -685,8 +685,6 @@ class IRVController extends CanvasController {
         if (oneS.Machine != null) { this.apiFilter.device_ids.push(oneS.Machine.id); }
       }
     }
-
-    this.apiFilter.device_ids  = JSON.stringify(this.apiFilter.device_ids);
   }
 
 
@@ -1498,8 +1496,11 @@ class IRVController extends CanvasController {
     new Request.JSON({
       url        : this.resources.path + metric_api.replace(/\[\[metric_id\]\]/g, selected_metric) + '?' + (new Date()).getTime(),
       onComplete : this.receivedMetrics,
-      headers    : {'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content')},
-      data       : this.apiFilter
+      headers    : {
+          'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content'),
+          'Content-Type': "application/json",
+      },
+      data       : JSON.stringify(this.apiFilter)
     }).send();
   }
 

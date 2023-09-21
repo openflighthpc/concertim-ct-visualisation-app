@@ -15,7 +15,6 @@ class HwRack < ApplicationRecord
   ############################
 
   DEFAULT_TEMPLATE_ID = 1
-  SPACE_USED_METRIC_KEY = 'ct.capacity.rack.space_used'
   VALID_STATUSES = %w(IN_PROGRESS FAILED ACTIVE STOPPED)
   VALID_STATUS_ACTION_MAPPINGS = {
     "IN_PROGRESS" => [],

@@ -24,12 +24,4 @@ class Group < ApplicationRecord
   def member_ids
     raise NotImplementedError
   end
-
-  def memcache_facade
-    MemcacheGroupFacade.new(interchange_key)
-  end
-
-  def interchange_key
-    "hacor:group:#{id}"
-  end
 end

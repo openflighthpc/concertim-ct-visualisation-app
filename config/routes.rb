@@ -51,6 +51,7 @@ Rails.application.routes.draw do
         resources :templates, only: [:index, :create, :update, :destroy]
         resources :nodes, only: [:create]
         resources :devices, only: [:index, :show, :update, :destroy]
+        resources :data_source_maps, path: 'data-source-maps', only: [:index]
 
         # For use by the interactive rack view
         namespace :irv do

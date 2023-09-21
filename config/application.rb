@@ -23,18 +23,8 @@ module CtApp
     config.jwt_secret_file = Pathname('/opt/concertim/etc/secret')
     config.jwt_secret = config.jwt_secret_file.read.chomp
     config.jwt_aud = 'alces-ct'
-  end
-end
 
-CtApp::Application::configure do
-  config.after_initialize do
-
-    #
-    # When the good job worker process starts enqueue a job to preheat the
-    # interchange.
-    #
-    if ENV['GOOD_JOB_WORKER'] && ENV['GOOD_JOB_WORKER'] == "true"
-      PreheatJob.set(priority: -10).perform_later
-    end
+    # The base URL to use for the concertim metric reporting daemon.
+    config.metric_daemon_url = ENV.fetch("METRIC_DAEMON_URL", "http://localhost:3000")
   end
 end
