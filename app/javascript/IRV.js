@@ -1,3 +1,6 @@
+// This file is the entry point for loading the interactive rack view (IRV)
+// javascript.  Options are retrieved from the DOM and a IRVController created.
+
 import IRVController from 'canvas/irv/IRVController';
 
 // Overwrite jquery's `$` to one that is closer to prototype's `$`.
