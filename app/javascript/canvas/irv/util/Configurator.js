@@ -37,9 +37,8 @@ import Profiler from 'Profiler';
 
 
 class Configurator {
-
   static setup(IRVController, config) {
-    Profiler.trace(Profiler.DEBUG, "Configurator.setup");
+    Profiler.trace(Profiler.DEBUG, this.setup, "Configurator.setup");
     AssetManager.NUM_CONCURRENT_LOADS = config.ASSETMANAGER.numConcurrentLoads;
 
     // parse colours into decimal ints

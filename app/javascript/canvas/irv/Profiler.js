@@ -29,7 +29,7 @@ const Profiler = {
         this.begin  = function(){};
         this.end    = function(){};
         this.trace  = function(){};
-        this.output = function(){console.log('Output unavailable, profier has been disbanded');};
+        this.output = function(){console.log('Output unavailable, profiler has been disbanded');};
     },
 
 
@@ -122,7 +122,7 @@ const Profiler = {
     },
 
 
-    trace: function(log_level, trace)
+    trace: function(log_level, callingFunction, trace)
     {
         if(log_level === undefined || log_level < this.LOG_LEVEL)
         return;
@@ -130,14 +130,14 @@ const Profiler = {
         var time = new Date().getTime();
         if(trace && typeof(trace) === 'string')
         {
-            count = 2;
-            len   = arguments.length;
+            let count = 2;
+            let len   = arguments.length;
             while(count < len)
             {
                 trace = trace.replace(/%s/, arguments[count]);
                 ++count;
             }
-            trace = this.getCaller(arguments.callee.caller) + ' ' + trace;
+            trace = this.getCaller(callingFunction) + ' ' + trace;
         }
 
     this.log.push({ type     : 'trace', 
@@ -391,7 +391,7 @@ const Profiler = {
                         return;
                     }
 
-                    response = eval('(' + req.response + ')');
+                    let response = eval('(' + req.response + ')');
 
                     if(response.error)
                     console.log('ERROR: ' + response.message);

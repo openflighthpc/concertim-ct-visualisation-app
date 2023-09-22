@@ -6,7 +6,7 @@ import RackObject from 'canvas/irv/view/RackObject'
 import Profiler from 'Profiler'
 import 'mia/contrib/knockout.js'
 
-// I've taken this from some live data, some may be unnecessary for this testing
+// I've taken this from some live front end data, there may be some unnecessary fields in there
 const deviceData = {
     "id": 1,
     "name": "comp102",
@@ -57,8 +57,8 @@ const chassisData = {
 const rackData = {
     "owner": {
         "id": 5,
-        "name": "turnip",
-        "login": "turnip"
+        "name": "bilbo",
+        "login": "bilbo"
     },
     "template": {
         "id": 1,
@@ -115,13 +115,6 @@ beforeAll(() => {
     RackObject.MODEL = new ViewModel();
     RackObject.MODEL.deviceLookup({"racks": {}, "devices": {}, "chassis": {}})
 
-    // Profiler uses deprecated functions/code that under normal circumstances would break.
-    // Perhaps it would be useful to have the option not to use it.
-    Profiler.makeCompatible();
-    // Try to limit what profiler logs
-    Profiler.LOG_LEVEL  = Profiler.CRITICAL;
-    Profiler.TRACE_ONLY = true;
-
     // Dont try to draw images, as no canvas to draw. We could mock one, but not
     // relevant to this test
     const mockedFunction = jest.fn();
@@ -134,5 +127,3 @@ test("filter function returns array containing just device's rack", () => {
    const machine = rack.children[0].children[0];
    expect(DragPolicy.filter(machine)).toEqual([rack]);
 });
-
-
