@@ -4,7 +4,6 @@ pin "application", to: "application.js"
 
 # Page-specific javascripts.
 pin "IRV", to: "IRV.js"
-pin "registrations/new", to: "registrations/new.js"
 pin "key_pairs/new", to: "key_pairs/new.js"
 
 # Utility Javascripts.
