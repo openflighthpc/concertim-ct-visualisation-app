@@ -3,10 +3,9 @@ import AssetManager from 'canvas/irv/util/AssetManager'
 import DragPolicy from 'canvas/irv/util/DragPolicy'
 import Rack from 'canvas/irv/view/Rack'
 import RackObject from 'canvas/irv/view/RackObject'
-import Profiler from 'Profiler'
 import 'mia/contrib/knockout.js'
 
-// I've taken this from some live front end data, there may be some unnecessary fields in there
+// I've taken this from some live front end data, there may be some unnecessary fields
 const deviceData = {
     "id": 1,
     "name": "comp102",
@@ -115,14 +114,22 @@ beforeAll(() => {
     RackObject.MODEL = new ViewModel();
     RackObject.MODEL.deviceLookup({"racks": {}, "devices": {}, "chassis": {}})
 
-    // Dont try to draw images, as no canvas to draw. We could mock one, but not
-    // relevant to this test
+    // Dont try to draw images, as no canvas to draw. We could mock/ manually set one, but not really
+    // relevant to this test.
     const mockedFunction = jest.fn();
     jest.spyOn(Rack.prototype, 'setImageCache').mockImplementation(mockedFunction);
 });
 
+afterAll(() => {
+    Rack.IMAGES_BY_TEMPLATE = {};
+    AssetManager.CACHE = {};
+    RackObject.RACK_GFX = null;
+    RackObject.MODEL = null;
+    jest.restoreAllMocks();
+});
+
 test("filter function returns array containing just device's rack", () => {
-   // There may be an easier/ better way to generate a machine directly, but there are so, so many dependencies
+   // There may be an easier or better way to generate a machine directly, but there are so, so many dependencies
    const rack = new Rack(rackData, "racks", 1);
    const machine = rack.children[0].children[0];
    expect(DragPolicy.filter(machine)).toEqual([rack]);
