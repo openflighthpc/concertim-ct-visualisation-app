@@ -64,7 +64,7 @@ Rails.application.configure do
   # config.active_job.queue_name_prefix = "ct_app_production"
   config.active_job.queue_adapter = :good_job
   config.good_job.execution_mode = :external
-  config.good_job.logger = Rails.logger
+  config.good_job.logger = ActiveSupport::TaggedLogging.new(ActiveSupport::Logger.new(Rails.root.join("log/good_job.log")))
 
   config.action_mailer.perform_caching = false
   config.action_mailer.default_url_options = { host: 'command.concertim.alces-flight.com' }
