@@ -10,11 +10,11 @@
 //= require mia/contrib/mootools/fxcss
 //= require mia/contrib/mootools/fxtween
 //
-//= require mia/contrib/MochiKit/Base
-//= require mia/contrib/MochiKit/Iter
-//= require mia/contrib/MochiKit/DOM
-//= require mia/contrib/MochiKit/Style
-//= require mia/contrib/MochiKit/Signal
+//= require MochiKit/Base
+//= require MochiKit/Iter
+//= require MochiKit/DOM
+//= require MochiKit/Style
+//= require MochiKit/Signal
 //
 //= require jquery
 //= require modernizr
