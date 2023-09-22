@@ -72,8 +72,6 @@ class RackObject extends RackSpaceObject {
       if (parent.frontFacing !== undefined) { this.frontFacing = parent.frontFacing; }
       parent       = parent.parent();
     }
-
-    console.log(RackObject.MODEL)
     if (RackObject.MODEL.deviceLookup()[this.group][this.id] == null) {
       def.instances = [];
       RackObject.MODEL.deviceLookup()[this.group][this.id] = def;
