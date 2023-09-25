@@ -17,6 +17,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const options = {};
   options.parent_div_id = 'rack_view';
-  options.show = document.getElementById(options.parent_div_id).dataset['show'];
+  const parent_div = document.getElementById(options.parent_div_id)
+  options.show = parent_div.dataset['show'];
+  if (parent_div.dataset['rackids']) {
+    options.rackIds = parent_div.dataset['rackids'].split(',');
+  }
   const _irv = new IRVController(options);
 });

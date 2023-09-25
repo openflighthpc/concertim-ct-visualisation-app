@@ -36,6 +36,9 @@
       data-filter="<%=@data_filter%>"
       data-show="<%=@show%>"
       data-applyfilter="<%=@data_applyfilter%>"
+      <% if @rack_ids.present? %>
+      data-rackIds="<%= @rack_ids.join(",") %>"
+      <% end %>
   >
     <div id="rack_container" class="main_pane"></div>
   </div>

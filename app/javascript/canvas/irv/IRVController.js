@@ -194,8 +194,6 @@ class IRVController {
     this.evSwitchStat = this.evSwitchStat.bind(this);
     this.evSwitchGroup = this.evSwitchGroup.bind(this);
     this.evSwitchGraphOrder = this.evSwitchGraphOrder.bind(this);
-    if (options == null) { options = {}; }
-    this.options = options;
     this.config_file = '/irv/configuration';
     console.log("Constructing IRV :::: with the options :::: ",this.options);
     jQuery(document).ready(this.getConfig);
