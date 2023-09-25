@@ -4,14 +4,10 @@ import 'contrib/knockout.js'
 test('class init', () => {
     ViewModel.initClass();
     expect(ViewModel.INIT_VIEW_MODE).toBe('Images and bars');
-});
-
-test('class init inherits from CanvasViewModel', () => {
-    ViewModel.initClass();
     expect(expect(ViewModel.INIT_FACE).toBe('front'));
 });
 
-test('inherits defaults from CanvasViewModel', () => {
+test('model defaults', () => {
     let model = new ViewModel();
     expect(model.showingFullIrv()).toBe(false);
     expect(model.showingRacks()).toBe(false);
@@ -24,14 +20,14 @@ test('inherits defaults from CanvasViewModel', () => {
     expect(model.assetList()).toEqual([]);
 });
 
-test('inherits faceBoth function from CanvasViewModel', () => {
+test('faceBoth', () => {
     let model = new ViewModel();
     expect(model.faceBoth()).toBe(false);
     model.face("both");
     expect(model.faceBoth()).toBe(true);
 });
 
-test('preset names', () => {
+test('presetNames', () => {
     let model = new ViewModel();
     expect(model.presetNames()).toEqual([])
     model.presetsById({"one": {"name": "testing"}, "two": {"name": "testing2"}})
@@ -45,7 +41,7 @@ test('enablePresetSelection', () => {
     expect(model.enablePresetSelection()).toBe(true);
 });
 
-test('metric ids', () => {
+test('metricIds', () => {
     let model = new ViewModel();
     expect(model.metricIds()).toEqual([]);
     model.metricTemplates({"one": {"name": "testing", "id": 1}, "two": {"name": "testing2", "id": 2},
