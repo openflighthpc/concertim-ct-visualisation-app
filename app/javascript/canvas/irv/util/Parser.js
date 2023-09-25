@@ -1,24 +1,12 @@
-/*
- * decaffeinate suggestions:
- * DS002: Fix invalid constructor
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS206: Consider reworking classes to avoid initClass
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-
 import Util from 'canvas/common/util/Util';
 import Profiler from 'Profiler';
 
 
 // takes the various JSON structures, reformats if necessary and populates the view model
 class Parser {
-  static initClass() {
-    this.OFFLINE_METRIC_VARIANCE  = .2;
-    this.OFFLINE                  = true;
-  }
-
+  // Configuration that can be overwritten by the config.
+  OFFLINE_METRIC_VARIANCE  = 0.2;
+  OFFLINE                  = true;
 
   constructor(model) {
     this.model = model;
@@ -27,7 +15,7 @@ class Parser {
   parseRackDefs(rack_defs, filter=null) {
     Profiler.begin(Profiler.CRITICAL, this.parseRackDefs);
     const apply_filter = filter !== null;
-    let filtered      = false;
+    let filtered       = false;
     const device_lookup = this.model.getBlankComponentClassNamesObject();
     const assets = {};
   
@@ -184,7 +172,6 @@ class Parser {
         //  --len2
       ++count2;
     }
-    return rack;
   }
 
   parseTemplate(item) {
@@ -264,5 +251,5 @@ class Parser {
   }
 
 };
-Parser.initClass();
+
 export default Parser;
