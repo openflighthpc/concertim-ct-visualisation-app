@@ -379,7 +379,6 @@ class Chassis extends RackObject {
   // Return whether the metric should be shown or not.
   showMetric() {
     const selected         = RackObject.MODEL.selectedDevices();
-    const metric_level     = RackObject.MODEL.metricLevel();
     const active_selection = RackObject.MODEL.activeSelection();
     const active_filter    = RackObject.MODEL.activeFilter();
     const filtered         = RackObject.MODEL.filteredDevices();
@@ -392,7 +391,7 @@ class Chassis extends RackObject {
       return false;
     }
 
-    const applicableMetricLevel = ((metric_level === this.componentClassName) || ((metric_level === ViewModel.METRIC_LEVEL_ALL) && (this.children.length === 0)));
+    const applicableMetricLevel = RackObject.MODEL.displayingChassisMetrics() && this.children.length === 0;
     if (!applicableMetricLevel) {
       return false;
     }

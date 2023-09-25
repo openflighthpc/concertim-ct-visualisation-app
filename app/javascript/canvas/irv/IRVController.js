@@ -593,6 +593,7 @@ class IRVController {
     this.keysPressed        = {};
     this.autoSelectMetric   = true;
     this.currentFace        = this.model.face();
+    // XXX why?
     this.currentMetricLevel = this.model.metricLevel();
 
     this.chartEl         = $('graph_container');
@@ -1305,8 +1306,8 @@ class IRVController {
   // metricLevel model property subscriber. Resets poller; switching between polling the metrics or fetching all
   // as necessary
   switchMetricLevel(metric_level) {
-    const switch_to_all   = (this.currentMetricLevel !== ViewModel.METRIC_LEVEL_ALL) && (metric_level === ViewModel.METRIC_LEVEL_ALL);
-    const switch_from_all = (this.currentMetricLevel === ViewModel.METRIC_LEVEL_ALL) && (metric_level !== ViewModel.METRIC_LEVEL_ALL);
+    const switch_to_all   = !this.model.metricLevelIsAll(this.currentMetricLevel) && this.model.metricLevelIsAll(metric_level);
+    const switch_from_all = this.model.metricLevelIsAll(this.currentMetricLevel) && !this.model.metricLevelIsAll(metric_level);
 
     if (switch_to_all || switch_from_all) {
       const vals        = this.model.getBlankComponentClassNamesObject();
@@ -1318,7 +1319,7 @@ class IRVController {
     this.currentMetricLevel = metric_level;
     this.model.activeSelection(false);
     this.model.selectedDevices(this.model.getBlankComponentClassNamesObject());
-    return this.rackSpace.setMetricLevel(this.model.metricLevel());
+    this.rackSpace.setMetricLevel(this.model.metricLevel());
   }
 
 

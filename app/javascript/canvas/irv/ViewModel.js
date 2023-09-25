@@ -20,7 +20,7 @@ class ViewModel {
   // class.
   static INIT_FACE             = 'front';
   static INIT_GRAPH_ORDER      = 'ascending';
-  static INIT_METRIC_LEVEL     = 'machine';
+  static INIT_METRIC_LEVEL     = 'devices';
   static INIT_METRIC_POLL_RATE = 60000
   static INIT_SHOW_CHART       = true;
   static INIT_VIEW_MODE        = 'Images and bars';
@@ -219,6 +219,29 @@ class ViewModel {
 
   faceBoth() {
     return this.face() === ViewModel.FACE_BOTH;
+  }
+
+  // Return true if we currently displaying all metrics.  The alternative is to
+  // be displaying metrics only for devices or only for chassis.
+  displayingAllMetrics() {
+    return metricLevelIsAll(this.metricLevel());
+  }
+
+  // Return true if the given metric is for displaying all metrics.  The
+  // alternative is to be displaying metrics only for devices or only for
+  // chassis.
+  metricLevelIsAll(metricLevel) {
+    return metricLevel === ViewModel.METRIC_LEVEL_ALL;
+  }
+
+  displayingDeviceMetrics() {
+    return this.metricLevel() === ViewModel.METRIC_LEVEL_DEVICES ||
+      this.metricLevel() === ViewModel.METRIC_LEVEL_ALL;
+  }
+
+  displayingChassisMetrics() {
+    return this.metricLevel() === ViewModel.METRIC_LEVEL_CHASSIS ||
+      this.metricLevel() === ViewModel.METRIC_LEVEL_ALL;
   }
 
   validMetric(metric) {

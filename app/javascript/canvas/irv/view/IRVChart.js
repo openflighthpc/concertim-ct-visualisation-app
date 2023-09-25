@@ -99,7 +99,7 @@ class IRVChart extends LBC {
     let sample_count = 0;
 
     // extract subset of all metrics according to display settings
-    const classNamesToConsider = metric_level === ViewModel.METRIC_LEVEL_ALL ? componentClassNames : [ metric_level ];
+    const classNamesToConsider = this.model.displayingAllMetrics() ? componentClassNames : [ metric_level ];
 
     //values  = metric_data.values[metric_level]
     series  = [ 'numMetric' ];

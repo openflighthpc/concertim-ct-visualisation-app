@@ -198,7 +198,6 @@ class Machine extends RackObject {
   }
 
   setMetricVisibility() {
-    const metric_level     = RackObject.MODEL.metricLevel();
     const active_selection = RackObject.MODEL.activeSelection();
     const selected         = RackObject.MODEL.selectedDevices();
     const active_filter    = RackObject.MODEL.activeFilter();
@@ -214,7 +213,7 @@ class Machine extends RackObject {
       visible = false;
     }
 
-    const applicableMetricLevel = ((metric_level === this.componentClassName) || ((metric_level === ViewModel.METRIC_LEVEL_ALL) && (this.children.length === 0)));
+    const applicableMetricLevel = RackObject.MODEL.displayingDeviceMetrics() && this.children.length === 0;
     if (!applicableMetricLevel) {
       visible = false;
     }

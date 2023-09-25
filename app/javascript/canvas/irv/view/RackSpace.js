@@ -2387,6 +2387,7 @@ class RackSpace {
     //
 
     //CHASSIS (or 'ALL')
+    // XXX Update here.
     if ((metric_level === ViewModel.METRIC_LEVEL_CHASSIS) || (metric_level === ViewModel.METRIC_LEVEL_ALL)) {
       for (id in device_lookup.chassis) {
         device = device_lookup.chassis[id];
@@ -2399,6 +2400,7 @@ class RackSpace {
     }
 
     //DEVICES (or 'ALL')
+    // XXX Update here.
     if ((metric_level === ViewModel.METRIC_LEVEL_DEVICES) || (metric_level === ViewModel.METRIC_LEVEL_ALL)) {
       for (id in device_lookup.devices) {
         device = device_lookup.devices[id];
