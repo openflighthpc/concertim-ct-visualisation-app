@@ -4,17 +4,17 @@
 // The old asset pipeline way of doing things.  We should remove the old JS
 // libraries and remove use of the old asset pipeline mechanism.
 //
-//= require mia/contrib/mootools/mootools
-//= require mia/contrib/mootools/request.json.js
-//= require mia/contrib/mootools/morebinds
-//= require mia/contrib/mootools/fxcss
-//= require mia/contrib/mootools/fxtween
+//= require mootools/mootools
+//= require mootools/request.json.js
+//= require mootools/morebinds
+//= require mootools/fxcss
+//= require mootools/fxtween
 //
-//= require mia/contrib/MochiKit/Base
-//= require mia/contrib/MochiKit/Iter
-//= require mia/contrib/MochiKit/DOM
-//= require mia/contrib/MochiKit/Style
-//= require mia/contrib/MochiKit/Signal
+//= require MochiKit/Base
+//= require MochiKit/Iter
+//= require MochiKit/DOM
+//= require MochiKit/Style
+//= require MochiKit/Signal
 //
 //= require jquery
 //= require modernizr

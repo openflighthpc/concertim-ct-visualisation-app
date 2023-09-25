@@ -1,5 +1,6 @@
 /*!
-* (C) Concurrent Thinking Ltd 2013 (except where otherwise noted)
+* (C) Concurrent Thinking Ltd 2013
+* (C) Alces Flight Ltd 2023
 *
 * name: 'util/ComboBox',
 * description: 'ComboBox to provide dynamic filtering combo boxes'
