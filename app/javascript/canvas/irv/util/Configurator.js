@@ -31,7 +31,6 @@ import ThumbHint from 'canvas/irv/view/ThumbHint';
 import ContextMenu from 'canvas/irv/view/ContextMenu';
 import ThumbNav from 'canvas/common/widgets/ThumbNav';
 import FilterBar from 'canvas/common/widgets/FilterBar';
-import CanvasViewModel from 'canvas/common/CanvasViewModel';
 import ViewModel from 'canvas/irv/ViewModel';
 import StaticGroupManager from 'canvas/common/util/StaticGroupManager';
 import IRVChart from 'canvas/irv/view/IRVChart';
@@ -50,9 +49,8 @@ class Configurator {
 
     IRVChart.SERIES_FADE_ALPHA = config.RACKSPACE.LBC.IRVCHART.seriesFadeAlpha;
  
-    const view_model_config                  = config.VIEWMODEL;
-    CanvasViewModel.INIT_FACE                = view_model_config.startUp.face;
-
+    const view_model_config            = config.VIEWMODEL;
+    ViewModel.INIT_FACE                = view_model_config.startUp.face;
     ViewModel.COLOUR_SCALE             = view_model_config.colourScale;
     ViewModel.INIT_VIEW_MODE           = view_model_config.startUp.viewMode;
     ViewModel.INIT_SCALE_BARS          = view_model_config.startUp.scaleBars;

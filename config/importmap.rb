@@ -9,6 +9,7 @@ pin "key_pairs/new", to: "key_pairs/new.js"
 # Utility Javascripts.
 pin "@rails/ujs", to: "https://ga.jspm.io/npm:@rails/ujs@7.0.5/lib/assets/compiled/rails-ujs.js"
 pin "Profiler", to: "canvas/irv/NullProfiler.js"
+pin "util/NotImplementedError", to: "util/NotImplementedError.js"
 pin "util/ComboBox", to: "util/ComboBox.js"
 pin "util/Dialog", to: "util/Dialog.js"
 # pin "util/copyToClipboard", to: "util/copyToClipboard.js"
@@ -67,4 +68,3 @@ pin "canvas/common/widgets/PieCountdown", to: "canvas/common/widgets/PieCountdow
 pin "canvas/common/widgets/EllipticalMetric", to: "canvas/common/widgets/EllipticalMetric.js"
 pin "canvas/common/widgets/MultiMetric", to: "canvas/common/widgets/MultiMetric.js"
 pin "canvas/common/widgets/ThumbNav", to: "canvas/common/widgets/ThumbNav.js"
-pin "canvas/common/CanvasViewModel", to: "canvas/common/CanvasViewModel.js"

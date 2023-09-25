@@ -7,13 +7,11 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import CanvasViewModel from 'canvas/common/CanvasViewModel';
-import CanvasParser from 'canvas/common/CanvasParser';
 import CanvasSpace from 'canvas/common/CanvasSpace';
 import Util from 'canvas/common/util/Util';
-import Configurator from 'canvas/irv/util/Configurator';
 import AssetManager from 'canvas/irv/util/AssetManager';
 import Profiler from 'Profiler';
+import NotImplementedError from 'util/NotImplementedError';
 
 class CanvasController {
   static initClass() {
@@ -29,7 +27,6 @@ class CanvasController {
 
   constructor(options) {
     this.getConfig = this.getConfig.bind(this);
-    this.configReceived = this.configReceived.bind(this);
     this.evLoadRackAssets = this.evLoadRackAssets.bind(this);
     this.rackIdsAsParams = this.rackIdsAsParams.bind(this);
     this.getRackDefs = this.getRackDefs.bind(this);
@@ -57,13 +54,7 @@ class CanvasController {
   }
 
   configReceived(config) {
-    Configurator.setup(CanvasController, null, config);
-    CanvasController.NUM_RESOURCES = 1; //Rack structure
-    this.model = new CanvasViewModel();
-    this.parser   = new CanvasParser(this.model);
-    this.setResources();
-    this.evLoadRackAssets();
-    return this.getRackData();
+    throw new NotImplementedError("CanvasController::configReceived");
   }
 
   // assetList model value subscriber, commences loading of rack images

@@ -233,7 +233,7 @@ class IRVController extends CanvasController {
     if (((this.options != null ? this.options.show : undefined) != null) && Array.from(this.options_show).includes("racks")) {
       this.model.showingRacks(true);
     }
-  
+
     if (((this.options != null ? this.options.show : undefined) != null) && Array.from(this.options_show).includes("rack_thumbnail")) {
       this.model.showingRacks(true);
       this.model.showingRackThumbnail(true);

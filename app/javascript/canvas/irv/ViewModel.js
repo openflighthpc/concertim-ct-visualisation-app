@@ -10,12 +10,18 @@
  */
 
 
-import CanvasViewModel from 'canvas/common/CanvasViewModel'
 import Util from 'canvas/common/util/Util'
 
-class ViewModel extends CanvasViewModel {
+class ViewModel {
   static initClass() {
     // startup properties, can be overwritten by url parameters
+    this.INIT_FACE           = 'front';
+
+    this.FACE_FRONT  = 'front';
+    this.FACE_REAR   = 'rear';
+    this.FACE_BOTH   = 'both';
+    this.FACES  = [this.FACE_FRONT, this.FACE_REAR, this.FACE_BOTH];
+
     this.INIT_VIEW_MODE      = 'Images and bars';
     this.INIT_METRIC_LEVEL   = 'machine';
     this.INIT_GRAPH_ORDER    = 'ascending';
@@ -44,8 +50,26 @@ class ViewModel extends CanvasViewModel {
 
 
   constructor() {
-    let group;
-    super(...arguments);
+    this.showingFullIrv = ko.observable(false);
+    this.showingRacks = ko.observable(false);
+    this.showingRackThumbnail = ko.observable(false);
+
+    // object, stores each device JSON object with an additional property 'instances', an array of references to the class instances
+    // uses group as top level key; id as second level key
+    this.deviceLookup = ko.observable({});
+
+    // array, stores the parsed rack definition JSON
+    this.racks = ko.observable([]);
+
+    // id groups, both group and id are required to identify an individual device
+    this.groups = ko.observable(['racks', 'chassis', 'devices']);
+  
+    // do the racks face forward, backwards or show both
+    this.face = ko.observable(ViewModel.INIT_FACE);
+    this.faces = ko.observable(ViewModel.FACES);
+
+    // list of images to preload
+    this.assetList = ko.observable([]);
 
     this.loadingAPreset = ko.observable(false);
     this.overLBC = ko.observable(false);
@@ -90,9 +114,6 @@ class ViewModel extends CanvasViewModel {
 
     // array, list of references to the currently highlighted device(s)
     this.highlighted = ko.observable([]);
-
-    // id groups, both group and id are required to identify an individual device
-    this.groups = ko.observable(['racks', 'chassis', 'devices']);
 
     // temporary storage of device definitions (used in synchronising changes to devices)
     this.modifiedRackDefs = ko.observable();
@@ -164,7 +185,7 @@ class ViewModel extends CanvasViewModel {
 
     let blank        = {};
     const groups       = this.groups();
-    for (group of Array.from(groups)) { blank[group] = {}; }
+    for (let group of Array.from(groups)) { blank[group] = {}; }
     // object, parsed metric data pushed from server. Values are contained in 'values' object
     this.metricData = ko.observable({ values: blank });
 
@@ -176,7 +197,7 @@ class ViewModel extends CanvasViewModel {
     this.rackImage = ko.observable();
 
     blank        = {};
-    for (group of Array.from(groups)) { blank[group] = {}; }
+    for (let group of Array.from(groups)) { blank[group] = {}; }
     // object, defines the physical dimensions of the breaching devices. Used to draw red boxes in thumb navigation. Uses group as
     // the top-level key, then id
     this.breachZones = ko.observable(blank);
@@ -242,6 +263,10 @@ class ViewModel extends CanvasViewModel {
 
   displayingBuildStatus() {
     return this.viewMode() == ViewModel.VIEW_MODE_BUILD_STATUS;
+  }
+
+  faceBoth() {
+    return this.face() === ViewModel.FACE_BOTH;
   }
 
   validMetric(metric) {
