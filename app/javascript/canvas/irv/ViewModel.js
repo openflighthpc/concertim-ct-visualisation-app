@@ -156,10 +156,6 @@ class ViewModel {
     // canvas, a snapshot of the rack view used by the thumb navigation
     this.rackImage = ko.observable();
 
-    // object, defines the physical dimensions of the breaching devices. Used to draw red boxes in thumb navigation. Uses class name as
-    // the top-level key, then id
-    this.breachZones = ko.observable(this.getBlankComponentClassNamesObject());
-
     // float, the current zoom level of the rack view 1 represents 100% where all images will be drawn at their natural size
     this.scale = ko.observable();
 

@@ -21,7 +21,7 @@ class ThumbNav {
     this.MASK_FILL        = '#333377';
     this.MASK_FILL_ALPHA  = .5;
 
-    this.MODEL_DEPENDENCIES  = { dataCentreImage: 'dcImage', rackImage: 'rackImage', breachZones: 'breachZones', scale: 'scale' };
+    this.MODEL_DEPENDENCIES  = { dataCentreImage: 'dcImage', rackImage: 'rackImage', scale: 'scale' };
   }
 
 

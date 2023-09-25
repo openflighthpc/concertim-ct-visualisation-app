@@ -333,7 +333,6 @@
     "modelDependencies":
     {
       "scale"       : "scale",
-      "breachZones" : "breachZones",
       "rackImage"   : "rackImage",
       "componentClassNames" : "componentClassNames"
     }
