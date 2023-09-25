@@ -50,7 +50,6 @@ class Configurator {
     ViewModel.INIT_FACE                = view_model_config.startUp.face;
     ViewModel.COLOUR_SCALE             = view_model_config.colourScale;
     ViewModel.INIT_VIEW_MODE           = view_model_config.startUp.viewMode;
-    ViewModel.INIT_SCALE_BARS          = view_model_config.startUp.scaleBars;
     ViewModel.INIT_SHOW_CHART          = view_model_config.startUp.showChart;
     ViewModel.INIT_METRIC_LEVEL        = view_model_config.startUp.metricLevel;
     ViewModel.INIT_GRAPH_ORDER         = view_model_config.startUp.graphOrder;
