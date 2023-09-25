@@ -38,7 +38,7 @@ import Profiler from 'Profiler';
 
 class Configurator {
 
-  static setup(CanvasController, IRVController, config) {
+  static setup(IRVController, config) {
     Profiler.trace(Profiler.DEBUG, "Configurator.setup");
     AssetManager.NUM_CONCURRENT_LOADS = config.ASSETMANAGER.numConcurrentLoads;
 
@@ -62,76 +62,71 @@ class Configurator {
     Util.SIG_FIG = util_config.sigFig;
 
     const controller_config                         = config.CONTROLLER;
-    CanvasController.PRIMARY_IMAGE_PATH       = controller_config.resources.primaryImagePath;
-    CanvasController.SECONDARY_IMAGE_PATH     = controller_config.resources.secondaryImagePath;
-    CanvasController.LIVE                     = controller_config.resources.live;
-    CanvasController.LIVE_RESOURCES           = controller_config.resources.liveResources;
-    CanvasController.OFFLINE_RESOURCES        = controller_config.resources.offlineResources;
-    CanvasController.NUM_RESOURCES            = controller_config.resources.numResources;
-    CanvasController.RESOURCE_LOAD_CAPTION    = controller_config.resourceLoadCaption;
-
-    if (IRVController !== null) {
-      IRVController.RACK_HINT_HOVER_DELAY       = controller_config.rackHintHoverDelay;
-      IRVController.THUMB_HINT_HOVER_DELAY      = controller_config.thumbHintHoverDelay;
-      IRVController.DOUBLE_CLICK_TIMEOUT        = controller_config.doubleClickTimeout;
-      IRVController.DRAG_ACTIVATION_DIST        = controller_config.dragActivationDist;
-      IRVController.RACK_PAGE_HEIGHT_PROPORTION = controller_config.rackPageHeightProportion;
-      IRVController.STEP_ZOOM_AMOUNT            = controller_config.stepZoomAmount;
-      IRVController.ZOOM_KEY                    = controller_config.zoomKey;
-      IRVController.THUMB_WIDTH                 = config.THUMBNAV.width;
-      IRVController.THUMB_HEIGHT                = config.THUMBNAV.height;
-      IRVController.SCREENSHOT_FILENAME         = controller_config.screenShotFilename;
-      IRVController.EXPORT_FILENAME             = controller_config.export.filename;
-      IRVController.EXPORT_HEADER               = controller_config.export.header;
-      IRVController.EXPORT_RECORD               = controller_config.export.record;
-      IRVController.EXPORT_MESSAGE              = controller_config.export.message;
-      IRVController.MIN_METRIC_POLL_RATE        = controller_config.minMetricPollRate;
-      IRVController.METRIC_POLL_EDIT_DELAY      = controller_config.metricPollEditDelay;
-      IRVController.INVALID_POLL_COLOUR         = controller_config.invalidPollColour;
-      IRVController.DEFAULT_METRIC_STAT         = controller_config.defaultMetricStat;
-      IRVController.MODIFIED_RACK_POLL_RATE     = controller_config.modifiedRackPollRate;
-      IRVController.METRIC_TEMPLATES_POLL_RATE  = controller_config.metricTemplatesPollRate;
-    }
+    IRVController.PRIMARY_IMAGE_PATH          = controller_config.resources.primaryImagePath;
+    IRVController.SECONDARY_IMAGE_PATH        = controller_config.resources.secondaryImagePath;
+    IRVController.LIVE                        = controller_config.resources.live;
+    IRVController.LIVE_RESOURCES              = controller_config.resources.liveResources;
+    IRVController.OFFLINE_RESOURCES           = controller_config.resources.offlineResources;
+    IRVController.NUM_RESOURCES               = controller_config.resources.numResources;
+    IRVController.RESOURCE_LOAD_CAPTION       = controller_config.resourceLoadCaption;
+    IRVController.RACK_HINT_HOVER_DELAY       = controller_config.rackHintHoverDelay;
+    IRVController.THUMB_HINT_HOVER_DELAY      = controller_config.thumbHintHoverDelay;
+    IRVController.DOUBLE_CLICK_TIMEOUT        = controller_config.doubleClickTimeout;
+    IRVController.DRAG_ACTIVATION_DIST        = controller_config.dragActivationDist;
+    IRVController.RACK_PAGE_HEIGHT_PROPORTION = controller_config.rackPageHeightProportion;
+    IRVController.STEP_ZOOM_AMOUNT            = controller_config.stepZoomAmount;
+    IRVController.ZOOM_KEY                    = controller_config.zoomKey;
+    IRVController.THUMB_WIDTH                 = config.THUMBNAV.width;
+    IRVController.THUMB_HEIGHT                = config.THUMBNAV.height;
+    IRVController.SCREENSHOT_FILENAME         = controller_config.screenShotFilename;
+    IRVController.EXPORT_FILENAME             = controller_config.export.filename;
+    IRVController.EXPORT_HEADER               = controller_config.export.header;
+    IRVController.EXPORT_RECORD               = controller_config.export.record;
+    IRVController.EXPORT_MESSAGE              = controller_config.export.message;
+    IRVController.MIN_METRIC_POLL_RATE        = controller_config.minMetricPollRate;
+    IRVController.METRIC_POLL_EDIT_DELAY      = controller_config.metricPollEditDelay;
+    IRVController.INVALID_POLL_COLOUR         = controller_config.invalidPollColour;
+    IRVController.DEFAULT_METRIC_STAT         = controller_config.defaultMetricStat;
+    IRVController.MODIFIED_RACK_POLL_RATE     = controller_config.modifiedRackPollRate;
+    IRVController.METRIC_TEMPLATES_POLL_RATE  = controller_config.metricTemplatesPollRate;
 
     const parser_config                  = config.PARSER;
     Parser.OFFLINE_METRIC_VARIANCE = parser_config.offlineMetricVariance;
     Parser.OFFLINE                 = !controller_config.resources.live;
 
-    if (IRVController !== null) {
-      const preset_config                       = config.PRESETMANAGER;
-      PresetManager.PATH                  = preset_config.path;
-      PresetManager.GET                   = preset_config.get;
-      PresetManager.NEW                   = preset_config.new;
-      PresetManager.UPDATE                = preset_config.update;
-      PresetManager.VALUES                = preset_config.values;
-      PresetManager.ERR_CAPTION           = preset_config.errors.caption;
-      PresetManager.ERR_INVALID_NAME      = preset_config.errors.invalidName;
-      PresetManager.ERR_WHITE_NAME        = preset_config.errors.whiteName;
-      PresetManager.ERR_DUPLICATE_NAME    = preset_config.errors.duplicateName;
-      PresetManager.ERR_NOT_OWNED         = preset_config.errors.notOwned;
-      PresetManager.MODEL_DEPENDENCIES    = preset_config.modelDependencies;
-      PresetManager.DOM_DEPENDENCIES      = preset_config.domDependencies;
-      PresetManager.MSG_CONFIRM_UPDATE    = preset_config.msgConfirmUpdate;
+    const preset_config                       = config.PRESETMANAGER;
+    PresetManager.PATH                  = preset_config.path;
+    PresetManager.GET                   = preset_config.get;
+    PresetManager.NEW                   = preset_config.new;
+    PresetManager.UPDATE                = preset_config.update;
+    PresetManager.VALUES                = preset_config.values;
+    PresetManager.ERR_CAPTION           = preset_config.errors.caption;
+    PresetManager.ERR_INVALID_NAME      = preset_config.errors.invalidName;
+    PresetManager.ERR_WHITE_NAME        = preset_config.errors.whiteName;
+    PresetManager.ERR_DUPLICATE_NAME    = preset_config.errors.duplicateName;
+    PresetManager.ERR_NOT_OWNED         = preset_config.errors.notOwned;
+    PresetManager.MODEL_DEPENDENCIES    = preset_config.modelDependencies;
+    PresetManager.DOM_DEPENDENCIES      = preset_config.domDependencies;
+    PresetManager.MSG_CONFIRM_UPDATE    = preset_config.msgConfirmUpdate;
 
-      const group_config = config.STATICGROUPMANAGER;
-      console.log(group_config);
-      StaticGroupManager.LIST                  = group_config.list;
-      StaticGroupManager.GET                   = group_config.get;
-      StaticGroupManager.NEW                   = group_config.new;
-      StaticGroupManager.UPDATE                = group_config.update;
-      StaticGroupManager.ERR_CAPTION           = group_config.errors.caption;
-      StaticGroupManager.ERR_INAVLID_NAME      = group_config.errors.invalidName;
-      StaticGroupManager.ERR_WHITE_NAME        = group_config.errors.whiteName;
-      StaticGroupManager.ERR_DUPLICATE_NAME    = group_config.errors.duplicateName;
-      StaticGroupManager.ERR_EMPTY_GROUP       = group_config.errors.emptyGroup;
-      StaticGroupManager.ERR_READ_ONLY         = group_config.errors.readOnly;
-      StaticGroupManager.ERR_GROUP_DATA_CENTRE = group_config.errors.groupDataCentre;
-      StaticGroupManager.MODEL_DEPENDENCIES    = group_config.modelDependencies;
-      StaticGroupManager.DOM_DEPENDENCIES      = group_config.domDependencies;
-      StaticGroupManager.MSG_READ_ONLY         = group_config.errors.readOnly;
-      StaticGroupManager.MSG_CONFIRM_UPDATE    = group_config.msgConfirmUpdate;
-      StaticGroupManager.MSG_EMPTY_GROUP       = group_config.emptyGroup;
-    }
+    const group_config = config.STATICGROUPMANAGER;
+    console.log(group_config);
+    StaticGroupManager.LIST                  = group_config.list;
+    StaticGroupManager.GET                   = group_config.get;
+    StaticGroupManager.NEW                   = group_config.new;
+    StaticGroupManager.UPDATE                = group_config.update;
+    StaticGroupManager.ERR_CAPTION           = group_config.errors.caption;
+    StaticGroupManager.ERR_INAVLID_NAME      = group_config.errors.invalidName;
+    StaticGroupManager.ERR_WHITE_NAME        = group_config.errors.whiteName;
+    StaticGroupManager.ERR_DUPLICATE_NAME    = group_config.errors.duplicateName;
+    StaticGroupManager.ERR_EMPTY_GROUP       = group_config.errors.emptyGroup;
+    StaticGroupManager.ERR_READ_ONLY         = group_config.errors.readOnly;
+    StaticGroupManager.ERR_GROUP_DATA_CENTRE = group_config.errors.groupDataCentre;
+    StaticGroupManager.MODEL_DEPENDENCIES    = group_config.modelDependencies;
+    StaticGroupManager.DOM_DEPENDENCIES      = group_config.domDependencies;
+    StaticGroupManager.MSG_READ_ONLY         = group_config.errors.readOnly;
+    StaticGroupManager.MSG_CONFIRM_UPDATE    = group_config.msgConfirmUpdate;
+    StaticGroupManager.MSG_EMPTY_GROUP       = group_config.emptyGroup;
 
     const thumb_nav_config            = config.THUMBNAV;
     ThumbNav.MASK_FILL          = thumb_nav_config.maskFill;
