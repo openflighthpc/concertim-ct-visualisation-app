@@ -7,7 +7,6 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import CanvasSpace from 'canvas/common/CanvasSpace';
 import Util from 'canvas/common/util/Util';
 import AssetManager from 'canvas/irv/util/AssetManager';
 import Profiler from 'Profiler';
@@ -231,15 +230,7 @@ class CanvasController {
   }
 
   init() {
-    $('loader').addClass('hidden');
-
-    // Store global reference to controller CC = CanvasController
-    document.CC = this;
-
-    this.rackEl          = $('rack_container');
-    // Rack Space
-    this.rackSpace = new CanvasSpace(this.rackEl, null, this.model, this.rackParent);
-    return this.showFinishedTime();
+    throw new NotImplementedError("CanvasController::init");
   }
 
   showStartedTime() {

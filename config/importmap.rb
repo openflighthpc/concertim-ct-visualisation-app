@@ -57,7 +57,6 @@ pin "canvas/common/gfx/SimpleRenderer", to: "canvas/common/gfx/SimpleRenderer.js
 pin "canvas/common/gfx/Easing", to: "canvas/common/gfx/Easing.js"
 pin "canvas/common/gfx/Validator", to: "canvas/common/gfx/Validator.js"
 pin "canvas/common/gfx/Primitives", to: "canvas/common/gfx/Primitives.js"
-pin "canvas/common/CanvasSpace", to: "canvas/common/CanvasSpace.js"
 pin "canvas/common/widgets/SimpleChart", to: "canvas/common/widgets/SimpleChart.js"
 pin "canvas/common/widgets/BarMetric", to: "canvas/common/widgets/BarMetric.js"
 pin "canvas/common/widgets/FilterBar", to: "canvas/common/widgets/FilterBar.js"
