@@ -12,7 +12,6 @@
 // ║ IRV ║ ~ ©Concurrent Thinking Ltd. 2012 ~ ║
 // ╚═════╩════════════════════════════════════╝
 
-import CanvasController from 'canvas/common/CanvasController';
 import CrossAppSettings from 'canvas/common/util/CrossAppSettings';
 import UpdateMsg from 'canvas/irv/view/UpdateMsg';
 import Configurator from 'canvas/irv/util/Configurator';
@@ -41,9 +40,10 @@ import Dialog from 'util/Dialog';
 // import 'canvg'; //inc
 
 
-class IRVController extends CanvasController {
+class IRVController {
   static initClass() {
     // statics overwritten by config
+    this.NUM_RESOURCES                 = 0;
     this.DOUBLE_CLICK_TIMEOUT          = 250;
     this.DRAG_ACTIVATION_DIST          = 8;
     this.RACK_HINT_HOVER_DELAY         = 2000;
@@ -53,8 +53,9 @@ class IRVController extends CanvasController {
     this.THUMB_WIDTH                   = 200;
     this.MULTI_SELECT_KEY              = 17;
     this.THUMB_HEIGHT                  = 130;
-    this.PRIMARTY_IMAGE_PATH           = '../';
-    this.SECONDARY_IMAGE_PATH          = '../';
+    this.PRIMARY_IMAGE_PATH            = '';
+    this.SECONDARY_IMAGE_PATH          = '';
+    this.RESOURCE_LOAD_CAPTION         = 'Loading Resources<br>[[progress]]';
     this.THUMB_HINT_HOVER_DELAY        = 500;
     this.API_RETRY_DELAY               = 5000;
     this.SCREENSHOT_FILENAME           = 'rarararar.jpg';
@@ -71,6 +72,9 @@ class IRVController extends CanvasController {
     this.DEFAULT_METRIC_STAT           = 'max';
     this.MODIFIED_RACK_POLL_RATE       = 60000;
     this.RANGE_EXPANSION_FACTOR        = 0.05;
+    this.LIVE                          = false;
+    this.LIVE_RESOURCES                = {};
+    this.OFFLINE_RESOURCES             = {};
 
     this.MAIN_PAGE_CONTENT_ID          = 'pageContent';
     this.CANVAS_CONTENT_ID             = 'interactive_canvas_view';
@@ -78,8 +82,24 @@ class IRVController extends CanvasController {
   }
 
   constructor(options) {
-    super(...arguments);
+    if (options == null) { options = {}; }
+    this.options = options;
+    this.showStartedTime();
+    this.options_show = this.options.show.split(',');
 
+    Profiler.makeCompatible();
+    Profiler.LOG_LEVEL  = Profiler.INFO;
+    Profiler.TRACE_ONLY = true;
+    document._P         = Profiler;
+    document._U         = Util;
+    this.initialised        = false;
+    this.rackParent      = $(this.options.parent_div_id);
+
+    this.getConfig = this.getConfig.bind(this);
+    this.evAssetLoaded = this.evAssetLoaded.bind(this);
+    this.evAssetFailed = this.evAssetFailed.bind(this);
+    this.evAssetDoubleFailed = this.evAssetDoubleFailed.bind(this);
+    this.getRackDefs = this.getRackDefs.bind(this);
     this.clearSelectedMetric = this.clearSelectedMetric.bind(this);
     this.getUserRoles = this.getUserRoles.bind(this);
     this.configReceived = this.configReceived.bind(this);
@@ -174,14 +194,28 @@ class IRVController extends CanvasController {
     this.evSwitchStat = this.evSwitchStat.bind(this);
     this.evSwitchGroup = this.evSwitchGroup.bind(this);
     this.evSwitchGraphOrder = this.evSwitchGraphOrder.bind(this);
-    if (options == null) { options = {}; }
-    this.options = options;
     this.config_file = '/irv/configuration';
     console.log("Constructing IRV :::: with the options :::: ",this.options);
     jQuery(document).ready(this.getConfig);
 
     // Store global reference to controller
     document.IRV = this;
+  }
+
+  showStartedTime() {
+    this.time_started = new Date();
+    console.log("===== STARTING CANVAS ===", this.time_started);
+  }
+
+  showFinishedTime() {
+    const time_finised = new Date();
+    console.log("======== END CANVAS =====", time_finised, "(", time_finised - this.time_started, ") miliseconds");
+  }
+
+  // loads configuration file during start up
+  getConfig() {
+    document.getElementById('dialogue').innerHTML = 'Loading config';
+    new Request.JSON({url: this.config_file + '?' + (new Date()).getTime(), onSuccess: this.configReceived, onFail: this.loadFail, onError: this.loadError}).get();
   }
 
   getUserRoles() {
@@ -192,7 +226,7 @@ class IRVController extends CanvasController {
   // any parameters passed in querystring, initialises model and parser and commences load sequence
   // @param  config  configuration object
   configReceived(config) {
-    Configurator.setup(CanvasController, IRVController, config);
+    Configurator.setup(IRVController, config);
 
     // grab url params if any and set model values
     let params = String(window.location);
@@ -233,7 +267,7 @@ class IRVController extends CanvasController {
     if (((this.options != null ? this.options.show : undefined) != null) && Array.from(this.options_show).includes("racks")) {
       this.model.showingRacks(true);
     }
-  
+
     if (((this.options != null ? this.options.show : undefined) != null) && Array.from(this.options_show).includes("rack_thumbnail")) {
       this.model.showingRacks(true);
       this.model.showingRackThumbnail(true);
@@ -242,14 +276,14 @@ class IRVController extends CanvasController {
     this.evLoadRackAssets();
 
     if (this.model.showingFullIrv() || this.model.showingRacks()) {
-      CanvasController.NUM_RESOURCES += 1;
+      IRVController.NUM_RESOURCES += 1;
       this.getNonrackDeviceData();
     }
 
     if (this.model.showingRacks()) {
-      CanvasController.NUM_RESOURCES += 1;
+      IRVController.NUM_RESOURCES += 1;
       if (this.model.showingFullIrv()) {
-        CanvasController.NUM_RESOURCES += 1; // metricstemplates
+        IRVController.NUM_RESOURCES += 1; // metricstemplates
       }
       this.getRackData();
     }
@@ -284,6 +318,23 @@ class IRVController extends CanvasController {
       this.crossAppSettings.selectedRacks = focus_filter;
       return this.crossAppSettings.selectedNonRackChassis = {};
     }
+  }
+
+  setResources() {
+    this.resourceCount = 0;
+    this.resources = IRVController.LIVE ? IRVController.LIVE_RESOURCES : IRVController.OFFLINE_RESOURCES;
+  }
+
+  // assetList model value subscriber, commences loading of rack images
+  evLoadRackAssets() {
+    this.assetCount = 0;
+    const assets    = this.model.assetList();
+
+    for (let asset of Array.from(assets)) {
+      AssetManager.get(IRVController.PRIMARY_IMAGE_PATH + asset, this.evAssetLoaded, this.evAssetFailed);
+    }
+
+    this.model.assetList(assets);
   }
 
   evShowHideScrollBars() {
@@ -339,7 +390,32 @@ class IRVController extends CanvasController {
   // makes server requests required for initialisation
   getRackData() {
     this.debug('getting rack data');
-    super.getRackData(...arguments);
+
+    // Determine which rack IDs we are interested in.
+    let rack__ids;
+    if ((this.options != null ? this.options.rackIds : undefined) != null) {
+      rack__ids = this.rackIdsAsParams(this.options.rackIds);
+    } else if ((this.crossAppSettings != null) && (this.crossAppSettings.selectedRacks != null)) {
+      this.model.displayingAllRacks(false);
+      if (Object.keys(this.crossAppSettings.selectedRacks).length === 0) {
+        rack__ids = 'none';
+      } else if (((this.options != null) && (this.options.applyfilter === "true")) || ($(options.parent_div_id).get('data-filter') != null) || ($(this.options.parent_div_id).get('data-focus') != null)) {
+        rack__ids = this.rackIdsAsParams(Object.keys(this.crossAppSettings.selectedRacks));
+      } else {
+        rack__ids = null;
+      }
+    } else { 
+      rack__ids = null;
+    }
+
+    // If no racks to search, then skip the getRackDefs function, 
+    // and send an empty hash to the receivedRackDefs function
+    if (rack__ids === 'none') {
+      this.receivedRackDefs({});
+    } else {
+      this.getRackDefs(rack__ids);
+    }
+
     if (this.model.showingFullIrv()) {
       this.debug('getting metric templates');
       this.getMetricTemplates();
@@ -347,6 +423,25 @@ class IRVController extends CanvasController {
     this.testLoadProgress();
     return this.getSystemDateTime();
   }
+
+  // turns an array of rack ids into a querystring
+  // @param  rack_ids  an array of rack ids
+  // @return querystring as a string
+  rackIdsAsParams(rack_ids) {
+    let params = "";
+    for (var rack_id of Array.from(rack_ids)) {
+      params += "&rack_ids[]=" + rack_id;
+    }
+    return params;
+  }
+
+  // load rack definitions, grabs everything unless an array of rack ids is supplied
+  // @param  rack_ids  option array of rack ids to fetch
+  getRackDefs(rack_ids) {
+    const query_str = (rack_ids != null) ? rack_ids : '';
+    new Request.JSON({url: this.resources.path + this.resources.rackDefinitions + '?' + (new Date()).getTime() + query_str, onComplete: this.receivedRackDefs, onTimeout: this.retryRackDefs}).get();
+  }
+
 
   getNonrackDeviceData() {
     this.debug('getting non rack device data');
@@ -1351,10 +1446,10 @@ class IRVController extends CanvasController {
         // there is no need to go through the asset loading routine
         return this.testLoadProgress();
       } else {
-        return this.synchroniseChanges();
+        this.synchroniseChanges();
       }
     } else {
-      return this.initialiseRackDefs(defs);
+      this.initialiseRackDefs(defs);
     }
   }
 
@@ -1374,6 +1469,46 @@ class IRVController extends CanvasController {
     }
   }
 
+  // generates rack image load queue to grab any new images required as a result of recent changes to the data centre
+  synchroniseChanges(newAssets) {
+    let assets;
+    if (newAssets != null) {
+      assets = newAssets;
+    } else {
+      assets = this.model.assetList();
+      this.assetCount = 0;
+    }
+    Array.from(assets).map((asset) => // deal with loading the images
+      AssetManager.get(IRVController.PRIMARY_IMAGE_PATH + asset, this.evAssetLoaded, this.evAssetFailed));
+  }
+
+  // asset manager callback invoked when an image finishes loading. Tests if all assets have been loaded successfully
+  evAssetLoaded() {
+    ++this.assetCount;
+    this.testLoadProgress();
+  }
+
+  // asset manager callback invoked when an image fails to load from the primary image location. Attempts to load the same image
+  // from the secondary image location
+  // @param  path  the attempted path to the image which failed
+  evAssetFailed(path) {
+    const image = path.substr(IRVController.PRIMARY_IMAGE_PATH.length);
+    Profiler.trace(Profiler.INFO, 'Failed to load ' + image + ', trying secondary location');
+    AssetManager.get(IRVController.SECONDARY_IMAGE_PATH + path.substr(IRVController.PRIMARY_IMAGE_PATH.length), this.evAssetLoaded, this.evAssetDoubleFailed);
+  }
+
+  // asset manager callback, image has failed to load from both the primary and secondary locations, it doesn't exist so scrap it
+  // out of the queue
+  // @param  path  the attempted path to the image which failed
+  evAssetDoubleFailed(path) {
+    const image  = path.substr(IRVController.SECONDARY_IMAGE_PATH.length);
+    const assets = this.model.assetList();
+    const idx    = assets.indexOf(image);
+    if (idx !== -1) { assets.splice(idx, 1); }
+    Profiler.trace(Profiler.CRITICAL, '** Failed to load ' + image + ' from primary and secondary locations **');
+  }
+
+
   createPresetManager() {
     this.updateMsg = new UpdateMsg(this.rackParent, [$('side_bar')]);
     this.model.selectedMetric.subscribe(this.switchMetric);
@@ -1387,13 +1522,25 @@ class IRVController extends CanvasController {
 
   // called during the initialisation process this stores relevent values in the model
   initialiseRackDefs(defs) {
-    super.initialiseRackDefs(...arguments);
+    let rackAsset;
+    ++this.resourceCount;
+
+    const allAssets = [];
+    for (rackAsset of Array.from(defs.assetList)) { allAssets.push(rackAsset); }
+    if (this.model.assetList() != null) {
+      for (rackAsset of Array.from(this.model.assetList())) { allAssets.push(rackAsset); }
+    }
+    this.model.assetList(allAssets);
+    this.synchroniseChanges(defs.assetList);
+    this.model.racks(defs.racks);
+    this.model.deviceLookup(defs.deviceLookup);
 
     if ((this.options != null ? this.options.rackIds : undefined) != null) { 
       this.model.displayingAllRacks(false);
     }
   
-    return this.recievedRacksAndChassis('racks');
+    this.testLoadProgress();
+    this.recievedRacksAndChassis('racks');
   }
 
   recievedRacksAndChassis(got_what){
@@ -1451,8 +1598,8 @@ class IRVController extends CanvasController {
       progress   = this.calculateProgress(num_assets);
       //XXX We have loaded everything now, this is where we action any rebuilding and redrawing
       //
-      this.debug(`load progress: resources:${this.resourceCount}/${CanvasController.NUM_RESOURCES} assets:${this.assetCount}/${num_assets} progress:${progress}`);
-      if ((this.resourceCount === CanvasController.NUM_RESOURCES) && (this.assetCount === num_assets)) {
+      this.debug(`load progress: resources:${this.resourceCount}/${IRVController.NUM_RESOURCES} assets:${this.assetCount}/${num_assets} progress:${progress}`);
+      if ((this.resourceCount === IRVController.NUM_RESOURCES) && (this.assetCount === num_assets)) {
         this.assetCount = 0;
         if (this.initialised) {
           this.rackSpace.synchroniseNonRackDevices(this.model.modifiedDcrvShowableNonRackChassis(), this.changeSetNonRacks);
@@ -1470,8 +1617,24 @@ class IRVController extends CanvasController {
       progress = 0;
     }
 
-    return $('dialogue').innerHTML = CanvasController.RESOURCE_LOAD_CAPTION.replace(/\[\[progress\]\]/g, progress + '%');
+    return $('dialogue').innerHTML = IRVController.RESOURCE_LOAD_CAPTION.replace(/\[\[progress\]\]/g, progress + '%');
   }
+
+  calculateProgress(num_assets) {
+    let assets_factor;
+    const rest_factor   = this.resourceCount / IRVController.NUM_RESOURCES;
+    if (num_assets > 0) {
+      assets_factor = this.assetCount / num_assets;
+    } else {
+      assets_factor = 1;
+    }
+
+    const assets_represents = 1 / (IRVController.NUM_RESOURCES + 1);
+    const rest_represents = 1 - assets_represents;
+
+    return ( ( (rest_factor * rest_represents) + ( assets_factor * assets_represents ) ) * 100).toFixed(1);
+  }
+
 
   // generic request error handler
   loadError(err_str, err) {

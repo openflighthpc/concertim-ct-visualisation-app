@@ -13,7 +13,6 @@ import PresetManager from 'canvas/common/util/PresetManager';
 import Parser from 'canvas/irv/util/Parser';
 import Util from 'canvas/common/util/Util';
 import AssetManager from 'canvas/irv/util/AssetManager';
-import CanvasSpace from 'canvas/common/CanvasSpace';
 import RackSpace from 'canvas/irv/view/RackSpace';
 import RackSpaceObject from 'canvas/irv/view/RackSpaceObject';
 import RackObject from 'canvas/irv/view/RackObject';
@@ -31,7 +30,6 @@ import ThumbHint from 'canvas/irv/view/ThumbHint';
 import ContextMenu from 'canvas/irv/view/ContextMenu';
 import ThumbNav from 'canvas/common/widgets/ThumbNav';
 import FilterBar from 'canvas/common/widgets/FilterBar';
-import CanvasViewModel from 'canvas/common/CanvasViewModel';
 import ViewModel from 'canvas/irv/ViewModel';
 import StaticGroupManager from 'canvas/common/util/StaticGroupManager';
 import IRVChart from 'canvas/irv/view/IRVChart';
@@ -40,19 +38,18 @@ import Profiler from 'Profiler';
 
 class Configurator {
 
-  static setup(CanvasController, IRVController, config) {
+  static setup(IRVController, config) {
     Profiler.trace(Profiler.DEBUG, "Configurator.setup");
     AssetManager.NUM_CONCURRENT_LOADS = config.ASSETMANAGER.numConcurrentLoads;
- 
+
     // parse colours into decimal ints
     for (var obj of Array.from(config.VIEWMODEL.colourScale)) { obj.col = Configurator.parseColourString(obj.col); }
     Util.sortByProperty(config.VIEWMODEL.colourScale, 'pos', true);
 
     IRVChart.SERIES_FADE_ALPHA = config.RACKSPACE.LBC.IRVCHART.seriesFadeAlpha;
- 
-    const view_model_config                  = config.VIEWMODEL;
-    CanvasViewModel.INIT_FACE                = view_model_config.startUp.face;
 
+    const view_model_config            = config.VIEWMODEL;
+    ViewModel.INIT_FACE                = view_model_config.startUp.face;
     ViewModel.COLOUR_SCALE             = view_model_config.colourScale;
     ViewModel.INIT_VIEW_MODE           = view_model_config.startUp.viewMode;
     ViewModel.INIT_SCALE_BARS          = view_model_config.startUp.scaleBars;
@@ -63,79 +60,74 @@ class Configurator {
 
     const util_config     = config.IRVUTIL;
     Util.SIG_FIG = util_config.sigFig;
- 
-    const controller_config                         = config.CONTROLLER;
-    CanvasController.PRIMARY_IMAGE_PATH       = controller_config.resources.primaryImagePath;
-    CanvasController.SECONDARY_IMAGE_PATH     = controller_config.resources.secondaryImagePath;
-    CanvasController.LIVE                     = controller_config.resources.live;
-    CanvasController.LIVE_RESOURCES           = controller_config.resources.liveResources;
-    CanvasController.OFFLINE_RESOURCES        = controller_config.resources.offlineResources;
-    CanvasController.NUM_RESOURCES            = controller_config.resources.numResources;
-    CanvasController.RESOURCE_LOAD_CAPTION    = controller_config.resourceLoadCaption;
 
-    if (IRVController !== null) {
-      IRVController.RACK_HINT_HOVER_DELAY       = controller_config.rackHintHoverDelay;
-      IRVController.THUMB_HINT_HOVER_DELAY      = controller_config.thumbHintHoverDelay;
-      IRVController.DOUBLE_CLICK_TIMEOUT        = controller_config.doubleClickTimeout;
-      IRVController.DRAG_ACTIVATION_DIST        = controller_config.dragActivationDist;
-      IRVController.RACK_PAGE_HEIGHT_PROPORTION = controller_config.rackPageHeightProportion;
-      IRVController.STEP_ZOOM_AMOUNT            = controller_config.stepZoomAmount;
-      IRVController.ZOOM_KEY                    = controller_config.zoomKey;
-      IRVController.THUMB_WIDTH                 = config.THUMBNAV.width;
-      IRVController.THUMB_HEIGHT                = config.THUMBNAV.height;
-      IRVController.SCREENSHOT_FILENAME         = controller_config.screenShotFilename;
-      IRVController.EXPORT_FILENAME             = controller_config.export.filename;
-      IRVController.EXPORT_HEADER               = controller_config.export.header;
-      IRVController.EXPORT_RECORD               = controller_config.export.record;
-      IRVController.EXPORT_MESSAGE              = controller_config.export.message;
-      IRVController.MIN_METRIC_POLL_RATE        = controller_config.minMetricPollRate;
-      IRVController.METRIC_POLL_EDIT_DELAY      = controller_config.metricPollEditDelay;
-      IRVController.INVALID_POLL_COLOUR         = controller_config.invalidPollColour;
-      IRVController.DEFAULT_METRIC_STAT         = controller_config.defaultMetricStat;
-      IRVController.MODIFIED_RACK_POLL_RATE     = controller_config.modifiedRackPollRate;
-      IRVController.METRIC_TEMPLATES_POLL_RATE  = controller_config.metricTemplatesPollRate;
-    }
- 
+    const controller_config                         = config.CONTROLLER;
+    IRVController.PRIMARY_IMAGE_PATH          = controller_config.resources.primaryImagePath;
+    IRVController.SECONDARY_IMAGE_PATH        = controller_config.resources.secondaryImagePath;
+    IRVController.LIVE                        = controller_config.resources.live;
+    IRVController.LIVE_RESOURCES              = controller_config.resources.liveResources;
+    IRVController.OFFLINE_RESOURCES           = controller_config.resources.offlineResources;
+    IRVController.NUM_RESOURCES               = controller_config.resources.numResources;
+    IRVController.RESOURCE_LOAD_CAPTION       = controller_config.resourceLoadCaption;
+    IRVController.RACK_HINT_HOVER_DELAY       = controller_config.rackHintHoverDelay;
+    IRVController.THUMB_HINT_HOVER_DELAY      = controller_config.thumbHintHoverDelay;
+    IRVController.DOUBLE_CLICK_TIMEOUT        = controller_config.doubleClickTimeout;
+    IRVController.DRAG_ACTIVATION_DIST        = controller_config.dragActivationDist;
+    IRVController.RACK_PAGE_HEIGHT_PROPORTION = controller_config.rackPageHeightProportion;
+    IRVController.STEP_ZOOM_AMOUNT            = controller_config.stepZoomAmount;
+    IRVController.ZOOM_KEY                    = controller_config.zoomKey;
+    IRVController.THUMB_WIDTH                 = config.THUMBNAV.width;
+    IRVController.THUMB_HEIGHT                = config.THUMBNAV.height;
+    IRVController.SCREENSHOT_FILENAME         = controller_config.screenShotFilename;
+    IRVController.EXPORT_FILENAME             = controller_config.export.filename;
+    IRVController.EXPORT_HEADER               = controller_config.export.header;
+    IRVController.EXPORT_RECORD               = controller_config.export.record;
+    IRVController.EXPORT_MESSAGE              = controller_config.export.message;
+    IRVController.MIN_METRIC_POLL_RATE        = controller_config.minMetricPollRate;
+    IRVController.METRIC_POLL_EDIT_DELAY      = controller_config.metricPollEditDelay;
+    IRVController.INVALID_POLL_COLOUR         = controller_config.invalidPollColour;
+    IRVController.DEFAULT_METRIC_STAT         = controller_config.defaultMetricStat;
+    IRVController.MODIFIED_RACK_POLL_RATE     = controller_config.modifiedRackPollRate;
+    IRVController.METRIC_TEMPLATES_POLL_RATE  = controller_config.metricTemplatesPollRate;
+
     const parser_config                  = config.PARSER;
     Parser.OFFLINE_METRIC_VARIANCE = parser_config.offlineMetricVariance;
     Parser.OFFLINE                 = !controller_config.resources.live;
- 
-    if (IRVController !== null) {
-      const preset_config                       = config.PRESETMANAGER;
-      PresetManager.PATH                  = preset_config.path;
-      PresetManager.GET                   = preset_config.get;
-      PresetManager.NEW                   = preset_config.new;
-      PresetManager.UPDATE                = preset_config.update;
-      PresetManager.VALUES                = preset_config.values;
-      PresetManager.ERR_CAPTION           = preset_config.errors.caption;
-      PresetManager.ERR_INVALID_NAME      = preset_config.errors.invalidName;
-      PresetManager.ERR_WHITE_NAME        = preset_config.errors.whiteName;
-      PresetManager.ERR_DUPLICATE_NAME    = preset_config.errors.duplicateName;
-      PresetManager.ERR_NOT_OWNED         = preset_config.errors.notOwned;
-      PresetManager.MODEL_DEPENDENCIES    = preset_config.modelDependencies;
-      PresetManager.DOM_DEPENDENCIES      = preset_config.domDependencies;
-      PresetManager.MSG_CONFIRM_UPDATE    = preset_config.msgConfirmUpdate;
 
-      const group_config = config.STATICGROUPMANAGER;
-      console.log(group_config);
-      StaticGroupManager.LIST                  = group_config.list;
-      StaticGroupManager.GET                   = group_config.get;
-      StaticGroupManager.NEW                   = group_config.new;
-      StaticGroupManager.UPDATE                = group_config.update;
-      StaticGroupManager.ERR_CAPTION           = group_config.errors.caption;
-      StaticGroupManager.ERR_INAVLID_NAME      = group_config.errors.invalidName;
-      StaticGroupManager.ERR_WHITE_NAME        = group_config.errors.whiteName;
-      StaticGroupManager.ERR_DUPLICATE_NAME    = group_config.errors.duplicateName;
-      StaticGroupManager.ERR_EMPTY_GROUP       = group_config.errors.emptyGroup;
-      StaticGroupManager.ERR_READ_ONLY         = group_config.errors.readOnly;
-      StaticGroupManager.ERR_GROUP_DATA_CENTRE = group_config.errors.groupDataCentre;
-      StaticGroupManager.MODEL_DEPENDENCIES    = group_config.modelDependencies;
-      StaticGroupManager.DOM_DEPENDENCIES      = group_config.domDependencies;
-      StaticGroupManager.MSG_READ_ONLY         = group_config.errors.readOnly;
-      StaticGroupManager.MSG_CONFIRM_UPDATE    = group_config.msgConfirmUpdate;
-      StaticGroupManager.MSG_EMPTY_GROUP       = group_config.emptyGroup;
-    }
- 
+    const preset_config                       = config.PRESETMANAGER;
+    PresetManager.PATH                  = preset_config.path;
+    PresetManager.GET                   = preset_config.get;
+    PresetManager.NEW                   = preset_config.new;
+    PresetManager.UPDATE                = preset_config.update;
+    PresetManager.VALUES                = preset_config.values;
+    PresetManager.ERR_CAPTION           = preset_config.errors.caption;
+    PresetManager.ERR_INVALID_NAME      = preset_config.errors.invalidName;
+    PresetManager.ERR_WHITE_NAME        = preset_config.errors.whiteName;
+    PresetManager.ERR_DUPLICATE_NAME    = preset_config.errors.duplicateName;
+    PresetManager.ERR_NOT_OWNED         = preset_config.errors.notOwned;
+    PresetManager.MODEL_DEPENDENCIES    = preset_config.modelDependencies;
+    PresetManager.DOM_DEPENDENCIES      = preset_config.domDependencies;
+    PresetManager.MSG_CONFIRM_UPDATE    = preset_config.msgConfirmUpdate;
+
+    const group_config = config.STATICGROUPMANAGER;
+    console.log(group_config);
+    StaticGroupManager.LIST                  = group_config.list;
+    StaticGroupManager.GET                   = group_config.get;
+    StaticGroupManager.NEW                   = group_config.new;
+    StaticGroupManager.UPDATE                = group_config.update;
+    StaticGroupManager.ERR_CAPTION           = group_config.errors.caption;
+    StaticGroupManager.ERR_INAVLID_NAME      = group_config.errors.invalidName;
+    StaticGroupManager.ERR_WHITE_NAME        = group_config.errors.whiteName;
+    StaticGroupManager.ERR_DUPLICATE_NAME    = group_config.errors.duplicateName;
+    StaticGroupManager.ERR_EMPTY_GROUP       = group_config.errors.emptyGroup;
+    StaticGroupManager.ERR_READ_ONLY         = group_config.errors.readOnly;
+    StaticGroupManager.ERR_GROUP_DATA_CENTRE = group_config.errors.groupDataCentre;
+    StaticGroupManager.MODEL_DEPENDENCIES    = group_config.modelDependencies;
+    StaticGroupManager.DOM_DEPENDENCIES      = group_config.domDependencies;
+    StaticGroupManager.MSG_READ_ONLY         = group_config.errors.readOnly;
+    StaticGroupManager.MSG_CONFIRM_UPDATE    = group_config.msgConfirmUpdate;
+    StaticGroupManager.MSG_EMPTY_GROUP       = group_config.emptyGroup;
+
     const thumb_nav_config            = config.THUMBNAV;
     ThumbNav.MASK_FILL          = thumb_nav_config.maskFill;
     ThumbNav.MASK_FILL_ALPHA    = thumb_nav_config.maskFillAlpha;
@@ -145,42 +137,39 @@ class Configurator {
 
     const update_msg_config = config.UPDATEMSG;
     UpdateMsg.MESSAGE = update_msg_config.message;
- 
-    const rackspace_config                         = config.RACKSPACE;
-    CanvasSpace.PADDING                        = rackspace_config.padding;
-    CanvasSpace.H_PADDING                      = rackspace_config.h_padding;
-    CanvasSpace.BOTH_VIEW_PAIR_PADDING         = rackspace_config.bothViewPairPadding;
-    CanvasSpace.RACK_H_SPACING                 = rackspace_config.rackHSpacing;
-    CanvasSpace.RACK_V_SPACING                 = rackspace_config.rackVSpacing;
-    CanvasSpace.U_LBL_SCALE_CUTOFF             = rackspace_config.uLblScaleCutoff;
-    CanvasSpace.NAME_LBL_SCALE_CUTOFF          = rackspace_config.nameLblScaleCutoff;
-    CanvasSpace.CANVAS_MAX_DIMENSION           = rackspace_config.canvasMaxDimension;
-    CanvasSpace.FPS                            = rackspace_config.fps;
-    CanvasSpace.ADDITIONAL_ROW_TOLERANCE       = rackspace_config.additionalRowTolerance;
 
-    if (IRVController !== null) {
-      RackSpace.ZOOM_DURATION                  = rackspace_config.zoomDuration;
-      RackSpace.DRAG_FADE_FILL                 = rackspace_config.drag.fadeFill;
-      RackSpace.DRAG_FADE_ALPHA                = rackspace_config.drag.fadeAlpha;
-      RackSpace.DRAG_SNAP_RANGE                = rackspace_config.drag.snapRange;
-      RackSpace.INFO_FADE_DURATION             = rackspace_config.infoFadeDuration;
-      RackSpace.FLIP_DURATION                  = rackspace_config.flipDuration;
-      RackSpace.FLIP_DELAY                     = rackspace_config.flipDelay;
-      RackSpace.METRIC_FADE_FILL               = rackspace_config.metricFadeFill;
-      RackSpace.METRIC_FADE_ALPHA              = rackspace_config.metricFadeAlpha;
-      RackSpace.SELECT_BOX_STROKE              = rackspace_config.selectBox.stroke;
-      RackSpace.SELECT_BOX_STROKE_WIDTH        = rackspace_config.selectBox.strokeWidth;
-      RackSpace.SELECT_BOX_ALPHA               = rackspace_config.selectBox.alpha;
-      RackSpace.LAYOUT_UPDATE_DELAY            = rackspace_config.layoutUpdateDelay;
-      RackSpace.CHART_SELECTION_COUNT_FILL     = rackspace_config.selectionCount.fill;
-      RackSpace.CHART_SELECTION_COUNT_FONT     = rackspace_config.selectionCount.font;
-      RackSpace.CHART_SELECTION_COUNT_BG_FILL  = rackspace_config.selectionCount.bgFill;
-      RackSpace.CHART_SELECTION_COUNT_BG_ALPHA = rackspace_config.selectionCount.bgAlpha;
-      RackSpace.CHART_SELECTION_COUNT_CAPTION  = rackspace_config.selectionCount.caption;
-      RackSpace.CHART_SELECTION_COUNT_OFFSET_X = rackspace_config.selectionCount.offsetX;
-      RackSpace.CHART_SELECTION_COUNT_OFFSET_Y = rackspace_config.selectionCount.offsetY;
-    }
- 
+    const rackspace_config                         = config.RACKSPACE;
+    RackSpace.PADDING                        = rackspace_config.padding;
+    RackSpace.H_PADDING                      = rackspace_config.h_padding;
+    RackSpace.BOTH_VIEW_PAIR_PADDING         = rackspace_config.bothViewPairPadding;
+    RackSpace.RACK_H_SPACING                 = rackspace_config.rackHSpacing;
+    RackSpace.RACK_V_SPACING                 = rackspace_config.rackVSpacing;
+    RackSpace.U_LBL_SCALE_CUTOFF             = rackspace_config.uLblScaleCutoff;
+    RackSpace.NAME_LBL_SCALE_CUTOFF          = rackspace_config.nameLblScaleCutoff;
+    RackSpace.CANVAS_MAX_DIMENSION           = rackspace_config.canvasMaxDimension;
+    RackSpace.FPS                            = rackspace_config.fps;
+    RackSpace.ADDITIONAL_ROW_TOLERANCE       = rackspace_config.additionalRowTolerance;
+    RackSpace.ZOOM_DURATION                  = rackspace_config.zoomDuration;
+    RackSpace.DRAG_FADE_FILL                 = rackspace_config.drag.fadeFill;
+    RackSpace.DRAG_FADE_ALPHA                = rackspace_config.drag.fadeAlpha;
+    RackSpace.DRAG_SNAP_RANGE                = rackspace_config.drag.snapRange;
+    RackSpace.INFO_FADE_DURATION             = rackspace_config.infoFadeDuration;
+    RackSpace.FLIP_DURATION                  = rackspace_config.flipDuration;
+    RackSpace.FLIP_DELAY                     = rackspace_config.flipDelay;
+    RackSpace.METRIC_FADE_FILL               = rackspace_config.metricFadeFill;
+    RackSpace.METRIC_FADE_ALPHA              = rackspace_config.metricFadeAlpha;
+    RackSpace.SELECT_BOX_STROKE              = rackspace_config.selectBox.stroke;
+    RackSpace.SELECT_BOX_STROKE_WIDTH        = rackspace_config.selectBox.strokeWidth;
+    RackSpace.SELECT_BOX_ALPHA               = rackspace_config.selectBox.alpha;
+    RackSpace.LAYOUT_UPDATE_DELAY            = rackspace_config.layoutUpdateDelay;
+    RackSpace.CHART_SELECTION_COUNT_FILL     = rackspace_config.selectionCount.fill;
+    RackSpace.CHART_SELECTION_COUNT_FONT     = rackspace_config.selectionCount.font;
+    RackSpace.CHART_SELECTION_COUNT_BG_FILL  = rackspace_config.selectionCount.bgFill;
+    RackSpace.CHART_SELECTION_COUNT_BG_ALPHA = rackspace_config.selectionCount.bgAlpha;
+    RackSpace.CHART_SELECTION_COUNT_CAPTION  = rackspace_config.selectionCount.caption;
+    RackSpace.CHART_SELECTION_COUNT_OFFSET_X = rackspace_config.selectionCount.offsetX;
+    RackSpace.CHART_SELECTION_COUNT_OFFSET_Y = rackspace_config.selectionCount.offsetY;
+
     const rack_object_config           = config.RACKSPACE.RACKOBJECT;
     RackObject.BLANK_FILL        = rack_object_config.blankFill;
     RackObject.METRIC_FADE_FILL  = rack_object_config.metricFadeFill;
@@ -188,7 +177,7 @@ class Configurator {
     RackObject.IMAGE_PATH        = controller_config.resources.primaryImagePath;
     RackObject.EXCLUDED_ALPHA    = rack_object_config.excludedAlpha;
     RackObject.U_PX_HEIGHT       = rack_object_config.uPxHeight;
- 
+
     const rack_config              = config.RACKSPACE.RACKOBJECT.RACK;
     NameLabel.OFFSET_X             = rack_config.nameLbl.offsetX;
     NameLabel.OFFSET_Y             = rack_config.nameLbl.offsetY;
@@ -212,7 +201,7 @@ class Configurator {
     RackSpaceObject.SPACE_FILL          = rack_config.space.fill;
     RackSpaceObject.SPACE_FADE_DURATION = rack_config.space.fadeDuration;
     Rack.FADE_IN_METRIC_MODE = rack_config.fadeInMetricMode;
- 
+
     const chassis_config                = config.RACKSPACE.RACKOBJECT.CHASSIS;
     Chassis.DEFAULT_WIDTH         = chassis_config.defaultWidth;
     Chassis.U_PX_HEIGHT           = chassis_config.uPxHeight;
@@ -230,15 +219,15 @@ class Configurator {
       Highlight.DRAGGED_ANIM_DURATION  = highlight_config.dragged.animDuration;
       Highlight.DRAGGED_MAX_ALPHA      = highlight_config.dragged.maxAlpha;
       Highlight.DRAGGED_MIN_ALPHA      = highlight_config.dragged.minAlpha;
- 
+
       const metric_config        = config.RACKSPACE.METRIC;
       Metric.ALPHA         = metric_config.alpha;
       Metric.FADE_DURATION = metric_config.fadeDuration;
       Metric.ANIM_DURATION = metric_config.animDuration;
     }
-    
+
     Primitives.Text.TRUNCATION_SUFFIX = config.RACKSPACE.PRIMITIVES.text.truncationSuffix;
- 
+
     const lbc_config                         = config.RACKSPACE.LBC;
     LBC.TITLE_CAPTION                  = lbc_config.titleCaption;
     LBC.POINTER_OFFSET_X               = lbc_config.pointerOffsetX;
@@ -291,10 +280,10 @@ class Configurator {
     RackHint.CHASSIS_TEXT    = rack_hint_config.chassisText;
     RackHint.DEVICE_TEXT     = rack_hint_config.deviceText;
     RackHint.MORE_INFO_DELAY = rack_hint_config.moreInfoDelay;
- 
+
     const thumb_hint_config = config.RACKSPACE.HINT.THUMBHINT;
     ThumbHint.CAPTION = thumb_hint_config.caption;
- 
+
     const context_menu_config             = config.RACKSPACE.CONTEXTMENU;
     ContextMenu.OPTIONS             = context_menu_config.options;
     ContextMenu.LAYOUT              = context_menu_config.layout;
@@ -303,7 +292,7 @@ class Configurator {
     ContextMenu.URL_INTERNAL_PREFIX = context_menu_config.urlInternalPrefix;
     ContextMenu.ASPECT_MAP          = context_menu_config.aspectMap;
     ContextMenu.ACTION_PATHS        = context_menu_config.actionPaths
- 
+
     const filter_bar_config                  = config.FILTERBAR;
     FilterBar.THICKNESS                = filter_bar_config.thickness;
     FilterBar.LENGTH                   = filter_bar_config.length;
@@ -328,7 +317,7 @@ class Configurator {
     FilterBar.DRAG_BOX_ALPHA           = filter_bar_config.dragBox.alpha;
     FilterBar.MODEL_DEPENDENCIES       = filter_bar_config.modelDependencies;
     FilterBar.LABEL_MIN_SEPARATION     = filter_bar_config.labelMinSeparation;
- 
+
     switch (filter_bar_config.defaultAlign) {
           case 'top':
                 FilterBar.DEFAULT_ALIGN = FilterBar.ALIGN_TOP;
@@ -345,12 +334,12 @@ class Configurator {
           default:
                 FilterBar.DEFAULT_ALIGN = FilterBar.ALIGN_BOTTOM;
     }
- 
+
     return config = null;
   }
- 
- 
- 
+
+
+
   static parseColourString(col_str) {
     switch (col_str.charAt(0)) {
       case '#':

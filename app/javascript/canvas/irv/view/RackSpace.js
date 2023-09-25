@@ -14,7 +14,6 @@
 // the RackSpace instanciates the racks and coordinates global operations and
 // animations such as zooming and flipping between front and rear views
 
-import CanvasSpace from 'canvas/common/CanvasSpace';
 import Util from 'canvas/common/util/Util';
 import Events from 'canvas/common/util/Events';
 import SimpleRenderer from 'canvas/common/gfx/SimpleRenderer';
@@ -36,10 +35,20 @@ import DragPolicy from 'canvas/irv/util/DragPolicy';
 import Profiler from 'Profiler';
 import NameLabel from 'canvas/irv/view/NameLabel';
 
-class RackSpace extends CanvasSpace {
+class RackSpace {
   static initClass() {
 
     // statics overwritten by config
+    this.PADDING              = 100;
+    this.H_PADDING            = 100;
+    this.RACK_H_SPACING       = 50;
+    this.RACK_V_SPACING       = 100;
+    this.FPS                  = 24;
+    this.BOTH_VIEW_PAIR_PADDING    = 150;
+    this.ADDITIONAL_ROW_TOLERANCE  = 3;
+
+    this.U_LBL_SCALE_CUTOFF        = .20;
+    this.NAME_LBL_SCALE_CUTOFF     = .01;
 
     this.DRAG_FADE_FILL   = '#0';
     this.DRAG_FADE_ALPHA  = .3;
@@ -77,7 +86,6 @@ class RackSpace extends CanvasSpace {
 
 
   constructor(rackEl, chartEl, model, rackParent) {
-    super(...arguments);
     let left;
     this.setLayout = this.setLayout.bind(this);
     this.highlightDevice = this.highlightDevice.bind(this);
@@ -204,7 +212,7 @@ class RackSpace extends CanvasSpace {
     this.holdingAreaInfoGfx = this.createGfxLayer(this.rackEl, 0, 0, 1, 1, 1);   // Holding area
     this.holdingAreaAlertGfx = this.createGfxLayer(this.rackEl, 0, 0, 1, 1, 1);   // Holding area
 
-    super.createGfx(...arguments);
+    this.rackGfx  = this.createGfxLayer(this.rackEl, 0, 0, 1, 1, 1);   // bottom layer, draws rack and device images
 
     this.rackInfoGfx  = this.createGfxLayer(this.rackEl, 0, 0, 1, 1, 1);   // middle layer, draws the empty spaces for racks
     this.infoGfx  = this.createGfxLayer(this.rackEl, 0, 0, 1, 1, 1);   // middle layer, draws metric bars and textual labels
@@ -214,6 +222,36 @@ class RackSpace extends CanvasSpace {
     }
   }
 
+  // creates an instance of a SimpleRenderer layer
+  // @param  container   a reference to a DOM element to which the layer will be appended
+  // @param  x           float, the pixel x coordinate to position the new layer
+  // @param  y           float, the pixel y coordinate to position the new layer
+  // @param  width       int, the width of the layer
+  // @param  height      int, the height of the new layer
+  // @param  scale       optional float, the initial scale of the new layer
+  createGfxLayer(container, x, y, width, height, scale) {
+    if (scale == null) { scale = 1; }
+    const gfx = new SimpleRenderer(container, width, height, scale, RackSpace.FPS);
+    Util.setStyle(gfx.cvs, 'position', 'absolute');
+    Util.setStyle(gfx.cvs, 'left', x + 'px');
+    Util.setStyle(gfx.cvs, 'top', y + 'px');
+
+    // For debugging canvas layer purposes.
+    // Util.setStyle(gfx.cvs, 'background', 'blue')
+    // Util.setStyle(gfx.cvs, 'opacity', '0.2')
+    //if (layer_name != null) {
+    //  gfx.addText(
+    //    x       : 0
+    //    y       : 300
+    //    font    : "20px Karla"
+    //    align   : "left"
+    //    caption : layer_name
+    //    alpha   : 1
+    //    fill    : "#000000")
+    //    }
+
+    return gfx;
+  }
   holdingAreaConfig() {
     const rack_sizes = {topheight:50,topwidth:500,bottomheight:50,rackmaxu:42};
     return { 
@@ -374,6 +412,18 @@ class RackSpace extends CanvasSpace {
     if (this.model.showingRacks()) { return this.centreRacks(); }
   }
 
+  setScale() {
+    let final_scale;
+    const max_scale = 0.30;
+    const max_height = $('interactive_canvas_view').getCoordinates().height;
+    if (((this.tallestRack+RackSpace.PADDING)*max_scale) > max_height) {
+      final_scale = max_scale * (max_height/((this.tallestRack+RackSpace.PADDING)*max_scale));
+    } else {
+      final_scale = max_scale;
+    }
+    return this.rackGfx.setScale(final_scale);
+  }
+
   setScaleInLayers() {
     this.rackGfx.setScale(this.scale);
     this.rackInfoGfx.setScale(this.scale);
@@ -497,8 +547,8 @@ class RackSpace extends CanvasSpace {
       $('zero-racks-message').addClass('hidden');
     }
 
-    const show_u_labels = this.scale >= CanvasSpace.U_LBL_SCALE_CUTOFF;
-    const show_name_label = this.scale >= CanvasSpace.NAME_LBL_SCALE_CUTOFF;
+    const show_u_labels = this.scale >= RackSpace.U_LBL_SCALE_CUTOFF;
+    const show_name_label = this.scale >= RackSpace.NAME_LBL_SCALE_CUTOFF;
     const show_owner_label = show_name_label && this.model.RBAC.can_i("view", "all");
     if (this.model.showingRacks()) {
       for (var rack of Array.from(this.racks)) { rack.draw(show_u_labels, show_name_label, show_owner_label); }
@@ -1986,7 +2036,7 @@ class RackSpace extends CanvasSpace {
         return Events.dispatchEvent(this.rackEl, 'rackSpaceClearDeselected');
       case 'reSelectAll':
         CrossAppSettings.clear('irv');
-        return window.location = "/irv";
+        return window.location = "/racks";
       case 'startDraggingDevice':
         return this.startDraggingDevice();
     }
@@ -2202,7 +2252,110 @@ class RackSpace extends CanvasSpace {
   // is to avoid the situation where the row width is say 20 racks but the last row has only three racks (and a lot of white space after
   // it). The second phase can lead to a significant digression from the first phase.
   arrangeRacks() {
-    super.arrangeRacks(...arguments);
+    let row_width;
+    const alternate_pad  = front_and_rear ? RackSpace.BOTH_VIEW_PAIR_PADDING : 0;
+    const delta          = front_and_rear ? 2 : 1;
+    const factor         = 1.5;
+
+    const dims             = Util.getElementDimensions(this.rackEl);
+    const dims_ratio       = dims.width / dims.height;
+    const num_racks        = this.racks.length;
+    let total_rack_width = 0;
+    for (var oneR of Array.from(this.racks)) {
+      total_rack_width += oneR.width + RackSpace.RACK_H_SPACING + alternate_pad;
+    }
+    const average_rack_width = total_rack_width/num_racks;
+    let best_width     = total_rack_width;
+    let best_fit_ratio = 0;
+    let count          = 0;
+    var front_and_rear = this.model.face() === ViewModel.FACE_BOTH;
+    // calculate row width which produces dimensions that most closely match the ratio of container width and height
+    // aka best fit row width
+    let num_rows = 0;
+    let total_width = 0;
+    let total_height = 0;
+    while (count < num_racks) {
+      total_width   += ((this.racks[count].width + RackSpace.RACK_H_SPACING)*delta) + alternate_pad;
+      num_rows      = Math.ceil(total_rack_width / total_width);
+      total_height  = (((this.tallestRack + RackSpace.RACK_V_SPACING) * num_rows) - RackSpace.RACK_V_SPACING) + (RackSpace.PADDING * 2);
+      var ratio         = (total_width / total_height) * factor;
+
+      if (Math.abs(ratio - dims_ratio) < Math.abs(best_fit_ratio - dims_ratio)) {
+        best_width     = total_width;
+        best_fit_ratio = ratio;
+      }
+
+      count += delta;
+    }
+
+    const max_row_width = best_width;
+  
+    // re calculate the row_width to distribute all the items in all the rows
+    if (total_rack_width > max_row_width) {
+      num_rows  = Math.ceil(total_rack_width / max_row_width);
+      row_width = Math.abs((total_rack_width/num_rows)+average_rack_width);
+    } else {
+      row_width = total_rack_width;
+      num_rows  = 1;
+    }
+
+    this.num_rows = num_rows;
+
+    let actual_width = row_width;
+    let actual_height = (num_rows * this.tallestRack) + ((num_rows - 1) * RackSpace.RACK_V_SPACING);
+    actual_width  += RackSpace.PADDING * 2;
+    actual_height += RackSpace.PADDING * 2;
+
+    //Adding extra padding when showing DCRV, so the user has more space in the top, to start a selection rubber band.
+    if (this.model.showingFullIrv()) {
+      actual_height += (RackSpace.PADDING * 2);
+    }
+
+    this.racksWidth  = actual_width;
+    if (this.model.showingFullIrv() || this.model.showingRacks()) {
+      const scale_x = (dims.width - this.scrollAdjust) / actual_width;
+      const scale_y = (dims.height - this.scrollAdjust) / actual_height;
+      const final_scale = scale_x > scale_y ? scale_y : scale_x;
+
+      const actual_width_div = Math.floor(actual_width * final_scale);
+
+      this.racksWidth += RackSpace.H_PADDING*2;
+    }
+
+    this.racksHeight = actual_height;
+
+    // set rack coordinates using @tallestRack to offset shorter racks
+    count = 0;
+    let acum_rack_width = 0;
+    let prev = 0;
+    let row_num = 0;
+    while (count < num_racks) {
+      var rack_x;
+      prev = row_num;
+      var col_num = count - (row_num * row_width);
+      var rack    = this.racks[count];
+      if ((acum_rack_width + rack.width) > actual_width) {
+        row_num += 1;
+        acum_rack_width = 0;
+      }
+      var rack_y = (RackSpace.PADDING + ((this.tallestRack + RackSpace.RACK_V_SPACING) * row_num) + this.tallestRack) - rack.height;
+      if (num_racks === 1) {
+        rack_x  = (this.racksWidth/2) - (rack.width/2);
+      } else {
+        if (this.model.showingRacks() && !this.model.showingFullIrv()) {
+          rack_x  = ((this.racksWidth/2) - (rack.width + (RackSpace.RACK_H_SPACING/2))) + acum_rack_width;
+        } else {
+          // In DCRV racks are rendered a bit lower in the Y axis, since there is more padding.
+          if (this.num_rows > 1) { rack_y  += RackSpace.PADDING; }
+          rack_x  = RackSpace.H_PADDING + RackSpace.PADDING + acum_rack_width;
+        }
+      }
+      rack.setCoords(rack_x, rack_y);
+      acum_rack_width += rack.width + RackSpace.RACK_H_SPACING;
+      ++count;
+    }
+
+    this.rackGfx.setDims(this.racksWidth, this.racksHeight);
     this.rackInfoGfx.setDims(this.racksWidth, this.racksHeight);
     this.infoGfx.setDims(this.racksWidth, this.racksHeight);
     return this.alertGfx.setDims(this.racksWidth, this.racksHeight);
