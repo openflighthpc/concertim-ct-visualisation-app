@@ -3,7 +3,7 @@ import AssetManager from 'canvas/irv/util/AssetManager'
 import DragPolicy from 'canvas/irv/util/DragPolicy'
 import Rack from 'canvas/irv/view/Rack'
 import RackObject from 'canvas/irv/view/RackObject'
-import 'mia/contrib/knockout.js'
+import 'contrib/knockout.js'
 
 // I've taken this from some live front end data, there may be some unnecessary fields
 const deviceData = {

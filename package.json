@@ -15,8 +15,9 @@
       "app/javascript"
     ],
     "moduleNameMapper": {
-      "^canvas/(.*)$": "<rootDir>/app/javascript/mia/coffee/src/canvas/$1",
-      "Profiler": "<rootDir>/app/javascript/mia/javascript/irv/Profiler.js"
+      "^canvas/(.*)$": "<rootDir>/app/javascript/canvas/$1",
+      "Profiler": "<rootDir>/app/javascript/canvas/irv/Profiler.js",
+      "^contrib/(.*)$": "<rootDir>/app/javascript/contrib/$1"
     },
     "testEnvironment": "jsdom"
   }

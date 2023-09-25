@@ -1,5 +1,5 @@
 import ViewModel from 'canvas/irv/ViewModel'
-import 'mia/contrib/knockout.js'
+import 'contrib/knockout.js'
 
 test('class init', () => {
     ViewModel.initClass();
