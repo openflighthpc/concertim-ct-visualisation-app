@@ -27,7 +27,7 @@ test('inherits defaults from CanvasViewModel', () => {
 test('inherits faceBoth function from CanvasViewModel', () => {
     let model = new ViewModel();
     expect(model.faceBoth()).toBe(false);
-    model.face = "both";
+    model.face("both");
     expect(model.faceBoth()).toBe(true);
 });
 

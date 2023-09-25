@@ -26,6 +26,6 @@ test('new object has expected defaults', () => {
 test('faceBoth function', () => {
     let model = new CanvasViewModel();
     expect(model.faceBoth()).toBe(false);
-    model.face = "both";
+    model.face("both");
     expect(model.faceBoth()).toBe(true);
 });
