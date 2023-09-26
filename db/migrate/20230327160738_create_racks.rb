@@ -17,5 +17,9 @@ class CreateRacks < ActiveRecord::Migration[7.0]
     add_reference 'racks', 'template',
       null: false,
       foreign_key: { on_update: :cascade, on_delete: :restrict }
+
+    add_reference 'racks', 'user',
+                  null: false,
+                  foreign_key: { on_update: :cascade, on_delete: :restrict }
   end
 end
