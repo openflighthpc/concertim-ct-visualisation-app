@@ -18,7 +18,7 @@ class CreateDevice < ActiveRecord::Migration[7.0]
     end
 
     add_reference 'devices', 'base_chassis',
-      null: true,
+      null: false,
       foreign_key: { on_update: :cascade, on_delete: :cascade }
   end
 end

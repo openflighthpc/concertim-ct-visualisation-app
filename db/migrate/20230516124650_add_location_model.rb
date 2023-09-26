@@ -17,7 +17,7 @@ class AddLocationModel < ActiveRecord::Migration[7.0]
     # Later migrations will populate location data and make this column `null:
     # false`.
     add_reference 'base_chassis', 'location',
-      null: true,
+      null: false,
       foreign_key: { on_update: :cascade, on_delete: :restrict }
   end
 end
