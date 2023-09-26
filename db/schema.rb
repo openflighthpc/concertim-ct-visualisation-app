@@ -154,15 +154,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_05_094853) do
     t.integer "u_height", default: 42, null: false
     t.integer "u_depth", default: 2, null: false
     t.integer "modified_timestamp", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "template_id", null: false
-    t.bigint "user_id", null: false
     t.jsonb "metadata", default: {}, null: false
     t.string "status", null: false
     t.decimal "cost", default: "0.0", null: false
     t.string "creation_output"
     t.jsonb "network_details", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "template_id", null: false
+    t.bigint "user_id", null: false
     t.index ["template_id"], name: "index_racks_on_template_id"
     t.index ["user_id"], name: "index_racks_on_user_id"
   end

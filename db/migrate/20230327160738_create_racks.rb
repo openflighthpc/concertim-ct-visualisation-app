@@ -5,10 +5,11 @@ class CreateRacks < ActiveRecord::Migration[7.0]
       t.integer :u_height, null: false, default: 42
       t.integer :u_depth, null: false, default: 2
       t.integer :modified_timestamp, null: false, default: 0
-
-      # XXX this ought to be a foreign_key, but more than that it shouldn't
-      # exist.  Remove the need for it.
-      t.integer :tagged_device_id, null: false
+      t.jsonb :metadata, default: {}, null: false
+      t.string :status, null: false
+      t.decimal :cost, default: "0.0", null: false
+      t.string :creation_output
+      t.jsonb :network_details, default: {}, null: false
 
       t.timestamps
     end
