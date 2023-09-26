@@ -193,14 +193,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_05_094853) do
     t.integer "padding_bottom", default: 0, null: false
     t.integer "padding_right", default: 0, null: false
     t.integer "padding_top", default: 0, null: false
-    t.string "model", limit: 255
-    t.string "rack_repeat_ratio", limit: 255
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.string "foreign_id"
     t.integer "vcpus"
     t.integer "ram"
     t.integer "disk"
+    t.string "model", limit: 255
+    t.string "rack_repeat_ratio", limit: 255
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|

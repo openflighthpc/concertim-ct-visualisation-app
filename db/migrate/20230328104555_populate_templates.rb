@@ -7,13 +7,13 @@ class PopulateTemplates < ActiveRecord::Migration[7.0]
     Template.reset_column_information
     templates.each do |t|
       say "Creating template #{t[:name]}"
-      chassis_type = (t[:chassis_type] || 'Server').to_s
-      unless %w[Server HwRack].include?(chassis_type)
-        raise ArgumentError, "Unknown chassis_type: #{chassis_type}"
+      template_type = (t[:template_type] || 'Server').to_s
+      unless %w[Server HwRack].include?(template_type)
+        raise ArgumentError, "Unknown template_type: #{template_type}"
       end
-      rackable = chassis_type == 'Server' ? 'rackable' : 'nonrackable'
-      rows = chassis_type == 'Server' ? 1 : nil
-      columns = chassis_type == 'Server' ? 1 : nil
+      rackable = template_type == 'Server' ? 'rackable' : 'nonrackable'
+      rows = template_type == 'Server' ? 1 : nil
+      columns = template_type == 'Server' ? 1 : nil
 
       record = Template.new(
         id: t[:id],
@@ -21,7 +21,7 @@ class PopulateTemplates < ActiveRecord::Migration[7.0]
         height: t[:height],
         depth: t[:depth],
         version: t[:version] || 1,
-        chassis_type: chassis_type,
+        template_type: template_type,
         rackable: rackable,
         simple: true,
         description: t[:description],

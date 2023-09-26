@@ -1,6 +1,6 @@
 id: 1
 
-chassis_type: HwRack
+template_type: HwRack
 description: Rack
 depth: 2
 height: 42
