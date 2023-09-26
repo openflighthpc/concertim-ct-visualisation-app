@@ -2,8 +2,8 @@ require 'rails_helper'
 
 RSpec.describe RequestStatusChangeJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
-  let(:cloud_service_config) { create(:cloud_service_config, admin_project_id: Faker::Internet.uuid, admin_user_id: Faker::Internet.uuid) }
-  let(:customer_user) { create(:user, project_id: Faker::Internet.uuid, cloud_user_id: Faker::Internet.uuid) }
+  let(:cloud_service_config) { create(:cloud_service_config, admin_project_id: Faker::Alphanumeric.alphanumeric(number: 10), admin_user_id: Faker::Alphanumeric.alphanumeric(number: 10)) }
+  let(:customer_user) { create(:user, project_id: Faker::Alphanumeric.alphanumeric(number: 10), cloud_user_id: Faker::Alphanumeric.alphanumeric(number: 10)) }
   let(:admin) { create(:user, :admin) }
   let(:user) { customer_user }
   let(:device) { create(:device, chassis: chassis, status: "ACTIVE") }
@@ -53,7 +53,7 @@ RSpec.describe RequestStatusChangeJob, type: :job do
       it "contains the admin credentials from config" do
         expect(subject[:cloud_env]).to eq({
                                             "auth_url" => cloud_service_config.internal_auth_url,
-                                            "user_id" => cloud_service_config.admin_user_id.gsub("-", ""),
+                                            "user_id" => cloud_service_config.admin_user_id,
                                             "password" => cloud_service_config.admin_foreign_password,
                                             "project_id" => cloud_service_config.admin_project_id
                                           })
@@ -65,7 +65,7 @@ RSpec.describe RequestStatusChangeJob, type: :job do
       it "contains the user's credentials" do
         expect(subject[:cloud_env]).to eq({
                                             "auth_url" => cloud_service_config.internal_auth_url,
-                                            "user_id" => user.cloud_user_id.gsub("-", ""),
+                                            "user_id" => user.cloud_user_id,
                                             "password" => user.foreign_password,
                                             "project_id" => user.project_id
                                           })
