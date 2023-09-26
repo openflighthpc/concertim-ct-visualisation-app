@@ -22,7 +22,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_07_151532) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "template_id", null: false
-    t.bigint "location_id", null: false
+    t.bigint "location_id"
     t.index ["location_id"], name: "index_base_chassis_on_location_id"
     t.index ["template_id"], name: "index_base_chassis_on_template_id"
   end
@@ -74,7 +74,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_07_151532) do
     t.jsonb "volume_details", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "base_chassis_id", null: false
+    t.bigint "base_chassis_id"
     t.index ["base_chassis_id"], name: "index_devices_on_base_chassis_id"
   end
 

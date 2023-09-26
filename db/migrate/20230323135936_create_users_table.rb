@@ -1,6 +1,6 @@
 class CreateUsersTable < ActiveRecord::Migration[7.0]
   def change
-    create_table :users, force: :cascade do |t|
+    create_table :users do |t|
       t.string :login, limit: 80, null: false
       t.string :name, limit: 56, null: false
       t.text :email, default: "", null: false
