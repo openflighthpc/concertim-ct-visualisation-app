@@ -11,10 +11,6 @@ class CreateDevice < ActiveRecord::Migration[7.0]
       t.timestamps
     end
 
-    add_reference 'devices', 'slot',
-      null: true,
-      foreign_key: { on_update: :cascade, on_delete: :cascade }
-
     add_reference 'devices', 'base_chassis',
       null: true,
       foreign_key: { on_update: :cascade, on_delete: :cascade }
