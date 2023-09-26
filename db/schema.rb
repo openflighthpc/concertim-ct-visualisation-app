@@ -64,9 +64,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_05_094853) do
     t.string "description", limit: 255
     t.boolean "hidden", default: false, null: false
     t.integer "modified_timestamp", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "base_chassis_id", null: false
     t.jsonb "metadata", default: {}, null: false
     t.string "status", null: false
     t.decimal "cost", default: "0.0", null: false
@@ -75,6 +72,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_05_094853) do
     t.string "ssh_key"
     t.string "login_user"
     t.jsonb "volume_details", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "base_chassis_id", null: false
     t.index ["base_chassis_id"], name: "index_devices_on_base_chassis_id"
   end
 
