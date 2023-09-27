@@ -85,7 +85,7 @@ RSpec.describe CreateClusterJob, type: :job do
     it "contains the correct config and user details" do
       expect(subject[:cloud_env]).to eq({
                                           "auth_url" => cloud_service_config.internal_auth_url,
-                                          "user_id" => user.cloud_user_id.gsub(/-/, ''),
+                                          "user_id" => user.cloud_user_id,
                                           "password" => user.foreign_password,
                                           "project_id" => user.project_id
                                         })

@@ -14,16 +14,8 @@ class AddLocationModel < ActiveRecord::Migration[7.0]
       null: false,
       foreign_key: { on_update: :cascade, on_delete: :restrict }
 
-    # Later migrations will populate location data and make this column `null:
-    # false`.
     add_reference 'base_chassis', 'location',
-      null: true,
+      null: false,
       foreign_key: { on_update: :cascade, on_delete: :restrict }
-
-    # Later migrations will populate chassis_id data and make this column `null:
-    # false`.
-    add_reference 'devices', 'base_chassis',
-      null: true,
-      foreign_key: { on_update: :cascade, on_delete: :cascade }
   end
 end

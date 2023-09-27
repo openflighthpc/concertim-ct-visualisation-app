@@ -71,7 +71,7 @@ class RequestStatusChangeJob < ApplicationJob
         cloud_env:
           {
             auth_url: @cloud_service_config.internal_auth_url,
-            user_id: (@user.root? ? @cloud_service_config.admin_user_id : @user.cloud_user_id).gsub(/-/, ''),
+            user_id: (@user.root? ? @cloud_service_config.admin_user_id : @user.cloud_user_id),
             password: @user.root? ? @cloud_service_config.admin_foreign_password : @user.foreign_password,
             project_id: @user.root? ? @cloud_service_config.admin_project_id : @user.project_id
           },

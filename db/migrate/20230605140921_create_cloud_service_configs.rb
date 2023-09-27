@@ -1,13 +1,13 @@
 class CreateCloudServiceConfigs < ActiveRecord::Migration[7.0]
   def change
     create_table :cloud_service_configs do |t|
-      t.string :host_name,    limit: 255, null: false
-      t.inet :host_ip,                    null: false
-      t.string :username,     limit: 255, null: false
-      t.string :password,     limit: 255, null: false
-      t.integer :port, default: 5000,     null: false
-      t.string :project_name, limit: 255, null: false
-      t.string :domain_name,  limit: 255, null: false
+      t.string :admin_user_id, limit: 255, null: false
+      t.string :admin_project_id, limit: 255, null: false
+      t.integer :user_handler_port, default: 42356, null: false
+      t.integer :cluster_builder_port, default: 42378, null: false
+      t.string :host_url, limit: 255, null: false
+      t.string :internal_auth_url, limit: 255, null: false
+      t.string :admin_foreign_password, limit: 255, null: false
 
       t.timestamps
     end

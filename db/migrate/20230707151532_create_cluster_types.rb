@@ -4,7 +4,8 @@ class CreateClusterTypes < ActiveRecord::Migration[7.0]
       t.string  :name,        null: false, limit: 255
       t.string  :description, null: false, limit: 1024
       t.string  :foreign_id,  null: false
-      t.integer :nodes,       null: false, default: 1
+      t.jsonb :fields, default: {}, null: false
+      t.datetime :version
 
       t.timestamps
     end

@@ -5,7 +5,7 @@ class CreateTemplates < ActiveRecord::Migration[7.0]
       t.integer :height, null: false
       t.integer :depth, null: false
       t.integer :version, null: false, default: 1
-      t.string :chassis_type, limit: 255, null: false
+      t.string :template_type, limit: 255, null: false
       t.integer :rackable, null: false, default: 1
       t.boolean :simple, null: false, default: true
       t.string :description, limit: 255
@@ -16,6 +16,10 @@ class CreateTemplates < ActiveRecord::Migration[7.0]
       t.integer :padding_bottom, null: false, default: 0
       t.integer :padding_right, null: false, default: 0
       t.integer :padding_top, null: false, default: 0
+      t.string :foreign_id
+      t.integer :vcpus
+      t.integer :ram
+      t.integer :disk
 
       # Needed for IRV structure.  Should be removed eventually.
       t.string :model, limit: 255

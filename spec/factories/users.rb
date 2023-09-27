@@ -13,8 +13,8 @@ FactoryBot.define do
   end
 
   trait :with_openstack_details do
-    project_id { Faker::Internet.uuid.gsub(/-/, '') }
-    cloud_user_id { Faker::Internet.uuid }
+    project_id { Faker::Alphanumeric.alphanumeric(number: 10) }
+    cloud_user_id { Faker::Alphanumeric.alphanumeric(number: 10) }
   end
 
   trait :admin do

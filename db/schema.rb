@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_05_094853) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_07_151532) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -34,19 +34,19 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_05_094853) do
     t.integer "cluster_builder_port", default: 42378, null: false
     t.string "host_url", limit: 255, null: false
     t.string "internal_auth_url", limit: 255, null: false
+    t.string "admin_foreign_password", limit: 255, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "admin_foreign_password"
   end
 
   create_table "cluster_types", force: :cascade do |t|
     t.string "name", limit: 255, null: false
     t.string "description", limit: 1024, null: false
     t.string "foreign_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.jsonb "fields", default: {}, null: false
     t.datetime "version"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "data_source_maps", force: :cascade do |t|
@@ -64,9 +64,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_05_094853) do
     t.string "description", limit: 255
     t.boolean "hidden", default: false, null: false
     t.integer "modified_timestamp", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "base_chassis_id", null: false
     t.jsonb "metadata", default: {}, null: false
     t.string "status", null: false
     t.decimal "cost", default: "0.0", null: false
@@ -75,6 +72,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_05_094853) do
     t.string "ssh_key"
     t.string "login_user"
     t.jsonb "volume_details", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "base_chassis_id", null: false
     t.index ["base_chassis_id"], name: "index_devices_on_base_chassis_id"
   end
 
@@ -154,15 +154,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_05_094853) do
     t.integer "u_height", default: 42, null: false
     t.integer "u_depth", default: 2, null: false
     t.integer "modified_timestamp", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.bigint "template_id", null: false
-    t.bigint "user_id", null: false
     t.jsonb "metadata", default: {}, null: false
     t.string "status", null: false
     t.decimal "cost", default: "0.0", null: false
     t.string "creation_output"
     t.jsonb "network_details", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "template_id", null: false
+    t.bigint "user_id", null: false
     t.index ["template_id"], name: "index_racks_on_template_id"
     t.index ["user_id"], name: "index_racks_on_user_id"
   end
@@ -193,14 +193,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_05_094853) do
     t.integer "padding_bottom", default: 0, null: false
     t.integer "padding_right", default: 0, null: false
     t.integer "padding_top", default: 0, null: false
-    t.string "model", limit: 255
-    t.string "rack_repeat_ratio", limit: 255
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.string "foreign_id"
     t.integer "vcpus"
     t.integer "ram"
     t.integer "disk"
+    t.string "model", limit: 255
+    t.string "rack_repeat_ratio", limit: 255
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|
@@ -218,14 +218,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_05_094853) do
     t.string "reset_password_token", limit: 255
     t.datetime "reset_password_sent_at"
     t.boolean "root", default: false, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.string "project_id", limit: 255
-    t.uuid "cloud_user_id"
+    t.string "cloud_user_id"
     t.decimal "cost", default: "0.0", null: false
     t.date "billing_period_start"
     t.date "billing_period_end"
     t.string "foreign_password"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["login"], name: "index_users_on_login", unique: true
     t.index ["project_id"], name: "index_users_on_project_id", unique: true, where: "(NOT NULL::boolean)"
