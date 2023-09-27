@@ -20,39 +20,82 @@ test('model defaults', () => {
     expect(model.assetList()).toEqual([]);
 });
 
-test('faceBoth', () => {
+test('faceBoth returns true if current facing is "both"', () => {
     let model = new ViewModel();
     expect(model.faceBoth()).toBe(false);
     model.face("both");
     expect(model.faceBoth()).toBe(true);
 });
 
-test('presetNames', () => {
-    let model = new ViewModel();
-    expect(model.presetNames()).toEqual([])
-    model.presetsById({"one": {"name": "testing"}, "two": {"name": "testing2"}})
-    expect(model.presetNames()).toEqual(["testing", "testing2"])
+describe("presetNames", () => {
+    test('returns list of preset names', () => {
+        let model = new ViewModel();
+        expect(model.presetNames()).toEqual([])
+        model.presetsById({"one": {"name": "testing"}, "two": {"name": "testing2"}})
+        expect(model.presetNames()).toEqual(["testing", "testing2"])
+    });
+
+    test('order list case insensitively', () => {
+        let model = new ViewModel();
+        expect(model.presetNames()).toEqual([])
+        model.presetsById({
+            "one": {"name": "testing1"},
+            "three": {"name": "TESTING3"},
+            "two": {"name": "testing2"},
+            "ten": {"name": "TeStInG10"},
+        })
+        expect(model.presetNames()).toEqual(["testing1", "TeStInG10", "testing2", "TESTING3"])
+    });
 });
 
-test('enablePresetSelection', () => {
-    let model = new ViewModel();
-    expect(model.enablePresetSelection()).toBe(false);
-    model.presetsById({"one": {"name": "testing"}, "two": {"name": "testing2"}})
-    expect(model.enablePresetSelection()).toBe(true);
+describe('enablePresetSelection', () => {
+    test('returns false if there are no presets', () => {
+        let model = new ViewModel();
+        model.presetsById({});
+        expect(model.enablePresetSelection()).toBe(false);
+    });
+
+    test('returns true if there are any presets', () => {
+        let model = new ViewModel();
+        model.presetsById({"one": {"name": "testing"}, "two": {"name": "testing2"}});
+        expect(model.enablePresetSelection()).toBe(true);
+    });
 });
 
-test('metricIds', () => {
+describe('metricIds', () => {
     let model = new ViewModel();
-    expect(model.metricIds()).toEqual([]);
-    model.metricTemplates({"one": {"name": "testing", "id": 1}, "two": {"name": "testing2", "id": 2},
-                           "excluded": {"name": "ct.capacity.rack", "id": 3}});
-    expect(model.metricIds()).toEqual([1, 2]);
+    test('returns empty list if there are no metric templates', () => {
+        model.metricTemplates([]);
+        expect(model.metricIds()).toEqual([]);
+    });
+    test('does not include id of excluded metrics', () => {
+        model.metricTemplates([
+            {"name": "ct.capacity.rack", "id": 3},
+            {"name": "ct.capacity.rack.suffix", "id": 4},
+        ]);
+        expect(model.metricIds()).toEqual([]);
+    });
+    test('includes id of all non-excluded metrics', () => {
+        model.metricTemplates([
+            {"name": "testing", "id": 1},
+            {"name": "testing2", "id": 2},
+        ]);
+        expect(model.metricIds()).toEqual([1, 2]);
+    });
 });
 
-test('enableMetricSelection', () => {
+describe('enableMetricSelection', () => {
     let model = new ViewModel();
-    model.metricTemplates({"excluded": {"name": "ct.capacity.rack", "id": 3}});
-    expect(model.enableMetricSelection()).toBe(false);
-    model.metricTemplates({"one": {"name": "testing", "id": 1}});
-    expect(model.enableMetricSelection()).toBe(true);
+    test('returns false if there are no metric templates', () => {
+        model.metricTemplates([]);
+        expect(model.enableMetricSelection()).toBe(false);
+    });
+    test('returns false if only excluded metrics are registered', () => {
+        model.metricTemplates([{"name": "ct.capacity.rack", "id": 3}]);
+        expect(model.enableMetricSelection()).toBe(false);
+    });
+    test('returns true if non-excluded metrics are registered', () => {
+        model.metricTemplates([{"name": "testing", "id": 1}]);
+        expect(model.enableMetricSelection()).toBe(true);
+    });
 });
