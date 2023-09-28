@@ -1,5 +1,6 @@
 object @rack
-attributes :id, :name, :cost
+attributes :id, :name
+attribute :currency_cost => :cost
 attributes u_height: :uHeight, status: :buildStatus
 
 child :user, root: 'owner' do
@@ -33,7 +34,7 @@ child(:chassis, root: 'Chassis') do |foo|
         id: chassis.device.id,
         name: chassis.device.name,
         buildStatus: chassis.device.status,
-        cost: chassis.device.cost
+        cost: chassis.device.currency_cost
       },
     }
   end

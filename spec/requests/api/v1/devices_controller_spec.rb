@@ -13,7 +13,7 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
       expect(parsed_device["id"]).to eq device.id
       expect(parsed_device["name"]).to eq device.name
       expect(parsed_device["metadata"]).to eq device.metadata
-      expect(parsed_device["cost"]).to eq "$#{'%.2f' % device.cost}"
+      expect(parsed_device["cost"]).to eq "#{'%.2f' % device.cost}"
       if full_template_details
         expect(parsed_device["template"]["id"]).to eq device_template.id
       else
@@ -194,7 +194,7 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
           expect(parsed_device["name"]).to eq valid_attributes[:device][:name]
           expect(parsed_device["metadata"]).to eq valid_attributes[:device][:metadata]
           expect(parsed_device["status"]).to eq valid_attributes[:device][:status]
-          expect(parsed_device["cost"]).to eq "$#{'%.2f' % valid_attributes[:device][:cost]}"
+          expect(parsed_device["cost"]).to eq "#{'%.2f' % valid_attributes[:device][:cost]}"
           expect(parsed_device["public_ips"]).to eq valid_attributes[:device][:public_ips]
           expect(parsed_device["private_ips"]).to eq valid_attributes[:device][:private_ips]
           expect(parsed_device["ssh_key"]).to eq valid_attributes[:device][:ssh_key]
