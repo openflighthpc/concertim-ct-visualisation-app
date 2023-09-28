@@ -70,7 +70,7 @@ class ContextMenu {
           aspect    = ContextMenu.ASPECT_MAP[aspect];
           break;
         default:
-          Profiler.trace(Profiler.CRITICAL, '***** UNKNOWN GROUP: %s ******', child.group);
+          Profiler.trace(Profiler.CRITICAL, this.show, '***** UNKNOWN GROUP: %s ******', child.group);
       }
 
       option_keys.push(child.group);

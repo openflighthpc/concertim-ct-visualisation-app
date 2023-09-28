@@ -72,7 +72,6 @@ class RackObject extends RackSpaceObject {
       if (parent.frontFacing !== undefined) { this.frontFacing = parent.frontFacing; }
       parent       = parent.parent();
     }
-
     if (RackObject.MODEL.deviceLookup()[this.group][this.id] == null) {
       def.instances = [];
       RackObject.MODEL.deviceLookup()[this.group][this.id] = def;
@@ -363,9 +362,9 @@ class RackObject extends RackSpaceObject {
   }
 
   draw() {
-    Profiler.begin(Profiler.DEBUG, this.name);
+    Profiler.begin(Profiler.DEBUG, this.draw, this.name);
     for (var child of Array.from(this.children)) { child.draw(); }
-    return Profiler.end(Profiler.DEBUG);
+    return Profiler.end(Profiler.DEBUG, this.draw);
   }
 
 

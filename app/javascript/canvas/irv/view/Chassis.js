@@ -185,7 +185,7 @@ class Chassis extends RackObject {
     if (show_name_label == null) {
       show_name_label = RackObject.MODEL.displayingBuildStatus();
     }
-    Profiler.begin(Profiler.DEBUG, this.name);
+    Profiler.begin(Profiler.DEBUG, this.draw, this.name);
     // clear
     for (var asset of Array.from(this.assets)) { this.gfx.remove(asset); }
     this.assets = [];
@@ -246,7 +246,7 @@ class Chassis extends RackObject {
 
     this.alignMachines();
     super.draw();
-    return Profiler.end(Profiler.DEBUG);
+    return Profiler.end(Profiler.DEBUG, this.draw);
   }
 
   select() {

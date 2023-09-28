@@ -96,6 +96,8 @@ The rails server, `dartsass` and `good_job` can all be started by running
 
 ## Running tests
 
+### Ruby on Rails tests
+
 Tests are to be ran on the vagrant vm.  First SSH into the VM (`vagrant ssh dev1`)
 and then change to the app directory (`cd /opt/concertim/dev/ct-visualisation-app`).
 
@@ -111,6 +113,15 @@ and then change to the app directory (`cd /opt/concertim/dev/ct-visualisation-ap
 
 - Specific tests: see `./bin/bundle exec rspec -h`
 
+### JavaScript tests
+
+These test can be run on your local machine or the vagrant VM.
+
+- Ensure your machine has `yarn` installed
+- Ensure you have a modern version of node installed, e.g. v18.18.0
+- Install the required testing dependencies by running `yarn install`
+
+You can then run all tests with `yarn jest`, or specify a file, e.g. `yarn jest spec/javascript/view_model.spec.js`
 
 ## Developing a feature
 

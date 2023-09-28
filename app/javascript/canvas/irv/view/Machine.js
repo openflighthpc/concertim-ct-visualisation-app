@@ -159,7 +159,7 @@ class Machine extends RackObject {
   }
 
   draw() {
-    Profiler.begin(Profiler.DEBUG, this.name);
+    Profiler.begin(Profiler.DEBUG, this.draw, this.name);
     // clear
     for (var asset of Array.from(this.assets)) { this.gfx.remove(asset); }
     this.assets = [];
@@ -177,7 +177,7 @@ class Machine extends RackObject {
       }
     }
 
-    return Profiler.end(Profiler.DEBUG);
+    return Profiler.end(Profiler.DEBUG, this.draw);
   }
 
 

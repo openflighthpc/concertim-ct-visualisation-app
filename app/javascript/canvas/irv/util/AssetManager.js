@@ -24,17 +24,17 @@ class AssetManager {
   }
 
   delay(asset, path) {
-    Profiler.begin(Profiler.DEBUG);
+    Profiler.begin(Profiler.DEBUG, this.delay);
     setTimeout(
       () => { this.assetReceived(asset, path); },
       this.ASSET_READY_DELAY
     );
-    Profiler.end(Profiler.DEBUG);
+    Profiler.end(Profiler.DEBUG, this.delay);
   }
 
   assetReceived(asset, path) {
     this.debug('received', path);
-    Profiler.begin(Profiler.DEBUG);
+    Profiler.begin(Profiler.DEBUG, this.assetReceived);
     if (asset.width > 0) {
       this.CACHE[path] = asset;
       --this.LOAD_COUNT;
@@ -52,7 +52,7 @@ class AssetManager {
     } else {
       this.delay(asset, path);
     }
-    Profiler.end(Profiler.DEBUG);
+    Profiler.end(Profiler.DEBUG, this.assetReceived);
   }
 
   assetFailed(path) {
@@ -67,7 +67,7 @@ class AssetManager {
   }
 
   get(path, on_success, on_error) {
-    Profiler.begin(Profiler.DEBUG, path);
+    Profiler.begin(Profiler.DEBUG, this.get, path);
 
     if (this.CACHE[path] === this.ASSET_LOAD_IN_PROGRESS) {
       // if the required asset is already being loaded append the callback to the existing list
@@ -96,12 +96,12 @@ class AssetManager {
         this.getAsset();
       }
     }
-    Profiler.end(Profiler.DEBUG);
+    Profiler.end(Profiler.DEBUG, this.get);
   }
 
 
   getAsset() {
-    Profiler.begin(Profiler.DEBUG);
+    Profiler.begin(Profiler.DEBUG, this.getAsset);
     ++this.LOAD_COUNT;
     const path = this.QUEUE.shift();
 
@@ -111,7 +111,7 @@ class AssetManager {
     img.onabort = () => this.assetFailed(path);
     img.onerror = () => this.assetFailed(path);
     img.src     = path;
-    Profiler.end(Profiler.DEBUG);
+    Profiler.end(Profiler.DEBUG, this.getAsset);
   }
 
   debug(...msg) {

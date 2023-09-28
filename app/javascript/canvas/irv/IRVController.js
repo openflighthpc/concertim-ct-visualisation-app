@@ -561,25 +561,25 @@ class IRVController {
 
   // called should the metric definition response fail, re-submits the request. !! possibly untested, possibly redundant
   retryMetricTemplates() {
-    Profiler.trace(Profiler.CRITICAL, 'Failed to load metric templates, retrying in ' + IRVController.API_RETRY_DELAY + 'ms');
+    Profiler.trace(Profiler.CRITICAL, this.retryMetricTemplates, 'Failed to load metric templates, retrying in ' + IRVController.API_RETRY_DELAY + 'ms');
     return setTimeout(this.getMetricTemplates, IRVController.API_RETRY_DELAY);
   }
 
 
   // called should the rack definition response fail, re-submits the request. !! possibly untested, possibly redundant
   retryRackDefs() {
-    Profiler.trace(Profiler.CRITICAL, 'Failed to load rack definitions, retrying in ' + IRVController.API_RETRY_DELAY + 'ms');
+    Profiler.trace(Profiler.CRITICAL, this.retryRackDefs, 'Failed to load rack definitions, retrying in ' + IRVController.API_RETRY_DELAY + 'ms');
     return setTimeout(this.getRackDefs, IRVController.API_RETRY_DELAY);
   }
 
   retryNonrackDeviceDefs() {
-    Profiler.trace(Profiler.CRITICAL, 'Failed to load nonrack device definitions, retrying in ' + IRVController.API_RETRY_DELAY + 'ms');
+    Profiler.trace(Profiler.CRITICAL, this.retryNonrackDeviceDefs, 'Failed to load nonrack device definitions, retrying in ' + IRVController.API_RETRY_DELAY + 'ms');
     return setTimeout(this.getNonrackDeviceDefs, IRVController.API_RETRY_DELAY);
   }
 
   // called should the system time response fail, re-submits the request. !! possibly untested, possibly redundant
   retrySystemDateTime() {
-    Profiler.trace(Profiler.CRITICAL, 'Failed to load system date time, retrying in ' + IRVController.API_RETRY_DELAY + 'ms');
+    Profiler.trace(Profiler.CRITICAL, this.retrySystemDateTime, 'Failed to load system date time, retrying in ' + IRVController.API_RETRY_DELAY + 'ms');
     return setTimeout(this.getSystemDateTime, IRVController.API_RETRY_DELAY);
   }
 
@@ -1638,13 +1638,13 @@ class IRVController {
 
   // generic request error handler
   loadError(err_str, err) {
-    return Profiler.trace(Profiler.CRITICAL, `loadError ${err_str}`);
+    return Profiler.trace(Profiler.CRITICAL, this.loadError, `loadError ${err_str}`);
   }
 
 
   // generic request failure handler
   loadFail(failee) {
-    return Profiler.trace(Profiler.CRITICAL, `loadFail ${failee}`);
+    return Profiler.trace(Profiler.CRITICAL, this.loadFail, `loadFail ${failee}`);
   }
 
 

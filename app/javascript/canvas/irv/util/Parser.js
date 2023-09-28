@@ -24,12 +24,9 @@ class Parser {
     this.model = model;
   }
 
-
   parseRackDefs(rack_defs, filter=null) {
-    Profiler.begin(Profiler.CRITICAL);
+    Profiler.begin(Profiler.CRITICAL, this.parseRackDefs);
     const apply_filter = filter === null ? false : true;
-
-    // format data and create lookup table based on rack/chassis/device id
     const groups        = this.model.groups();
     let filtered      = false;
     const device_lookup = { byGroup: {} };
@@ -65,7 +62,7 @@ class Parser {
     const asset_list = [];
     for (var asset in assets) { asset_list.push(asset); }
 
-    Profiler.end(Profiler.CRITICAL);
+    Profiler.end(Profiler.CRITICAL, this.parseRackDefs);
     return { filtered, assetList: asset_list, racks: rack_defs, deviceLookup: device_lookup };
   }
 
@@ -193,7 +190,7 @@ class Parser {
   }
 
   parseTemplate(item) {
-    Profiler.begin(Profiler.CRITICAL);
+    Profiler.begin(Profiler.CRITICAL, this.parseTemplate);
 
     item.template.id      = Number(item.template.id);
     item.template.rows    = Number(item.template.rows);
@@ -213,7 +210,7 @@ class Parser {
     item.template.padding.top    = Number(item.template.padding_top);    delete item.template.padding_top;
     item.template.padding.bottom = Number(item.template.padding_bottom); delete item.template.padding_bottom;
 
-    return Profiler.end(Profiler.CRITICAL);
+    return Profiler.end(Profiler.CRITICAL, this.parseTemplate);
   }
 
   parseMetrics(metrics) {

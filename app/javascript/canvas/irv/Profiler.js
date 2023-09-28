@@ -29,21 +29,21 @@ const Profiler = {
         this.begin  = function(){};
         this.end    = function(){};
         this.trace  = function(){};
-        this.output = function(){console.log('Output unavailable, profier has been disbanded');};
+        this.output = function(){console.log('Output unavailable, profiler has been disbanded');};
     },
 
 
     makeCompatible: function()
     {
-        tracer = function(log_level, trace)
+        const tracer = function(log_level, trace)
         {
             if(log_level === undefined || log_level < this.LOG_LEVEL || trace === undefined)
             return;
 
             if(typeof(trace) === 'string')
             {
-                count = 2;
-                len   = arguments.length;
+                let count = 2;
+                let len = arguments.length;
                 while(count < len)
                 {
                     trace = trace.replace(/%s/, arguments[count]);
@@ -61,14 +61,14 @@ const Profiler = {
     },
 
 
-    begin: function(log_level, trace)
+    begin: function(log_level, calling_function, trace)
     {
         if(log_level === undefined || log_level < this.LOG_LEVEL)
         return;
 
         var start_obj;
         var time   = new Date().getTime();
-        var fn     = arguments.callee.caller;
+        var fn     = calling_function;
         var caller = this.getCaller(fn);
         var idx    = this.getTimeIdx(fn, caller);
         var log    = { type: 'start',
@@ -81,8 +81,8 @@ const Profiler = {
         {
             if(typeof(trace) === 'string')
             {
-                count = 2;
-                len   = arguments.length;
+                let count = 2;
+                let len   = arguments.length;
                 while(count < len)
                 {
                     trace = trace.replace(/%s/, arguments[count]);
@@ -122,7 +122,7 @@ const Profiler = {
     },
 
 
-    trace: function(log_level, trace)
+    trace: function(log_level, callingFunction, trace)
     {
         if(log_level === undefined || log_level < this.LOG_LEVEL)
         return;
@@ -130,14 +130,14 @@ const Profiler = {
         var time = new Date().getTime();
         if(trace && typeof(trace) === 'string')
         {
-            count = 2;
-            len   = arguments.length;
+            let count = 2;
+            let len   = arguments.length;
             while(count < len)
             {
                 trace = trace.replace(/%s/, arguments[count]);
                 ++count;
             }
-            trace = this.getCaller(arguments.callee.caller) + ' ' + trace;
+            trace = this.getCaller(callingFunction) + ' ' + trace;
         }
 
     this.log.push({ type     : 'trace', 
@@ -150,13 +150,13 @@ const Profiler = {
     },
 
 
-    end: function(log_level, trace)
+    end: function(log_level, calling_function, trace)
     {
         if(log_level === undefined || log_level < this.LOG_LEVEL)
         return;
 
         var time   = new Date().getTime();
-        var fn     = arguments.callee.caller;
+        var fn     = calling_function;
         var caller = this.getCaller(fn);
         var idx    = this.getTimeIdx(fn, caller);
 
@@ -183,8 +183,8 @@ const Profiler = {
             {
                 if(typeof(trace) === 'string')
                 {
-                    count = 2;
-                    len = arguments.length;
+                    let count = 2;
+                    let len = arguments.length;
                     while(count < len)
                     {
                         trace = trace.replace(/%s/, arguments[count]);
@@ -391,7 +391,7 @@ const Profiler = {
                         return;
                     }
 
-                    response = eval('(' + req.response + ')');
+                    let response = eval('(' + req.response + ')');
 
                     if(response.error)
                     console.log('ERROR: ' + response.message);
@@ -424,8 +424,8 @@ if(start_obj !== undefined && start_obj.fn === fn)
 return start_obj.idx;*/
 
         // an indentically named fn may have overwritten startsByCaller reference so perform slow lookup to be certain
-        count = 0;
-        len   = this.startEvents.length;
+        let count = 0;
+        let len   = this.startEvents.length;
         while(count < len)
     {
             if(this.startEvents[count].fn === fn)
