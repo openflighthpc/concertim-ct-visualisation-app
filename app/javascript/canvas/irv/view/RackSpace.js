@@ -1141,8 +1141,6 @@ class RackSpace {
         }
       }
 
-      this.model.selectedGroup(null);
-
       this.model.activeSelection(active_selection);
       return this.model.selectedDevices(selected_devices);
 
@@ -1162,9 +1160,6 @@ class RackSpace {
           }
         }
       }
-
-
-      this.model.selectedGroup(null);
 
       this.model.activeSelection(true);
       return this.model.selectedDevices(new_sel);
@@ -1439,7 +1434,6 @@ class RackSpace {
     box.top    = box.y;
     box.bottom = box.y + box.height;
 
-    this.model.selectedGroup(null);
     const selection = this.selectWithin(box, true);
     this.model.activeSelection(selection != null);
     this.model.selectedDevices(selection);

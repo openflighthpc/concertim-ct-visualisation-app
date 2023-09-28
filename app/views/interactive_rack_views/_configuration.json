@@ -257,59 +257,6 @@
     ]
   },
 
-  "STATICGROUPMANAGER":
-  {
-    "*COMMENT*"        : "Server API URL to grab a list of static group names and their associated IDs",
-    "list"             : "/api/v1/groups?group_for=irv",
-    "*COMMENT*"        : "Server API URL to get a specific static group",
-    "get"              : "/api/v1/groups/[[group_id]]?group_for=irv",
-    "*COMMENT*"        : "Server API UTL to post a new static group",
-    "new"              : "/-/api/v1/static_groups",
-    "*COMMENT*"        : "Server API URL to update an existing static group",
-    "update"           : "/-/api/v1/static_groups/[[group_id]]",
-    "*COMMENT*"        : "Static group update confirmation message",
-    "msgConfirmUpdate" : "Are you sure you wish to overwrite the static group [[selected_group]] with the current selection?",
-
-    "*COMMENT*"         : "The names of the model values required by StaticGroupManager",
-    "modelDependencies" :
-    {
-      "selectedGroup"      : "selectedGroup",
-      "groupsById"         : "groupsById",
-      "deviceLookup"       : "deviceLookup",
-      "groups"             : "groups",
-      "activeSelection"    : "activeSelection",
-      "selectedDevices"    : "selectedDevices",
-      "activeFilter"       : "activeFilter",
-      "filteredDevices"    : "filteredDevices",
-      "displayingAllRacks" : "displayingAllRacks"
-    },
-
-    "*COMMENT*"       : "DOM dependencies, specific elements are accessed by the IDs stipulated below",
-    "domDependencies" :
-    {
-      "saveDialogue"     : "group_save_dialogue",
-      "nameInput"        : "group_save_input",
-      "createNewBtn"     : "create_group",
-      "updateBtn"        : "update_group",
-      "confirmGroupSave" : "confirm_group_save",
-      "cancelGroupSave"  : "cancel_group_save"
-    },
-
-    "*COMMENT*" : "All possible error messages",
-    "errors" :
-    {
-      "*COMMENT*"       : "Generic aspect of error message",
-      "caption"         : "Failed to save static group: [[error_message]]",
-      "*COMMENT*"       : "The user attempted to create a group with the same name as an existing group",
-      "duplicateName"   : "The chosen name is already in use.",
-      "invalidName"     : "The chosen name contains invalid characters.",
-      "whiteName"       : "The chosen name contains no characters.",
-      "readOnly"        : "The selected group is of type [[group_type]] and cannot be modified.",
-      "emptyGroup"      : "Your request could not be processed as the current selection is empty.",
-      "groupDataCentre" : "Your request could not be processed. The current selection includes the entire data centre; a group for this already exists."
-    }
-  },
-
   "UPDATEMSG":
   {
     "message": "Updating..."

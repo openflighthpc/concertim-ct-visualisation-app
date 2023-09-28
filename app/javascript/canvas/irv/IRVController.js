@@ -192,7 +192,6 @@ class IRVController {
     this.evDropFilterBar = this.evDropFilterBar.bind(this);
     this.hintInfoReceived = this.hintInfoReceived.bind(this);
     this.evSwitchStat = this.evSwitchStat.bind(this);
-    this.evSwitchGroup = this.evSwitchGroup.bind(this);
     this.evSwitchGraphOrder = this.evSwitchGraphOrder.bind(this);
     this.config_file = '/irv/configuration';
     console.log("Constructing IRV :::: with the options :::: ",this.options);
@@ -663,7 +662,6 @@ class IRVController {
     this.model.metricLevel.subscribe(this.switchMetricLevel);
     this.model.selectedMetricStat.subscribe(this.evSwitchStat);
     this.model.graphOrder.subscribe(this.evSwitchGraphOrder);
-    this.model.selectedGroup.subscribe(this.evSwitchGroup);
     this.pollSub = this.model.metricPollRate.subscribe(this.setMetricPollInput);
 
     const resetMetricControl = $('reset_metric');
@@ -2507,15 +2505,6 @@ class IRVController {
     if ((selected_metric == null) || (filter == null) || (col_map == null)) { return; }
 
     if (((filter.max != null) && (filter.max !== col_map.high)) || ((filter.min != null) && (filter.min !== col_map.low))) { return this.applyFilter(); }
-  }
-
-
-  // There is one subscriber to selectedGroup in the StaticGroupManager class that runs before this one,
-  // But we also need this subscriber here to setMetricLevel when the selected group has been blanked.
-  evSwitchGroup(group) {
-    if (this.model.noGroupSelected()) {
-      this.rackSpace.setMetricLevel(this.currentMetricLevel);
-    }
   }
 
   // graphOrder model value subscriber, sets the agreggated metric statistic based upon the chosen chart order
