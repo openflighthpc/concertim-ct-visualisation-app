@@ -198,7 +198,7 @@ GEM
     nokogiri (1.15.4-x86_64-linux)
       racc (~> 1.4)
     orm_adapter (0.5.0)
-    pg (1.4.5)
+    pg (1.5.4)
     public_suffix (5.0.1)
     puma (5.6.5)
       nio4r (~> 2.0)
@@ -339,7 +339,7 @@ DEPENDENCIES
   good_job (~> 3.12)
   importmap-rails
   jbuilder
-  pg (~> 1.1)
+  pg (~> 1.5)
   puma (~> 5.0)
   rabl (~> 0.16.1)
   rails (~> 7.0.4)
