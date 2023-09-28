@@ -36,11 +36,6 @@ class HwRack < ApplicationRecord
   has_many :chassis, through: :locations
   has_many :devices, through: :chassis
 
-  has_one :group,
-          class_name: "Group::RuleBasedGroup",
-          foreign_key: :ref_text,
-          primary_key: :name
-
   belongs_to :user, class_name: 'User'
 
 
