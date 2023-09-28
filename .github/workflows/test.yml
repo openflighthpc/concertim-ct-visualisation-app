@@ -9,12 +9,12 @@ on:
     paths-ignore: ['docs/**']
 
 jobs:
-  test:
+  test-ruby:
     env:
       RAILS_ENV: test
       CONCERTIM_JWT_SECRET: "fake-but-ok"
 
-    name: Run tests
+    name: Rails tests
     runs-on: ubuntu-latest
     # container: ubuntu:latest
 
@@ -51,7 +51,7 @@ jobs:
           EDITOR=cat ./bin/rails credentials:edit
           ./bin/rails encryption:generate
 
-      - name: Test with rails spec
+      - name: Run rails tests
         env:
           DB_DATABASE: ct-vis-test
           DB_HOST: localhost
@@ -62,3 +62,22 @@ jobs:
         # fine.  :shrug:.
         run:
           ./bin/rails spec
+
+  test-javascript:
+    name: JavaScript tests
+    runs-on: ubuntu-latest
+    # container: ubuntu:latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+          cache: 'yarn'
+
+      - name: Install JavaScript testing dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Run JavaScript tests
+        run:
+          yarn run jest --all
