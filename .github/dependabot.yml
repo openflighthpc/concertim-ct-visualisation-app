@@ -8,4 +8,45 @@ updates:
     directory: /
     schedule:
       interval: weekly
-
+    groups:
+      rails:
+        patterns:
+          - "actioncable"
+          - "actionmailbox"
+          - "actionmailer"
+          - "actionpack"
+          - "actiontext"
+          - "actionview"
+          - "activejob"
+          - "activemodel"
+          - "activerecord"
+          - "activestorage"
+          - "activesupport"
+          - "railties"
+          - "rails"
+      cells:
+        patterns:
+          - "cells*"
+      devise_and_warden:
+        patterns:
+          - "devise*"
+          - "warden*"
+      faraday:
+        patterns:
+          - "faraday*"
+      sprockets:
+        patterns:
+          - "sprockets*"
+      dev-dependencies:
+        patterns:
+          - "web-console"
+          - "foreman"
+          - "debug"
+      test-dependencies:
+        patterns:
+          - "rspec*"
+          - "factory_bot*"
+          - "capybara"
+          - "faker"
+          - "*webdriver*"
+          - "diff-lcs"
