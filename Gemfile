@@ -63,7 +63,7 @@ gem "sprockets-rails"
 gem "importmap-rails"
 gem "turbo-rails"
 gem "stimulus-rails"
-gem "dartsass-rails", "~> 0.4.1"
+gem "dartsass-rails", "~> 0.5.0"
 
 
 ###################################
