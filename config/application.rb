@@ -20,8 +20,13 @@ module CtApp
     # config.eager_load_paths << Rails.root.join("extras")
     #
     #
-    config.jwt_secret_file = Pathname('/opt/concertim/etc/secret')
-    config.jwt_secret = config.jwt_secret_file.read.chomp
+    if ENV['CONCERTIM_JWT_SECRET'].present?
+      config.jwt_secret_file = nil
+      config.jwt_secret = ENV['CONCERTIM_JWT_SECRET'].chomp
+    else
+      config.jwt_secret_file = Pathname('/opt/concertim/etc/secret')
+      config.jwt_secret = config.jwt_secret_file.read.chomp
+    end
     config.jwt_aud = 'alces-ct'
 
     # The base URL to use for the concertim metric reporting daemon.
