@@ -91,7 +91,7 @@ gem "crack", "~> 0.4.5"
 # A memcache client.
 gem "dalli", "~> 3.2"
 
-gem "good_job", "~> 3.12"
+gem "good_job", "~> 3.19"
 
 
 ###################################
