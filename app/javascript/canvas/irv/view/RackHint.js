@@ -41,7 +41,7 @@ class RackHint extends Hint {
     let caption, metric_max, metric_mean, metric_min, metric_total, position;
     const metrics         = this.model.metricData();
     const metric_template = (this.model.metricTemplates()[metrics.metricId] != null) ? this.model.metricTemplates()[metrics.metricId] : {};
-    let metric_value    = (metrics.values[device.group] != null) ? metrics.values[device.group][device.id] : null;
+    let metric_value    = (metrics.values[device.componentClassName] != null) ? metrics.values[device.componentClassName][device.id] : null;
 
     if ((typeof metric_value === 'object') && (metric_value !== null)) {
       if (metric_value.min != null) { metric_min   = metric_template.format.replace(/%s/, metric_value.min); }

@@ -529,12 +529,12 @@ class Rack extends RackObject {
   selectChildren() {
     const select_hash = {};
     if (this.children.length === 0) { return select_hash; }
-    select_hash[this.children[0].group] = {};
+    select_hash[this.children[0].componentClassName] = {};
     for (var child of Array.from(this.children)) {
-      select_hash[child.group][child.id] = true;
+      select_hash[child.componentClassName][child.id] = true;
       for (var gchild of Array.from(child.children)) {
-        if (!select_hash[gchild.group]) { select_hash[gchild.group] = {}; }
-        select_hash[gchild.group][gchild.id] = true;
+        if (!select_hash[gchild.componentClassName]) { select_hash[gchild.componentClassName] = {}; }
+        select_hash[gchild.componentClassName][gchild.id] = true;
       }
     }
     return select_hash;

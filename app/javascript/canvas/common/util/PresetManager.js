@@ -145,7 +145,7 @@ class PresetManager {
       this.model.crossAppSettings = false;
     } else {
       this.model.activeSelection(false);
-      this.model.selectedDevices(this.model.getBlankGroupObject());
+      this.model.selectedDevices(this.model.getBlankComponentClassNamesObject());
     }
 
     this.debug('::: switching to preset', selectedPresetName, preset);

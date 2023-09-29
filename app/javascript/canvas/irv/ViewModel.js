@@ -54,14 +54,14 @@ class ViewModel {
     this.showingRackThumbnail = ko.observable(false);
 
     // object, stores each device JSON object with an additional property 'instances', an array of references to the class instances
-    // uses group (class - racks, chassis or devices) as top level key; id as second level key
+    // uses class name as top level key; id as second level key
     this.deviceLookup = ko.observable({});
 
     // array, stores the parsed rack definition JSON
     this.racks = ko.observable([]);
 
-    // id groups (class), both group and id are required to identify an individual device
-    this.groups = ko.observable(['racks', 'chassis', 'devices']);
+    // Both class name and id are required to identify an individual component
+    this.componentClassNames = ko.observable(['racks', 'chassis', 'devices']);
   
     // do the racks face forward, backwards or show both
     this.face = ko.observable(ViewModel.INIT_FACE);
@@ -145,21 +145,21 @@ class ViewModel {
 
     this.dragging = ko.observable(false);
 
-    // object, devices in current selection, uses id group as the top-level key and id as the second level key
+    // object, devices in current selection, uses component class name as the top-level key and id as the second level key
     this.selectedDevices = ko.observable({});
 
     // boolean, is a filter active (metrics which satisfy above/below/between filters if any)
     this.activeFilter = ko.observable(false);
 
-    // object, devices in current filter, uses id group as the top-level key and id as the second level key
+    // object, devices in current filter, uses component class name as the top-level key and id as the second level key
     this.filteredDevices = ko.observable({});
 
     // object, stores metric definitions using metric id as the key
     this.metricTemplates = ko.observable([]);
 
-    let blank        = {};
-    const groups       = this.groups();
-    for (let group of Array.from(groups)) { blank[group] = {}; }
+    let blank = {};
+    const classNames  = this.componentClassNames();
+    for (let className of Array.from(classNames)) { blank[className] = {}; }
     // object, parsed metric data pushed from server. Values are contained in 'values' object
     this.metricData = ko.observable({ values: blank });
 
@@ -171,8 +171,8 @@ class ViewModel {
     this.rackImage = ko.observable();
 
     blank        = {};
-    for (let group of Array.from(groups)) { blank[group] = {}; }
-    // object, defines the physical dimensions of the breaching devices. Used to draw red boxes in thumb navigation. Uses group as
+    for (let className of Array.from(classNames)) { blank[className] = {}; }
+    // object, defines the physical dimensions of the breaching devices. Used to draw red boxes in thumb navigation. Uses class name as
     // the top-level key, then id
     this.breachZones = ko.observable(blank);
 
@@ -236,7 +236,7 @@ class ViewModel {
   }
 
   displayingBuildStatus() {
-    return this.viewMode() == ViewModel.VIEW_MODE_BUILD_STATUS;
+    return this.viewMode() === ViewModel.VIEW_MODE_BUILD_STATUS;
   }
 
   faceBoth() {
@@ -259,7 +259,7 @@ class ViewModel {
   // Reset the "metric value filter" filter.
   resetFilter() {
     this.activeFilter(false);
-    this.filteredDevices(this.getBlankGroupObject());
+    this.filteredDevices(this.getBlankComponentClassNamesObject());
   
     const selected_metric          = this.selectedMetric();
     const filters                  = this.filters();
@@ -271,19 +271,20 @@ class ViewModel {
   // box of clicking on Focus on.
   resetSelection() {
     this.activeSelection(false);
-    this.selectedDevices(this.getBlankGroupObject());
+    this.selectedDevices(this.getBlankComponentClassNamesObject());
   }
 
   resetMetricData() {
     let blank  = { values: {} };
-    for (let group of this.groups()) { blank.values[group] = {}; }
+    for (let className of this.componentClassNames()) { blank.values[className] = {}; }
     this.metricData(blank);
   }
 
-  getBlankGroupObject() {
+  // Create an object with keys for each of the component class names (racks, devices, etc.), each containing an empty object
+  getBlankComponentClassNamesObject() {
     const obj        = {};
-    const groups     = this.groups();
-    for (var group of Array.from(groups)) { obj[group] = {}; }
+    const classNames     = this.componentClassNames();
+    for (let className of Array.from(classNames)) { obj[className] = {}; }
 
     return obj;
   }

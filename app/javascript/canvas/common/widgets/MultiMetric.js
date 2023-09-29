@@ -149,7 +149,7 @@ class MultiMetric extends Metric {
   update() {
     let old_len, scale;
     const metrics = this.modelRefs.metricData();
-    const val_obj = (metrics.byGroup != null ? metrics.byGroup : metrics.values)[this.group][this.id];
+    const val_obj = (metrics.byClass != null ? metrics.byClass : metrics.values)[this.componentClassName][this.id];
     if (this.value != null) { old_len = this.value.length; }
     this.value  = this.getValue(val_obj);
 

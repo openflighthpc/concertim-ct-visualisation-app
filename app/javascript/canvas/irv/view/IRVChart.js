@@ -79,17 +79,17 @@ class IRVChart extends LBC {
   // Override
   getDataSet(inclusion_filter) {
 
-    let colours, device, group, id, metric, name, series, values;
+    let colours, device, id, metric, name, series, values;
     const data             = [];
     const metric_data      = this.modelRefs.metricData();
     const metric_templates = this.modelRefs.metricTemplates();
     const metric_template  = metric_templates[metric_data.metricId];
     const selected_metric  = this.modelRefs.selectedMetric();
     const device_lookup    = this.modelRefs.deviceLookup();
-    const groups           = this.modelRefs.groups();
+    const componentClassNames = this.modelRefs.componentClassNames();
     let metric_level     = this.modelRefs.metricLevel();
     const included         = {};
-    for (group of Array.from(groups)) { included[group]  = {}; }
+    for (let className of Array.from(componentClassNames)) { included[className]  = {}; }
 
     const col_map  = this.modelRefs.colourMaps()[metric_data.metricId];
     const col_high = col_map.high;
@@ -99,25 +99,25 @@ class IRVChart extends LBC {
     let sample_count = 0;
 
     // extract subset of all metrics according to display settings
-    const groups_to_consider = metric_level === ViewModel.METRIC_LEVEL_ALL ? groups : [ metric_level ];
+    const classNamesToConsider = metric_level === ViewModel.METRIC_LEVEL_ALL ? componentClassNames : [ metric_level ];
 
     //values  = metric_data.values[metric_level]
     series  = [ 'numMetric' ];
     colours = [ 'colour' ];
 
-    for (group of Array.from(groups_to_consider)) {
+    for (let className of Array.from(classNamesToConsider)) {
 
-      var group_values = metric_data.values[group];
+      let classValues = metric_data.values[className];
 
-      for (id in group_values) {
-        metric = group_values[id];
+      for (id in classValues) {
+        metric = classValues[id];
         ++sample_count;
-        if (inclusion_filter(group, id)) {
-          device = device_lookup[group][id];
+        if (inclusion_filter(className, id)) {
+          device = device_lookup[className][id];
 
           if (device == null) { continue; }
 
-          included[group][id] = true;
+          included[className][id] = true;
 
           var temp = (metric - col_low) / range;
           var col  = this.getColour(temp).toString(16);
@@ -127,8 +127,8 @@ class IRVChart extends LBC {
           data.push({
             name,
             id,
-            group,
-            pos       : this.posLookup[group][id],
+            className,
+            pos       : this.posLookup[className][id],
             metric,
             numMetric : Number(metric),
             colour    : '#' + col,

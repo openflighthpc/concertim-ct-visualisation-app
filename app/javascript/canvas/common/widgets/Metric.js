@@ -21,12 +21,12 @@ class Metric {
   }
 
 
-  constructor(group, id, parent, x, y, width, height, model) {
+  constructor(componentClassName, id, parent, x, y, width, height, model) {
     this.update = this.update.bind(this);
     this.show = this.show.bind(this);
     this.hide = this.hide.bind(this);
     this.evToggleScale = this.evToggleScale.bind(this);
-    this.group = group;
+    this.componentClassName = componentClassName;
     this.id = id;
     this.parent = parent;
     this.x = x;
@@ -80,7 +80,7 @@ class Metric {
   // necessary and commences animations
   update() {
     const metrics = this.modelRefs.metricData();
-    const val_obj = (metrics.byGroup != null ? metrics.byGroup : metrics.values)[this.group][this.id];
+    const val_obj = (metrics.byClass != null ? metrics.byClass : metrics.values)[this.componentClassName][this.id];
     this.value  = this.getValue(val_obj);
 
     if (this.value != null) {

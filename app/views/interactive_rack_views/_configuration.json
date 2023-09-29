@@ -122,7 +122,7 @@
         "modifiedNonRackIds" : "/api/v1/irv/nonrack_devices/modified",
         "systemDateTime"  : "/sys/date",
         "metricData"      : "/api/v1/irv/metrics/[[metric_id]]",
-        "hintData"        : "/api/v1/irv/[[group]]/[[device_id]]/tooltip"
+        "hintData"        : "/api/v1/irv/[[componentClassName]]/[[device_id]]/tooltip"
       },
 
       "*COMMENT*" : "Location of dummy responses for offline mode",
@@ -335,7 +335,7 @@
       "scale"       : "scale",
       "breachZones" : "breachZones",
       "rackImage"   : "rackImage",
-      "groups"      : "groups"
+      "componentClassNames" : "componentClassNames"
     }
   },
 
@@ -656,7 +656,7 @@
         "metricTemplates"   : "metricTemplates",
         "selectedMetric"    : "selectedMetric",
         "deviceLookup"      : "deviceLookup",
-        "groups"            : "groups",
+        "componentClassNames": "componentClassNames",
         "activeSelection"   : "activeSelection",
         "gradientLBCMetric" : "gradientLBCMetric",
         "activeFilter"      : "activeFilter"

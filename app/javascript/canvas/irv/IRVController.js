@@ -760,7 +760,6 @@ class IRVController {
     let id;
     const device_lookup = this.model.deviceLookup();
     this.apiFilter = { device_ids: [], tagged_devices_ids: []};
-    const groups = ['chassis', 'devices'];
 
     for (id in device_lookup.devices) {
       var oneDevice = device_lookup.devices[id];
@@ -798,7 +797,7 @@ class IRVController {
 
     var trash_lookup = rack_object => {
       for (var child of Array.from(rack_object.children)) { trash_lookup(child); }
-      return delete device_lookup[rack_object.group][rack_object.id];
+      return delete device_lookup[rack_object.componentClassName][rack_object.id];
     };
 
     let modified = false;
@@ -1054,7 +1053,7 @@ class IRVController {
 
     const data          = this.model.metricData();
     const metric        = this.model.metricTemplates()[selected_metric];
-    const groups        = this.model.groups();
+    const componentClassNames = this.model.componentClassNames();
     const device_lookup = this.model.deviceLookup();
 
     let output = IRVController.EXPORT_HEADER;
@@ -1062,12 +1061,12 @@ class IRVController {
     output = Util.substitutePhrase(output, 'metric_units', metric.units);
     output = Util.substitutePhrase(output, 'metric_name', metric.units);
 
-    for (var group of Array.from(groups)) {
-      var group_lookup = device_lookup[group];
-      var values       = data.values[group];
+    for (let className of Array.from(componentClassNames)) {
+      var class_lookup = device_lookup[className];
+      var values       = data.values[className];
 
       for (var id in values) {
-        var device = group_lookup[id];
+        var device = class_lookup[id];
 
         if (device != null) {
           var record = IRVController.EXPORT_RECORD;
@@ -1283,7 +1282,6 @@ class IRVController {
   // restarts metric poller(s)
   // @param  metric  string, new metric id
   switchMetric(metric) {
-    let group;
     if (!this.noMetricSelected(metric) && !this.model.validMetric(metric)) { return; }
 
     this.resetMetricPoller();
@@ -1295,7 +1293,7 @@ class IRVController {
       this.pieCountdown.hide();
     } else {
       // Remove the filter as it might be inappropriate for the new selection.
-      // Consider adding a guard hgere to check if it is.
+      // Consider adding a guard here to check if it is.
       this.model.resetFilter();
     }
   }
@@ -1308,9 +1306,9 @@ class IRVController {
     const switch_from_all = (this.currentMetricLevel === ViewModel.METRIC_LEVEL_ALL) && (metric_level !== ViewModel.METRIC_LEVEL_ALL);
 
     if (switch_to_all || switch_from_all) {
-      const groups      = this.model.groups();
+      const componentClassNames = this.model.componentClassNames();
       const vals        = {};
-      for (var group of Array.from(groups)) { vals[group] = {}; }
+      for (let className of Array.from(componentClassNames)) { vals[className] = {}; }
       this.model.metricData({ values: vals });
       this.model.graphOrders(ViewModel.NORMAL_CHART_ORDERS);
       this.resetMetricPoller();
@@ -1318,7 +1316,7 @@ class IRVController {
 
     this.currentMetricLevel = metric_level;
     this.model.activeSelection(false);
-    this.model.selectedDevices(this.model.getBlankGroupObject());
+    this.model.selectedDevices(this.model.getBlankComponentClassNamesObject());
     return this.rackSpace.setMetricLevel(this.model.metricLevel());
   }
 
@@ -1724,11 +1722,11 @@ class IRVController {
       }
 
       // determine min max
-      const group_vals = metrics.values[this.model.metricLevel()];
+      const class_vals = metrics.values[this.model.metricLevel()];
       let min        = Number.MAX_VALUE;
       let max        = -Number.MAX_VALUE;
-      for (var id in group_vals) {
-        var val = Number(group_vals[id]);
+      for (var id in class_vals) {
+        var val = Number(class_vals[id]);
         if (val < min) { min = val; }
         if (val > max) { max = val; }
       }
@@ -2189,7 +2187,7 @@ class IRVController {
 
   // applies above/below/between filter to all devices and stores subset in the view model
   applyFilter() {
-    let filter, group;
+    let filter;
     const filters         = this.model.filters();
     const selected_metric = this.model.selectedMetric();
     const metrics         = this.model.metricData();
@@ -2198,8 +2196,8 @@ class IRVController {
     const { min, max } = filters[selected_metric];
 
     const filtered_devices = {};
-    const groups           = this.model.groups();
-    for (group of Array.from(groups)) { filtered_devices[group] = {}; }
+    const componentClassNames = this.model.componentClassNames();
+    for (let className of Array.from(componentClassNames)) { filtered_devices[className] = {}; }
 
     const gt = val => {
       return val > min;
@@ -2229,10 +2227,10 @@ class IRVController {
 
     let is_valid = false;
     // apply filter to each device
-    for (group of Array.from(groups)) {
-      for (var id in metrics.values[group]) {
+    for (let className of Array.from(componentClassNames)) {
+      for (var id in metrics.values[className]) {
         is_valid = true;
-        filtered_devices[group][id] = filter(Number(metrics.values[group][id][selected_stat] != null ? metrics.values[group][id][selected_stat] : metrics.values[group][id]));
+        filtered_devices[className][id] = filter(Number(metrics.values[className][id][selected_stat] != null ? metrics.values[className][id][selected_stat] : metrics.values[className][id]));
       }
     }
 
@@ -2397,7 +2395,7 @@ class IRVController {
   // @param  ev  the event object which invoked execution
   evGetHintInfo(ev) {
     let url = this.resources.path + this.resources.hintData.replace(/\[\[device_id\]\]/g, this.rackSpace.hint.device.id) + '?' + (new Date()).getTime();
-    url = url.replace(/\[\[group\]\]/g, this.rackSpace.hint.device.group);
+    url = url.replace(/\[\[componentClassName\]\]/g, this.rackSpace.hint.device.componentClassName);
 
     return new Request.JSON({
       url,
@@ -2442,9 +2440,9 @@ class IRVController {
     clearInterval(this.metricTmr);
     if (new_poll === 0) {
       // clear metric data
-      const groups = this.model.groups();
+      const componentClassNames = this.model.componentClassNames();
       const blank  = { values: {} };
-      for (var group of Array.from(groups)) { blank.values[group] = {}; }
+      for (let className of Array.from(componentClassNames)) { blank.values[className] = {}; }
       this.model.metricData(blank);
       // clear chart
       this.rackSpace.chart.clear();

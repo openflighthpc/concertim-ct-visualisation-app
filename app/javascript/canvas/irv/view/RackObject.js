@@ -37,12 +37,12 @@ class RackObject extends RackSpaceObject {
     this.HOLDING_AREA_GFX  = null;
   }
 
-  constructor(def, group, parent1) {
+  constructor(def, componentClassName, parent1) {
     super(...arguments);
     this.create_request = this.create_request.bind(this);
     this.sendConfirmation = this.sendConfirmation.bind(this);
     this.setLayers = this.setLayers.bind(this);
-    this.group = group;
+    this.componentClassName = componentClassName;
     this.parent = parent1;
     this.gfx           = RackObject.RACK_GFX;
     this.infoGfx       = RackObject.INFO_GFX;
@@ -72,12 +72,12 @@ class RackObject extends RackSpaceObject {
       if (parent.frontFacing !== undefined) { this.frontFacing = parent.frontFacing; }
       parent       = parent.parent();
     }
-    if (RackObject.MODEL.deviceLookup()[this.group][this.id] == null) {
+    if (RackObject.MODEL.deviceLookup()[this.componentClassName][this.id] == null) {
       def.instances = [];
-      RackObject.MODEL.deviceLookup()[this.group][this.id] = def;
+      RackObject.MODEL.deviceLookup()[this.componentClassName][this.id] = def;
     }
 
-    RackObject.MODEL.deviceLookup()[this.group][this.id].instances.push(this);
+    RackObject.MODEL.deviceLookup()[this.componentClassName][this.id].instances.push(this);
   }
 
   // Function to validate if this device is viewable from the current_face of the rack.
@@ -220,10 +220,10 @@ class RackObject extends RackSpaceObject {
   }
 
   selectOtherInstances() {
-    if (RackObject.MODEL.deviceLookup()[this.group][this.id] != null) {
+    if (RackObject.MODEL.deviceLookup()[this.componentClassName][this.id] != null) {
       return (() => {
         const result = [];
-        for (var oneInstance of Array.from(RackObject.MODEL.deviceLookup()[this.group][this.id].instances)) {
+        for (var oneInstance of Array.from(RackObject.MODEL.deviceLookup()[this.componentClassName][this.id].instances)) {
           if (this !== oneInstance) { result.push(oneInstance.select()); } else {
             result.push(undefined);
           }
@@ -234,10 +234,10 @@ class RackObject extends RackSpaceObject {
   }
 
   deselectOtherInstances() {
-    if (RackObject.MODEL.deviceLookup()[this.group][this.id] != null) {
+    if (RackObject.MODEL.deviceLookup()[this.componentClassName][this.id] != null) {
       return (() => {
         const result = [];
-        for (var oneInstance of Array.from(RackObject.MODEL.deviceLookup()[this.group][this.id].instances)) {
+        for (var oneInstance of Array.from(RackObject.MODEL.deviceLookup()[this.componentClassName][this.id].instances)) {
           if (this !== oneInstance) { result.push(oneInstance.deselect()); } else {
             result.push(undefined);
           }
@@ -250,10 +250,10 @@ class RackObject extends RackSpaceObject {
   destroy() {
     const device_lookup = RackObject.MODEL.deviceLookup();
 
-    if ((device_lookup[this.group][this.id] != null) && (device_lookup[this.group][this.id].instances != null)) {
+    if ((device_lookup[this.componentClassName][this.id] != null) && (device_lookup[this.componentClassName][this.id].instances != null)) {
       const {
         instances
-      } = device_lookup[this.group][this.id];
+      } = device_lookup[this.componentClassName][this.id];
       const idx       = Util.arrayIndexOf(instances, this);
     
       if (idx !== -1) { instances.splice(idx, 1); }
@@ -262,14 +262,14 @@ class RackObject extends RackSpaceObject {
     for (var sub of Array.from(this.subscriptions)) { sub.dispose(); }
     for (var child of Array.from(this.children)) { child.destroy(); }
     for (var asset of Array.from(this.assets)) { RackObject.RACK_GFX.remove(asset); }
-    delete RackObject.MODEL.deviceLookup()[this.group][this.id];
+    delete RackObject.MODEL.deviceLookup()[this.componentClassName][this.id];
     return this.assets = [];
   }
 
   create_request(ev) {
     return new Request.JSON({
       headers    : {'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content')},
-      url: '/api/v1/irv/'+this.group+'/'+this.id+'/'+this.conf.action+'/',
+      url: '/api/v1/irv/'+this.componentClassName+'/'+this.id+'/'+this.conf.action+'/',
       onSuccess: this.sendConfirmation,
       onFail: this.loadError,
       onError: this.loadError,
@@ -384,7 +384,7 @@ class RackObject extends RackSpaceObject {
   }
 
   isInActiveSelection() {
-    return (RackObject.MODEL.selectedDevices()[this.group] != null) && RackObject.MODEL.selectedDevices()[this.group][this.id];
+    return (RackObject.MODEL.selectedDevices()[this.componentClassName] != null) && RackObject.MODEL.selectedDevices()[this.componentClassName][this.id];
   }
 
   noMetricSelection() {
@@ -392,7 +392,7 @@ class RackObject extends RackSpaceObject {
   }
 
   isInMetricSelection() {
-    return RackObject.MODEL.metricData().selection[this.group][this.id];
+    return RackObject.MODEL.metricData().selection[this.componentClassName][this.id];
   }
 
   noAciveFilter() {
@@ -400,7 +400,7 @@ class RackObject extends RackSpaceObject {
   }
 
   isInActiveFilter() {
-    return RackObject.MODEL.filteredDevices()[this.group][this.id];
+    return RackObject.MODEL.filteredDevices()[this.componentClassName][this.id];
   }
 
 
@@ -414,10 +414,10 @@ class RackObject extends RackSpaceObject {
   // Inclusive selections (object touches box) and exlusive selections (object is contained by box)
   // Box object requires properties: top, bottom, left, right
   selectWithin(box, inclusive) {
-    let child, group, i, subselection, test_contained_h, test_contained_v;
-    const groups   = RackObject.MODEL.groups();
+    let child, componentClassName, i, subselection, test_contained_h, test_contained_v;
+    const componentClassNames   = RackObject.MODEL.componentClassNames();
     const selected = {};
-    for (group of Array.from(groups)) { selected[group] = {}; }
+    for (let className of Array.from(componentClassNames)) { selected[className] = {}; }
 
     if (inclusive) {
       const test_left        = (box.left >= this.x) && (box.left <= (this.x + this.width));
@@ -428,12 +428,12 @@ class RackObject extends RackSpaceObject {
       test_contained_v = (box.top < this.y) && (box.bottom > (this.y + this.height));
 
       if ((test_left || test_right || test_contained_h) && (test_top || test_bottom || test_contained_v)) {
-        selected[this.group][this.id] = true;
+        selected[this.componentClassName][this.id] = true;
         for (child of Array.from(this.children)) {
           subselection = child.selectWithin(box, inclusive);
-          for (group of Array.from(groups)) {
-            for (i in subselection[group]) {
-              if (!isNaN(Number(subselection[group][i]))) { selected[group][i] = true; }
+          for (let className of Array.from(componentClassNames)) {
+            for (i in subselection[className]) {
+              if (!isNaN(Number(subselection[className][i]))) { selected[className][i] = true; }
             }
           }
         }
@@ -443,14 +443,14 @@ class RackObject extends RackSpaceObject {
       test_contained_v = (box.top <= this.y) && (box.bottom >= (this.y + this.height));
     
       if (test_contained_h && test_contained_v) {
-        selected[this.group][this.id] = true;
+        selected[this.componentClassName][this.id] = true;
       }
 
       for (child of Array.from(this.children)) {
         subselection = child.selectWithin(box, inclusive);
-        for (group of Array.from(groups)) {
-          for (i in subselection[group]) {
-            if (!isNaN(Number(subselection[group][i]))) { selected[group][i] = true; }
+        for (let className of Array.from(componentClassNames)) {
+          for (i in subselection[className]) {
+            if (!isNaN(Number(subselection[className][i]))) { selected[className][i] = true; }
           }
         }
       }
@@ -465,7 +465,7 @@ class RackObject extends RackSpaceObject {
   }
 
   getInstances() {
-    return this.deviceLookup()[this.group][this.id].instances;
+    return this.deviceLookup()[this.componentClassName][this.id].instances;
   }
 
   setLayers() {

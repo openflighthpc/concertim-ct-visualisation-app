@@ -111,7 +111,7 @@ class Chassis extends RackObject {
     if (RackObject.MODEL.metricLevel !== undefined) {
       this.subscriptions.push(RackObject.MODEL.metricLevel.subscribe(this.setMetricVisibility));
 
-      this.metric = new BarMetric(this.group, this.id, this, 0, 0, max_width, max_height, RackObject.MODEL);
+      this.metric = new BarMetric(this.componentClassName, this.id, this, 0, 0, max_width, max_height, RackObject.MODEL);
       this.setIncluded();
     } else {
       this.included = true;
@@ -140,11 +140,11 @@ class Chassis extends RackObject {
   }
 
   // Returs the rack where the chassis is placed, if they are placed in one.
-  // Sorry about this not very elegant: parent.group is 'racks'
-  // Not using the 'intanceof Rack' here, because importing the Rack class in this Chassis class, creates a require.js tiemout issue when loading.
+  // Sorry about this not very elegant: parent.componentClassName is 'racks'
+  // Not using the 'instanceof Rack' here, because importing the Rack class in this Chassis class, creates a require.js timeout issue when loading.
   rack() {
     const parent = this.parent();
-    if (parent.group === 'racks') {
+    if (parent.componentClassName === 'racks') {
       return parent;
     } else {
       return null;
@@ -345,10 +345,10 @@ class Chassis extends RackObject {
 
 
   selectWithinOld(box, inclusive) {
-    let child, group, test_contained_h, test_contained_v;
-    const groups = RackObject.MODEL.groups();
+    let child, componentClassName, test_contained_h, test_contained_v;
+    const componentClassNames = RackObject.MODEL.componentClassNames();
     const selected = {};
-    for (group of Array.from(groups)) { selected[group] = {}; }
+    for (className of Array.from(componentClassNames)) { selected[className] = {}; }
 
     if (inclusive) {
       for (child of Array.from(this.children)) {
@@ -360,7 +360,7 @@ class Chassis extends RackObject {
         test_contained_v = (box.top < child.y) && (box.bottom > (child.y + child.height));
 
         if ((test_left || test_right || test_contained_h) && (test_top || test_bottom || test_contained_v)) {
-          selected[child.group][child.id] = true;
+          selected[child.componentClassName][child.id] = true;
         }
       }
     } else {
@@ -369,7 +369,7 @@ class Chassis extends RackObject {
         test_contained_v = (box.top <= child.y) && (box.bottom >= (child.y + child.height));
       
         if (test_contained_h && test_contained_v) {
-          selected[child.group][child.id] = true;
+          selected[child.componentClassName][child.id] = true;
        }
      }
    }
@@ -394,19 +394,19 @@ class Chassis extends RackObject {
       return false;
     }
 
-    const applicableMetricLevel = ((metric_level === this.group) || ((metric_level === ViewModel.METRIC_LEVEL_ALL) && (this.children.length === 0)));
+    const applicableMetricLevel = ((metric_level === this.componentClassName) || ((metric_level === ViewModel.METRIC_LEVEL_ALL) && (this.children.length === 0)));
     if (!applicableMetricLevel) {
       return false;
     }
 
     // Not included in active selection.
-    const inCurrentSelection = selected[this.group] != null ? selected[this.group][this.id] : undefined;
+    const inCurrentSelection = selected[this.componentClassName] != null ? selected[this.componentClassName][this.id] : undefined;
     if (active_selection && !inCurrentSelection) {
       return false;
     }
 
     // Not included in active filter.
-    if (active_filter && !filtered[this.group][this.id]) {
+    if (active_filter && !filtered[this.componentClassName][this.id]) {
       return false;
     }
 

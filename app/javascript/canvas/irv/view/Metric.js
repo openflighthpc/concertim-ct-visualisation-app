@@ -21,12 +21,12 @@ class Metric {
   }
 
 
-  constructor(group, id, gfx, x, y, width, height, model) {
+  constructor(componentClassName, id, gfx, x, y, width, height, model) {
     this.update = this.update.bind(this);
     this.show = this.show.bind(this);
     this.hide = this.hide.bind(this);
     this.toggleScale = this.toggleScale.bind(this);
-    this.group = group;
+    this.componentClassName = componentClassName;
     this.id = id;
     this.gfx = gfx;
     this.x = x;
@@ -61,7 +61,7 @@ class Metric {
 
   update() {
     const metrics = this.model.metricData();
-    this.value  = metrics.values[this.group][this.id];
+    this.value  = metrics.values[this.componentClassName][this.id];
 
     if (this.value != null) {
       const colour_scale = this.model.colourScale();
