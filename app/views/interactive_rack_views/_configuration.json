@@ -247,10 +247,6 @@
         "key"  : "selectedMetric"
       },
       {
-        "name" : "selectedGroup",
-        "type" : "simple"
-      },
-      {
         "name" : "invertedColours",
         "type" : "simple"
       }
