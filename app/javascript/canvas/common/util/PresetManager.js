@@ -159,10 +159,6 @@ class PresetManager {
         this.debug('skipping', val_name, 'not present');
         continue;
       }
-      if ((val_name === 'selectedGroup') && (this.model.activeSelection() === true)) {
-        this.debug('skipping', val_name, 'active selection');
-        continue;
-      }
       try {
         // only update the model if current value is different from preset value
         // this is only effective for simple data types

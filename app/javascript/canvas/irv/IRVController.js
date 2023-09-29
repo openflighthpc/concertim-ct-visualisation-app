@@ -379,11 +379,6 @@ class IRVController {
       });
 
     }
-    if (ComboBox.boxes.groups != null) {
-      ComboBox.boxes.groups.add_change_callback(() => {
-        this.model.selectedGroup(ComboBox.boxes.groups.value);
-      });
-    }
   }
 
   // makes server requests required for initialisation
@@ -931,7 +926,6 @@ class IRVController {
 
   // removes any active filter and/or selection
   resetFilterAndSelection() {
-    this.model.resetSelectedGroup();
     this.model.resetFilter();
     this.model.resetSelection();
 
@@ -967,10 +961,8 @@ class IRVController {
   saveSettings(going_to) {
     const settings = {};
 
-    // carry over either the current static group or the selected devices (if any)
-    if (this.model.selectedGroup() != null) {
-      settings.selectedGroup = this.model.selectedGroup();
-    } else if (this.model.activeSelection() || this.crossAppSettings.selectedRacks) {
+    // carry over the selected devices (if any)
+    if (this.model.activeSelection() || this.crossAppSettings.selectedRacks) {
       const device_lookup    = this.model.deviceLookup();
       const selected_devices = { racks: {} };
       let valid            = false;
