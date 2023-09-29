@@ -11,7 +11,7 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
       expect(parsed_rack["id"]).to eq rack.id
       expect(parsed_rack["name"]).to eq rack.name
       expect(parsed_rack["u_height"]).to eq rack.u_height
-      expect(parsed_rack["cost"]).to eq "$#{'%.2f' % rack.cost}"
+      expect(parsed_rack["cost"]).to eq "#{'%.2f' % rack.cost}"
       expect(parsed_rack["creation_output"]).to eq rack.creation_output
       expect(parsed_rack["network_details"]["id"]).to eq rack.network_details["id"]
     end
@@ -230,7 +230,7 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
           expect(parsed_rack["u_height"]).to eq valid_attributes[:rack][:u_height]
           expect(parsed_rack["owner"]["id"]).to eq valid_attributes[:rack][:user_id]
           expect(parsed_rack["metadata"]).to eq valid_attributes[:rack][:metadata]
-          expect(parsed_rack["cost"]).to eq "$0.00"
+          expect(parsed_rack["cost"]).to eq "0.00"
           expect(parsed_rack["creation_output"]).to eq valid_attributes[:rack][:creation_output]
           expect(parsed_rack["network_details"]["id"]).to eq valid_attributes[:rack][:network_details][:id]
         end
@@ -320,7 +320,7 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
           expect(parsed_rack["u_height"]).to eq valid_attributes[:rack][:u_height]
           expect(parsed_rack["metadata"]).to eq valid_attributes[:rack][:metadata]
           expect(parsed_rack["status"]).to eq valid_attributes[:rack][:status]
-          expect(parsed_rack["cost"]).to eq  "$#{'%.2f' % valid_attributes[:rack][:cost]}"
+          expect(parsed_rack["cost"]).to eq  "#{'%.2f' % valid_attributes[:rack][:cost]}"
           expect(parsed_rack["creation_output"]).to eq valid_attributes[:rack][:creation_output]
           expect(parsed_rack["network_details"]["id"]).to eq valid_attributes[:rack][:network_details][:id]
         end

@@ -46,7 +46,7 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
           result = parsed_users.first
           expect(result['id']).to eq other_user.id
           expect(result['root']).to eq false
-          expect(result['cost']).to eq '$0.00'
+          expect(result['cost']).to eq '0.00'
           expect(result['name']).to eq other_user.name
           expect(result['email']).to eq other_user.email
           expect(result.keys.include?('billing_period_start')).to eq true

@@ -23,7 +23,11 @@ end
 module Costed
   extend ActiveSupport::Concern
 
+  def currency_cost
+    "$#{cost}"
+  end
+
   def cost
-    "$#{'%.2f' % o.cost}"
+    '%.2f' % o.cost
   end
 end
