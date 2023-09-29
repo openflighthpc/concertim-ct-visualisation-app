@@ -48,5 +48,5 @@ updates:
           - "factory_bot*"
           - "capybara"
           - "faker"
-          - "*webdriver*"
+          - "selenium-webdriver"
           - "diff-lcs"
