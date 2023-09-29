@@ -63,7 +63,13 @@ gem "sprockets-rails"
 gem "importmap-rails"
 gem "turbo-rails"
 gem "stimulus-rails"
-gem "dartsass-rails", "~> 0.5.0"
+
+# Pin dartsass-rails to 0.4.1.  Version 0.5.0 has a dependency on sass-embedded
+# that doesn't work with dependabot.  Dependabot keeps trying to change
+# sass-embedded to a x86_64-linux-gnu variation that doesn't install on either
+# the vagrant machine or the github actions machine.  Perhaps there is a better
+# fix than this.
+gem "dartsass-rails", "= 0.4.1"
 
 
 ###################################
