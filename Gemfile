@@ -11,7 +11,7 @@ ruby "3.0.2"
 ###################################
 
 gem "rails", "~> 7.0.8"
-gem "puma", "~> 5.0"
+gem "puma", "~> 6.4"
 gem "jbuilder"
 gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
 # Reduces boot times through caching; required in config/boot.rb
