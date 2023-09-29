@@ -7,7 +7,6 @@ pin "IRV", to: "IRV.js"
 pin "key_pairs/new", to: "key_pairs/new.js"
 
 # Utility Javascripts.
-pin "@rails/ujs", to: "https://ga.jspm.io/npm:@rails/ujs@7.0.5/lib/assets/compiled/rails-ujs.js"
 pin "Profiler", to: "canvas/irv/NullProfiler.js"
 pin "util/NotImplementedError", to: "util/NotImplementedError.js"
 pin "util/ComboBox", to: "util/ComboBox.js"
