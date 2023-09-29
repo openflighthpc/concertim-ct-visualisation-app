@@ -38,7 +38,6 @@ class ViewModel {
     this.METRIC_LEVEL_DEVICES  = 'devices';
     this.METRIC_LEVEL_CHASSIS  = 'chassis';
     this.METRIC_LEVEL_ALL      = 'all';
-    this.GROUP_NO_VALUE        = 'No group selected';
 
     this.NORMAL_CHART_ORDERS  = [ 'ascending', 'descending', 'physical position', 'name' ];
 
@@ -55,13 +54,13 @@ class ViewModel {
     this.showingRackThumbnail = ko.observable(false);
 
     // object, stores each device JSON object with an additional property 'instances', an array of references to the class instances
-    // uses group as top level key; id as second level key
+    // uses group (class - racks, chassis or devices) as top level key; id as second level key
     this.deviceLookup = ko.observable({});
 
     // array, stores the parsed rack definition JSON
     this.racks = ko.observable([]);
 
-    // id groups, both group and id are required to identify an individual device
+    // id groups (class), both group and id are required to identify an individual device
     this.groups = ko.observable(['racks', 'chassis', 'devices']);
   
     // do the racks face forward, backwards or show both
@@ -138,31 +137,6 @@ class ViewModel {
     this.enablePresetSelection = ko.dependentObservable(function() {
       const presets = this.presetNames();
       return (presets != null) && (presets.length > 0);
-    }
-    , this);
-
-    // object, group definitions using group id as the key. Initially these contain just the string group name and id. After
-    // a group has been selected and it's definition loaded the definition is also stored here to act as a cache
-    this.groupsById = ko.observable([]);
-
-    // string, name of the currently selected group
-    this.selectedGroup = ko.observable();
-
-    // array of strings, list of available group names
-    this.groupNames = ko.dependentObservable(function() {
-      const presets      = this.groupsById();
-      let preset_names = [];
-      for (var i in presets) { preset_names.push(presets[i].name); }
-      Util.sortCaseInsensitive(preset_names);
-      preset_names = [ViewModel.GROUP_NO_VALUE].concat(preset_names);
-      return preset_names;
-    }
-    , this);
-
-    // boolean, is the group drop-down enabled? Dependencies: groupNames
-    this.enableGroupSelection = ko.dependentObservable(function() {
-      const groups = this.groupNames();
-      return (groups != null) && (groups.length > 0);
     }
     , this);
 
@@ -282,10 +256,6 @@ class ViewModel {
     return false;
   }
 
-  resetSelectedGroup() {
-    this.selectedGroup(null);
-  }
-
   // Reset the "metric value filter" filter.
   resetFilter() {
     this.activeFilter(false);
@@ -308,10 +278,6 @@ class ViewModel {
     let blank  = { values: {} };
     for (let group of this.groups()) { blank.values[group] = {}; }
     this.metricData(blank);
-  }
-
-  noGroupSelected() {
-    return (this.selectedGroup() == null) || (this.selectedGroup() === null) || (this.selectedGroup() === ViewModel.GROUP_NO_VALUE);
   }
 
   getBlankGroupObject() {
