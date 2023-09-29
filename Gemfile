@@ -48,7 +48,7 @@ gem "pg", "~> 1.5"
 # Authorization and Authentication
 #
 ###################################
-gem "devise", "~> 4.9.0"
+gem "devise", "~> 4.9.2"
 gem "devise-jwt", ">= 0.10.0"
 gem "cancancan", "~> 3.5.0"
 gem "sqlite3"
