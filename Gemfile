@@ -69,7 +69,7 @@ gem "stimulus-rails"
 # sass-embedded to a x86_64-linux-gnu variation that doesn't install on either
 # the vagrant machine or the github actions machine.  Perhaps there is a better
 # fix than this.
-gem "dartsass-rails", "= 0.4.1"
+gem "dartsass-rails", "0.5.0"
 
 
 ###################################
