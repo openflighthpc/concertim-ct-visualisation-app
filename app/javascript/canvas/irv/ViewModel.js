@@ -156,12 +156,9 @@ class ViewModel {
 
     // object, stores metric definitions using metric id as the key
     this.metricTemplates = ko.observable([]);
-
-    let blank = {};
-    const classNames  = this.componentClassNames();
-    for (let className of Array.from(classNames)) { blank[className] = {}; }
+    
     // object, parsed metric data pushed from server. Values are contained in 'values' object
-    this.metricData = ko.observable({ values: blank });
+    this.metricData = ko.observable({ values: this.getBlankComponentClassNamesObject() });
 
     // array, stores the parsed nonrack devices definition JSON
     this.nonrackDevices = ko.observable([]);
@@ -170,11 +167,9 @@ class ViewModel {
     // canvas, a snapshot of the rack view used by the thumb navigation
     this.rackImage = ko.observable();
 
-    blank        = {};
-    for (let className of Array.from(classNames)) { blank[className] = {}; }
     // object, defines the physical dimensions of the breaching devices. Used to draw red boxes in thumb navigation. Uses class name as
     // the top-level key, then id
-    this.breachZones = ko.observable(blank);
+    this.breachZones = ko.observable(this.getBlankComponentClassNamesObject());
 
     // float, the current zoom level of the rack view 1 represents 100% where all images will be drawn at their natural size
     this.scale = ko.observable();
@@ -275,8 +270,7 @@ class ViewModel {
   }
 
   resetMetricData() {
-    let blank  = { values: {} };
-    for (let className of this.componentClassNames()) { blank.values[className] = {}; }
+    let blank  = { values: this.getBlankComponentClassNamesObject() } ;
     this.metricData(blank);
   }
 

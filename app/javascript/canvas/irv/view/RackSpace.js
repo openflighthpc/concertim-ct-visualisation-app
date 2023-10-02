@@ -1145,9 +1145,7 @@ class RackSpace {
       return this.model.selectedDevices(selected_devices);
 
     } else {
-      let componentClassNames  = this.model.componentClassNames();
-      const new_sel = {};
-      for (let className of Array.from(componentClassNames)) { new_sel[className] = {}; }
+      const new_sel = this.model.getBlankComponentClassNamesObject();
       new_sel[item.componentClassName][item.id] = true;
 
       if (item instanceof Rack) {
@@ -2184,9 +2182,7 @@ class RackSpace {
     this.quickZoom(centre_x, centre_y, scale);
 
     let active_selection = false;
-    const selection        = {};
-    const componentClassNames = this.model.componentClassNames();
-    for (let className of Array.from(componentClassNames)) { selection[className] = {}; }
+    const selection      = this.model.getBlankComponentClassNamesObject();
 
     // compile a selection of all target device instances and all of their children recursively
     for (var region of Array.from(regions)) {
@@ -2214,8 +2210,7 @@ class RackSpace {
   selectWithin(box, inclusive) {
     let active_selection = false;
     const componentClassNames = this.model.componentClassNames();
-    const selected         = {};
-    for (let className of Array.from(componentClassNames)) { selected[className]  = {}; }
+    const selected = this.model.getBlankComponentClassNamesObject();
 
     for (var rack of Array.from(this.racks)) {
       var subselection = rack.selectWithin(box, inclusive);
@@ -2383,9 +2378,7 @@ class RackSpace {
   setMetricLevel(metric_level) {
     let device, id;
     this.metricLevel = metric_level;
-    const componentClassNames = this.model.componentClassNames();
-    const selection    = {};
-    for (let className of Array.from(componentClassNames)) { selection[className] = {}; }
+    const selection = this.model.getBlankComponentClassNamesObject();
 
     const device_lookup = this.model.deviceLookup();
   

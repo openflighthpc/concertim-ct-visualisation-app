@@ -1306,9 +1306,7 @@ class IRVController {
     const switch_from_all = (this.currentMetricLevel === ViewModel.METRIC_LEVEL_ALL) && (metric_level !== ViewModel.METRIC_LEVEL_ALL);
 
     if (switch_to_all || switch_from_all) {
-      const componentClassNames = this.model.componentClassNames();
-      const vals        = {};
-      for (let className of Array.from(componentClassNames)) { vals[className] = {}; }
+      const vals        = this.model.getBlankComponentClassNamesObject();
       this.model.metricData({ values: vals });
       this.model.graphOrders(ViewModel.NORMAL_CHART_ORDERS);
       this.resetMetricPoller();
@@ -2195,9 +2193,8 @@ class IRVController {
 
     const { min, max } = filters[selected_metric];
 
-    const filtered_devices = {};
+    const filtered_devices = this.model.getBlankComponentClassNamesObject();;
     const componentClassNames = this.model.componentClassNames();
-    for (let className of Array.from(componentClassNames)) { filtered_devices[className] = {}; }
 
     const gt = val => {
       return val > min;
@@ -2440,9 +2437,7 @@ class IRVController {
     clearInterval(this.metricTmr);
     if (new_poll === 0) {
       // clear metric data
-      const componentClassNames = this.model.componentClassNames();
-      const blank  = { values: {} };
-      for (let className of Array.from(componentClassNames)) { blank.values[className] = {}; }
+      const blank  = { values: this.model.getBlankComponentClassNamesObject() };
       this.model.metricData(blank);
       // clear chart
       this.rackSpace.chart.clear();

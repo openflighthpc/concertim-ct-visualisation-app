@@ -27,10 +27,8 @@ class Parser {
   parseRackDefs(rack_defs, filter=null) {
     Profiler.begin(Profiler.CRITICAL, this.parseRackDefs);
     const apply_filter = filter !== null;
-    const componentClassNames = this.model.componentClassNames();
     let filtered      = false;
-    const device_lookup = { byClass: {} };
-    for (let className of Array.from(componentClassNames)) { device_lookup[className] = {}; }
+    const device_lookup = this.model.getBlankComponentClassNamesObject();
     const assets = {};
   
     if (Object.keys(rack_defs).length === 0) {

@@ -345,10 +345,8 @@ class Chassis extends RackObject {
 
 
   selectWithinOld(box, inclusive) {
-    let child, componentClassName, test_contained_h, test_contained_v;
-    const componentClassNames = RackObject.MODEL.componentClassNames();
-    const selected = {};
-    for (className of Array.from(componentClassNames)) { selected[className] = {}; }
+    let child, test_contained_h, test_contained_v;
+    const selected = RackObject.MODEL.getBlankComponentClassNamesObject();
 
     if (inclusive) {
       for (child of Array.from(this.children)) {

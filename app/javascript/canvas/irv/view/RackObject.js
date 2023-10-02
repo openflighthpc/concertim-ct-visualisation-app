@@ -414,10 +414,9 @@ class RackObject extends RackSpaceObject {
   // Inclusive selections (object touches box) and exlusive selections (object is contained by box)
   // Box object requires properties: top, bottom, left, right
   selectWithin(box, inclusive) {
-    let child, componentClassName, i, subselection, test_contained_h, test_contained_v;
+    let child, i, subselection, test_contained_h, test_contained_v;
     const componentClassNames   = RackObject.MODEL.componentClassNames();
-    const selected = {};
-    for (let className of Array.from(componentClassNames)) { selected[className] = {}; }
+    const selected = RackObject.MODEL.getBlankComponentClassNamesObject();
 
     if (inclusive) {
       const test_left        = (box.left >= this.x) && (box.left <= (this.x + this.width));

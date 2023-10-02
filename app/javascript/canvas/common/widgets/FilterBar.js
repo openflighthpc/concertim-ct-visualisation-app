@@ -753,9 +753,7 @@ class FilterBar {
   // When a filtering has happened, we also want to create a active selection from those
   // filtered devices, so if the user changes the metric name, the selection is still active.
   setSelectedDevicesFromFilteredDevices() {
-    const componentClassNames = this.model.componentClassNames();
-    const selection        = {};
-    for (let className of Array.from(componentClassNames)) { selection[className] = {}; }
+    const selection        = this.model.getBlankComponentClassNamesObject();
     let activeSelection = false;
 
     const object = this.model.filteredDevices();
