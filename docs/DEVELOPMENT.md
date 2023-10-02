@@ -61,8 +61,8 @@ and 3) removed some of old JavaScript libraries such as Prototype.
 
 It still has the following issues:
 
-1. Old libraries such as mootools and MochiKit still remain.  These should
-   probably be replaced or at least updated to their latest versions.
+1. Old libraries such as mootools still remain.  These should probably be
+   removed, replaced or at least updated to their latest versions.
 2. Many JavaScript libraries have been vendored in and should be updated at
    some point.  These include jQuery, modernizr and foundation.
 3. Much of the source code was automatically ported from CoffeeScript to
