@@ -296,7 +296,7 @@ class LBC {
     const range    = col_high - col_low;
 
     const component_classes_to_consider = componentClassNames;
-    const values = metric_data.values != null ? metric_data.values : metric_data.byClass;
+    const values = metric_data.values;
 
     let sample_count = 0;
     // extract subset of all metrics according to display settings

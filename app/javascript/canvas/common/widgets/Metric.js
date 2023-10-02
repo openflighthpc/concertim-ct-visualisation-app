@@ -80,7 +80,7 @@ class Metric {
   // necessary and commences animations
   update() {
     const metrics = this.modelRefs.metricData();
-    const val_obj = (metrics.byClass != null ? metrics.byClass : metrics.values)[this.componentClassName][this.id];
+    const val_obj = metrics.values[this.componentClassName][this.id];
     this.value  = this.getValue(val_obj);
 
     if (this.value != null) {
