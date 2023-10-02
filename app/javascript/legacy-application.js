@@ -12,7 +12,6 @@
 //
 //= require MochiKit/Base
 //= require MochiKit/Iter
-//= require MochiKit/DOM
 //
 //= require jquery
 //= require modernizr

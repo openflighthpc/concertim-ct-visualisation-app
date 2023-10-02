@@ -200,6 +200,24 @@ const Util = {
     }
   },
 
+  insertSiblingNodesAfter(referenceNode, newNode) {
+    const parentNode = referenceNode.parentNode;
+    if (referenceNode.nextSibling) {
+      parentNode.insertBefore(newNode, referenceNode.nextSibling);
+    } else {
+      parentNode.appendChild(newNode);
+    }
+  },
+
+  replaceChildNodes(parent, ...newNodes) {
+    while(parent.hasChildNodes()) {
+      parent.removeChild(parent.firstChild);
+    }
+    newNodes.forEach((child) => {
+      parent.appendChild(child);
+    });
+  },
+
   // assumes vertical scrollbars have the same thickness as horizontal
   getScrollbarThickness() {
     const inner_el = document.createElement('p');

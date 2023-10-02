@@ -62,7 +62,7 @@ const ComboBox = new Class({
             mousedown: this.mouseDown
         });
 
-        appendChildNodes(this.node, this.optionslist);
+        this.node.appendChild(this.optionslist);
     },
 
     add_change_callback: function(callback) {
@@ -211,7 +211,9 @@ const ComboBox = new Class({
         for (var i = 0; i < options.length; ++i) {
             var data = options[i];
             var string = this.config.optionStringGetter(data);
-            var div = DIV({'class':'cbox-item'}, string);
+            const div = document.createElement('div');
+            div.classList.add('cbox-item');
+            div.appendChild(document.createTextNode(string));
             div.addEvent('onmouseover', onmouseover);
             div.addEvent('onmouseout', onmouseout);
             this._connect_ids.push(div);
@@ -221,7 +223,7 @@ const ComboBox = new Class({
             div.setAttribute('id', data);
             divs.push(div);
         }
-        replaceChildNodes(this.optionslist, divs);
+        Util.replaceChildNodes(this.optionslist, ...divs);
 
         var visibleCount = Math.min(options.length, this.config.maxListLength);
         if ( this._loaded ) {
@@ -311,13 +313,13 @@ const ComboBox = new Class({
         if (this._highlighted_node != node) {
             this.blurHighlightedNode();
             this._highlighted_node = node;
-            addElementClass(this._highlighted_node, "cbox-hilite");
+            this._highlighted_node.classList.add("cbox-hilite");
         }
     },
 
     blurHighlightedNode: function() {
         if (this._highlighted_node) {
-            removeElementClass(this._highlighted_node, "cbox-hilite");
+            this._highlighted_node.classList.remove("cbox-hilite");
             this._highlighted_node = null;
         }
     },
@@ -363,7 +365,7 @@ const ComboBox = new Class({
             this.failure_notice = new Element('div', {
                 'class' : 'drop_down_meta'
             });
-            insertSiblingNodesAfter(this.node, this.failure_notice);
+            Util.insertSiblingNodesAfter(this.node, this.failure_notice);
         }
         if (dataArray === '') {
             this.failure_notice.innerHTML = '(Option retrieval interrupted)';
@@ -411,7 +413,7 @@ const ComboBox = new Class({
             this.failure_notice = new Element('div', {
                 'class' : 'drop_down_meta'
             });
-            insertSiblingNodesAfter(this.node, this.failure_notice);
+            Util.insertSiblingNodesAfter(this.node, this.failure_notice);
         }
 
         this._completed = false;
