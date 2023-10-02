@@ -10,8 +10,6 @@
 //= require mootools/fxcss
 //= require mootools/fxtween
 //
-//= require MochiKit/Base
-//
 //= require jquery
 //= require modernizr
 //= require foundation

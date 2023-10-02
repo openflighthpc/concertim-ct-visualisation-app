@@ -205,8 +205,8 @@ const ComboBox = new Class({
     build: function(options) {
         this.showing_all_options = options === this.config.options;
         while (this._connect_ids.length) { this._connect_ids.pop().removeEvents(); }
-        var onmouseover = bind(this.itemMouseOver, this);
-        var onmouseout = bind(this.itemMouseOut, this);
+        const onmouseover = this.itemMouseOver.bind(this);
+        const onmouseout = this.itemMouseOut.bind(this);
         var divs = [];
         for (var i = 0; i < options.length; ++i) {
             var data = options[i];
@@ -214,8 +214,8 @@ const ComboBox = new Class({
             const div = document.createElement('div');
             div.classList.add('cbox-item');
             div.appendChild(document.createTextNode(string));
-            div.addEvent('onmouseover', onmouseover);
-            div.addEvent('onmouseout', onmouseout);
+            div.addEvent('mouseover', onmouseover);
+            div.addEvent('mouseout', onmouseout);
             this._connect_ids.push(div);
             div.setAttribute('Desc', string);
             div.setAttribute('Data', data);
@@ -404,7 +404,7 @@ const ComboBox = new Class({
     },
 
     updateFromUrl: function(url, error_msg) {
-        if (isUndefinedOrNull(error_msg)) {
+        if (MochiKit.Base.isUndefinedOrNull(error_msg)) {
             var error_msg = "Unable to retrieve list";
         }
 
