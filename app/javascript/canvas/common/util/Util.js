@@ -144,12 +144,61 @@ const Util = {
   },
 
 
+  // Hide the given element.
+  hideElement(element) {
+    element.style.display = 'none';
+  },
+
+  // Display the given element.
+  showElement(element) {
+    element.style.display = 'block';
+  },
+
   // return an object with a DOM element's dimensions as numeric values
   getElementDimensions(element) {
     const dims = element.getSize();
     return { width: dims.x, height: dims.y };
   },
 
+  // Set the given element's dimensions.
+  //
+  // Based on code taken from MochiKit licensed under the MIT.
+  setElementDimensions(element, newSize/* optional */, units) {
+    if (typeof(units) == 'undefined') {
+      units = 'px';
+    }
+    const newStyle = {};
+    if (newSize.w != null) {
+      newStyle['width'] = newSize.w + units;
+    }
+    if (newSize.h != null) {
+      newStyle['height'] = newSize.h + units;
+    }
+    for (let k in newStyle) {
+      const v = newStyle[k];
+      Util.setStyle(element, k, v);
+    }
+  },
+
+  // Set the given element's position.
+  //
+  // Based on code taken from MochiKit licensed under the MIT.
+  setElementPosition(element, newPos/* optional */, units) {
+    if (typeof(units) == 'undefined') {
+      units = 'px';
+    }
+    const newStyle = {};
+    if (newPos.x != null) {
+      newStyle['left'] = newPos.x + units;
+    }
+    if (newPos.y != null) {
+      newStyle['top'] = newPos.y + units;
+    }
+    for (let k in newStyle) {
+      const v = newStyle[k];
+      Util.setStyle(element, k, v);
+    }
+  },
 
   // assumes vertical scrollbars have the same thickness as horizontal
   getScrollbarThickness() {

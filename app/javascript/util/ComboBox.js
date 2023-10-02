@@ -8,6 +8,8 @@
 * adapted from Eric Waldheims MochiKit-based ComboBox
 */
 
+import Util from 'canvas/common/util/Util';
+
 if (RegExp.escape == undefined) {
     RegExp.escape = function(text) {
         return text.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
@@ -57,7 +59,7 @@ const ComboBox = new Class({
         });
 
         document.addEvents({
-            onmousedown: this.mouseDown
+            mousedown: this.mouseDown
         });
 
         appendChildNodes(this.node, this.optionslist);
@@ -86,7 +88,7 @@ const ComboBox = new Class({
             this.moveCaretToEnd();
         }
         else {
-            hideElement(this.optionslist);
+            Util.hideElement(this.optionslist);
         }
     },
 
@@ -114,7 +116,7 @@ const ComboBox = new Class({
                 evt.stopPropagation();
                 break;
             case 'esc':
-                hideElement(this.optionslist);
+                Util.hideElement(this.optionslist);
                 evt.stopPropagation();
                 break;
             case 'backspace':
@@ -125,7 +127,7 @@ const ComboBox = new Class({
             case 'enter':
                 if (this.isVisible(this.optionslist) && this._highlighted_node) {
                     this.selectOption();
-                    hideElement(this.optionslist);
+                    Util.hideElement(this.optionslist);
                     evt.stop();
                 } else if ( key === 'enter' && this.textedit.style.background !== '' ) {
                     evt.stop();
@@ -188,7 +190,7 @@ const ComboBox = new Class({
         this.exposed_options = [];
         this._suppress_range = false;
 
-        for(i=0;i<options.length;i++) {
+        for(let i=0;i<options.length;i++) {
             if (options[i].toLowerCase().match(textedit_start_regexp)) {
                 this.exposed_options.push(options[i]);
             } else if (options[i].toLowerCase().match(textedit_any_regexp)) {
@@ -227,7 +229,7 @@ const ComboBox = new Class({
                 this.addEmptyHighlight();
                 return;
             } else if (!visibleCount) {
-                hideElement(this.optionslist);
+                Util.hideElement(this.optionslist);
                 this.blurHighlightedNode();
                 if (this.config.highlightNotFound) {
                     this.addErrorHighlight();
@@ -236,7 +238,7 @@ const ComboBox = new Class({
             }
         }
         if (this._activate_dropdown || this._suppress_range || visibleCount > 1) {
-            showElement(this.optionslist);
+            Util.showElement(this.optionslist);
             this.addEmptyHighlight();
         }
         // mjt - IE seems to break within MochiKit, guessing that firstChild is null (or perhaps... "not an object" ;-p).
@@ -244,17 +246,17 @@ const ComboBox = new Class({
             return;
         }
 
-        var item_dims = getElementDimensions(this.optionslist.firstChild);
-        var textedit_dims = getElementDimensions(this.textedit);
-        var node_dims = getElementDimensions(this.node);
+        var item_dims = Util.getElementDimensions(this.optionslist.firstChild);
+        var textedit_dims = Util.getElementDimensions(this.textedit);
+        var node_dims = Util.getElementDimensions(this.node);
         var h = visibleCount ? (visibleCount * item_dims.h) : 0;
-        setElementDimensions(this.optionslist, {w:node_dims.w});
-        setElementPosition(this.optionslist, {x:0, y: textedit_dims.h});
+        Util.setElementDimensions(this.optionslist, {w:node_dims.w});
+        Util.setElementPosition(this.optionslist, {x:0, y: textedit_dims.h});
 
         this.highlightNode(divs[0]);
         if(!this._activate_dropdown && !this._suppress_range && this.exposed_options.length == 1) {
             this.selectOption();
-            //hideElement(this.optionslist);
+            //Util.hideElement(this.optionslist);
         }
     },
 
@@ -274,7 +276,7 @@ const ComboBox = new Class({
         this.highlightNode(evt.target);
         this._suppress_range = true;
         this.selectOption();
-        hideElement(this.optionslist);
+        Util.hideElement(this.optionslist);
     },
 
     toggle: function(evt) {
@@ -288,7 +290,7 @@ const ComboBox = new Class({
                 this.highlightNode(document.getElementById(this.textedit.value));
             }
         } else {
-            hideElement(this.optionslist);
+            Util.hideElement(this.optionslist);
         }
     },
 
@@ -299,7 +301,7 @@ const ComboBox = new Class({
 
     scrollIntoView: function(el) {
         var rel_pos = el.offsetTop;
-        var diff = rel_pos - (getElementDimensions(this.optionslist).h/2);
+        var diff = rel_pos - (Util.getElementDimensions(this.optionslist).h/2);
         if (rel_pos > 0) {
             this.optionslist.scrollTop = diff;
         }
