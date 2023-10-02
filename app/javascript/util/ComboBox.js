@@ -288,7 +288,7 @@ const ComboBox = new Class({
             this.update();
             this.build(this.config.options);
             this.textedit.focus();
-            if (document.getElementById(this.textedit.value)) {
+            if (this.textedit.value !== "" && document.getElementById(this.textedit.value)) {
                 this.highlightNode(document.getElementById(this.textedit.value));
             }
         } else {
