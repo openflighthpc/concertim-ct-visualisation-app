@@ -8,6 +8,8 @@
 * adapted from Eric Waldheims MochiKit-based ComboBox
 */
 
+import Util from 'canvas/common/util/Util';
+
 if (RegExp.escape == undefined) {
     RegExp.escape = function(text) {
         return text.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&');
@@ -57,10 +59,10 @@ const ComboBox = new Class({
         });
 
         document.addEvents({
-            onmousedown: this.mouseDown
+            mousedown: this.mouseDown
         });
 
-        appendChildNodes(this.node, this.optionslist);
+        this.node.appendChild(this.optionslist);
     },
 
     add_change_callback: function(callback) {
@@ -86,7 +88,7 @@ const ComboBox = new Class({
             this.moveCaretToEnd();
         }
         else {
-            hideElement(this.optionslist);
+            Util.hideElement(this.optionslist);
         }
     },
 
@@ -114,7 +116,7 @@ const ComboBox = new Class({
                 evt.stopPropagation();
                 break;
             case 'esc':
-                hideElement(this.optionslist);
+                Util.hideElement(this.optionslist);
                 evt.stopPropagation();
                 break;
             case 'backspace':
@@ -125,7 +127,7 @@ const ComboBox = new Class({
             case 'enter':
                 if (this.isVisible(this.optionslist) && this._highlighted_node) {
                     this.selectOption();
-                    hideElement(this.optionslist);
+                    Util.hideElement(this.optionslist);
                     evt.stop();
                 } else if ( key === 'enter' && this.textedit.style.background !== '' ) {
                     evt.stop();
@@ -188,7 +190,7 @@ const ComboBox = new Class({
         this.exposed_options = [];
         this._suppress_range = false;
 
-        for(i=0;i<options.length;i++) {
+        for(let i=0;i<options.length;i++) {
             if (options[i].toLowerCase().match(textedit_start_regexp)) {
                 this.exposed_options.push(options[i]);
             } else if (options[i].toLowerCase().match(textedit_any_regexp)) {
@@ -203,15 +205,17 @@ const ComboBox = new Class({
     build: function(options) {
         this.showing_all_options = options === this.config.options;
         while (this._connect_ids.length) { this._connect_ids.pop().removeEvents(); }
-        var onmouseover = bind(this.itemMouseOver, this);
-        var onmouseout = bind(this.itemMouseOut, this);
+        const onmouseover = this.itemMouseOver.bind(this);
+        const onmouseout = this.itemMouseOut.bind(this);
         var divs = [];
         for (var i = 0; i < options.length; ++i) {
             var data = options[i];
             var string = this.config.optionStringGetter(data);
-            var div = DIV({'class':'cbox-item'}, string);
-            div.addEvent('onmouseover', onmouseover);
-            div.addEvent('onmouseout', onmouseout);
+            const div = document.createElement('div');
+            div.classList.add('cbox-item');
+            div.appendChild(document.createTextNode(string));
+            div.addEvent('mouseover', onmouseover);
+            div.addEvent('mouseout', onmouseout);
             this._connect_ids.push(div);
             div.setAttribute('Desc', string);
             div.setAttribute('Data', data);
@@ -219,7 +223,7 @@ const ComboBox = new Class({
             div.setAttribute('id', data);
             divs.push(div);
         }
-        replaceChildNodes(this.optionslist, divs);
+        Util.replaceChildNodes(this.optionslist, ...divs);
 
         var visibleCount = Math.min(options.length, this.config.maxListLength);
         if ( this._loaded ) {
@@ -227,7 +231,7 @@ const ComboBox = new Class({
                 this.addEmptyHighlight();
                 return;
             } else if (!visibleCount) {
-                hideElement(this.optionslist);
+                Util.hideElement(this.optionslist);
                 this.blurHighlightedNode();
                 if (this.config.highlightNotFound) {
                     this.addErrorHighlight();
@@ -236,7 +240,7 @@ const ComboBox = new Class({
             }
         }
         if (this._activate_dropdown || this._suppress_range || visibleCount > 1) {
-            showElement(this.optionslist);
+            Util.showElement(this.optionslist);
             this.addEmptyHighlight();
         }
         // mjt - IE seems to break within MochiKit, guessing that firstChild is null (or perhaps... "not an object" ;-p).
@@ -244,17 +248,17 @@ const ComboBox = new Class({
             return;
         }
 
-        var item_dims = getElementDimensions(this.optionslist.firstChild);
-        var textedit_dims = getElementDimensions(this.textedit);
-        var node_dims = getElementDimensions(this.node);
+        var item_dims = Util.getElementDimensions(this.optionslist.firstChild);
+        var textedit_dims = Util.getElementDimensions(this.textedit);
+        var node_dims = Util.getElementDimensions(this.node);
         var h = visibleCount ? (visibleCount * item_dims.h) : 0;
-        setElementDimensions(this.optionslist, {w:node_dims.w});
-        setElementPosition(this.optionslist, {x:0, y: textedit_dims.h});
+        Util.setElementDimensions(this.optionslist, {w:node_dims.w});
+        Util.setElementPosition(this.optionslist, {x:0, y: textedit_dims.h});
 
         this.highlightNode(divs[0]);
         if(!this._activate_dropdown && !this._suppress_range && this.exposed_options.length == 1) {
             this.selectOption();
-            //hideElement(this.optionslist);
+            //Util.hideElement(this.optionslist);
         }
     },
 
@@ -274,7 +278,7 @@ const ComboBox = new Class({
         this.highlightNode(evt.target);
         this._suppress_range = true;
         this.selectOption();
-        hideElement(this.optionslist);
+        Util.hideElement(this.optionslist);
     },
 
     toggle: function(evt) {
@@ -284,11 +288,11 @@ const ComboBox = new Class({
             this.update();
             this.build(this.config.options);
             this.textedit.focus();
-            if (document.getElementById(this.textedit.value)) {
+            if (this.textedit.value !== "" && document.getElementById(this.textedit.value)) {
                 this.highlightNode(document.getElementById(this.textedit.value));
             }
         } else {
-            hideElement(this.optionslist);
+            Util.hideElement(this.optionslist);
         }
     },
 
@@ -299,7 +303,7 @@ const ComboBox = new Class({
 
     scrollIntoView: function(el) {
         var rel_pos = el.offsetTop;
-        var diff = rel_pos - (getElementDimensions(this.optionslist).h/2);
+        var diff = rel_pos - (Util.getElementDimensions(this.optionslist).h/2);
         if (rel_pos > 0) {
             this.optionslist.scrollTop = diff;
         }
@@ -309,13 +313,13 @@ const ComboBox = new Class({
         if (this._highlighted_node != node) {
             this.blurHighlightedNode();
             this._highlighted_node = node;
-            addElementClass(this._highlighted_node, "cbox-hilite");
+            this._highlighted_node.classList.add("cbox-hilite");
         }
     },
 
     blurHighlightedNode: function() {
         if (this._highlighted_node) {
-            removeElementClass(this._highlighted_node, "cbox-hilite");
+            this._highlighted_node.classList.remove("cbox-hilite");
             this._highlighted_node = null;
         }
     },
@@ -361,7 +365,7 @@ const ComboBox = new Class({
             this.failure_notice = new Element('div', {
                 'class' : 'drop_down_meta'
             });
-            insertSiblingNodesAfter(this.node, this.failure_notice);
+            Util.insertSiblingNodesAfter(this.node, this.failure_notice);
         }
         if (dataArray === '') {
             this.failure_notice.innerHTML = '(Option retrieval interrupted)';
@@ -400,7 +404,7 @@ const ComboBox = new Class({
     },
 
     updateFromUrl: function(url, error_msg) {
-        if (isUndefinedOrNull(error_msg)) {
+        if (error_msg == null) {
             var error_msg = "Unable to retrieve list";
         }
 
@@ -409,7 +413,7 @@ const ComboBox = new Class({
             this.failure_notice = new Element('div', {
                 'class' : 'drop_down_meta'
             });
-            insertSiblingNodesAfter(this.node, this.failure_notice);
+            Util.insertSiblingNodesAfter(this.node, this.failure_notice);
         }
 
         this._completed = false;
