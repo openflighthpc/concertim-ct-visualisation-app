@@ -61,23 +61,6 @@
     width: 70px;
   }
 
-
-  #group_save_dialogue
-  {
-    top:220px;
-    left:0;
-    background:#ddf2bb;
-    width:93%;
-    display:none;
-    padding: 5px;
-  }
-
-  #group_save_dialogue input
-  {
-    width: 95%;
-    margin-bottom:5px;
-  }
-
   #rack_thumbnail
   {
     position: absolute;
@@ -255,19 +238,9 @@
     height: auto;*/
   }
 
-  #cancel_group_save
-  {
-    float: right; 
-  }
-
   #cancel_preset_save
   {
     float: right;
-  }
-
-  #confirm_group_save
-  {
-    position: relative; 
   }
 
   #confirm_preset_save
