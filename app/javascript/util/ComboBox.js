@@ -404,7 +404,7 @@ const ComboBox = new Class({
     },
 
     updateFromUrl: function(url, error_msg) {
-        if (MochiKit.Base.isUndefinedOrNull(error_msg)) {
+        if (error_msg == null) {
             var error_msg = "Unable to retrieve list";
         }
 

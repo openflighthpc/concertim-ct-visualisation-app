@@ -164,7 +164,7 @@ const Util = {
   //
   // Based on code taken from MochiKit licensed under the MIT.
   setElementDimensions(element, newSize/* optional */, units) {
-    if (typeof(units) == 'undefined') {
+    if (units == null) {
       units = 'px';
     }
     const newStyle = {};
@@ -184,7 +184,7 @@ const Util = {
   //
   // Based on code taken from MochiKit licensed under the MIT.
   setElementPosition(element, newPos/* optional */, units) {
-    if (typeof(units) == 'undefined') {
+    if (units == null) {
       units = 'px';
     }
     const newStyle = {};
