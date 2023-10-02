@@ -11,7 +11,6 @@
 //= require mootools/fxtween
 //
 //= require MochiKit/Base
-//= require MochiKit/Iter
 //
 //= require jquery
 //= require modernizr
