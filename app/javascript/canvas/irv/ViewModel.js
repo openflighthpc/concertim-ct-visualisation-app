@@ -1,52 +1,41 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS104: Avoid inline assignments
- * DS204: Change includes calls to have a more natural evaluation order
- * DS206: Consider reworking classes to avoid initClass
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-
-
 import Util from 'canvas/common/util/Util'
 
+// Hard coded constants.
+const VIEW_MODE_BOTH         = 'Images and bars';
+const VIEW_MODE_IMAGES       = 'Images only';
+const VIEW_MODE_METRICS      = 'Bars only';
+const VIEW_MODE_BUILD_STATUS = 'Build status';
+const GROUP_NO_VALUE         = 'No group selected';
+const EXCLUDED_METRICS       = ['ct.capacity.rack'];
+
+// Values used for initialising the model.  These cannot be overwritten by the
+// config.
+const INIT_SCALE_METRICS   = true;
+const INIT_SHOW_FILTER_BAR = true;
+const INIT_METRIC          = null;
+
 class ViewModel {
-  static initClass() {
-    // startup properties, can be overwritten by url parameters
-    this.INIT_FACE           = 'front';
+  // Values used for initialising the model.  These can be overwritten by the
+  // config.  If we ever stop allowing that, consider moving outside of the
+  // class.
+  static INIT_FACE             = 'front';
+  static INIT_GRAPH_ORDER      = 'ascending';
+  static INIT_METRIC_LEVEL     = 'machine';
+  static INIT_METRIC_POLL_RATE = 60000
+  static INIT_SHOW_CHART       = true;
+  static INIT_VIEW_MODE        = 'Images and bars';
+  static COLOUR_SCALE = [{ pos: 0, col: '#000000' }, { pos: 1, col: '#ffffff' }];
 
-    this.FACE_FRONT  = 'front';
-    this.FACE_REAR   = 'rear';
-    this.FACE_BOTH   = 'both';
-    this.FACES  = [this.FACE_FRONT, this.FACE_REAR, this.FACE_BOTH];
-
-    this.INIT_VIEW_MODE      = 'Images and bars';
-    this.INIT_METRIC_LEVEL   = 'machine';
-    this.INIT_GRAPH_ORDER    = 'ascending';
-    this.INIT_SCALE_METRICS  = true;
-    this.INIT_SHOW_CHART     = true;
-    this.INIT_SHOW_FILTER_BAR     = true;
-    this.INIT_METRIC         = null;
-
-    this.VIEW_MODE_BOTH         = 'Images and bars';
-    this.VIEW_MODE_IMAGES       = 'Images only';
-    this.VIEW_MODE_METRICS      = 'Bars only';
-    this.VIEW_MODE_BUILD_STATUS = 'Build status';
-
-    this.METRIC_LEVEL_DEVICES  = 'devices';
-    this.METRIC_LEVEL_CHASSIS  = 'chassis';
-    this.METRIC_LEVEL_ALL      = 'all';
-
-    this.NORMAL_CHART_ORDERS  = [ 'ascending', 'descending', 'physical position', 'name' ];
-
-    this.EXCLUDED_METRICS     = ['ct.capacity.rack'];
-
-    // statics overwritten by config
-    this.COLOUR_SCALE = [{ pos: 0, col: '#000000' }, { pos: 1, col: '#ffffff' }];
-  }
-
+  // Hard coded constants.
+  // These are referenced outside of this file so need to be exported.  Perhaps
+  // they shouldn't be.
+  static FACE_FRONT  = 'front';
+  static FACE_REAR   = 'rear';
+  static FACE_BOTH   = 'both';
+  static METRIC_LEVEL_DEVICES  = 'devices';
+  static METRIC_LEVEL_CHASSIS  = 'chassis';
+  static METRIC_LEVEL_ALL      = 'all';
+  static NORMAL_CHART_ORDERS  = [ 'ascending', 'descending', 'physical position', 'name' ];
 
   constructor() {
     this.showingFullIrv = ko.observable(false);
@@ -65,7 +54,7 @@ class ViewModel {
   
     // do the racks face forward, backwards or show both
     this.face = ko.observable(ViewModel.INIT_FACE);
-    this.faces = ko.observable(ViewModel.FACES);
+    this.faces = ko.observable([ViewModel.FACE_FRONT, ViewModel.FACE_REAR, ViewModel.FACE_BOTH]);
 
     // list of images to preload
     this.assetList = ko.observable([]);
@@ -79,7 +68,7 @@ class ViewModel {
     // display mode settings
     // view mode dictates wether metrics and images are drawn
     this.viewMode  = ko.observable(ViewModel.INIT_VIEW_MODE);
-    this.viewModes = ko.observable([ViewModel.VIEW_MODE_IMAGES, ViewModel.VIEW_MODE_METRICS, ViewModel.VIEW_MODE_BOTH, ViewModel.VIEW_MODE_BUILD_STATUS]);
+    this.viewModes = ko.observable([VIEW_MODE_IMAGES, VIEW_MODE_METRICS, VIEW_MODE_BOTH, VIEW_MODE_BUILD_STATUS]);
 
     // string, metric level determines wether to display chassis or device level metrics.
     this.metricLevel = ko.observable(ViewModel.INIT_METRIC_LEVEL);
@@ -89,18 +78,18 @@ class ViewModel {
     this.graphOrders = ko.observable(ViewModel.NORMAL_CHART_ORDERS);
 
     // boolean, do metric bars on devices scale to reflect their value or just show a colour
-    this.scaleMetrics = ko.observable(ViewModel.INIT_SCALE_METRICS);
+    this.scaleMetrics = ko.observable(INIT_SCALE_METRICS);
 
     // set chart visibility
     this.showChart = ko.observable(ViewModel.INIT_SHOW_CHART);
 
-    this.showFilterBar = ko.observable(ViewModel.INIT_SHOW_FILTER_BAR);
+    this.showFilterBar = ko.observable(INIT_SHOW_FILTER_BAR);
 
     // set holding area
     this.showHoldingArea = ko.observable(false);
 
     // string, id of currently selected metric
-    this.selectedMetric = ko.observable(ViewModel.INIT_METRIC);
+    this.selectedMetric = ko.observable(INIT_METRIC);
 
     // int, poll rate period in ms
     this.metricPollRate = ko.observable(ViewModel.INIT_METRIC_POLL_RATE);//.extend({ ignoreNull: true })
@@ -136,7 +125,7 @@ class ViewModel {
     // boolean, are presets available? Dependencies: presetNames
     this.enablePresetSelection = ko.dependentObservable(function() {
       const presets = this.presetNames();
-      return (presets != null) && (presets.length > 0);
+      return presets && (presets.length > 0);
     }
     , this);
 
@@ -166,10 +155,6 @@ class ViewModel {
 
     // canvas, a snapshot of the rack view used by the thumb navigation
     this.rackImage = ko.observable();
-
-    // object, defines the physical dimensions of the breaching devices. Used to draw red boxes in thumb navigation. Uses class name as
-    // the top-level key, then id
-    this.breachZones = ko.observable(this.getBlankComponentClassNamesObject());
 
     // float, the current zoom level of the rack view 1 represents 100% where all images will be drawn at their natural size
     this.scale = ko.observable();
@@ -215,23 +200,21 @@ class ViewModel {
     // boolean, is the metric combo box active? Dependencies: metricIds
     this.enableMetricSelection = ko.dependentObservable(function() {
       const metrics = this.metricIds();
-      return (metrics != null) && (metrics.length > 0);
+      return metrics && (metrics.length > 0);
     }
     , this);
   }
 
   displayingMetrics() {
-    return this.viewMode() === ViewModel.VIEW_MODE_METRICS
-      || this.viewMode() === ViewModel.VIEW_MODE_BOTH;
+    return this.viewMode() === VIEW_MODE_METRICS || this.viewMode() === VIEW_MODE_BOTH;
   }
 
   displayingImages() {
-    return this.viewMode() === ViewModel.VIEW_MODE_IMAGES
-      || this.viewMode() === ViewModel.VIEW_MODE_BOTH;
+    return this.viewMode() === VIEW_MODE_IMAGES || this.viewMode() === VIEW_MODE_BOTH;
   }
 
   displayingBuildStatus() {
-    return this.viewMode() === ViewModel.VIEW_MODE_BUILD_STATUS;
+    return this.viewMode() === VIEW_MODE_BUILD_STATUS;
   }
 
   faceBoth() {
@@ -239,14 +222,15 @@ class ViewModel {
   }
 
   validMetric(metric) {
-    let needle;
-    return (needle = metric, Array.from(this.metricIds()).includes(needle));
+    return this.metricIds().includes(metric);
   }
 
   isInExcludedMetrics(one_metric_name) {
-    for (var one_metric_to_exclude of Array.from(ViewModel.EXCLUDED_METRICS)) {
+    for (var one_metric_to_exclude of EXCLUDED_METRICS) {
       // Return true if one_metric_name starts with one_metric_to_exclude
-      if ((one_metric_name != null) && (one_metric_name.indexOf(one_metric_to_exclude) === 0)) { return true; }
+      if (one_metric_name && (one_metric_name.indexOf(one_metric_to_exclude) === 0)) {
+        return true;
+      }
     }
     return false;
   }
@@ -259,7 +243,7 @@ class ViewModel {
     const selected_metric          = this.selectedMetric();
     const filters                  = this.filters();
     filters[selected_metric] = {};
-    return this.filters(filters);
+    this.filters(filters);
   }
 
   // Reset the "selection" filter.  The one activated by dragging a selection
@@ -277,9 +261,8 @@ class ViewModel {
   // Create an object with keys for each of the component class names (racks, devices, etc.), each containing an empty object
   getBlankComponentClassNamesObject() {
     const obj        = {};
-    const classNames     = this.componentClassNames();
-    for (let className of Array.from(classNames)) { obj[className] = {}; }
-
+    const classNames = this.componentClassNames();
+    for (let className of classNames) { obj[className] = {}; }
     return obj;
   }
 
@@ -291,5 +274,5 @@ class ViewModel {
     }
   }
 };
-ViewModel.initClass();
+
 export default ViewModel;

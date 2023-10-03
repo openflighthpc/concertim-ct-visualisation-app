@@ -1,12 +1,6 @@
 import ViewModel from 'canvas/irv/ViewModel'
 import 'contrib/knockout.js'
 
-test('class init', () => {
-    ViewModel.initClass();
-    expect(ViewModel.INIT_VIEW_MODE).toBe('Images and bars');
-    expect(expect(ViewModel.INIT_FACE).toBe('front'));
-});
-
 test('model defaults', () => {
     let model = new ViewModel();
     expect(model.showingFullIrv()).toBe(false);
@@ -18,6 +12,8 @@ test('model defaults', () => {
     expect(model.face()).toBe('front');
     expect(model.faces()).toEqual(['front', 'rear', 'both']);
     expect(model.assetList()).toEqual([]);
+    expect(model.viewMode()).toEqual('Images and bars')
+    expect(model.viewModes()).toEqual(['Images only', 'Bars only', 'Images and bars', 'Build status'])
 });
 
 test('faceBoth returns true if current facing is "both"', () => {

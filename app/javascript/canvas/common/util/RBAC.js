@@ -10,10 +10,10 @@ import Events from 'canvas/common/util/Events';
 class RBAC {
   static PATH = '/api/v1/users/can_i';
 
-  constructor(model, ignoreDefault) {
+  constructor({onSuccess}) {
+    this.onSuccessCallback = onSuccess;
     this.permisionsReceived = this.permisionsReceived.bind(this);
-    this.model = model;
-    this.ignoreDefault = ignoreDefault;
+    this.debug("loading permissions");
     new Request.JSON({
       headers   : {'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content')},
       url       : RBAC.PATH,
@@ -24,8 +24,16 @@ class RBAC {
   }
 
 
+  isLoaded() {
+    return this.permissions != null;
+  }
+
   permisionsReceived(permissions) {
+    this.debug("recevied permissions");
     this.permissions = permissions;
+    if (this.onSuccessCallback) {
+      this.onSuccessCallback()
+    }
   }
 
   getPermissionsToQuery() {
@@ -49,6 +57,10 @@ class RBAC {
 
   can_i_manage_devices() {
     return this.can_i("manage", "Device") || this.can_i("manage", "Chassis");
+  }
+
+  debug(...msg) {
+    console.debug('RBAC:', ...msg);
   }
 };
 

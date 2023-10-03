@@ -101,7 +101,6 @@ class IRVController {
     this.evAssetDoubleFailed = this.evAssetDoubleFailed.bind(this);
     this.getRackDefs = this.getRackDefs.bind(this);
     this.clearSelectedMetric = this.clearSelectedMetric.bind(this);
-    this.getUserRoles = this.getUserRoles.bind(this);
     this.configReceived = this.configReceived.bind(this);
     this.evShowHideScrollBars = this.evShowHideScrollBars.bind(this);
     this.getNonrackDeviceDefs = this.getNonrackDeviceDefs.bind(this);
@@ -218,7 +217,11 @@ class IRVController {
   }
 
   getUserRoles() {
-    return this.model.RBAC = new RBAC();
+    IRVController.NUM_RESOURCES += 1;
+    this.model.RBAC = new RBAC({onSuccess: () => { 
+      ++this.resourceCount;
+      this.testLoadProgress();
+    }});
   }
 
   // called on successful load of confuration file. Applies application configuration, overwrites view model startup state with
@@ -1582,10 +1585,10 @@ class IRVController {
     if ((assets != null) && (assets.length >= 0)) {
       const num_assets = assets.length;
       progress   = this.calculateProgress(num_assets);
-      //XXX We have loaded everything now, this is where we action any rebuilding and redrawing
-      //
       this.debug(`load progress: resources:${this.resourceCount}/${IRVController.NUM_RESOURCES} assets:${this.assetCount}/${num_assets} progress:${progress}`);
       if ((this.resourceCount === IRVController.NUM_RESOURCES) && (this.assetCount === num_assets)) {
+        // We have loaded everything now, this is where we action any
+        // rebuilding and redrawing
         this.assetCount = 0;
         if (this.initialised) {
           this.rackSpace.synchroniseNonRackDevices(this.model.modifiedDcrvShowableNonRackChassis(), this.changeSetNonRacks);
