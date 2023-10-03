@@ -25,6 +25,12 @@ class ViewModel {
   static INIT_SHOW_CHART       = true;
   static INIT_VIEW_MODE        = 'Images and bars';
   static COLOUR_SCALE = [{ pos: 0, col: '#000000' }, { pos: 1, col: '#ffffff' }];
+  static INIT_METRIC_TIMEFRAME = 'current';
+  static METRIC_TIMEFRAMES = [
+      {caption: 'Current', value: 'current'}, {caption: 'Past day', value: 'day'},
+      {caption: 'Past month', value: 'month'}, {caption: 'Past 3 months', value: 'three_months'},
+      {caption: 'Past year', value: 'year'}
+  ]
 
   // Hard coded constants.
   // These are referenced outside of this file so need to be exported.  Perhaps
@@ -66,9 +72,13 @@ class ViewModel {
     this.RBAC = null;
 
     // display mode settings
-    // view mode dictates wether metrics and images are drawn
+    // view mode dictates weather metrics and images are drawn
     this.viewMode  = ko.observable(ViewModel.INIT_VIEW_MODE);
     this.viewModes = ko.observable([VIEW_MODE_IMAGES, VIEW_MODE_METRICS, VIEW_MODE_BOTH, VIEW_MODE_BUILD_STATUS]);
+
+    // metric timeframe settings
+    this.metricTimeframe = ko.observable(ViewModel.INIT_METRIC_TIMEFRAME);
+    this.metricTimeframes = ko.observable(ViewModel.METRIC_TIMEFRAMES);
 
     // string, metric level determines wether to display chassis or device level metrics.
     this.metricLevel = ko.observable(ViewModel.INIT_METRIC_LEVEL);

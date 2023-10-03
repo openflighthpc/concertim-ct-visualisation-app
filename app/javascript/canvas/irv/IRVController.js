@@ -186,6 +186,7 @@ class IRVController {
     this.evEditMetricPoll = this.evEditMetricPoll.bind(this);
     this.evSetMetricPoll = this.evSetMetricPoll.bind(this);
     this.evResetMetricPoller = this.evResetMetricPoller.bind(this);
+    this.evEditMetricTimeframe = this.evEditMetricTimeframe.bind(this);
     this.setMetricPoll = this.setMetricPoll.bind(this);
     this.setMetricPollInput = this.setMetricPollInput.bind(this);
     this.evDropFilterBar = this.evDropFilterBar.bind(this);
@@ -600,6 +601,7 @@ class IRVController {
     this.thumbEl         = $('thumb_nav');
     this.filterBarEl     = $('colour_map');
     this.metricPollInput = $('metric_poll_input');
+    this.metricTimeframeInput = $('metric_timeframe');
     this.holdingAreaCheckBox = $('show_holding_area');
 
     if (this.metricPollInput != null) { this.metricPollInput.value = this.model.metricPollRate() / 1000; }
@@ -640,6 +642,7 @@ class IRVController {
     Events.addEventListener(window, 'getHintInfo', this.evGetHintInfo);
     if (this.metricPollInput != null) { Events.addEventListener(this.metricPollInput, 'keyup', this.evEditMetricPoll); }
     if (this.metricPollInput != null) { Events.addEventListener(this.metricPollInput, 'blur', this.evSetMetricPoll); }
+    if (this.metricTimeframeInput != null) { Events.addEventListener(this.metricTimeframeInput, 'change', this.evEditMetricTimeframe); }
 
     this.updateLayout();
 
@@ -1642,11 +1645,12 @@ class IRVController {
     //console.log "@@@ DCRV @@@ LOADING METRICS"
     const selected_metric = this.model.selectedMetric();
     if (this.noMetricSelected(selected_metric)) { return; }
-
+    const metricTimeframe = this.model.metricTimeframe();
+    const params = `?timeframe=${metricTimeframe}&timestamp=${(new Date()).getTime()}`;
     const metric_api = this.resources.metricData;
 
     new Request.JSON({
-      url        : this.resources.path + metric_api.replace(/\[\[metric_id\]\]/g, selected_metric) + '?' + (new Date()).getTime(),
+      url        : this.resources.path + metric_api.replace(/\[\[metric_id\]\]/g, selected_metric) + params,
       onComplete : this.receivedMetrics,
       headers    : {
           'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content'),
@@ -2465,6 +2469,11 @@ class IRVController {
   // @param  poll_rate the new poll rate value
   setMetricPollInput(poll_rate) {
     return this.metricPollInput.value = poll_rate / 1000;
+  }
+
+  evEditMetricTimeframe(event) {
+    this.model.metricTimeframe(this.metricTimeframeInput.value);
+    this.resetMetricPoller();
   }
 
 
