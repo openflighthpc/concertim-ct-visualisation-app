@@ -53,7 +53,7 @@ class ContextMenu {
 
     // iterate through device-parent hierarchy of selected item and collate a list of options to include
     while (child != null) {
-      switch (child.group) {
+      switch (child.componentClassName) {
         case 'devices':
           device_id   = child.id;
           device_name = child.name != null ? child.name : child.id;
@@ -70,10 +70,10 @@ class ContextMenu {
           aspect    = ContextMenu.ASPECT_MAP[aspect];
           break;
         default:
-          Profiler.trace(Profiler.CRITICAL, this.show, '***** UNKNOWN GROUP: %s ******', child.group);
+          Profiler.trace(Profiler.CRITICAL, this.show, '***** UNKNOWN CLASS NAME: %s ******', child.componentClassName);
       }
 
-      option_keys.push(child.group);
+      option_keys.push(child.componentClassName);
       if (ContextMenu.VERBOSE) {
         child = child.parent;
       } else {

@@ -8,8 +8,8 @@ import Easing from 'canvas/common/gfx/Easing';
 
 class BarMetric extends Metric {
   
-  constructor(group, id, parent, x, y, width, height, model) {
-    super(group, id, parent, x, y, width, height, model);
+  constructor(componentClassName, id, parent, x, y, width, height, model) {
+    super(componentClassName, id, parent, x, y, width, height, model);
   }
 
 

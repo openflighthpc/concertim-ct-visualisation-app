@@ -40,7 +40,7 @@ class LBC {
     this.LINE_POINTER_COLOUR  = '#0';
     this.LINE_POINTER_WIDTH   = 1;
 
-    this.MODEL_DEPENDENCIES = { showChart: 'showChart', selectedDevices: 'selectedDevices', filteredDevices: 'filteredDevices', metricData: 'metricData', colourMaps: 'colourMaps', colourScale: 'colourScale', graphOrder: 'chartSortOrder', racks: 'racks', highlighted: 'highlighted', metricLevel: 'metricLevel', metricTemplates: 'metricTemplates', selectedMetric: 'selectedMetric', deviceLookup: 'deviceLookup', groups: 'groups', activeSelection: 'activeSelection', activeFilter: 'activeFilter' };
+    this.MODEL_DEPENDENCIES = { showChart: 'showChart', selectedDevices: 'selectedDevices', filteredDevices: 'filteredDevices', metricData: 'metricData', colourMaps: 'colourMaps', colourScale: 'colourScale', graphOrder: 'chartSortOrder', racks: 'racks', highlighted: 'highlighted', metricLevel: 'metricLevel', metricTemplates: 'metricTemplates', selectedMetric: 'selectedMetric', deviceLookup: 'deviceLookup', componentClassNames: 'componentClassNames', activeSelection: 'activeSelection', activeFilter: 'activeFilter' };
 
 
     // constants and run-time assigned statics
@@ -74,9 +74,9 @@ class LBC {
     this.visSub        = this.modelRefs.showChart.subscribe(this.evShowChart);
     this.setSubscriptions();
 
-    const groups     = this.modelRefs.groups();
+    const componentClassNames     = this.modelRefs.componentClassNames();
     this.posLookup = {};
-    for (var group of Array.from(groups)) { this.posLookup[group] = {}; }
+    for (let className of Array.from(componentClassNames)) { this.posLookup[className] = {}; }
 
     this.cvs    = document.createElement('canvas');
     this.ctx    = this.cvs.getContext('2d');
@@ -146,13 +146,13 @@ class LBC {
     const active_filter    = this.modelRefs.activeFilter();
 
     // subset filters
-    const test_selection = (group, id) => selected_devices[group][id];
+    const test_selection = (componentClassName, id) => selected_devices[componentClassName][id];
 
-    const test_filter = (group, id) => filtered_devices[group][id];
+    const test_filter = (componentClassName, id) => filtered_devices[componentClassName][id];
 
-    const test_both = (group, id) => filtered_devices[group][id] && selected_devices[group][id];
+    const test_both = (componentClassName, id) => filtered_devices[componentClassName][id] && selected_devices[componentClassName][id];
 
-    const test_none = (group, id) => true;
+    const test_none = (componentClassName, id) => true;
 
     // chose a filter based upon current view
     if (active_selection && active_filter) {
@@ -179,7 +179,7 @@ class LBC {
 
     if (set.data.length > 0) {
       // sort
-      let group, max_min;
+      let max_min;
       switch (this.modelRefs.graphOrder()) {
         case 'ascending':
           Util.sortByProperty(set.data, 'numMetric', true);
@@ -247,10 +247,10 @@ class LBC {
 
       console.log('update complete, ' + set.data.length + ' metrics plotted in ' + ((new Date()).getTime() - start) + 'ms');
     
-      const groups   = this.modelRefs.groups();
+      const componentClassNames = this.modelRefs.componentClassNames();
       this.idxById = {};
-      for (group of Array.from(groups)) { this.idxById[group] = {}; }
-      for (let idx = 0; idx < set.data.length; idx++) { var datum = set.data[idx]; this.idxById[datum.group][datum.id] = idx; }
+      for (let className of Array.from(componentClassNames)) { this.idxById[className] = {}; }
+      for (let idx = 0; idx < set.data.length; idx++) { var datum = set.data[idx]; this.idxById[datum.className][datum.id] = idx; }
 
       const the_min = typeof max_min.min === "string" ? max_min.min : Util.formatValue(max_min.min);
       const the_max = typeof max_min.max === "string" ? max_min.max : Util.formatValue(max_min.max);
@@ -277,38 +277,38 @@ class LBC {
   // queries all metric data to return the subset defined by the current display settings.
   // Accepts an inclusion function which should return true/false to indicate if a member
   // satisfies current selection and filter settings if any. Also returns an object of the
-  // included members structured by their group and id
+  // included members structured by their class name and id
   getDataSet(inclusion_filter) {
-    let group;
+    let componentClassName;
     const data             = [];
     const metric_data      = this.modelRefs.metricData();
     const metric_templates = this.modelRefs.metricTemplates();
     const metric_template  = metric_templates[metric_data.metricId];
     const selected_metric  = this.modelRefs.selectedMetric();
     const device_lookup    = this.modelRefs.deviceLookup();
-    const groups           = this.modelRefs.groups();
+    const componentClassNames = this.modelRefs.componentClassNames();
     const included         = {};
-    for (group of Array.from(groups)) { included[group]  = {}; }
+    for (let className of Array.from(componentClassNames)) { included[className]  = {}; }
 
     const col_map  = this.modelRefs.colourMaps()[metric_data.metricId];
     const col_high = col_map.high;
     const col_low  = col_map.low;
     const range    = col_high - col_low;
 
-    const groups_to_consider = groups;
-    const values = metric_data.values != null ? metric_data.values : metric_data.byGroup;
+    const component_classes_to_consider = componentClassNames;
+    const values = metric_data.values;
 
     let sample_count = 0;
     // extract subset of all metrics according to display settings
-    for (group of Array.from(groups_to_consider)) {
-      for (var id in values[group]) {
+    for (let className of Array.from(component_classes_to_consider)) {
+      for (var id in values[className]) {
         ++sample_count;
-        if (inclusion_filter(group, id)) {
-          var device = device_lookup[group][id];
+        if (inclusion_filter(className, id)) {
+          var device = device_lookup[className][id];
 
-          included[group][id] = true;
+          included[className][id] = true;
 
-          var metric = values[group][id];
+          var metric = values[className][id];
           var temp   = (metric - col_low) / range;
           var col    = this.getColour(temp).toString(16);
           while (col.length < 6) { col    = '0' + col; }
@@ -317,8 +317,8 @@ class LBC {
           data.push({
             name,
             id,
-            group,
-            pos       : this.posLookup[group][id],
+            className,
+            pos       : this.posLookup[className][id],
             metric,
             numMetric : Number(metric),
             colour    : '#' + col,
@@ -375,8 +375,8 @@ class LBC {
     }
 
     const id = device.id != null ? device.id : device.itemId;
-    if ((this.chart != null) && !this.over && (this.included != null) && (this.included[device.group] != null) && this.included[device.group][id] && (this.idxById[device.group][id] != null)) {
-      const coords = this.chart.coords[this.idxById[device.group][id]];
+    if ((this.chart != null) && !this.over && (this.included != null) && (this.included[device.componentClassName] != null) && this.included[device.componentClassName][id] && (this.idxById[device.componentClassName][id] != null)) {
+      const coords = this.chart.coords[this.idxById[device.componentClassName][id]];
       const x      = this.plotLine ? coords.x : coords.centre;
       const {
         y
@@ -431,10 +431,9 @@ class LBC {
 
 
   getSelection(box) {
-    let group;
-    const groups           = this.modelRefs.groups();
+    const componentClassNames = this.modelRefs.componentClassNames();
     const selection        = {};
-    for (group of Array.from(groups)) { selection[group] = {}; }
+    for (let className of Array.from(componentClassNames)) { selection[className] = {}; }
     let active_selection = false;
     let count            = 0;
     const box_left         = box.x;
@@ -479,7 +478,7 @@ class LBC {
     //idx = start_idx
     //while idx <= end_idx
     //  device = coords[idx].datum.instances[0]
-    //  selection[device.group][device.id ? device.itemId] = true
+    //  selection[device.componentClassName][device.id ? device.itemId] = true
     //  ++idx
 
     //return { activeSelection: true, selection: selection, count: end_idx - start_idx + 1 }
@@ -496,7 +495,7 @@ class LBC {
         // of code.
         if ((datum.instances != null) && (datum.instances.length > 0)) {
           var device = datum.instances[0];
-          selection[device.group][device.id != null ? device.id : device.itemId] = true;
+          selection[device.componentClassName][device.id != null ? device.id : device.itemId] = true;
           active_selection = true;
         }
 
@@ -622,9 +621,9 @@ class LBC {
 
   // creates posLookup object which uses [device_type + id] as the key and pos idx as the value, for sorting by physical position
   makePositionLookup() {
-    const groups            = this.modelRefs.groups();
+    const componentClassNames = this.modelRefs.componentClassNames();
     this.posLookup        = {};
-    for (var group of Array.from(groups)) { this.posLookup[group] = {}; }
+    for (let className of Array.from(componentClassNames)) { this.posLookup[className] = {}; }
 
     const racks   = this.modelRefs.racks();
     let u_count = 0;

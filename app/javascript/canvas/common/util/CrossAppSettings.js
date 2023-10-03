@@ -1,5 +1,5 @@
 // When transitioning from the IRV to the DCPV we may wish to maintain some
-// settings such as the current metric selected or the current group filter.
+// settings such as the current metric selected.
 // This class provides a wrapper around localStorage to facilitate that.
 //
 // XXX Currently the settings are returned as a JSON blob making it hard to

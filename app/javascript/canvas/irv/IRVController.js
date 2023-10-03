@@ -192,7 +192,6 @@ class IRVController {
     this.evDropFilterBar = this.evDropFilterBar.bind(this);
     this.hintInfoReceived = this.hintInfoReceived.bind(this);
     this.evSwitchStat = this.evSwitchStat.bind(this);
-    this.evSwitchGroup = this.evSwitchGroup.bind(this);
     this.evSwitchGraphOrder = this.evSwitchGraphOrder.bind(this);
     this.config_file = '/irv/configuration';
     console.log("Constructing IRV :::: with the options :::: ",this.options);
@@ -379,11 +378,6 @@ class IRVController {
         }
       });
 
-    }
-    if (ComboBox.boxes.groups != null) {
-      ComboBox.boxes.groups.add_change_callback(() => {
-        this.model.selectedGroup(ComboBox.boxes.groups.value);
-      });
     }
   }
 
@@ -663,7 +657,6 @@ class IRVController {
     this.model.metricLevel.subscribe(this.switchMetricLevel);
     this.model.selectedMetricStat.subscribe(this.evSwitchStat);
     this.model.graphOrder.subscribe(this.evSwitchGraphOrder);
-    this.model.selectedGroup.subscribe(this.evSwitchGroup);
     this.pollSub = this.model.metricPollRate.subscribe(this.setMetricPollInput);
 
     const resetMetricControl = $('reset_metric');
@@ -767,7 +760,6 @@ class IRVController {
     let id;
     const device_lookup = this.model.deviceLookup();
     this.apiFilter = { device_ids: [], tagged_devices_ids: []};
-    const groups = ['chassis', 'devices'];
 
     for (id in device_lookup.devices) {
       var oneDevice = device_lookup.devices[id];
@@ -805,7 +797,7 @@ class IRVController {
 
     var trash_lookup = rack_object => {
       for (var child of Array.from(rack_object.children)) { trash_lookup(child); }
-      return delete device_lookup[rack_object.group][rack_object.id];
+      return delete device_lookup[rack_object.componentClassName][rack_object.id];
     };
 
     let modified = false;
@@ -933,7 +925,6 @@ class IRVController {
 
   // removes any active filter and/or selection
   resetFilterAndSelection() {
-    this.model.resetSelectedGroup();
     this.model.resetFilter();
     this.model.resetSelection();
 
@@ -969,10 +960,8 @@ class IRVController {
   saveSettings(going_to) {
     const settings = {};
 
-    // carry over either the current static group or the selected devices (if any)
-    if (this.model.selectedGroup() != null) {
-      settings.selectedGroup = this.model.selectedGroup();
-    } else if (this.model.activeSelection() || this.crossAppSettings.selectedRacks) {
+    // carry over the selected devices (if any)
+    if (this.model.activeSelection() || this.crossAppSettings.selectedRacks) {
       const device_lookup    = this.model.deviceLookup();
       const selected_devices = { racks: {} };
       let valid            = false;
@@ -1064,7 +1053,7 @@ class IRVController {
 
     const data          = this.model.metricData();
     const metric        = this.model.metricTemplates()[selected_metric];
-    const groups        = this.model.groups();
+    const componentClassNames = this.model.componentClassNames();
     const device_lookup = this.model.deviceLookup();
 
     let output = IRVController.EXPORT_HEADER;
@@ -1072,12 +1061,12 @@ class IRVController {
     output = Util.substitutePhrase(output, 'metric_units', metric.units);
     output = Util.substitutePhrase(output, 'metric_name', metric.units);
 
-    for (var group of Array.from(groups)) {
-      var group_lookup = device_lookup[group];
-      var values       = data.values[group];
+    for (let className of Array.from(componentClassNames)) {
+      var class_lookup = device_lookup[className];
+      var values       = data.values[className];
 
       for (var id in values) {
-        var device = group_lookup[id];
+        var device = class_lookup[id];
 
         if (device != null) {
           var record = IRVController.EXPORT_RECORD;
@@ -1293,7 +1282,6 @@ class IRVController {
   // restarts metric poller(s)
   // @param  metric  string, new metric id
   switchMetric(metric) {
-    let group;
     if (!this.noMetricSelected(metric) && !this.model.validMetric(metric)) { return; }
 
     this.resetMetricPoller();
@@ -1305,7 +1293,7 @@ class IRVController {
       this.pieCountdown.hide();
     } else {
       // Remove the filter as it might be inappropriate for the new selection.
-      // Consider adding a guard hgere to check if it is.
+      // Consider adding a guard here to check if it is.
       this.model.resetFilter();
     }
   }
@@ -1318,9 +1306,7 @@ class IRVController {
     const switch_from_all = (this.currentMetricLevel === ViewModel.METRIC_LEVEL_ALL) && (metric_level !== ViewModel.METRIC_LEVEL_ALL);
 
     if (switch_to_all || switch_from_all) {
-      const groups      = this.model.groups();
-      const vals        = {};
-      for (var group of Array.from(groups)) { vals[group] = {}; }
+      const vals        = this.model.getBlankComponentClassNamesObject();
       this.model.metricData({ values: vals });
       this.model.graphOrders(ViewModel.NORMAL_CHART_ORDERS);
       this.resetMetricPoller();
@@ -1328,7 +1314,7 @@ class IRVController {
 
     this.currentMetricLevel = metric_level;
     this.model.activeSelection(false);
-    this.model.selectedDevices(this.model.getBlankGroupObject());
+    this.model.selectedDevices(this.model.getBlankComponentClassNamesObject());
     return this.rackSpace.setMetricLevel(this.model.metricLevel());
   }
 
@@ -1734,11 +1720,11 @@ class IRVController {
       }
 
       // determine min max
-      const group_vals = metrics.values[this.model.metricLevel()];
+      const class_vals = metrics.values[this.model.metricLevel()];
       let min        = Number.MAX_VALUE;
       let max        = -Number.MAX_VALUE;
-      for (var id in group_vals) {
-        var val = Number(group_vals[id]);
+      for (var id in class_vals) {
+        var val = Number(class_vals[id]);
         if (val < min) { min = val; }
         if (val > max) { max = val; }
       }
@@ -2199,7 +2185,7 @@ class IRVController {
 
   // applies above/below/between filter to all devices and stores subset in the view model
   applyFilter() {
-    let filter, group;
+    let filter;
     const filters         = this.model.filters();
     const selected_metric = this.model.selectedMetric();
     const metrics         = this.model.metricData();
@@ -2207,9 +2193,8 @@ class IRVController {
 
     const { min, max } = filters[selected_metric];
 
-    const filtered_devices = {};
-    const groups           = this.model.groups();
-    for (group of Array.from(groups)) { filtered_devices[group] = {}; }
+    const filtered_devices = this.model.getBlankComponentClassNamesObject();;
+    const componentClassNames = this.model.componentClassNames();
 
     const gt = val => {
       return val > min;
@@ -2239,10 +2224,10 @@ class IRVController {
 
     let is_valid = false;
     // apply filter to each device
-    for (group of Array.from(groups)) {
-      for (var id in metrics.values[group]) {
+    for (let className of Array.from(componentClassNames)) {
+      for (var id in metrics.values[className]) {
         is_valid = true;
-        filtered_devices[group][id] = filter(Number(metrics.values[group][id][selected_stat] != null ? metrics.values[group][id][selected_stat] : metrics.values[group][id]));
+        filtered_devices[className][id] = filter(Number(metrics.values[className][id][selected_stat] != null ? metrics.values[className][id][selected_stat] : metrics.values[className][id]));
       }
     }
 
@@ -2407,7 +2392,7 @@ class IRVController {
   // @param  ev  the event object which invoked execution
   evGetHintInfo(ev) {
     let url = this.resources.path + this.resources.hintData.replace(/\[\[device_id\]\]/g, this.rackSpace.hint.device.id) + '?' + (new Date()).getTime();
-    url = url.replace(/\[\[group\]\]/g, this.rackSpace.hint.device.group);
+    url = url.replace(/\[\[componentClassName\]\]/g, this.rackSpace.hint.device.componentClassName);
 
     return new Request.JSON({
       url,
@@ -2452,9 +2437,7 @@ class IRVController {
     clearInterval(this.metricTmr);
     if (new_poll === 0) {
       // clear metric data
-      const groups = this.model.groups();
-      const blank  = { values: {} };
-      for (var group of Array.from(groups)) { blank.values[group] = {}; }
+      const blank  = { values: this.model.getBlankComponentClassNamesObject() };
       this.model.metricData(blank);
       // clear chart
       this.rackSpace.chart.clear();
@@ -2507,15 +2490,6 @@ class IRVController {
     if ((selected_metric == null) || (filter == null) || (col_map == null)) { return; }
 
     if (((filter.max != null) && (filter.max !== col_map.high)) || ((filter.min != null) && (filter.min !== col_map.low))) { return this.applyFilter(); }
-  }
-
-
-  // There is one subscriber to selectedGroup in the StaticGroupManager class that runs before this one,
-  // But we also need this subscriber here to setMetricLevel when the selected group has been blanked.
-  evSwitchGroup(group) {
-    if (this.model.noGroupSelected()) {
-      this.rackSpace.setMetricLevel(this.currentMetricLevel);
-    }
   }
 
   // graphOrder model value subscriber, sets the agreggated metric statistic based upon the chosen chart order

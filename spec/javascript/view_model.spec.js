@@ -14,7 +14,7 @@ test('model defaults', () => {
     expect(model.showingRackThumbnail()).toBe(false);
     expect(model.deviceLookup()).toEqual({});
     expect(model.racks()).toEqual([]);
-    expect(model.groups()).toEqual(['racks', 'chassis', 'devices']);
+    expect(model.componentClassNames()).toEqual(['racks', 'chassis', 'devices']);
     expect(model.face()).toBe('front');
     expect(model.faces()).toEqual(['front', 'rear', 'both']);
     expect(model.assetList()).toEqual([]);

@@ -90,7 +90,6 @@ Rails.application.routes.draw do
           end
         end
 
-        resources :groups, only: [:index, :show]
         resources :metrics, :constraints => { :id => /.*/ }, only: [] do
           get :structure, :on => :collection
         end

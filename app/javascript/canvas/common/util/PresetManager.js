@@ -145,7 +145,7 @@ class PresetManager {
       this.model.crossAppSettings = false;
     } else {
       this.model.activeSelection(false);
-      this.model.selectedDevices(this.model.getBlankGroupObject());
+      this.model.selectedDevices(this.model.getBlankComponentClassNamesObject());
     }
 
     this.debug('::: switching to preset', selectedPresetName, preset);
@@ -157,10 +157,6 @@ class PresetManager {
       var val_name = val_def.name;
       if (!preset.values.hasOwnProperty(val_name)) {
         this.debug('skipping', val_name, 'not present');
-        continue;
-      }
-      if ((val_name === 'selectedGroup') && (this.model.activeSelection() === true)) {
-        this.debug('skipping', val_name, 'active selection');
         continue;
       }
       try {

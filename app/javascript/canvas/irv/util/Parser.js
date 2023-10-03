@@ -26,11 +26,9 @@ class Parser {
 
   parseRackDefs(rack_defs, filter=null) {
     Profiler.begin(Profiler.CRITICAL, this.parseRackDefs);
-    const apply_filter = filter === null ? false : true;
-    const groups        = this.model.groups();
+    const apply_filter = filter !== null;
     let filtered      = false;
-    const device_lookup = { byGroup: {} };
-    for (var group of Array.from(groups)) { device_lookup[group] = {}; }
+    const device_lookup = this.model.getBlankComponentClassNamesObject();
     const assets = {};
   
     if (Object.keys(rack_defs).length === 0) {
@@ -198,7 +196,7 @@ class Parser {
     item.template.height  = Number(item.template.height);
     item.template.depth   = Number(item.template.depth);
     item.template.rackable = Number(item.template.rackable);
-    item.template.simple  = item.template.simple === "true" ? true : false;
+    item.template.simple  = item.template.simple === "true";
 
     if (item.template.images == null) {
       item.template.images  = {};
@@ -214,7 +212,6 @@ class Parser {
   }
 
   parseMetrics(metrics) {
-    let group;
     Profiler.begin(Profiler.CRITICAL);
     if (metrics == null) { metrics = { name: '', values: {}, selection: {} }; }
 
@@ -222,32 +219,32 @@ class Parser {
     delete metrics.name;
 
     const device_lookup = this.model.deviceLookup();
-    const groups        = this.model.groups();
+    const componentClassNames = this.model.componentClassNames();
 
     // turn array into an object indexed by id for fast access
     if (metrics.values == null) { metrics.values = {}; }
     if (metrics.selection == null) { metrics.selection = {}; }
-    for (group of Array.from(groups)) {
-      if (metrics.values[group] == null) { metrics.values[group] = {}; }
-      if (metrics.selection[group] == null) { metrics.selection[group] = {}; }
+    for (let className of Array.from(componentClassNames)) {
+      if (metrics.values[className] == null) { metrics.values[className] = {}; }
+      if (metrics.selection[className] == null) { metrics.selection[className] = {}; }
     }
 
     const values_obj = {};
     const sel_obj = {};
-    for (group in metrics.values) {
+    for (let className in metrics.values) {
       var set = {};
       var sel = {};
-      for (var metric of Array.from(metrics.values[group])) {
+      for (var metric of Array.from(metrics.values[className])) {
 
         // ignore unrecognised metrics, may be present due to zero U devices and NRADS
-        if (device_lookup[group][metric.id] == null) { continue; }
+        if (device_lookup[className][metric.id] == null) { continue; }
 
         set[metric.id] = Util.formatValue(Number(metric.value));
         sel[metric.id] = true;
       }
 
-      values_obj[group] = set;
-      sel_obj[group] = sel;
+      values_obj[className] = set;
+      sel_obj[className] = sel;
     }
 
     metrics.values = values_obj;

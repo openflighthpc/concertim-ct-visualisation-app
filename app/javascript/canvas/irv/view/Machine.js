@@ -67,7 +67,7 @@ class Machine extends RackObject {
     this.assets      = [];
 
     if (RackObject.MODEL.metricLevel !== undefined) {
-      this.metric   = new BarMetric(this.group, this.id, this, this.x, this.y, this.width, this.height, RackObject.MODEL);
+      this.metric   = new BarMetric(this.componentClassName, this.id, this, this.x, this.y, this.width, this.height, RackObject.MODEL);
       
       if (RackObject.MODEL.showingFullIrv()) { this.subscriptions.push(RackObject.MODEL.metricLevel.subscribe(this.setMetricVisibility)); }
 
@@ -214,18 +214,18 @@ class Machine extends RackObject {
       visible = false;
     }
 
-    const applicableMetricLevel = ((metric_level === this.group) || ((metric_level === ViewModel.METRIC_LEVEL_ALL) && (this.children.length === 0)));
+    const applicableMetricLevel = ((metric_level === this.componentClassName) || ((metric_level === ViewModel.METRIC_LEVEL_ALL) && (this.children.length === 0)));
     if (!applicableMetricLevel) {
       visible = false;
     }
 
     // Not included in active selection.
-    if (active_selection && !selected[this.group][this.id]) {
+    if (active_selection && !selected[this.componentClassName][this.id]) {
       visible = false;
     }
 
     // Not included in active filter.
-    if (active_filter && !filtered[this.group][this.id]) {
+    if (active_filter && !filtered[this.componentClassName][this.id]) {
       visible = false;
     }
 

@@ -1106,21 +1106,21 @@ class RackSpace {
   }
 
   viewSelectItem(item, multi_select) {
-    let childKey, childValue, group, groups, id, key, value;
+    let childKey, childValue, id, key, value;
     const selected_devices = this.model.selectedDevices();
 
     if (multi_select) {
       let active_selection;
-      const new_val = (selected_devices[item.group][item.id] = !selected_devices[item.group][item.id]);
+      const new_val = (selected_devices[item.componentClassName][item.id] = !selected_devices[item.componentClassName][item.id]);
 
       if (new_val) {
         active_selection = true;
       } else {
         active_selection = false;
-        groups = this.model.groups();
-        for (group of Array.from(groups)) {
-          for (id in selected_devices[group]) {
-            if (selected_devices[group][id]) {
+        let componentClassNames = this.model.componentClassNames();
+        for (let className of Array.from(componentClassNames)) {
+          for (id in selected_devices[className]) {
+            if (selected_devices[className][id]) {
               active_selection = true;
               break;
             }
@@ -1141,16 +1141,12 @@ class RackSpace {
         }
       }
 
-      this.model.selectedGroup(null);
-
       this.model.activeSelection(active_selection);
       return this.model.selectedDevices(selected_devices);
 
     } else {
-      groups  = this.model.groups();
-      const new_sel = {};
-      for (group of Array.from(groups)) { new_sel[group] = {}; }
-      new_sel[item.group][item.id] = true;
+      const new_sel = this.model.getBlankComponentClassNamesObject();
+      new_sel[item.componentClassName][item.id] = true;
 
       if (item instanceof Rack) {
         const object1 = item.selectChildren();
@@ -1162,9 +1158,6 @@ class RackSpace {
           }
         }
       }
-
-
-      this.model.selectedGroup(null);
 
       this.model.activeSelection(true);
       return this.model.selectedDevices(new_sel);
@@ -1439,7 +1432,6 @@ class RackSpace {
     box.top    = box.y;
     box.bottom = box.y + box.height;
 
-    this.model.selectedGroup(null);
     const selection = this.selectWithin(box, true);
     this.model.activeSelection(selection != null);
     this.model.selectedDevices(selection);
@@ -2141,11 +2133,11 @@ class RackSpace {
   }
 
   // creates a selection containing a specific device and (recursively) all of its children and zooms the view on to that device
-  // @param  group   the category/id pool to which the device belongs (rack, chassis etc.)
+  // @param  componentClassName   the category/id pool to which the device belongs (rack, chassis etc.)
   // @param  id      the specific id of the device
-  focusOn(group, id) {
-    const target = this.model.deviceLookup()[group][id];
-    if (group === "racks") {
+  focusOn(componentClassName, id) {
+    const target = this.model.deviceLookup()[componentClassName][id];
+    if (componentClassName === "racks") {
       this.clearAllRacksAsFocused();
       this.setRackAsFocused(id); // Here we set a flag against only racks to say they have been focused on specifically, 
     }
@@ -2190,18 +2182,16 @@ class RackSpace {
     this.quickZoom(centre_x, centre_y, scale);
 
     let active_selection = false;
-    const selection        = {};
-    const groups           = this.model.groups();
-    for (group of Array.from(groups)) { selection[group] = {}; }
+    const selection      = this.model.getBlankComponentClassNamesObject();
 
     // compile a selection of all target device instances and all of their children recursively
     for (var region of Array.from(regions)) {
       var sub_sel = this.selectWithin(region, false);
       if (sub_sel != null) {
         active_selection = true;
-        for (group in sub_sel) {
-          var set = sub_sel[group];
-          for (id in set) { selection[group][id] = true; }
+        for (let className in sub_sel) {
+          var set = sub_sel[className];
+          for (id in set) { selection[className][id] = true; }
         }
       }
     }
@@ -2218,21 +2208,19 @@ class RackSpace {
   //                     exclusive selection (only devices entirely encapsulated by the box)
   // @return array of device instances which satisfy the selection or null if nothing
   selectWithin(box, inclusive) {
-    let group;
     let active_selection = false;
-    const groups           = this.model.groups();
-    const selected         = {};
-    for (group of Array.from(groups)) { selected[group]  = {}; }
+    const componentClassNames = this.model.componentClassNames();
+    const selected = this.model.getBlankComponentClassNamesObject();
 
     for (var rack of Array.from(this.racks)) {
       var subselection = rack.selectWithin(box, inclusive);
-      for (group of Array.from(groups)) {
-        for (var i in subselection[group]) {
+      for (let className of Array.from(componentClassNames)) {
+        for (var i in subselection[className]) {
           // we only want to display a subset of metrics when at least one device or chassis is selected i.e. ignore rack only selections
           // additionally ignore native object properties, hence isNaN/parseInt stuff
-          if (!isNaN(Number(subselection[group][i]))) {
+          if (!isNaN(Number(subselection[className][i]))) {
             active_selection   = true;
-            selected[group][i] = true;
+            selected[className][i] = true;
           }
         }
       }
@@ -2388,11 +2376,9 @@ class RackSpace {
   // metricLevel model subscriber, creates a selection of relevant devices when changing metric level.
   // @param  metric_level  the new value of metric level
   setMetricLevel(metric_level) {
-    let device, group, id;
+    let device, id;
     this.metricLevel = metric_level;
-    const groups       = this.model.groups();
-    const selection    = {};
-    for (group of Array.from(groups)) { selection[group] = {}; }
+    const selection = this.model.getBlankComponentClassNamesObject();
 
     const device_lookup = this.model.deviceLookup();
   
@@ -2406,8 +2392,8 @@ class RackSpace {
         device = device_lookup.chassis[id];
         if (this.selectionAndNotSelected(device) || this.noHoldingAndInHolding(device)) { continue; }
         if (device.instances[0].complex) {
-          selection[device.instances[0].group][device.instances[0].id] = true;
-          for (var child of Array.from(device.instances[0].children)) { selection[child.group][child.id] = true; }
+          selection[device.instances[0].componentClassName][device.instances[0].id] = true;
+          for (var child of Array.from(device.instances[0].children)) { selection[child.componentClassName][child.id] = true; }
         }
       }
     }
@@ -2417,7 +2403,7 @@ class RackSpace {
       for (id in device_lookup.devices) {
         device = device_lookup.devices[id];
         if (this.selectionAndNotSelected(device) || this.noHoldingAndInHolding(device)) { continue; }
-        selection[device.instances[0].group][device.instances[0].id] = true;
+        selection[device.instances[0].componentClassName][device.instances[0].id] = true;
       }
     }
 
@@ -2432,7 +2418,7 @@ class RackSpace {
 
   // Validates if there is an active selection, and device is not selected
   selectionAndNotSelected(device) {
-    return this.model.activeSelection() && !__guard__(this.model.selectedDevices()[device.instances[0].group], x => x[device.instances[0].id]);
+    return this.model.activeSelection() && !__guard__(this.model.selectedDevices()[device.instances[0].componentClassName], x => x[device.instances[0].id]);
   }
 };
 RackSpace.initClass();
