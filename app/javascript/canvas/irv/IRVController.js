@@ -602,6 +602,7 @@ class IRVController {
 
     this.chartEl         = $('graph_container');
     this.historicChartEl = $('historic_graph_container');
+    this.chartControls   = $('metric-chart-controls');
     this.chartTypeRadio  = document.querySelectorAll('input[name="metric-graph-choice"]');
     this.rackEl          = $('rack_container');
     this.thumbEl         = $('thumb_nav');
@@ -1229,6 +1230,11 @@ class IRVController {
       Util.setStyle(this.chartEl, 'height', (graph_height_proportion * 100) + '%');
       Util.setStyle(this.historicChartEl, 'top', ((rack_height_proportion + filter_height_proportion) * 100) + '%');
       Util.setStyle(this.historicChartEl, 'height', (graph_height_proportion * 100) + '%');
+      Util.setStyle(this.chartControls, 'top', ((rack_height_proportion + filter_height_proportion) * 100) + '%');
+      Util.setStyle(this.chartControls, 'height', (graph_height_proportion * 100) + '%');
+      if(this.model.selectedMetric()) { Util.setStyle(this.chartControls, 'display', 'block') }
+    } else {
+      Util.setStyle(this.chartControls, 'display', 'none');
     }
 
     const dims     = this.rackParent.getCoordinates();
@@ -1313,6 +1319,7 @@ class IRVController {
     if (this.noMetricSelected(metric)) {
       this.resetFilterAndSelection();
       this.pieCountdown.hide();
+      Util.setStyle(this.chartControls, 'display', 'none');
     } else {
       // Remove the filter as it might be inappropriate for the new selection.
       // Consider adding a guard here to check if it is.

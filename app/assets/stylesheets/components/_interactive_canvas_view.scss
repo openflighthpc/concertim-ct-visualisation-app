@@ -213,11 +213,13 @@
     /*border-top: 2px solid;*/
   }
 
-  #historic_graph_container
+  #metric-chart-controls
   {
     position: absolute;
-    padding: 0;
+    padding-left: 2rem;
+    padding-right: 2rem;
     width: 100%;
+    display: none;
 
     .metric-graph-radio {
       padding-top: 0.75rem;
