@@ -186,7 +186,9 @@ class IRVController {
     this.evEditMetricPoll = this.evEditMetricPoll.bind(this);
     this.evSetMetricPoll = this.evSetMetricPoll.bind(this);
     this.evResetMetricPoller = this.evResetMetricPoller.bind(this);
-    this.evEditMetricTimeframe = this.evEditMetricTimeframe.bind(this);
+    this.evEditMetricStartDate = this.evEditMetricStartDate.bind(this);
+    this.evEditMetricEndDate = this.evEditMetricEndDate.bind(this);
+    this.maybeLoadMetricsAndUpdatePolling = this.maybeLoadMetricsAndUpdatePolling.bind(this);
     this.setMetricPoll = this.setMetricPoll.bind(this);
     this.setMetricPollInput = this.setMetricPollInput.bind(this);
     this.evDropFilterBar = this.evDropFilterBar.bind(this);
@@ -601,7 +603,8 @@ class IRVController {
     this.thumbEl         = $('thumb_nav');
     this.filterBarEl     = $('colour_map');
     this.metricPollInput = $('metric_poll_input');
-    this.metricTimeframeInput = $('metric_timeframe');
+    this.metricStartDateInput = $('metric_start_date');
+    this.metricEndDateInput   = $('metric_end_date');
     this.holdingAreaCheckBox = $('show_holding_area');
 
     if (this.metricPollInput != null) { this.metricPollInput.value = this.model.metricPollRate() / 1000; }
@@ -642,7 +645,8 @@ class IRVController {
     Events.addEventListener(window, 'getHintInfo', this.evGetHintInfo);
     if (this.metricPollInput != null) { Events.addEventListener(this.metricPollInput, 'keyup', this.evEditMetricPoll); }
     if (this.metricPollInput != null) { Events.addEventListener(this.metricPollInput, 'blur', this.evSetMetricPoll); }
-    if (this.metricTimeframeInput != null) { Events.addEventListener(this.metricTimeframeInput, 'change', this.evEditMetricTimeframe); }
+    if (this.metricStartDateInput != null) { Events.addEventListener(this.metricStartDateInput, 'change', this.evEditMetricStartDate); }
+    if (this.metricEndDateInput != null) { Events.addEventListener(this.metricEndDateInput, 'change', this.evEditMetricEndDate); }
 
     this.updateLayout();
 
@@ -709,7 +713,7 @@ class IRVController {
     if (this.model.showingFullIrv()) {
       this.modifiedMetricTemplates = setInterval(this.metricTemplatesPoller, IRVController.METRIC_TEMPLATES_POLL_RATE);
       if (this.model.metricPollRate() !== 0) {
-        this.loadMetrics;
+        this.loadMetrics();
       }
 
       this.connectMetricCombos();
@@ -1258,7 +1262,7 @@ class IRVController {
   }
 
 
-  // clears any runnnig pollers and restarts them
+  // clears any running pollers and restarts them
   resetMetricPoller() {
     // During the loading of a preset in the DCRV, there are more than 1 observable that could trigger this function.
     // So, if a preset is being set/loaded at the moment, exit this function, because when the preset finish loading,
@@ -1645,8 +1649,11 @@ class IRVController {
     //console.log "@@@ DCRV @@@ LOADING METRICS"
     const selected_metric = this.model.selectedMetric();
     if (this.noMetricSelected(selected_metric)) { return; }
-    const metricTimeframe = this.model.metricTimeframe();
-    const params = `?timeframe=${metricTimeframe}&timestamp=${(new Date()).getTime()}`;
+    let timeframeParams = "";
+    if  (this.model.metricStartDate() && this.model.metricEndDate()) {
+      timeframeParams = `&start_date=${this.model.metricStartDate()}&end_date=${this.model.metricEndDate()}`;
+    }
+    const params = `?timestamp=${(new Date()).getTime()}${timeframeParams}`;
     const metric_api = this.resources.metricData;
 
     new Request.JSON({
@@ -2471,11 +2478,28 @@ class IRVController {
     return this.metricPollInput.value = poll_rate / 1000;
   }
 
-  evEditMetricTimeframe(event) {
-    this.model.metricTimeframe(this.metricTimeframeInput.value);
-    this.resetMetricPoller();
+  evEditMetricStartDate(event) {
+    this.model.metricStartDate(this.metricStartDateInput.value);
+    if(this.model.metricStartDate()) { this.metricEndDateInput.min = this.model.metricStartDate() }
+    this.maybeLoadMetricsAndUpdatePolling();
   }
 
+  evEditMetricEndDate(event) {
+    this.model.metricEndDate(this.metricEndDateInput.value);
+    if(this.model.metricEndDate()) { this.metricStartDateInput.max = this.model.metricEndDate() }
+    this.maybeLoadMetricsAndUpdatePolling();
+  }
+
+  maybeLoadMetricsAndUpdatePolling() {
+    if (this.model.metricStartDate() && this.model.metricEndDate()) {
+      clearInterval(this.metricTmr);
+      this.loadMetrics();
+    } else if (!this.metricTmr) {
+      this.metricPollInput.disabled = false;
+      this.model.metricPollRate(this.metricPollInput.value);
+      this.resetMetricPoller();
+    }
+  }
 
   // filter bar drop event handler, called on mouse up having first dragged the filter bar
   // @param  ev  the event object which invoked execution

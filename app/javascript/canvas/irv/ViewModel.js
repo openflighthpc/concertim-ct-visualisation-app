@@ -77,8 +77,8 @@ class ViewModel {
     this.viewModes = ko.observable([VIEW_MODE_IMAGES, VIEW_MODE_METRICS, VIEW_MODE_BOTH, VIEW_MODE_BUILD_STATUS]);
 
     // metric timeframe settings
-    this.metricTimeframe = ko.observable(ViewModel.INIT_METRIC_TIMEFRAME);
-    this.metricTimeframes = ko.observable(ViewModel.METRIC_TIMEFRAMES);
+    this.metricStartDate = ko.observable();
+    this.metricEndDate = ko.observable();
 
     // string, metric level determines wether to display chassis or device level metrics.
     this.metricLevel = ko.observable(ViewModel.INIT_METRIC_LEVEL);
