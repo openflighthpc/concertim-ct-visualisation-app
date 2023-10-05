@@ -88,32 +88,6 @@
     </div>
     <div class="div_row">
       <div class="div_cell">
-        <label class="toolTip" for="metric_start_date">
-          Metric start date
-        </label>
-      </div>
-    </div>
-    <div class="div_row">
-      <div class="div_cell">
-        <input type="date" id="metric_start_date" name="metric_start_date", max="<%= Date.current %>"
-                data-bind="enable: enableMetricSelection" />
-      </div>
-    </div>
-    <div class="div_row">
-      <div class="div_cell">
-        <label class="toolTip" for="metric_end_date">
-          Metric end date
-        </label>
-      </div>
-    </div>
-    <div class="div_row">
-      <div class="div_cell">
-        <input type="date" id="metric_end_date" name="metric_end_date", max="<%= Date.current %>"
-               data-bind="enable: enableMetricSelection" />
-      </div>
-    </div>
-    <div class="div_row">
-      <div class="div_cell">
         <label class="toolTip" title="Minimum value: 60, set to 0 to switch off metric polling">
           Metric refresh rate (s)
         </label>

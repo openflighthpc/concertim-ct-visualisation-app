@@ -145,6 +145,7 @@ class ViewModel {
     this.dragging = ko.observable(false);
 
     // object, devices in current selection, uses component class name as the top-level key and id as the second level key
+    // This should probably be renamed as it includes racks, chassis and devices - not just devices
     this.selectedDevices = ko.observable({});
 
     // boolean, is a filter active (metrics which satisfy above/below/between filters if any)
@@ -196,6 +197,9 @@ class ViewModel {
 
     this.invertedColours = ko.observable(false);
 
+    // current or historic chart
+    this.metricChart = ko.observable('current');
+
     // array of strings, list of available metric ids. Dependencies: metricTemplates
     this.metricIds = ko.dependentObservable(function() {
       let metric_ids = [];
@@ -213,6 +217,17 @@ class ViewModel {
       return metrics && (metrics.length > 0);
     }
     , this);
+
+    this.enableHistoricMetricGraph = ko.dependentObservable(function() {
+      return this.enableMetricSelection() && this.selectedDevices().devices != null && Object.keys(this.selectedDevices().devices).length === 1;
+    }
+    , this);
+
+    this.enableMetricDateChoice = ko.dependentObservable(function() {
+      console.log(this.metricChart());
+      return this.metricChart() === "historic";
+    }
+    ,this);
   }
 
   displayingMetrics() {

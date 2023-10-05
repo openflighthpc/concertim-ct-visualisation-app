@@ -188,6 +188,8 @@ class IRVController {
     this.evResetMetricPoller = this.evResetMetricPoller.bind(this);
     this.evEditMetricStartDate = this.evEditMetricStartDate.bind(this);
     this.evEditMetricEndDate = this.evEditMetricEndDate.bind(this);
+    this.evEditMetricChartChoice = this.evEditMetricChartChoice.bind(this);
+    this.maybeUpdateChartChoice = this.maybeUpdateChartChoice.bind(this);
     this.maybeLoadMetricsAndUpdatePolling = this.maybeLoadMetricsAndUpdatePolling.bind(this);
     this.setMetricPoll = this.setMetricPoll.bind(this);
     this.setMetricPollInput = this.setMetricPollInput.bind(this);
@@ -599,6 +601,8 @@ class IRVController {
     this.currentMetricLevel = this.model.metricLevel();
 
     this.chartEl         = $('graph_container');
+    this.historicChartEl = $('historic_graph_container');
+    this.chartTypeRadio  = document.querySelectorAll('input[name="metric-graph-choice"]');
     this.rackEl          = $('rack_container');
     this.thumbEl         = $('thumb_nav');
     this.filterBarEl     = $('colour_map');
@@ -647,6 +651,11 @@ class IRVController {
     if (this.metricPollInput != null) { Events.addEventListener(this.metricPollInput, 'blur', this.evSetMetricPoll); }
     if (this.metricStartDateInput != null) { Events.addEventListener(this.metricStartDateInput, 'change', this.evEditMetricStartDate); }
     if (this.metricEndDateInput != null) { Events.addEventListener(this.metricEndDateInput, 'change', this.evEditMetricEndDate); }
+    if (this.chartTypeRadio.length !== 0) {
+      this.chartTypeRadio.forEach(radio => {
+        Events.addEventListener(radio, 'change', this.evEditMetricChartChoice);
+      });
+    }
 
     this.updateLayout();
 
@@ -661,6 +670,7 @@ class IRVController {
     this.model.showChart.subscribe(this.updateLayout);
     this.model.showFilterBar.subscribe(this.updateLayout);
     this.model.selectedMetric.subscribe(this.updateLayout);
+    this.model.enableHistoricMetricGraph.subscribe(this.maybeUpdateChartChoice);
     this.model.face.subscribe(this.switchFace);
     this.model.showHoldingArea.subscribe(this.evShowHideScrollBars);
     this.model.filters.subscribe(this.applyFilter);
@@ -1217,6 +1227,8 @@ class IRVController {
     if (this.model.showChart()) {
       Util.setStyle(this.chartEl, 'top', ((rack_height_proportion + filter_height_proportion) * 100) + '%');
       Util.setStyle(this.chartEl, 'height', (graph_height_proportion * 100) + '%');
+      Util.setStyle(this.historicChartEl, 'top', ((rack_height_proportion + filter_height_proportion) * 100) + '%');
+      Util.setStyle(this.historicChartEl, 'height', (graph_height_proportion * 100) + '%');
     }
 
     const dims     = this.rackParent.getCoordinates();
@@ -2480,14 +2492,25 @@ class IRVController {
 
   evEditMetricStartDate(event) {
     this.model.metricStartDate(this.metricStartDateInput.value);
-    if(this.model.metricStartDate()) { this.metricEndDateInput.min = this.model.metricStartDate() }
+    if(this.model.metricStartDate()) {this.metricEndDateInput.min = this.model.metricStartDate() }
     this.maybeLoadMetricsAndUpdatePolling();
   }
 
   evEditMetricEndDate(event) {
     this.model.metricEndDate(this.metricEndDateInput.value);
-    if(this.model.metricEndDate()) { this.metricStartDateInput.max = this.model.metricEndDate() }
+    const newMax = this.model.metricEndDate() ? this.model.metricEndDate() : new Date(new Date().setDate(new Date().getDate() - 90));
+    this.metricStartDateInput.max = newMax;
     this.maybeLoadMetricsAndUpdatePolling();
+  }
+
+  evEditMetricChartChoice(event) {
+    this.model.metricChart(event.target.value);
+  }
+
+  maybeUpdateChartChoice() {
+    if(!this.model.enableHistoricMetricGraph() && this.model.metricChart() === "historic") {
+      this.chartTypeRadio[0].checked = true;
+    }
   }
 
   maybeLoadMetricsAndUpdatePolling() {

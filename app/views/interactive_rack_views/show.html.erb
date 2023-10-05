@@ -44,4 +44,34 @@
   </div>
   <div id="colour_map"><input id="input_min" type="text" name="min" value=""><input id="input_max" type="text" name="max" value=""></div>
   <div id="graph_container" class="main_pane"><div id="graph"></div><div id="pointer"></div></div>
+  <div id="historic_graph_container">
+    <div class="div_row" id="metric_dates">
+      <div class="metric-graph-choice">
+        <div class="text-center"><strong>Metric Timeframe</strong></div>
+        <div class="metric-graph-radio">
+          <input type="radio" id="current-metrics" name="metric-graph-choice" value="current" checked />
+          <label for="current-metrics">Current</label>
+          <input type="radio" id="historic-metrics" name="metric-graph-choice" value="historic"
+                 data-bind="enable: enableHistoricMetricGraph" title="Only available when 1 device selected"/>
+          <label for="historic-metrics">Historic</label>
+        </div>
+      </div>
+      <div class="metric-date-pickers">
+        <div class="date-input">
+          <label class="toolTip" for="metric_start_date">
+            Metric start date
+          </label>
+          <input type="date" id="metric_start_date" name="metric_start_date", max="<%= Date.current %>" min="<%= Date.current - 90.days %>"
+                 data-bind="enable: enableMetricDateChoice" />
+        </div>
+        <div class="date-input">
+          <label class="toolTip" for="metric_end_date">
+            Metric end date
+          </label>
+          <input type="date" id="metric_end_date" name="metric_end_date", max="<%= Date.current %>"
+                 data-bind="enable: enableMetricDateChoice" />
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

@@ -213,6 +213,32 @@
     /*border-top: 2px solid;*/
   }
 
+  #historic_graph_container
+  {
+    position: absolute;
+    padding: 0;
+    width: 100%;
+
+    .metric-graph-radio {
+      padding-top: 0.75rem;
+    }
+
+    #metric_dates {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+
+      .metric-date-pickers {
+        display:inline-flex;
+        justify-content: flex-end;
+      }
+
+      .date-input {
+        margin-left: 1rem;
+      }
+    }
+  }
+
   #pointer
   {
     border-color: #555 transparent transparent transparent;
