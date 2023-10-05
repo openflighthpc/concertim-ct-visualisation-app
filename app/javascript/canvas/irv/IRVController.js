@@ -144,7 +144,8 @@ class IRVController {
     this.receivedModifiedNonRackIds = this.receivedModifiedNonRackIds.bind(this);
     this.receivedRackDefs = this.receivedRackDefs.bind(this);
     this.recievedNonrackDeviceDefs = this.recievedNonrackDeviceDefs.bind(this);
-    this.loadMetrics = this.loadMetrics.bind(this);
+    this.loadCurrentMetrics = this.loadCurrentMetrics.bind(this);
+    this.stopOrStartMetricRefresh = this.stopOrStartMetricRefresh.bind(this);
     this.receivedMetrics = this.receivedMetrics.bind(this);
     this.displayMetrics = this.displayMetrics.bind(this);
     this.evMouseWheelRack = this.evMouseWheelRack.bind(this);
@@ -671,6 +672,7 @@ class IRVController {
     this.model.showChart.subscribe(this.updateLayout);
     this.model.showFilterBar.subscribe(this.updateLayout);
     this.model.selectedMetric.subscribe(this.updateLayout);
+    this.model.metricChart.subscribe(this.stopOrStartMetricRefresh);
     this.model.enableHistoricMetricGraph.subscribe(this.maybeUpdateChartChoice);
     this.model.face.subscribe(this.switchFace);
     this.model.showHoldingArea.subscribe(this.evShowHideScrollBars);
@@ -724,7 +726,7 @@ class IRVController {
     if (this.model.showingFullIrv()) {
       this.modifiedMetricTemplates = setInterval(this.metricTemplatesPoller, IRVController.METRIC_TEMPLATES_POLL_RATE);
       if (this.model.metricPollRate() !== 0) {
-        this.loadMetrics();
+        this.loadCurrentMetrics();
       }
 
       this.connectMetricCombos();
@@ -1288,8 +1290,8 @@ class IRVController {
     if (this.model.loadingAPreset() === true) { return; }
     clearInterval(this.metricTmr);
     if ((this.model.metricPollRate() !== 0) && !this.noMetricSelected(this.model.selectedMetric())) {
-      this.loadMetrics();
-      this.metricTmr   = setInterval(this.loadMetrics, this.model.metricPollRate());
+      this.loadCurrentMetrics();
+      this.metricTmr   = setInterval(this.loadCurrentMetrics, this.model.metricPollRate());
     }
   }
 
@@ -1664,15 +1666,11 @@ class IRVController {
 
 
   // sends a request for metric data to the server, called on an interval
-  loadMetrics() {
+  loadCurrentMetrics() {
     //console.log "@@@ DCRV @@@ LOADING METRICS"
     const selected_metric = this.model.selectedMetric();
-    if (this.noMetricSelected(selected_metric)) { return; }
-    let timeframeParams = "";
-    if  (this.model.metricStartDate() && this.model.metricEndDate()) {
-      timeframeParams = `&start_date=${this.model.metricStartDate()}&end_date=${this.model.metricEndDate()}`;
-    }
-    const params = `?timestamp=${(new Date()).getTime()}${timeframeParams}`;
+    if (this.noMetricSelected(selected_metric) || this.model.metricChart === "historic") { return; }
+    const params = `?timestamp=${(new Date()).getTime()}`;
     const metric_api = this.resources.metricData;
 
     new Request.JSON({
@@ -1690,6 +1688,7 @@ class IRVController {
   // called when the server responds with metric data
   // @param  metrics the metric data as returned by the server
   receivedMetrics(metrics) {
+    console.log(metrics)
     //console.log "@@@ DCRV @@@ RECEIVED METRICS",metrics
     // display update message and display metrics a short while after
     // this allows the screen to redraw once the update message has been
@@ -1811,6 +1810,14 @@ class IRVController {
     }
   }
 
+  stopOrStartMetricRefresh() {
+    if(this.model.metricChart() === "historic") {
+      clearTimeout(this.clickTmr);
+      this.pieCountdown.hide();
+    } else {
+      this.loadCurrentMetrics();
+    }
+  }
 
   // rack view mouse wheel event handler
   // @param  ev  the event object which invoked execution
@@ -2517,13 +2524,14 @@ class IRVController {
   maybeUpdateChartChoice() {
     if(!this.model.enableHistoricMetricGraph() && this.model.metricChart() === "historic") {
       this.chartTypeRadio[0].checked = true;
+      this.model.metricChart("current");
     }
   }
 
   maybeLoadMetricsAndUpdatePolling() {
     if (this.model.metricStartDate() && this.model.metricEndDate()) {
       clearInterval(this.metricTmr);
-      this.loadMetrics();
+      this.loadCurrentMetrics();
     } else if (!this.metricTmr) {
       this.metricPollInput.disabled = false;
       this.model.metricPollRate(this.metricPollInput.value);
