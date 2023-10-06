@@ -604,6 +604,7 @@ class IRVController {
     this.chartEl         = $('graph_container');
     this.historicChartEl = $('historic_graph_container');
     this.chartControls   = $('metric-chart-controls');
+    this.noMetricsText   = $('no-metrics-data');
     this.chartTypeRadio  = document.querySelectorAll('input[name="metric-graph-choice"]');
     this.rackEl          = $('rack_container');
     this.thumbEl         = $('thumb_nav');
@@ -1230,10 +1231,10 @@ class IRVController {
     if (this.model.showChart()) {
       Util.setStyle(this.chartEl, 'top', ((rack_height_proportion + filter_height_proportion) * 100) + '%');
       Util.setStyle(this.chartEl, 'height', (graph_height_proportion * 100) + '%');
-      Util.setStyle(this.historicChartEl, 'top', ((rack_height_proportion + filter_height_proportion) * 100) + '%');
-      Util.setStyle(this.historicChartEl, 'height', (graph_height_proportion * 100) + '%');
-      Util.setStyle(this.chartControls, 'top', ((rack_height_proportion + filter_height_proportion) * 100) + '%');
-      Util.setStyle(this.chartControls, 'height', (graph_height_proportion * 100) + '%');
+      // Util.setStyle(this.historicChartEl, 'top', ((rack_height_proportion + filter_height_proportion) * 100) + '%');
+      // Util.setStyle(this.historicChartEl, 'height', (graph_height_proportion * 100) + '%');
+      // Util.setStyle(this.chartControls, 'top', ((rack_height_proportion + filter_height_proportion) * 100) + '%');
+      // Util.setStyle(this.chartControls, 'height', (graph_height_proportion * 100) + '%');
       if(this.model.selectedMetric()) { Util.setStyle(this.chartControls, 'display', 'block') }
     } else {
       Util.setStyle(this.chartControls, 'display', 'none');
@@ -1688,7 +1689,6 @@ class IRVController {
   // called when the server responds with metric data
   // @param  metrics the metric data as returned by the server
   receivedMetrics(metrics) {
-    console.log(metrics)
     //console.log "@@@ DCRV @@@ RECEIVED METRICS",metrics
     // display update message and display metrics a short while after
     // this allows the screen to redraw once the update message has been

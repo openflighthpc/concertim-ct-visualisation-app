@@ -242,6 +242,16 @@
     }
   }
 
+  #no-metrics-data {
+    position: absolute;
+    display: none;
+    top: 3rem;
+    width: 100%;
+    z-index: 100;
+    text-align: center;
+    padding-top: 5rem;
+  }
+
   #pointer
   {
     border-color: #555 transparent transparent transparent;

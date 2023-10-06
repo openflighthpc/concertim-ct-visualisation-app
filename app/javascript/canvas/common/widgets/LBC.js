@@ -63,6 +63,7 @@ class LBC {
     if (canvasId == null) { canvasId = 'lbc'; }
     this.canvasId = canvasId;
     this.pointerEl    = $('pointer');
+    this.noDataEl     = $('no-metrics-data');
     this.heightOffset = -this.pointerEl.getCoordinates().height;
     this.over         = false;
 
@@ -178,6 +179,7 @@ class LBC {
     this.included = set.included;
 
     if (set.data.length > 0) {
+      Util.setStyle(this.noDataEl, 'display', 'none');
       // sort
       let max_min;
       switch (this.modelRefs.graphOrder()) {
@@ -270,6 +272,8 @@ class LBC {
       this.chart.setTitle(title);
       this.chart.addEventListener('onshowtooltip', this.evShowHint);
       this.chart.addEventListener('onhidetooltip', this.evHideHint);
+    } else {
+      Util.setStyle(this.noDataEl, 'display', 'block');
     }
   }
 
