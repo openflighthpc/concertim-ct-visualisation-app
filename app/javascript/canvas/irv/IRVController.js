@@ -146,6 +146,7 @@ class IRVController {
     this.recievedNonrackDeviceDefs = this.recievedNonrackDeviceDefs.bind(this);
     this.loadCurrentMetrics = this.loadCurrentMetrics.bind(this);
     this.loadHistoricMetrics = this.loadHistoricMetrics.bind(this);
+    this.receivedHistoricMetrics = this.receivedHistoricMetrics.bind(this);
     this.loadCurrentOrHistoricMetrics = this.loadCurrentOrHistoricMetrics.bind(this);
     this.receivedCurrentMetrics = this.receivedCurrentMetrics.bind(this);
     this.displayMetrics = this.displayMetrics.bind(this);
@@ -602,7 +603,6 @@ class IRVController {
     this.currentMetricLevel = this.model.metricLevel();
 
     this.chartEl         = $('graph_container');
-    this.historicChartEl = $('historic_graph_container');
     this.chartControls   = $('metric-chart-controls');
     this.noMetricsText   = $('no-metrics-data');
     this.chartTypeRadio  = document.querySelectorAll('input[name="metric-graph-choice"]');
@@ -1706,8 +1706,30 @@ class IRVController {
     }).send();
   }
 
-  receivedHistoricMetrics() {
-    console.log("here")
+  // Chart.js chart
+  receivedHistoricMetrics(data) {
+    new Chart(
+        document.getElementById('historic-metrics-canvas'),
+        {
+          type: 'line',
+          data: {
+            labels: data.map(row => row.timestamp),
+            datasets: [
+              {
+                label: this.model.selectedMetric(),
+                data: data.map(row => row.value),
+                fill: false,
+                backgroundColor: '#004F98',
+                borderColor: '#004F98',
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false
+          }
+        }
+    );
   }
 
 
@@ -1840,8 +1862,18 @@ class IRVController {
       clearTimeout(this.clickTmr);
       this.pieCountdown.hide();
       this.loadHistoricMetrics();
+      // at least some of this logic should be in rackspace
+      Util.setStyle(document.getElementById('lbc'), 'display', 'none');
+      Util.setStyle(document.getElementById('lbc'), 'z-index', '1');
+      Util.setStyle(document.getElementById('historic-graph'), 'display', 'block');
+      Util.setStyle(document.getElementById('historic-graph'), 'z-index', '100');
     } else {
       this.loadCurrentMetrics();
+      // at least some of this logic should be in rackspace
+      Util.setStyle(document.getElementById('historic-graph'), 'display', 'none');
+      Util.setStyle(document.getElementById('historic-graph'), 'z-index', '1');
+      Util.setStyle(document.getElementById('lbc'), 'display', 'block');
+      Util.setStyle(document.getElementById('lbc'), 'z-index', '100');
     }
   }
 

@@ -266,6 +266,14 @@
     z-index: 99999;
   }
 
+  #historic-graph {
+    display: none;
+  }
+
+  #historic-metrics-canvas {
+    height: 75%;
+  }
+
   #thumb_nav
   {
     background-color: white;
