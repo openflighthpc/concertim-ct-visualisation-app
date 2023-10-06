@@ -23,7 +23,7 @@ import RackObject from 'canvas/irv/view/RackObject';
 import Rack from 'canvas/irv/view/Rack';
 import Chassis from 'canvas/irv/view/Chassis';
 import Machine from 'canvas/irv/view/Machine';
-import Chart from 'canvas/irv/view/IRVChart';
+import IRVChart from 'canvas/irv/view/IRVChart';
 import MessageHint from 'canvas/irv/view/MessageHint';
 import RackHint from 'canvas/irv/view/RackHint';
 import ContextMenu from 'canvas/irv/view/ContextMenu';
@@ -174,7 +174,7 @@ class RackSpace {
     this.draw();
     if (this.model.showingRacks()) { this.centreRacks(); }
 
-    if (this.model.showChart()) { this.chart       = new Chart(this.chartEl, this.model); }
+    if (this.model.showChart()) { this.currentMetricsChart = new IRVChart(this.chartEl, this.model); }
     this.hint        = new RackHint((left = $('tooltip').parentElement) != null ? left : $('tooltip').parentNode, this.model);
     this.contextMenu = new ContextMenu(this.rackEl, this.model, this.evContextClick);
     this.messageHint = new MessageHint();
@@ -398,7 +398,7 @@ class RackSpace {
   setLayout() {
     const showing_all = this.scale === RackSpace.MIN_ZOOM;
   
-    if (this.chart != null) { this.chart.updateLayout(); }
+    if (this.currentMetricsChart!= null) { this.currentMetricsChart.updateLayout(); }
     if (this.model.showingRacks()) { this.arrangeRacks(); }
     this.setZoomPresets();
     this.synchroniseZoomIdx();
@@ -584,7 +584,7 @@ class RackSpace {
       this.flip();
     }
 
-    if (this.chart != null) { this.chart.updateLayout(); }
+    if (this.currentMetricsChart!= null) { this.chart.updateLayout(); }
     return this.currentFace = face;
   }
 

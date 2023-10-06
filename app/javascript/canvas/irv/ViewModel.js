@@ -224,7 +224,6 @@ class ViewModel {
     , this);
 
     this.enableMetricDateChoice = ko.dependentObservable(function() {
-      console.log(this.metricChart());
       return this.metricChart() === "historic";
     }
     ,this);

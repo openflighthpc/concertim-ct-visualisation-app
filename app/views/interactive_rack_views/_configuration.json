@@ -122,6 +122,7 @@
         "modifiedNonRackIds" : "/api/v1/irv/nonrack_devices/modified",
         "systemDateTime"  : "/sys/date",
         "metricData"      : "/api/v1/irv/metrics/[[metric_id]]",
+        "historicMetricData": "/api/v1/irv/metrics/[[metric_id]]/historic",
         "hintData"        : "/api/v1/irv/[[componentClassName]]/[[device_id]]/tooltip"
       },
 

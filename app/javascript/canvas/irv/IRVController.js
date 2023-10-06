@@ -145,8 +145,9 @@ class IRVController {
     this.receivedRackDefs = this.receivedRackDefs.bind(this);
     this.recievedNonrackDeviceDefs = this.recievedNonrackDeviceDefs.bind(this);
     this.loadCurrentMetrics = this.loadCurrentMetrics.bind(this);
-    this.stopOrStartMetricRefresh = this.stopOrStartMetricRefresh.bind(this);
-    this.receivedMetrics = this.receivedMetrics.bind(this);
+    this.loadHistoricMetrics = this.loadHistoricMetrics.bind(this);
+    this.loadCurrentOrHistoricMetrics = this.loadCurrentOrHistoricMetrics.bind(this);
+    this.receivedCurrentMetrics = this.receivedCurrentMetrics.bind(this);
     this.displayMetrics = this.displayMetrics.bind(this);
     this.evMouseWheelRack = this.evMouseWheelRack.bind(this);
     this.evMouseWheelThumb = this.evMouseWheelThumb.bind(this);
@@ -191,7 +192,6 @@ class IRVController {
     this.evEditMetricEndDate = this.evEditMetricEndDate.bind(this);
     this.evEditMetricChartChoice = this.evEditMetricChartChoice.bind(this);
     this.maybeUpdateChartChoice = this.maybeUpdateChartChoice.bind(this);
-    this.maybeLoadMetricsAndUpdatePolling = this.maybeLoadMetricsAndUpdatePolling.bind(this);
     this.setMetricPoll = this.setMetricPoll.bind(this);
     this.setMetricPollInput = this.setMetricPollInput.bind(this);
     this.evDropFilterBar = this.evDropFilterBar.bind(this);
@@ -673,7 +673,7 @@ class IRVController {
     this.model.showChart.subscribe(this.updateLayout);
     this.model.showFilterBar.subscribe(this.updateLayout);
     this.model.selectedMetric.subscribe(this.updateLayout);
-    this.model.metricChart.subscribe(this.stopOrStartMetricRefresh);
+    this.model.metricChart.subscribe(this.loadCurrentOrHistoricMetrics);
     this.model.enableHistoricMetricGraph.subscribe(this.maybeUpdateChartChoice);
     this.model.face.subscribe(this.switchFace);
     this.model.showHoldingArea.subscribe(this.evShowHideScrollBars);
@@ -1676,7 +1676,7 @@ class IRVController {
 
     new Request.JSON({
       url        : this.resources.path + metric_api.replace(/\[\[metric_id\]\]/g, selected_metric) + params,
-      onComplete : this.receivedMetrics,
+      onComplete : this.receivedCurrentMetrics,
       headers    : {
           'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content'),
           'Content-Type': "application/json",
@@ -1685,10 +1685,35 @@ class IRVController {
     }).send();
   }
 
+  loadHistoricMetrics() {
+    console.log("here")
+    //console.log "@@@ DCRV @@@ LOADING METRICS"
+    const selected_metric = this.model.selectedMetric();
+    if (this.noMetricSelected(selected_metric) || !this.model.enableHistoricMetricGraph()) { return; }
+    const selectedDevice = Object.keys(this.model.selectedDevices().devices)[0];
+    const params = `?device_id=${selectedDevice}&start_date=${this.metricStartDateInput.value}&end_date=${this.metricEndDateInput.value}`;
+    const historicMetricApi = this.resources.historicMetricData;
+    const path = historicMetricApi.replace(/\[\[metric_id\]\]/g, selected_metric);
+
+    new Request.JSON({
+      method: 'get',
+      url        : this.resources.path + path + params,
+      onComplete : this.receivedHistoricMetrics,
+      headers    : {
+        'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content'),
+        'Content-Type': "application/json",
+      },
+    }).send();
+  }
+
+  receivedHistoricMetrics() {
+    console.log("here")
+  }
+
 
   // called when the server responds with metric data
   // @param  metrics the metric data as returned by the server
-  receivedMetrics(metrics) {
+  receivedCurrentMetrics(metrics) {
     //console.log "@@@ DCRV @@@ RECEIVED METRICS",metrics
     // display update message and display metrics a short while after
     // this allows the screen to redraw once the update message has been
@@ -1810,10 +1835,11 @@ class IRVController {
     }
   }
 
-  stopOrStartMetricRefresh() {
+  loadCurrentOrHistoricMetrics() {
     if(this.model.metricChart() === "historic") {
       clearTimeout(this.clickTmr);
       this.pieCountdown.hide();
+      this.loadHistoricMetrics();
     } else {
       this.loadCurrentMetrics();
     }
@@ -2507,14 +2533,14 @@ class IRVController {
   evEditMetricStartDate(event) {
     this.model.metricStartDate(this.metricStartDateInput.value);
     if(this.model.metricStartDate()) {this.metricEndDateInput.min = this.model.metricStartDate() }
-    this.maybeLoadMetricsAndUpdatePolling();
+    // maybeGetHistoricMetrics
   }
 
   evEditMetricEndDate(event) {
     this.model.metricEndDate(this.metricEndDateInput.value);
     const newMax = this.model.metricEndDate() ? this.model.metricEndDate() : new Date(new Date().setDate(new Date().getDate() - 90));
     this.metricStartDateInput.max = newMax;
-    this.maybeLoadMetricsAndUpdatePolling();
+    // maybeGetHistoricMetrics
   }
 
   evEditMetricChartChoice(event) {
@@ -2525,17 +2551,6 @@ class IRVController {
     if(!this.model.enableHistoricMetricGraph() && this.model.metricChart() === "historic") {
       this.chartTypeRadio[0].checked = true;
       this.model.metricChart("current");
-    }
-  }
-
-  maybeLoadMetricsAndUpdatePolling() {
-    if (this.model.metricStartDate() && this.model.metricEndDate()) {
-      clearInterval(this.metricTmr);
-      this.loadCurrentMetrics();
-    } else if (!this.metricTmr) {
-      this.metricPollInput.disabled = false;
-      this.model.metricPollRate(this.metricPollInput.value);
-      this.resetMetricPoller();
     }
   }
 

@@ -1,5 +1,5 @@
 class Api::V1::Irv::MetricsController < Api::V1::Irv::BaseController
-  before_action :check_params, :only=>[:index, :show]
+  before_action :check_params, :only=>[:index, :show, :historic]
 
   def show
     # XXX Add authorization!  :index metrics/devices/chassis?  Or something
@@ -11,6 +11,18 @@ class Api::V1::Irv::MetricsController < Api::V1::Irv::BaseController
     if result.success?
       @devices = result.metric_values
         .select { |mv| device_ids.nil? || device_ids.include?(mv.id) }
+    else
+      render json: {success: false, errors: result.error_message}, status: 502
+    end
+  end
+
+  def historic
+    result = GetHistoricMetricValuesJob.perform_now(metric_name: params[:id], device_id: params[:device_id],
+                                                    start_date: params[:start_date], end_date: [params[:end_date]]
+    )
+    if result.success?
+      # put in suitable chart format
+      render json: result.metric_values.to_json
     else
       render json: {success: false, errors: result.error_message}, status: 502
     end
