@@ -1699,7 +1699,7 @@ class IRVController {
     new Request.JSON({
       method: 'get',
       url        : this.resources.path + path + params,
-      onComplete : this.receivedHistoricMetrics,
+      onSuccess : this.receivedHistoricMetrics,
       headers    : {
         'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content'),
         'Content-Type': "application/json",
@@ -1708,29 +1708,41 @@ class IRVController {
   }
 
   // Chart.js chart
+  // Don't rebuild each time, just update data. Maybe it should be in rackspace?
   receivedHistoricMetrics(data) {
-    new Chart(
-        document.getElementById('historic-metrics-canvas'),
+    let chartData = {
+      labels: data.map(row => row.timestamp),
+          datasets: [
         {
-          type: 'line',
-          data: {
-            labels: data.map(row => row.timestamp),
-            datasets: [
-              {
-                label: this.model.selectedMetric(),
-                data: data.map(row => row.value),
-                fill: false,
-                backgroundColor: '#004F98',
-                borderColor: '#004F98',
-              }
-            ]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false
-          }
+          label: this.model.selectedMetric(),
+          data: data.map(row => row.value),
+          fill: false,
+          backgroundColor: '#004F98',
+          borderColor: '#004F98',
         }
-    );
+      ]
+    };
+    if(this.historicChart == null) {
+      if(data.length === 0) return;
+
+      this.historicChart = new Chart(
+          document.getElementById('historic-metrics-canvas'),
+          {
+            type: 'line',
+            data: chartData,
+            options: {
+              responsive: true,
+              maintainAspectRatio: false
+            }
+          }
+      )
+    } else if(data.length === 0) {
+      this.historicChart.destroy();
+      this.historicChart = null;
+    } else {
+      this.historicChart.data = chartData;
+      this.historicChart.update();
+    }
   }
 
 

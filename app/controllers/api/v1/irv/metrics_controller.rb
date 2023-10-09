@@ -18,11 +18,12 @@ class Api::V1::Irv::MetricsController < Api::V1::Irv::BaseController
 
   def historic
     result = GetHistoricMetricValuesJob.perform_now(metric_name: params[:id], device_id: params[:device_id],
-                                                    start_date: params[:start_date], end_date: [params[:end_date]]
+                                                    start_date: Date.parse(params[:start_date]), end_date: Date.parse(params[:end_date])
     )
     if result.success?
-      # put in suitable chart format
       render json: result.metric_values.to_json
+    elsif result.status_code == 404
+      render json: []
     else
       render json: {success: false, errors: result.error_message}, status: 502
     end

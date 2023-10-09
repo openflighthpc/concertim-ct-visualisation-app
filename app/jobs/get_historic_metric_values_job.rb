@@ -3,7 +3,7 @@ require 'faraday'
 class GetHistoricMetricValuesJob < ApplicationJob
   queue_as :default
 
-  def perform(metric_name:,device_id:, start_date:, end_date: Date.current, **kwargs)
+  def perform(metric_name:,device_id:, start_date:, end_date:, **kwargs)
     runner = Runner.new(
       cloud_service_config: nil,
       metric_name: metric_name,
@@ -49,31 +49,32 @@ class GetHistoricMetricValuesJob < ApplicationJob
     def initialize(metric_name:, device_id:, start_date:, end_date:,  **kwargs)
       @metric_name = metric_name
       @device_id = device_id
-      @start_date = start_date
-      @end_date = end_date
+      @start_time = start_date.beginning_of_day.utc.to_i
+      @end_time = end_date.end_of_day.utc.to_i
       super(**kwargs)
     end
 
     def call
-      mocked_data = [
-        {"timestamp" => 1696420533, "value" => 12},
-        {"timestamp" => 1696420548, "value" => 9},
-        {"timestamp" => 1696420518, "value" => 8},
-        {"timestamp" => 1696420503, "value" => 10}
-      ]
-      Result.new(true, mocked_data, "")
-    #   response = connection.get(path)
-    #   unless response.success?
-    #     return Result.new(false, [], "#{error_description}: #{response.reason_phrase || "Unknown error"}")
-    #   end
-    #
-    #   return Result.new(true, response.body, "")
-    #
-    # rescue Faraday::Error
-    #   status_code = $!.response[:status] rescue 0
-    #   Result.new(false, [], "#{error_description}: #{$!.message}", status_code)
-    # rescue TypeError
-    #   Result.new(false, [], "Parsing metric values failed: #{$!.message}", 0)
+      # mocked_data = [
+      #   {"timestamp" => 1696420533, "value" => 12},
+      #   {"timestamp" => 1696420548, "value" => 9},
+      #   {"timestamp" => 1696420518, "value" => 8},
+      #   {"timestamp" => 1696420503, "value" => 10}
+      # ]
+      # Result.new(true, mocked_data, "")
+      response = connection.get(path)
+      unless response.success?
+        return Result.new(false, [], "#{error_description}: #{response.reason_phrase || "Unknown error"}")
+      end
+
+      dataset = group_results(response.body)
+      return Result.new(true, dataset, "")
+
+    rescue Faraday::Error
+      status_code = $!.response[:status] rescue 0
+      Result.new(false, [], "#{error_description}: #{$!.message}", status_code)
+    rescue TypeError
+      Result.new(false, [], "Parsing metric values failed: #{$!.message}", 0)
     end
 
     private
@@ -83,11 +84,19 @@ class GetHistoricMetricValuesJob < ApplicationJob
     end
 
     def path
-      "/metrics/#{ERB::Util.url_encode(@metric_name)}/values"
+      "/device/#{@device_id}/metrics/#{ERB::Util.url_encode(@metric_name)}/historic/#{@start_time}/#{@end_time}"
     end
 
     def error_description
       "Unable to fetch metric values"
+    end
+
+    def group_results(body)
+      dataset = []
+      body.each do |data_point|
+        dataset << data_point if Time.at(data_point["timestamp"]) <= Time.current
+      end
+      dataset
     end
   end
 end
