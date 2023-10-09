@@ -43,7 +43,9 @@ class GetUserInvoiceJob < ApplicationJob
     end
 
     def call
-      return fake_response
+      if Rails.application.config.fake_invoice
+        return fake_response
+      end
 
       response = connection.get(path) do |req|
         req.body = body
