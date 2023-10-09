@@ -61,6 +61,9 @@ class HwRack < ApplicationRecord
   validates :cost,
             numericality: { greater_than_or_equal_to: 0 },
             allow_blank: true
+  validates :order_id,
+    presence: true,
+    uniqueness: true
   validate :rack_limit, if: :new_record?
   validate :metadata_format
 

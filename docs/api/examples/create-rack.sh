@@ -14,13 +14,15 @@ BASE_URL="https://${CONCERTIM_HOST}/api/v1"
 # generated LOGIN and PASSWORD environment variables must be set.
 AUTH_TOKEN=${AUTH_TOKEN:-$("${SCRIPT_DIR}"/get-auth-token.sh)}
 
-USER_ID=${1}
-NAME=${2}
-U_HEIGHT=${3}
+ORDER_ID=${1}
+USER_ID=${2}
+NAME=${3}
+U_HEIGHT=${4}
 
 # Here lies complex JSON documentation creation. The complications arise due to
 # the following:
 #
+# * ORDER_ID is mandatory.
 # * NAME is optional.
 # * U_HEIGHT is optional.
 # * USER_ID is mandatory if the rack is being created for an admin user.
@@ -29,7 +31,7 @@ U_HEIGHT=${3}
 # To achieve this, we use jq to construct a JSON document, such as
 #
 # ```
-# {"rack": {"name": "", "u_height": 42, "user_id": "3"}}
+# {"rack": {"name": "", "u_height": 42, "user_id": "3", "order_id": "42"}}
 # ```
 #
 # Then we pipe that document to jq passing a funky script which dives into the
@@ -37,7 +39,7 @@ U_HEIGHT=${3}
 # resulting document would be:
 #
 # ```
-# {"rack": {"u_height": 42, "user_id": "3"}}
+# {"rack": {"u_height": 42, "user_id": "3", "order_id": "42"}}
 # ```
 #
 # The metadata below is hardcoded but it could be any valid JSON document.
@@ -45,12 +47,14 @@ BODY=$( jq --null-input  \
   --arg name "${NAME}" \
   --arg user_id "${USER_ID}" \
   --arg u_height "${U_HEIGHT}" \
+  --arg order_id "${ORDER_ID}" \
   '
 {
   "rack": {
     "name": $name,
     "user_id": $user_id,
     "u_height": $u_height|(try tonumber catch ""),
+    "order_id": $order_id,
     "status": "IN_PROGRESS",
     "metadata": {
       "status": "IN_PROGRESS",

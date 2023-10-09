@@ -12,7 +12,8 @@ RSpec.describe HwRack, type: :model do
         template: template,
         user: user,
         status: 'IN_PROGRESS',
-        cost: 99.99
+        cost: 99.99,
+        order_id: 42,
       )
       expect(rack).to be_valid
     end
@@ -82,6 +83,18 @@ RSpec.describe HwRack, type: :model do
     it "is not valid with a negative cost" do
       subject.cost = -99
       expect(subject).to have_error(:cost, :greater_than_or_equal_to)
+    end
+
+    describe "order_id" do
+      it "is not valid without an order_id" do
+        subject.order_id = nil
+        expect(subject).to have_error(:order_id, :blank)
+      end
+
+      it "must have a unique order id" do
+        new_rack = build(:rack, user: user, template: template, order_id: subject.order_id)
+        expect(new_rack).to have_error(:order_id, :taken)
+      end
     end
   end
 

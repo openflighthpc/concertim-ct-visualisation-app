@@ -88,7 +88,7 @@ Create a new rack.  If `RACK_NAME` or `U_HEIGHT` are not provided defaults
 based on the previous rack will be created.
 
 ```
-./create-rack.sh [RACK_NAME [U_HEIGHT]]
+./create-rack.sh <ORDER_ID> [<USER_ID> [RACK_NAME [U_HEIGHT]]]
 ```
 
 Show a rack including its nodes.
