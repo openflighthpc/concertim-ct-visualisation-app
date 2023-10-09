@@ -9,4 +9,5 @@ attribute :project_id, if: ->(user) { !user.root? }
 attribute :cost, if: ->(user) { !user.root? }
 attribute :billing_period_start, if: ->(user) { !user.root? }
 attribute :billing_period_end, if: ->(user) { !user.root? }
+attribute :billing_acct_id, if: ->(user) { !user.root? }
 attribute root?: :root

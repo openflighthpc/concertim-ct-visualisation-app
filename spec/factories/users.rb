@@ -7,6 +7,7 @@ FactoryBot.define do
     email { "#{login}@example.com" }
     project_id { nil }
     cloud_user_id { nil }
+    billing_acct_id { nil }
     root { false }
 
     password { SecureRandom.alphanumeric }
@@ -15,6 +16,7 @@ FactoryBot.define do
   trait :with_openstack_details do
     project_id { Faker::Alphanumeric.alphanumeric(number: 10) }
     cloud_user_id { Faker::Alphanumeric.alphanumeric(number: 10) }
+    billing_acct_id { Faker::Alphanumeric.alphanumeric(number: 10) }
   end
 
   trait :admin do

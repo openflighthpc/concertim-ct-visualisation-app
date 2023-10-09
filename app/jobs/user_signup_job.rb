@@ -21,9 +21,11 @@ class UserSignupJob < ApplicationJob
 
     attr_accessor :user_id
     attr_accessor :project_id
+    attr_accessor :billing_acct_id
 
     validates :user_id, presence: true
     validates :project_id, presence: true
+    validates :billing_acct_id, presence: true
   end
 
   class Runner < HttpRequests::Faraday::JobRunner
@@ -35,10 +37,15 @@ class UserSignupJob < ApplicationJob
     def call
       response = super
       body = response.body
-      result = Result.new(user_id: body["user_id"], project_id: body["project_id"])
+      result = Result.new(
+        user_id: body["user_id"],
+        project_id: body["project_id"],
+        billing_acct_id: body["billing_acct_id"],
+      )
       result.validate!
       @user.project_id = result.project_id
       @user.cloud_user_id = result.user_id
+      @user.billing_acct_id = result.billing_acct_id
       @user.save!
     end
 
