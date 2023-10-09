@@ -14,7 +14,9 @@ import SimpleChart from 'canvas/common/widgets/SimpleChart';
 
 class LBC {
   static initClass() {
-    // statics overwritten by config
+    // statics overwritten by configuration.json
+    // Not sure why we set them here if their values are ultimately
+    // irrelevant.
     this.TITLE_CAPTION  = 'something about cats';
 
     this.POINTER_OFFSET_X  = 10;
@@ -40,7 +42,12 @@ class LBC {
     this.LINE_POINTER_COLOUR  = '#0';
     this.LINE_POINTER_WIDTH   = 1;
 
-    this.MODEL_DEPENDENCIES = { showChart: 'showChart', selectedDevices: 'selectedDevices', filteredDevices: 'filteredDevices', metricData: 'metricData', colourMaps: 'colourMaps', colourScale: 'colourScale', graphOrder: 'chartSortOrder', racks: 'racks', highlighted: 'highlighted', metricLevel: 'metricLevel', metricTemplates: 'metricTemplates', selectedMetric: 'selectedMetric', deviceLookup: 'deviceLookup', componentClassNames: 'componentClassNames', activeSelection: 'activeSelection', activeFilter: 'activeFilter' };
+    this.MODEL_DEPENDENCIES = { showChart: 'showChart', selectedDevices: 'selectedDevices', filteredDevices: 'filteredDevices',
+                                metricData: 'metricData', colourMaps: 'colourMaps', colourScale: 'colourScale',
+                                graphOrder: 'chartSortOrder', racks: 'racks', highlighted: 'highlighted',
+                                metricLevel: 'metricLevel', metricTemplates: 'metricTemplates', selectedMetric: 'selectedMetric',
+                                metricChart: 'metricChart', deviceLookup: 'deviceLookup', componentClassNames: 'componentClassNames',
+                                activeSelection: 'activeSelection', activeFilter: 'activeFilter' };
 
 
     // constants and run-time assigned statics
@@ -368,8 +375,7 @@ class LBC {
 
   highlightDatum() {
     const device = this.modelRefs.highlighted()[0];
-
-    if (device == null) {
+    if (device == null || this.modelRefs.metricChart() !== 'current') {
       Util.setStyle(this.pointerEl, 'visibility', 'hidden');
       if (this.hoverCvs != null) {
         this.containerEl.removeChild(this.hoverCvs);

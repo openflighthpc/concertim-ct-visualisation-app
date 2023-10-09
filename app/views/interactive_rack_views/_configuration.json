@@ -653,6 +653,7 @@
         "racks"             : "racks",
         "highlighted"       : "highlighted",
         "metricLevel"       : "metricLevel",
+        "metricChart"       : "metricChart",
         "metricTemplates"   : "metricTemplates",
         "selectedMetric"    : "selectedMetric",
         "deviceLookup"      : "deviceLookup",

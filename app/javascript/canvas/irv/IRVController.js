@@ -148,6 +148,7 @@ class IRVController {
     this.loadHistoricMetrics = this.loadHistoricMetrics.bind(this);
     this.receivedHistoricMetrics = this.receivedHistoricMetrics.bind(this);
     this.loadCurrentOrHistoricMetrics = this.loadCurrentOrHistoricMetrics.bind(this);
+    this.maybeLoadHistoricMetrics = this.maybeLoadHistoricMetrics.bind(this);
     this.receivedCurrentMetrics = this.receivedCurrentMetrics.bind(this);
     this.displayMetrics = this.displayMetrics.bind(this);
     this.evMouseWheelRack = this.evMouseWheelRack.bind(this);
@@ -675,6 +676,7 @@ class IRVController {
     this.model.selectedMetric.subscribe(this.updateLayout);
     this.model.metricChart.subscribe(this.loadCurrentOrHistoricMetrics);
     this.model.enableHistoricMetricGraph.subscribe(this.maybeUpdateChartChoice);
+    this.model.selectedDevices.subscribe(this.maybeLoadHistoricMetrics);
     this.model.face.subscribe(this.switchFace);
     this.model.showHoldingArea.subscribe(this.evShowHideScrollBars);
     this.model.filters.subscribe(this.applyFilter);
@@ -1686,7 +1688,6 @@ class IRVController {
   }
 
   loadHistoricMetrics() {
-    console.log("here")
     //console.log "@@@ DCRV @@@ LOADING METRICS"
     const selected_metric = this.model.selectedMetric();
     if (this.noMetricSelected(selected_metric) || !this.model.enableHistoricMetricGraph()) { return; }
@@ -1859,7 +1860,7 @@ class IRVController {
 
   loadCurrentOrHistoricMetrics() {
     if(this.model.metricChart() === "historic") {
-      clearTimeout(this.clickTmr);
+      clearTimeout(this.dispTmr);
       this.pieCountdown.hide();
       this.loadHistoricMetrics();
       // at least some of this logic should be in rackspace
@@ -1875,6 +1876,11 @@ class IRVController {
       Util.setStyle(document.getElementById('lbc'), 'display', 'block');
       Util.setStyle(document.getElementById('lbc'), 'z-index', '100');
     }
+  }
+
+  maybeLoadHistoricMetrics() {
+    clearTimeout(this.dispTmr);
+    if(this.model.metricChart() === "historic") { this.loadHistoricMetrics(); }
   }
 
   // rack view mouse wheel event handler
@@ -2565,14 +2571,14 @@ class IRVController {
   evEditMetricStartDate(event) {
     this.model.metricStartDate(this.metricStartDateInput.value);
     if(this.model.metricStartDate()) {this.metricEndDateInput.min = this.model.metricStartDate() }
-    // maybeGetHistoricMetrics
+    this.maybeLoadHistoricMetrics();
   }
 
   evEditMetricEndDate(event) {
     this.model.metricEndDate(this.metricEndDateInput.value);
     const newMax = this.model.metricEndDate() ? this.model.metricEndDate() : new Date(new Date().setDate(new Date().getDate() - 90));
     this.metricStartDateInput.max = newMax;
-    // maybeGetHistoricMetrics
+    this.maybeLoadHistoricMetrics();
   }
 
   evEditMetricChartChoice(event) {

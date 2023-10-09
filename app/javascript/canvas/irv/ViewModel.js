@@ -219,7 +219,8 @@ class ViewModel {
     , this);
 
     this.enableHistoricMetricGraph = ko.dependentObservable(function() {
-      return this.enableMetricSelection() && this.selectedDevices().devices != null && Object.keys(this.selectedDevices().devices).length === 1;
+      return this.enableMetricSelection() &&  this.selectedDevices() != null &&
+             this.selectedDevices().devices != null && Object.keys(this.selectedDevices().devices).length === 1;
     }
     , this);
 
