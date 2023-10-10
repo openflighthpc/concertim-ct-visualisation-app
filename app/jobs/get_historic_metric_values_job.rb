@@ -91,7 +91,7 @@ class GetHistoricMetricValuesJob < ApplicationJob
       count = 0
       start = Time.at(@start_time)
       while count < hours_to_cover
-        hourly_averages[(start + (3600 * count)).strftime('%Y-%m-%d %H:00')] = []
+        hourly_averages[(start + (3600 * count)).strftime('%y-%m-%d %H:00')] = []
         count += 1
       end
 
@@ -101,7 +101,7 @@ class GetHistoricMetricValuesJob < ApplicationJob
 
         any_values = true
         timestamp = Time.at(item["timestamp"])
-        hour_key = timestamp.strftime('%Y-%m-%d %H:00')
+        hour_key = timestamp.strftime('%y-%m-%d %H:00')
         hourly_averages[hour_key] << item["value"]
       end
 
@@ -109,7 +109,7 @@ class GetHistoricMetricValuesJob < ApplicationJob
 
       [].tap do |results|
         hourly_averages.each do |hour_key, values|
-          results << { timestamp: hour_key, value: values.sum / values.length.to_f }
+          results << { timestamp: hour_key, value: ("%.2f" % (values.sum / values.length.to_f)) }
         end
       end
     end

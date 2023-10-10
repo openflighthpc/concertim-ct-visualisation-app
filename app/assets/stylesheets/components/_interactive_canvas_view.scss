@@ -205,7 +205,7 @@
   {
   }
 
-  #graph_container
+  #current_metrics_graph_container
   {
     position: absolute;
     padding: 0;
@@ -220,7 +220,7 @@
     padding-right: 2rem;
     width: 100%;
     display: none;
-    z-index: 100;
+    z-index: 101;
 
     .metric-graph-radio {
       padding-top: 0.75rem;
@@ -231,8 +231,8 @@
       justify-content: space-between;
       width: 100%;
 
-      .metric-date-pickers {
-        display:inline-flex;
+      #metric-date-pickers {
+        display: none;
         justify-content: flex-end;
       }
 
@@ -241,6 +241,7 @@
       }
     }
   }
+
 
   #no-metrics-data {
     position: absolute;
@@ -268,6 +269,8 @@
 
   #historic-graph {
     display: none;
+    position: absolute;
+    width: 100%;
   }
 
   #historic-metrics-canvas {

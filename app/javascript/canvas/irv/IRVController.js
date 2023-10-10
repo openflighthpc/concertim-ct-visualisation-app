@@ -603,10 +603,13 @@ class IRVController {
     this.currentFace        = this.model.face();
     this.currentMetricLevel = this.model.metricLevel();
 
-    this.chartEl         = $('graph_container');
+    this.currentMetricsChartEl = $('current_metrics_graph_container');
     this.chartControls   = $('metric-chart-controls');
+    this.historicMetricsChartEl = $('historic-graph');
+    this.metricControlsEl = $('metric-chart-controls');
     this.noMetricsText   = $('no-metrics-data');
     this.chartTypeRadio  = document.querySelectorAll('input[name="metric-graph-choice"]');
+    this.metricDatePickers = $('metric-date-pickers');
     this.rackEl          = $('rack_container');
     this.thumbEl         = $('thumb_nav');
     this.filterBarEl     = $('colour_map');
@@ -698,7 +701,7 @@ class IRVController {
 
 
     // Rack Space
-    this.rackSpace = new RackSpace(this.rackEl, this.chartEl, this.model, this.rackParent);
+    this.rackSpace = new RackSpace(this.rackEl, this.currentMetricsChartEl, this.model, this.rackParent);
     if (this.model.showingFullIrv()) {
       this.pieCountdown = new PieCountdown(this.rackSpace.countDownGfx, this.model.metricPollRate()/1000);
     }
@@ -1231,12 +1234,11 @@ class IRVController {
 
     Util.setStyle(this.rackParent, 'height', (rack_height_proportion * 99) + '%');
     if (this.model.showChart()) {
-      Util.setStyle(this.chartEl, 'top', ((rack_height_proportion + filter_height_proportion) * 100) + '%');
-      Util.setStyle(this.chartEl, 'height', (graph_height_proportion * 100) + '%');
-      // Util.setStyle(this.historicChartEl, 'top', ((rack_height_proportion + filter_height_proportion) * 100) + '%');
-      // Util.setStyle(this.historicChartEl, 'height', (graph_height_proportion * 100) + '%');
-      // Util.setStyle(this.chartControls, 'top', ((rack_height_proportion + filter_height_proportion) * 100) + '%');
-      // Util.setStyle(this.chartControls, 'height', (graph_height_proportion * 100) + '%');
+      Util.setStyle(this.currentMetricsChartEl, 'top', ((rack_height_proportion + filter_height_proportion) * 100) + '%');
+      Util.setStyle(this.currentMetricsChartEl, 'height', (graph_height_proportion * 100) + '%');
+      Util.setStyle(this.metricControlsEl, 'top', ((rack_height_proportion + filter_height_proportion) * 100) + '%');
+      Util.setStyle(this.historicMetricsChartEl, 'top', ((rack_height_proportion + filter_height_proportion) * 100 +4) + '%');
+      Util.setStyle(this.historicMetricsChartEl, 'height', (graph_height_proportion * 85) + '%');
       if(this.model.selectedMetric()) { Util.setStyle(this.chartControls, 'display', 'block') }
     } else {
       Util.setStyle(this.chartControls, 'display', 'none');
@@ -1276,7 +1278,7 @@ class IRVController {
     }
 
     this.rackElDims  = this.rackEl.getCoordinates();
-    this.chartElDims = this.chartEl != null ? this.chartEl.getCoordinates() : undefined;
+    this.chartElDims = this.currentMetricsChartEl != null ? this.currentMetricsChartEl.getCoordinates() : undefined;
 
     if (this.rackSpace != null) {
       if (this.filterBar) { this.filterBar.updateLayout(); }
@@ -1880,6 +1882,7 @@ class IRVController {
     if(this.model.metricChart() === "historic") {
       clearTimeout(this.metricTmr);
       this.pieCountdown.hide();
+      Util.setStyle(this.metricDatePickers, 'display', 'inline-flex');
       this.loadHistoricMetrics();
       // at least some of this logic should be in rackspace
       Util.setStyle(document.getElementById('lbc'), 'display', 'none');
@@ -1889,6 +1892,7 @@ class IRVController {
     } else {
       this.loadCurrentMetrics();
       // at least some of this logic should be in rackspace
+      Util.setStyle(this.metricDatePickers, 'display', 'none');
       Util.setStyle(document.getElementById('historic-graph'), 'display', 'none');
       Util.setStyle(document.getElementById('historic-graph'), 'z-index', '1');
       Util.setStyle(document.getElementById('lbc'), 'display', 'block');
@@ -2194,20 +2198,20 @@ class IRVController {
   // LBC mouse down event handler, initialises drag event handling
   // @param  ev  the event object which invoked execution
   evMouseDownChart(ev) {
-    const coords      = Util.resolveMouseCoords(this.chartEl, ev);
+    const coords      = Util.resolveMouseCoords(this.currentMetricsChartEl, ev);
     this.downCoords = coords;
-    return Events.addEventListener(this.chartEl, 'mousemove', this.evDragChart);
+    return Events.addEventListener(this.currentMetricsChartEl, 'mousemove', this.evDragChart);
   }
 
 
   // LBC mouse up event handler, clears drag event handling and actions any selection box which has been created
   // @param  ev  the event object which invoked execution
   evMouseUpChart(ev) {
-    this.upCoords = Util.resolveMouseCoords(this.chartEl, ev);
-    Events.removeEventListener(this.chartEl, 'mousemove', this.evDragChart);
+    this.upCoords = Util.resolveMouseCoords(this.currentMetricsChartEl, ev);
+    Events.removeEventListener(this.currentMetricsChartEl, 'mousemove', this.evDragChart);
 
     if (this.dragging) {
-      const coords = Util.resolveMouseCoords(this.chartEl, ev);
+      const coords = Util.resolveMouseCoords(this.currentMetricsChartEl, ev);
       this.rackSpace.stopDragChart(coords.x, coords.y);
       return this.dragging = false;
     }
@@ -2218,7 +2222,7 @@ class IRVController {
   // threshold distance from the originating click coordinates
   // @param  ev  the event object which invoked execution
   evDragChart(ev) {
-    const coords = Util.resolveMouseCoords(this.chartEl, ev);
+    const coords = Util.resolveMouseCoords(this.currentMetricsChartEl, ev);
     if (!this.dragging) {
       this.dragging = Math.sqrt(Math.pow(coords.x - this.downCoords.x, 2) + Math.pow(coords.y - this.downCoords.y, 2)) > IRVController.DRAG_ACTIVATION_DIST;
       if (this.dragging) {
@@ -2256,9 +2260,9 @@ class IRVController {
   // disables mouse events to prevent user interaction during zoom/flip animations. This is probably redundant now following implementation
   // of the update message
   disableMouse() {
-    if (this.model.showChart()) { Events.removeEventListener(this.chartEl, 'mousedown', this.evMouseDownChart); }
-    if (this.model.showChart()) { Events.removeEventListener(this.chartEl, 'mouseup', this.evMouseUpChart); }
-    if (this.model.showChart()) { Events.removeEventListener(this.chartEl, 'mousemove', this.evMouseMoveChart); }
+    if (this.model.showChart()) { Events.removeEventListener(this.currentMetricsChartEl, 'mousedown', this.evMouseDownChart); }
+    if (this.model.showChart()) { Events.removeEventListener(this.currentMetricsChartEl, 'mouseup', this.evMouseUpChart); }
+    if (this.model.showChart()) { Events.removeEventListener(this.currentMetricsChartEl, 'mousemove', this.evMouseMoveChart); }
 
     Events.removeEventListener(this.rackEl, 'mousedown', this.evMouseDownRack);
     Events.removeEventListener(this.rackEl, 'mouseup', this.evMouseUpRack);
@@ -2279,9 +2283,9 @@ class IRVController {
   // enables  mouse events on completion of zoom/flip animations. This is probably redundant now following implementation of the update
   // message
   enableMouse() {
-    if (this.model.showChart()) { Events.addEventListener(this.chartEl, 'mousedown', this.evMouseDownChart); }
-    if (this.model.showChart()) { Events.addEventListener(this.chartEl, 'mouseup', this.evMouseUpChart); }
-    if (this.model.showChart()) { Events.addEventListener(this.chartEl, 'mousemove', this.evMouseMoveChart); }
+    if (this.model.showChart()) { Events.addEventListener(this.currentMetricsChartEl, 'mousedown', this.evMouseDownChart); }
+    if (this.model.showChart()) { Events.addEventListener(this.currentMetricsChartEl, 'mouseup', this.evMouseUpChart); }
+    if (this.model.showChart()) { Events.addEventListener(this.currentMetricsChartEl, 'mousemove', this.evMouseMoveChart); }
 
     Events.addEventListener(this.rackEl, 'mousedown', this.evMouseDownRack);
     Events.addEventListener(this.rackEl, 'mouseup', this.evMouseUpRack);
