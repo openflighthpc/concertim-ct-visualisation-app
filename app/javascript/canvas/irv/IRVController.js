@@ -1292,7 +1292,7 @@ class IRVController {
     // the observable loadingAPreset will call this function again.
     if (this.model.loadingAPreset() === true) { return; }
     clearInterval(this.metricTmr);
-    if ((this.model.metricPollRate() !== 0) && !this.noMetricSelected(this.model.selectedMetric())) {
+    if ((this.model.metricPollRate() !== 0) && !this.noMetricSelected(this.model.selectedMetric()) && this.model.metricChart() === 'current') {
       this.loadCurrentMetrics();
       this.metricTmr   = setInterval(this.loadCurrentMetrics, this.model.metricPollRate());
     }
@@ -1714,7 +1714,7 @@ class IRVController {
       labels: data.map(row => row.timestamp),
           datasets: [
         {
-          label: this.model.selectedMetric(),
+          label: `${this.model.selectedMetric()} (average/ hour)`,
           data: data.map(row => row.value),
           fill: false,
           backgroundColor: '#004F98',
@@ -1723,8 +1723,12 @@ class IRVController {
       ]
     };
     if(this.historicChart == null) {
-      if(data.length === 0) return;
+      if(data.length === 0) {
+        Util.setStyle(this.noMetricsText, 'display', 'block');
+        return;
+      }
 
+      Util.setStyle(this.noMetricsText, 'display', 'none');
       this.historicChart = new Chart(
           document.getElementById('historic-metrics-canvas'),
           {
@@ -1739,7 +1743,9 @@ class IRVController {
     } else if(data.length === 0) {
       this.historicChart.destroy();
       this.historicChart = null;
+      Util.setStyle(this.noMetricsText, 'display', 'block');
     } else {
+      Util.setStyle(this.noMetricsText, 'display', 'none');
       this.historicChart.data = chartData;
       this.historicChart.update();
     }
@@ -1872,7 +1878,7 @@ class IRVController {
 
   loadCurrentOrHistoricMetrics() {
     if(this.model.metricChart() === "historic") {
-      clearTimeout(this.dispTmr);
+      clearTimeout(this.metricTmr);
       this.pieCountdown.hide();
       this.loadHistoricMetrics();
       // at least some of this logic should be in rackspace
@@ -1891,7 +1897,7 @@ class IRVController {
   }
 
   maybeLoadHistoricMetrics() {
-    clearTimeout(this.dispTmr);
+    clearTimeout(this.metricTmr);
     if(this.model.metricChart() === "historic") { this.loadHistoricMetrics(); }
   }
 

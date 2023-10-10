@@ -23,7 +23,7 @@ class GetHistoricMetricValuesJob < ApplicationJob
 
     def initialize(success, metric_values, error_message, status_code=nil)
       @success = !!success
-      @metric_values = parse_metric_values(metric_values)
+      @metric_values = metric_values
       @error_message = error_message
       @status_code = status_code
     end
@@ -34,14 +34,6 @@ class GetHistoricMetricValuesJob < ApplicationJob
 
     def error_message
       success? ? nil : @error_message
-    end
-
-    private
-
-    def parse_metric_values(body)
-      body.map do |mv|
-        MetricValue.new(timestamp: Time.at(mv["timestamp"].to_i), value: mv["value"])
-      end
     end
   end
 
@@ -91,12 +83,35 @@ class GetHistoricMetricValuesJob < ApplicationJob
       "Unable to fetch metric values"
     end
 
+    # We want to show hourly averages
     def group_results(body)
-      dataset = []
-      body.each do |data_point|
-        dataset << data_point if Time.at(data_point["timestamp"]) <= Time.current
+      hourly_averages = {}
+      finish = [Time.current.utc.to_i, @end_time].min
+      hours_to_cover = ((finish - @start_time) / 3600) + 1
+      count = 0
+      start = Time.at(@start_time)
+      while count < hours_to_cover
+        hourly_averages[(start + (3600 * count)).strftime('%Y-%m-%d %H:00')] = []
+        count += 1
       end
-      dataset
+
+      any_values = false
+      body.each do |item|
+        next if item["value"].nil?
+
+        any_values = true
+        timestamp = Time.at(item["timestamp"])
+        hour_key = timestamp.strftime('%Y-%m-%d %H:00')
+        hourly_averages[hour_key] << item["value"]
+      end
+
+      return [] unless any_values
+
+      [].tap do |results|
+        hourly_averages.each do |hour_key, values|
+          results << { timestamp: hour_key, value: values.sum / values.length.to_f }
+        end
+      end
     end
   end
 end
