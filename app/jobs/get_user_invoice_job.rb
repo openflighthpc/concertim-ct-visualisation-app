@@ -87,10 +87,12 @@ class GetUserInvoiceJob < ApplicationJob
           user_id: @user.cloud_user_id,
           password: @user.foreign_password,
           project_id: @user.project_id,
+        },
+        invoice: {
           billing_acct_id: @user.billing_acct_id,
-        }
+          target_date: Date.today.to_formatted_s(:iso8601),
+        },
       }
     end
   end
 end
-

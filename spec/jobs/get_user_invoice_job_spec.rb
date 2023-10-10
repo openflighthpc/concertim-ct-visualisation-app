@@ -32,7 +32,13 @@ RSpec.describe GetUserInvoiceJob, type: :job do
         "user_id" => user.cloud_user_id,
         "password" => user.foreign_password,
         "project_id" => user.project_id,
+      })
+    end
+
+    it "contains invoice config" do
+      expect(subject[:invoice]).to eq({
         "billing_acct_id" => user.billing_acct_id,
+        "target_date" => "#{Date.today.year}-#{Date.today.month}-#{Date.today.day}",
       })
     end
   end
