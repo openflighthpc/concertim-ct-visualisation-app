@@ -49,13 +49,13 @@ class GetUserInvoiceJob < ApplicationJob
         req.body = body
       end
       unless response.success?
-        return Result.new(false, nil, "#{error_description}: #{response.reason_phrase || "Unknown error"}")
+        return Result.new(false, nil, response.reason_phrase || "Unknown error")
       end
       return Result.new(true, response.body, "", response.status)
 
     rescue Faraday::Error
       status_code = $!.response[:status] rescue 0
-      Result.new(false, nil, "#{error_description}: #{$!.message}", status_code)
+      Result.new(false, nil, $!.message, status_code)
     end
 
     private
@@ -74,10 +74,6 @@ class GetUserInvoiceJob < ApplicationJob
       url = URI(@cloud_service_config.user_handler_base_url)
       url.path = "/get_user_invoice"
       url.to_s
-    end
-
-    def error_description
-      "Unable to fetch user's invoice"
     end
 
     def body

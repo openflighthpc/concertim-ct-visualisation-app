@@ -76,7 +76,7 @@ RSpec.describe GetUserInvoiceJob, type: :job do
 
       it "returns a sensible error_message" do
         result = described_class.perform_now(cloud_service_config, user, test_stubs: stubs)
-        expect(result.error_message).to eq "Unable to fetch user's invoice: the server responded with status 404"
+        expect(result.error_message).to eq "the server responded with status 404"
       end
     end
 
@@ -93,7 +93,7 @@ RSpec.describe GetUserInvoiceJob, type: :job do
 
       it "returns a sensible error_message" do
         result = described_class.perform_now(cloud_service_config, user, test_stubs: stubs, timeout: timeout)
-        expect(result.error_message).to eq "Unable to fetch user's invoice: execution expired"
+        expect(result.error_message).to eq "execution expired"
       end
     end
   end
