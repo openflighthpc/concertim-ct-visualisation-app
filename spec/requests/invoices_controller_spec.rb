@@ -48,10 +48,10 @@ RSpec.describe "InvoicesControllers", type: :request do
 
       context "when prerequisites are met" do
         before(:each) { allow(CreateUserInvoiceJob).to receive(:perform_now).and_return(result) }
+        let(:result) { CreateUserInvoiceJob::Result.new(true, invoice_document, nil, 201) }
+        let(:invoice_document) { "<html><head></head><body><h1>This is your invoice</h1></body></html>" }
         let(:authenticated_user) { create(:user, :with_openstack_details) }
         let!(:cloud_service_config) { create(:cloud_service_config) }
-        let(:result) { CreateUserInvoiceJob::Result.new(true, invoice_document, nil, 200) }
-        let(:invoice_document) { "<html><head></head><body><h1>This is your invoice</h1></body></html>" }
 
         include_examples "successful HTML response"
 

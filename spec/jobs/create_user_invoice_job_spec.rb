@@ -46,7 +46,7 @@ RSpec.describe CreateUserInvoiceJob, type: :job do
   describe "#perform" do
     context "when request is successful" do
       before(:each) do
-        stubs.post(expected_url) { |env| [ 200, {}, invoice_document] }
+        stubs.post(expected_url) { |env| [ 200, {}, {"invoice_html" => invoice_document}] }
       end
 
       let(:invoice_document) {

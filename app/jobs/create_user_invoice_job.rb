@@ -43,13 +43,16 @@ class CreateUserInvoiceJob < ApplicationJob
     end
 
     def call
-      return fake_response if Rails.application.config.fake_invoice
-
-      response = super
+      response =
+        if Rails.application.config.fake_invoice
+          fake_response
+        else
+          super
+        end
       unless response.success?
         return Result.new(false, nil, response.reason_phrase || "Unknown error")
       end
-      return Result.new(true, response.body, "", response.status)
+      return Result.new(true, response.body["invoice_html"], "", response.status)
 
     rescue Faraday::Error
       status_code = $!.response[:status] rescue 0
@@ -65,7 +68,11 @@ class CreateUserInvoiceJob < ApplicationJob
         layout: false,
         assigns: {user: UserPresenter.new(@user)},
       )
-      Result.new(true, invoice, "", 200)
+      Object.new.tap do |o|
+        o.define_singleton_method(:success?) { true }
+        o.define_singleton_method(:status) { 201 }
+        o.define_singleton_method(:body) { {"invoice_html" => invoice} }
+      end
     end
 
     def url
