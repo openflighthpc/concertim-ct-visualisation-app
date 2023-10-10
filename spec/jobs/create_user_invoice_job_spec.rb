@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe GetUserInvoiceJob, type: :job do
+RSpec.describe CreateUserInvoiceJob, type: :job do
 
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
   let(:cloud_service_config) { create(:cloud_service_config) }
@@ -46,7 +46,7 @@ RSpec.describe GetUserInvoiceJob, type: :job do
   describe "#perform" do
     context "when request is successful" do
       before(:each) do
-        stubs.get(expected_url) { |env| [ 200, {}, invoice_document] }
+        stubs.post(expected_url) { |env| [ 200, {}, invoice_document] }
       end
 
       let(:invoice_document) {
@@ -66,7 +66,7 @@ RSpec.describe GetUserInvoiceJob, type: :job do
 
     context "when request is not successful" do
       before(:each) do
-        stubs.get(expected_url) { |env| [ 404, {}, "404 Not Found"] }
+        stubs.post(expected_url) { |env| [ 404, {}, "404 Not Found"] }
       end
 
       it "returns an unsuccessful result" do
@@ -82,7 +82,7 @@ RSpec.describe GetUserInvoiceJob, type: :job do
 
     context "when request times out" do
       before(:each) do
-        stubs.get(expected_url) { |env| sleep timeout * 2 ; [ 200, {}, ""] }
+        stubs.post(expected_url) { |env| sleep timeout * 2 ; [ 200, {}, ""] }
       end
       let(:timeout) { 0.1 }
 

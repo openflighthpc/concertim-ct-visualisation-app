@@ -1,6 +1,6 @@
 require 'faraday'
 
-class GetUserInvoiceJob < ApplicationJob
+class CreateUserInvoiceJob < ApplicationJob
   queue_as :default
 
   def perform(cloud_service_config, user, **options)
@@ -45,9 +45,7 @@ class GetUserInvoiceJob < ApplicationJob
     def call
       return fake_response if Rails.application.config.fake_invoice
 
-      response = connection.get("") do |req|
-        req.body = body
-      end
+      response = super
       unless response.success?
         return Result.new(false, nil, response.reason_phrase || "Unknown error")
       end

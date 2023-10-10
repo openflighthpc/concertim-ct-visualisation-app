@@ -19,7 +19,7 @@ class InvoicesController < ApplicationController
       return
     end
 
-    result = GetUserInvoiceJob.perform_now(@cloud_service_config, current_user)
+    result = CreateUserInvoiceJob.perform_now(@cloud_service_config, current_user)
     if result.success?
       render status: 200, html: result.invoice.html_safe
     else
