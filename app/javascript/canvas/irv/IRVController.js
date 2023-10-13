@@ -1879,29 +1879,29 @@ class IRVController {
   }
 
   loadCurrentOrHistoricMetrics() {
+    Util.setStyle(this.noMetricsText, 'display', 'none');
     if(this.model.metricChart() === "historic") {
-      clearTimeout(this.metricTmr);
+      clearInterval(this.metricTmr);
       this.pieCountdown.hide();
-      Util.setStyle(this.metricDatePickers, 'display', 'inline-flex');
-      this.loadHistoricMetrics();
       // at least some of this logic should be in rackspace
       Util.setStyle(document.getElementById('lbc'), 'display', 'none');
       Util.setStyle(document.getElementById('lbc'), 'z-index', '1');
+      this.loadHistoricMetrics();
+      Util.setStyle(this.metricDatePickers, 'display', 'inline-flex');
       Util.setStyle(document.getElementById('historic-graph'), 'display', 'block');
       Util.setStyle(document.getElementById('historic-graph'), 'z-index', '100');
     } else {
-      this.loadCurrentMetrics();
       // at least some of this logic should be in rackspace
       Util.setStyle(this.metricDatePickers, 'display', 'none');
       Util.setStyle(document.getElementById('historic-graph'), 'display', 'none');
       Util.setStyle(document.getElementById('historic-graph'), 'z-index', '1');
+      this.resetMetricPoller();
       Util.setStyle(document.getElementById('lbc'), 'display', 'block');
       Util.setStyle(document.getElementById('lbc'), 'z-index', '100');
     }
   }
 
   maybeLoadHistoricMetrics() {
-    clearTimeout(this.metricTmr);
     if(this.model.metricChart() === "historic") { this.loadHistoricMetrics(); }
   }
 
