@@ -76,7 +76,7 @@ class GetHistoricMetricValuesJob < ApplicationJob
     end
 
     def path
-      "/device/#{@device_id}/metrics/#{ERB::Util.url_encode(@metric_name)}/historic/#{@start_time}/#{@end_time}"
+      "/devices/#{@device_id}/metrics/#{ERB::Util.url_encode(@metric_name)}/historic/#{@start_time}/#{@end_time}"
     end
 
     def error_description

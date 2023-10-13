@@ -279,7 +279,7 @@ class LBC {
       this.chart.setTitle(title);
       this.chart.addEventListener('onshowtooltip', this.evShowHint);
       this.chart.addEventListener('onhidetooltip', this.evHideHint);
-    } else {
+    } else if(this.modelRefs.metricChart() === "current") {
       Util.setStyle(this.noDataEl, 'display', 'block');
     }
   }

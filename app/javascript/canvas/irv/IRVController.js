@@ -1319,8 +1319,6 @@ class IRVController {
   switchMetric(metric) {
     if (!this.noMetricSelected(metric) && !this.model.validMetric(metric)) { return; }
 
-    this.resetMetricPoller();
-
     this.model.resetMetricData();
 
     if (this.noMetricSelected(metric)) {
@@ -1330,7 +1328,9 @@ class IRVController {
     } else {
       // Remove the filter as it might be inappropriate for the new selection.
       // Consider adding a guard here to check if it is.
+      this.loadCurrentOrHistoricMetrics();
       this.model.resetFilter();
+
     }
   }
 
@@ -1675,6 +1675,12 @@ class IRVController {
     //console.log "@@@ DCRV @@@ LOADING METRICS"
     const selected_metric = this.model.selectedMetric();
     if (this.noMetricSelected(selected_metric) || this.model.metricChart === "historic") { return; }
+
+    if(this.historicChart != null) {
+      this.historicChart.destroy();
+      this.historicChart = null;
+    }
+
     const params = `?timestamp=${(new Date()).getTime()}`;
     const metric_api = this.resources.metricData;
 
