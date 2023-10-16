@@ -23,6 +23,9 @@ class Ability
 
     cannot :read, ClusterType
     cannot :create, Cluster
+
+    # Don't allow any admin users to be deleted.
+    cannot :destroy, User, root: true
   end
 
   # Abilities for non-root users.
