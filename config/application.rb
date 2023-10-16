@@ -30,7 +30,7 @@ module CtApp
     config.jwt_aud = 'alces-ct'
 
     # The base URL to use for the concertim metric reporting daemon.
-    config.metric_daemon_url = ENV.fetch("METRIC_DAEMON_URL", "http://localhost:3000")
+    config.metric_daemon_url = ENV.fetch("METRIC_DAEMON_URL", "http://localhost:3000/")
 
     # Display a fake invoice if ENV['FAKE_INVOICE'] is set.  Otherwise the
     # concertim-openstack-service will be contacted to provide the invoice.
