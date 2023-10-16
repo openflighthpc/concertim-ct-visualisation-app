@@ -2,13 +2,41 @@
   display: flex;
   align-items: center;
 
+
   .metric-check-box {
     margin-left: 0.25rem;
     margin-bottom: 0;
-    padding-top: 1rem;
   }
 
   .metric-check-box-label {
     margin-left: 0.25rem;
+  }
+}
+
+#metric-timeframe {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: left;
+
+  label {
+    white-space: nowrap;
+    padding-bottom: 0.85rem;
+  }
+}
+
+#metric-date-pickers {
+  display: flex;
+  justify-content: left;
+  width: 100%;
+
+  label {
+    display: none;
+  }
+
+  #date-range-text {
+    padding-top: 0.6rem;
+    margin-left: 0.45rem;
+    margin-right: 0.45rem;
   }
 }

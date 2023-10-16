@@ -5,6 +5,7 @@ pin "application", to: "application.js"
 # Page-specific javascripts.
 pin "IRV", to: "IRV.js"
 pin "key_pairs/new", to: "key_pairs/new.js"
+pin "metrics/index", to: "metrics/index.js"
 
 # Utility Javascripts.
 pin "Profiler", to: "canvas/irv/NullProfiler.js"

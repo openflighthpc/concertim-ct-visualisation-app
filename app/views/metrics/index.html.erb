@@ -1,13 +1,47 @@
-<% set_title 'Device Metrics' -%>
+<% content_for(:head) do %>
+  <%= javascript_import_module_tag "metrics/index" %>
+<% end %>
+
+<% set_title "Metrics for #{@device.name}" -%>
 
 <% if @metrics.any? %>
+  <h4>Timeframe:</h4>
+  <div id="metric-timeframe">
+    <input type="radio" id="current-hour-metrics" name="metric-timeline-choice" value="hour" checked />
+    <label for="current-metrics">Past hour</label>
+    <input type="radio" id="current-day-metrics" name="metric-timeline-choice" value="day"/>
+    <label for="historic-metrics">Past day</label>
+    <input type="radio" id="date-range-metrics" name="metric-timeline-choice" value="range"/>
+    <label for="historic-metrics">Select date range:</label>
+    <div id="metric-date-pickers">
+      <div class="date-input">
+        <label class="toolTip" for="metric_start_date">
+          Start date
+        </label>
+        <input type="date" class="metric-date-picker" id="metric_start_date" name="metric_start_date"
+               max="<%= Date.current %>" min="<%= Date.current - 89.days %>"
+               value="<%= Date.current - 6.days %>" disabled/>
+      </div>
+      <div id="date-range-text">
+        to
+      </div>
+      <div class="date-input">
+        <label class="toolTip" for="metric_end_date">
+          End date
+        </label>
+        <input type="date" class="metric-date-picker" id="metric_end_date" name="metric_end_date"
+               max="<%= Date.current %>" value="<%= Date.current %>" disabled/>
+      </div>
+    </div>
+  </div>
+
+  <h4>Show metrics:</h4>
   <div id="metrics-choices">
-    <strong>Show metrics:</strong>
     <%= collection_check_boxes(nil, :metric_ids, @metrics, :id, :name) do |b| %>
       <%= b.check_box(class: "metric-check-box") %>
       <%= b.label(class: "metric-check-box-label") %>
     <%  end %>
   </div>
 <% else %>
-  <h4>No metrics currently available for selected device.</h4>
+  <h4>No metrics currently available for the selected device.</h4>
 <% end %>
