@@ -70,7 +70,7 @@ class GetValuesForDevicesWithMetricJob < ApplicationJob
     end
 
     def path
-      "/metrics/#{ERB::Util.url_encode(@metric_name)}/values"
+      "/metrics/#{ERB::Util.url_encode(@metric_name)}/current"
     end
 
     def error_description

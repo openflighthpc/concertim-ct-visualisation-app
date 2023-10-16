@@ -1,1 +1,13 @@
 <% set_title 'Device Metrics' -%>
+
+<% if @metrics.any? %>
+  <div id="metrics-choices">
+    <strong>Show metrics:</strong>
+    <%= collection_check_boxes(nil, :metric_ids, @metrics, :id, :name) do |b| %>
+      <%= b.check_box(class: "metric-check-box") %>
+      <%= b.label(class: "metric-check-box-label") %>
+    <%  end %>
+  </div>
+<% else %>
+  <h4>No metrics currently available for selected device.</h4>
+<% end %>

@@ -1,0 +1,14 @@
+#metrics-choices {
+  display: flex;
+  align-items: center;
+
+  .metric-check-box {
+    margin-left: 0.25rem;
+    margin-bottom: 0;
+    padding-top: 1rem;
+  }
+
+  .metric-check-box-label {
+    margin-left: 0.25rem;
+  }
+}
