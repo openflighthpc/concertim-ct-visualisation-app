@@ -25,6 +25,7 @@ class ContextMenu {
     this.SPACER               = '<br>';
     this.ASPECT_MAP           = { front: 'f', rear: 'r' };
     this.ACTION_PATHS         = {};
+    this.DETAILED_METRICS_PATH = "";
   }
 
 

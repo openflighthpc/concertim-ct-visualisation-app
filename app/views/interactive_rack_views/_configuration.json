@@ -440,6 +440,10 @@
             "url"     : "internal::focusOn,devices,[[device_id]]"
           },
           {
+            "caption" : "View detailed metrics",
+            "url"     : "internal::viewDetailedMetrics,devices,[[device_id]]"
+          },
+          {
             "caption" : "Switch off",
             "url"     : "internal::statusChangeRequest,off,devices,[[device_id]],[[device_name]]",
             "availableToBuildStatuses": ["ACTIVE"]
@@ -475,7 +479,9 @@
       {
         "devices": "/api/v1/irv/devices/[[device_id]]/request_status_change?task=[[action]]",
         "racks": "/api/v1/irv/racks/[[rack_id]]/request_status_change?task=[[action]]"
-      }
+      },
+
+      "detailedMetricsPath": "/devices/[[device_id]]/metrics"
     },
 
     "HINT":

@@ -40,6 +40,10 @@ Rails.application.routes.draw do
 
   resource :invoices, only: :show
 
+  resources :devices, only: [] do
+    resources :metrics, only: [:index]
+  end
+
   # API routes
   #
   # Some of these have been done in a non-railsy way (you have "posts" where you should have 
