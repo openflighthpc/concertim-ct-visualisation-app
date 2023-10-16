@@ -41,3 +41,8 @@ en:
       "user_signup_job/result":
         user_id: "user_id"
         project_id: "project_id"
+
+  api:
+    errors:
+      title:
+        "active_record/record_not_found": "Record Not Found"
