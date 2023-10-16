@@ -2,6 +2,7 @@ require 'devise/jwt/test_helpers'
 
 RSpec.shared_context "Not logged in" do
   let(:headers) { {} }
+  let(:authenticated_user) { nil }
 end
 
 RSpec.shared_context "Logged in as admin" do

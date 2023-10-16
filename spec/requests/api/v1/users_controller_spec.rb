@@ -362,4 +362,81 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
       it_behaves_like "can update user's billing_period_end"
     end
   end
+
+  describe "DELETE :destroy" do
+    before(:each) do
+      # Ensure the users are created before the test runs.  Else the `change`
+      # expectation may not work correctly.
+      authenticated_user
+      user_to_delete
+    end
+
+    let(:url_under_test) { urls.api_v1_user_path(user_to_delete) }
+    let(:user_to_delete) { create(:user) }
+
+    def send_request
+      delete url_under_test,
+        headers: headers,
+        as: :json
+    end
+
+    context "when not logged in" do
+      include_context "Not logged in"
+      include_examples "unauthorised JSON response" do
+        let(:request_method) { :delete }
+      end
+    end
+
+    context "when logged in as a non-admin user" do
+      include_context "Logged in as non-admin"
+      include_examples "forbidden JSON response" do
+        let(:request_method) { :delete }
+      end
+    end
+
+    context "when logged in as admin user" do
+      include_context "Logged in as admin"
+
+      context "when user to delete is an admin" do
+        let(:user_to_delete) { create(:user, :admin) }
+        include_examples "forbidden JSON response" do
+          let(:request_method) { :delete }
+        end
+      end
+
+      context "when user to delete is a non-admin" do
+        let(:user_to_delete) { create(:user) }
+
+        it "deletes the user" do
+          expect {
+            send_request
+          }.to change(User, :count).by(-1)
+        end
+      end
+
+      context "when user to delete is a non-admin with racks" do
+        let(:user_to_delete) { create(:user, :with_empty_rack) }
+
+        it "does not delete the user" do
+          expect {
+            send_request
+          }.not_to change(User, :count)
+        end
+
+        it "responds with a 422 unprocessable_entity" do
+          send_request
+          expect(response).to have_http_status :unprocessable_entity
+        end
+
+        it "contains the expected error message" do
+          send_request
+          error_document = JSON.parse(response.body)
+          expect(error_document).to have_key "errors"
+          expect(error_document["errors"].length).to eq 1
+          expect(error_document["errors"][0]["title"]).to eq "Unprocessable Content"
+          expect(error_document["errors"][0]["description"]).to match /Cannot delete user as they have\b.*\bracks/i
+        end
+      end
+    end
+  end
 end
