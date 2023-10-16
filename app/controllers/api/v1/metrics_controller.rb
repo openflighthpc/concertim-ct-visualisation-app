@@ -11,4 +11,8 @@ class Api::V1::MetricsController < Api::V1::ApplicationController
       render json: {success: false, errors: result.error_message}, status: 502
     end
   end
+
+  def show
+    render json: [{timestamp: Time.current, value: 99}]
+  end
 end

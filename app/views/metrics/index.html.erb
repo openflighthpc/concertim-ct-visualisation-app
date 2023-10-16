@@ -1,8 +1,11 @@
 <% content_for(:head) do %>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
   <%= javascript_import_module_tag "metrics/index" %>
 <% end %>
 
 <% set_title "Metrics for #{@device.name}" -%>
+
+<div style="display:none;" data-device-id="<%= @device.id %>" id="device-id"></div>
 
 <% if @metrics.any? %>
   <h4>Timeframe:</h4>
@@ -42,6 +45,16 @@
       <%= b.label(class: "metric-check-box-label") %>
     <%  end %>
   </div>
+
+  <div class="metric-charts" style="display:none;">
+    <% @metrics.each do |metric| %>
+      <div class="metric-chart-section" id="<%= metric.id %>-chart-section">
+        <h4><%= metric.name %></h4>
+        <canvas class="metrics-chart" id="<%= metric.id %>-canvas"></canvas>
+      </div>
+    <% end %>
+  </div>
+
 <% else %>
   <h4>No metrics currently available for the selected device.</h4>
 <% end %>
