@@ -14,6 +14,7 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
       expect(parsed_rack["cost"]).to eq "#{'%.2f' % rack.cost}"
       expect(parsed_rack["creation_output"]).to eq rack.creation_output
       expect(parsed_rack["network_details"]["id"]).to eq rack.network_details["id"]
+      expect(parsed_rack["order_id"]).to eq rack.order_id
     end
 
     it "has the correct owner" do
@@ -191,7 +192,8 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
             status: 'IN_PROGRESS',
             metadata: { "foo" => "bar" },
             creation_output: "all tasks complete",
-            network_details: { id: "abc" }
+            network_details: { id: "abc" },
+            order_id: Faker::Alphanumeric.alphanumeric(number: 10),
           }
         }
       }
@@ -233,6 +235,7 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
           expect(parsed_rack["cost"]).to eq "0.00"
           expect(parsed_rack["creation_output"]).to eq valid_attributes[:rack][:creation_output]
           expect(parsed_rack["network_details"]["id"]).to eq valid_attributes[:rack][:network_details][:id]
+          expect(parsed_rack["order_id"]).to eq valid_attributes[:rack][:order_id]
         end
       end
 
@@ -267,10 +270,12 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
         metadata: initial_rack_metadata,
         u_height: initial_u_height,
         status: 'IN_PROGRESS',
+        order_id: initial_order_id,
       )
     }
     let(:initial_rack_metadata) { {} }
     let(:initial_u_height) { 20 }
+    let(:initial_order_id) { Faker::Alphanumeric.alphanumeric(number: 10) }
 
     shared_examples "authorized user updating rack" do
       let(:valid_attributes) {
@@ -281,7 +286,8 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
             metadata: initial_rack_metadata.merge("foo" => "bar"),
             cost: 99.99,
             creation_output: "all tasks complete",
-            network_details: { id: "abc" }
+            network_details: { id: "abc" },
+            order_id: Faker::Alphanumeric.alphanumeric(number: 10),
           }
         }
       }
@@ -296,6 +302,11 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
       }
 
       context "with valid parameters" do
+        before(:each) do
+          # We'll get unexpected errors if this isn't true.
+          expect(initial_order_id).not_to eq valid_attributes[:rack][:order_id]
+        end
+
         def send_request
           patch url_under_test,
             params: valid_attributes,
@@ -323,6 +334,11 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
           expect(parsed_rack["cost"]).to eq  "#{'%.2f' % valid_attributes[:rack][:cost]}"
           expect(parsed_rack["creation_output"]).to eq valid_attributes[:rack][:creation_output]
           expect(parsed_rack["network_details"]["id"]).to eq valid_attributes[:rack][:network_details][:id]
+          if can_update_order_id
+            expect(parsed_rack["order_id"]).to eq valid_attributes[:rack][:order_id]
+          else
+            expect(parsed_rack["order_id"]).to eq initial_order_id
+          end
         end
       end
 
@@ -355,7 +371,9 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
     context "when logged in as rack owner" do
       include_context "Logged in as non-admin"
       let(:rack_owner) { authenticated_user }
-      include_examples "authorized user updating rack"
+      include_examples "authorized user updating rack" do
+        let(:can_update_order_id) { false }
+      end
     end
 
     context "when logged in as another user" do
@@ -368,7 +386,9 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
     context "when logged in as admin" do
       include_context "Logged in as admin"
       let(:rack_owner) { create(:user) }
-      include_examples "authorized user updating rack"
+      include_examples "authorized user updating rack" do
+        let(:can_update_order_id) { true }
+      end
     end
   end
 end

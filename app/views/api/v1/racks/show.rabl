@@ -1,5 +1,5 @@
 object @rack
-attributes :id, :name, :u_height, :metadata, :status, :cost, :network_details, :creation_output
+attributes :id, :name, :u_height, :metadata, :status, :cost, :network_details, :creation_output, :order_id
 
 child :user, root: 'owner', if: current_user.root? do
   extends 'api/v1/users/show'

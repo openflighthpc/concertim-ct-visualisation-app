@@ -2,6 +2,13 @@ SimpleNavigation::Configuration.run do |navigation|
   url_helpers = Rails.application.routes.url_helpers
   navigation.selected_class = 'current'
 
+  view_invoice_link = ->(parent, alignment) {
+    parent.item :view_invoice, "View invoice", url_helpers.invoices_path,
+      icon: :reports,
+      link_html: {title: "View invoice for current billing period", target: "_blank"},
+      align: alignment
+  }
+
   navigation.items do |primary|
 
     if user_signed_in?
@@ -18,6 +25,7 @@ SimpleNavigation::Configuration.run do |navigation|
         highlights_on: /\/users/ do |acc|
           acc.item :acc_details, 'Account details', url_helpers.edit_user_registration_path, :icon => :details, :link => {:class => 'details'}
           unless current_user.root?
+            view_invoice_link.call(acc, :left)
             acc.item :acc_details, 'Manage key-pairs', url_helpers.key_pairs_path,
                      :icon => :key, :link => {:class => 'details'}
           end

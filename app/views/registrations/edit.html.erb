@@ -30,6 +30,16 @@
   <% end %>
 
   <% unless current_user.root? %>
+    <div class="formItem">
+      <%
+          tooltip = current_user.billing_acct_id.blank? ? "A billing account ID will be automatically created" : "Once set billing account IDs can only be changed by an admin user"
+      %>
+      <%= f.label :billing_acct_id, "Billing account ID", title: tooltip %>
+      <%= f.text_field :billing_acct_id, autocomplete: :off, disabled: true %>
+    </div>
+  <% end %>
+
+  <% unless current_user.root? %>
     <% user = user_presenter(current_user) %>
     <div class="formItem">
       <%= f.label :billing_period, "Current billing period" %>

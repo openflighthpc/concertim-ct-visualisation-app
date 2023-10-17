@@ -92,6 +92,25 @@ RSpec.describe User, type: :model do
       end
     end
 
+    describe "billing_acct_id" do
+      it "must be unique if present" do
+        user.billing_acct_id = SecureRandom.uuid
+        user.save!
+        user.reload
+        expect(user.billing_acct_id).not_to be_nil
+
+        new_user = build(:user, billing_acct_id: user.billing_acct_id)
+        expect(new_user).to have_error(:billing_acct_id, :taken)
+      end
+
+      specify "duplicate nils are ok" do
+        expect(user.billing_acct_id).to be_nil
+
+        new_user = build(:user, billing_acct_id: user.billing_acct_id)
+        expect(new_user).not_to have_error(:billing_acct_id, :taken)
+      end
+    end
+
     describe "billing period dates" do
       it 'is not valid if has only a start or only an end' do
         user.billing_period_start = Date.current

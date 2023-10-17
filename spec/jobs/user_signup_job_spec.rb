@@ -103,16 +103,21 @@ RSpec.describe UserSignupJob, type: :job do
     context "when response contains expected fields" do
       let(:cloud_user_id) { SecureRandom.uuid }
       let(:project_id) { SecureRandom.uuid }
-      let(:response_body) { {user_id: cloud_user_id, project_id: project_id}.stringify_keys }
+      let(:billing_acct_id) { SecureRandom.uuid }
+      let(:response_body) {
+        {user_id: cloud_user_id, project_id: project_id, billing_acct_id: billing_acct_id}
+          .stringify_keys
+      }
 
       before(:each) do
         stubs.post(user_service_path) { |env| [ 201, {}, response_body ] }
       end
 
-      it "updates the user's cloud_user_id and project_id" do
+      it "updates the user's cloud_user_id, project_id and billing_acct_id" do
         expect { subject.call }
           .to  change(user, :cloud_user_id).from(nil).to(cloud_user_id)
           .and change(user, :project_id).from(nil).to(project_id)
+          .and change(user, :billing_acct_id).from(nil).to(billing_acct_id)
       end
     end
   end

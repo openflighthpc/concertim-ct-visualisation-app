@@ -5,6 +5,7 @@ FactoryBot.define do
     u_depth { 2 }
     metadata { {stack_id: "abc123"} }
     status { 'IN_PROGRESS' }
+    order_id { Faker::Alphanumeric.alphanumeric(number: 10) }
 
     association :user
   end

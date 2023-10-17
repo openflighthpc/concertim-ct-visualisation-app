@@ -38,6 +38,8 @@ Rails.application.routes.draw do
     end
   end
 
+  resource :invoices, only: :show
+
   # API routes
   #
   # Some of these have been done in a non-railsy way (you have "posts" where you should have 

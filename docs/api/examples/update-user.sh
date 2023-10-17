@@ -17,15 +17,18 @@ AUTH_TOKEN=${AUTH_TOKEN:-$("${SCRIPT_DIR}"/get-auth-token.sh)}
 USER_ID=${1}
 CLOUD_USER_ID=${2}
 PROJECT_ID=${3}
+BILLING_ACCT_ID=${4}
 
 BODY=$(jq --null-input \
     --arg cloud_user_id "${CLOUD_USER_ID}" \
     --arg project_id "${PROJECT_ID}" \
+    --arg billing_acct_id "${BILLING_ACCT_ID}" \
     '
 {
     "user": {
         "cloud_user_id": $cloud_user_id,
-        "project_id": $project_id
+        "project_id": $project_id,
+        "billing_acct_id": $billing_acct_id
     }
 }
 '

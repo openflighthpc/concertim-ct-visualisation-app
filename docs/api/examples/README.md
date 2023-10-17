@@ -58,11 +58,12 @@ Get details of current user.  Provides details of the current user.
 ./current-user.sh
 ```
 
-Update cloud user ID and/or project ID for a given user.  Setting
-`CLOUD_USER_ID` or `PROJECT_ID` to `""` will unset the value for the user.
+Update cloud user ID, project ID or billing acct ID for a given user.  Setting
+`CLOUD_USER_ID`, `PROJECT_ID` or `BILLING_ACCT_ID` to `""` will unset the value
+for the user.
 
 ```
-./update-user.sh <USER_ID> <CLOUD_USER_ID> <PROJECT_ID>
+./update-user.sh <USER_ID> <CLOUD_USER_ID> <PROJECT_ID> <BILLING_ACCT_ID>
 ```
 
 Update cost for the current billing period, the billing period start date and the billing period end date for a given user.
@@ -87,7 +88,7 @@ Create a new rack.  If `RACK_NAME` or `U_HEIGHT` are not provided defaults
 based on the previous rack will be created.
 
 ```
-./create-rack.sh [RACK_NAME [U_HEIGHT]]
+./create-rack.sh <ORDER_ID> [<USER_ID> [RACK_NAME [U_HEIGHT]]]
 ```
 
 Show a rack including its nodes.

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_28_182951) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_09_134153) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -181,6 +181,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_28_182951) do
     t.datetime "updated_at", null: false
     t.bigint "template_id", null: false
     t.bigint "user_id", null: false
+    t.string "order_id"
+    t.index ["order_id"], name: "index_racks_on_order_id", unique: true
     t.index ["template_id"], name: "index_racks_on_template_id"
     t.index ["user_id"], name: "index_racks_on_user_id"
   end
@@ -244,6 +246,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_28_182951) do
     t.string "foreign_password"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "billing_acct_id", limit: 255
+    t.index ["billing_acct_id"], name: "index_users_on_billing_acct_id", unique: true, where: "(NOT NULL::boolean)"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["login"], name: "index_users_on_login", unique: true
     t.index ["project_id"], name: "index_users_on_project_id", unique: true, where: "(NOT NULL::boolean)"

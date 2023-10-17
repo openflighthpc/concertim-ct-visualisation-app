@@ -121,7 +121,7 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
     let(:url_under_test) { urls.api_v1_user_path(user) }
     let(:initial_value) { nil }
 
-    %w( project_id cloud_user_id ).each do |attr_under_test|
+    %w( project_id cloud_user_id billing_acct_id ).each do |attr_under_test|
 
       let(:user) { create(:user, attr_under_test => initial_value) }
 
@@ -340,6 +340,7 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
       it_behaves_like "cannot update user's project_id"
       it_behaves_like "cannot update user's cloud_user_id"
       it_behaves_like "cannot update user's cost"
+      it_behaves_like "cannot update user's billing_acct_id"
       it_behaves_like "cannot update user's billing_period_start"
       it_behaves_like "cannot update user's billing_period_end"
     end
@@ -356,6 +357,7 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
       it_behaves_like "can update user's project_id"
       it_behaves_like "can update user's cloud_user_id"
       it_behaves_like "can update user's cost"
+      it_behaves_like "can update user's billing_acct_id"
       it_behaves_like "can update user's billing_period_start"
       it_behaves_like "can update user's billing_period_end"
     end

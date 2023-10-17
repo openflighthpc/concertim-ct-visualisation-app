@@ -17,13 +17,15 @@ class UserSignupJob < ApplicationJob
   end
 
   class Result
-    include ActiveModel::API
+    include HttpRequests::ResultSyncer
 
-    attr_accessor :user_id
-    attr_accessor :project_id
+    property :cloud_user_id, from: :user_id
+    property :project_id
+    property :billing_acct_id
 
-    validates :user_id, presence: true
+    validates :cloud_user_id, presence: true
     validates :project_id, presence: true
+    validates :billing_acct_id, presence: true
   end
 
   class Runner < HttpRequests::Faraday::JobRunner
@@ -34,12 +36,9 @@ class UserSignupJob < ApplicationJob
 
     def call
       response = super
-      body = response.body
-      result = Result.new(user_id: body["user_id"], project_id: body["project_id"])
+      result = Result.from(response.body)
       result.validate!
-      @user.project_id = result.project_id
-      @user.cloud_user_id = result.user_id
-      @user.save!
+      result.sync(@user)
     end
 
     private

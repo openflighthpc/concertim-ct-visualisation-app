@@ -41,6 +41,11 @@ class User < ApplicationRecord
   validates :cost,
     numericality: { greater_than_or_equal_to: 0 },
     allow_blank: true
+  validates :billing_acct_id,
+    uniqueness: true,
+    length: { maximum: 255 },
+    allow_nil: true,
+    allow_blank: true
   validates :billing_period_end, comparison: { greater_than: :billing_period_start },
             unless: -> { billing_period_start.blank? || billing_period_end.blank? }
   validate :billing_period_start_today_or_ealier,
