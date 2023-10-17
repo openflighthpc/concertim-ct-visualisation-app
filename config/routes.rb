@@ -95,7 +95,7 @@ Rails.application.routes.draw do
         resources :metrics, :constraints => { :id => /.*/ }, only: [] do
           get :structure, :on => :collection
         end
-        resources :users, only: [:index, :update] do
+        resources :users, only: [:index, :update, :destroy] do
           collection do
             # Endpoint for checking user abilities.
             get :can_i, action: :can_i?, as: :ability_check

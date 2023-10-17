@@ -76,6 +76,14 @@ Cost cannot be blank.
 ./update-user-cost.sh <USER_ID> <COST> <BILLING_PERIOD_START> <BILLING_PERIOD_END>
 ```
 
+Delete a user.  If recurse is given, any racks and devices belonging to the
+user are deleted.  If recurse is not given this will fail if the user has any
+racks or devices.  It is not currently permitted to delete any admin users.
+
+```
+./delete-user.sh <USER_ID> [recurse]
+```
+
 ### Racks
 
 List all racks.

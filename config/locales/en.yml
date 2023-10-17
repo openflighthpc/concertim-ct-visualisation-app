@@ -41,3 +41,13 @@ en:
       "user_signup_job/result":
         user_id: "user_id"
         project_id: "project_id"
+
+  unauthorized:
+    destroy:
+      user: "You are not authorized to delete this user"
+
+  api:
+    errors:
+      title:
+        "active_record/record_not_found": "Record Not Found"
+        "can_can/access_denied": "Not Authorized"

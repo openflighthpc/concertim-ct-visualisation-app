@@ -24,4 +24,14 @@ FactoryBot.define do
     sequence(:name) { |n| "Admin #{n}" }
     root { true }
   end
+
+  trait :with_empty_rack do
+    after(:create) do |user, context|
+      rack_template = Template.find_by_id(HwRack::DEFAULT_TEMPLATE_ID)
+      if rack_template.nil?
+        rack_template = create(:template, :rack_template)
+      end
+      create(:rack, user: user, template: rack_template)
+    end
+  end
 end

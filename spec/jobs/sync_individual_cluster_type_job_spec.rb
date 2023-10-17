@@ -128,9 +128,8 @@ RSpec.describe SyncIndividualClusterTypeJob, type: :job do
       end
 
       it "returns a sensible error_message" do
-        pending "faraday test adapter sets reason_phrase to nil"
         result = described_class.perform_now(cloud_service_config, cluster_type, test_stubs: stubs)
-        expect(result.error_message).to eq "404 Not Found"
+        expect(result.error_message).to eq "Unable to update cluster type: the server responded with status 404"
       end
     end
 

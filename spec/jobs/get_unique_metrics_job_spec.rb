@@ -13,8 +13,8 @@ RSpec.describe GetUniqueMetricsJob, type: :job do
       end
     end
 
-    xit "uses the configured ip and port" do
-      expect(subject.connection.url_prefix.to_s).to eq ENV['METRIC_DAEMON_URL']
+    it "uses the configured ip and port" do
+      expect(subject.connection.url_prefix.to_s).to eq Rails.application.config.metric_daemon_url
     end
 
     it "uses a hard-coded path" do
