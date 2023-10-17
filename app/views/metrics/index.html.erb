@@ -11,11 +11,11 @@
   <h4>Timeframe:</h4>
   <div id="metric-timeframe">
     <input type="radio" id="current-hour-metrics" name="metric-timeline-choice" value="hour" checked />
-    <label for="current-metrics">Past hour</label>
+    <label for="current-hour-metrics">Past hour</label>
     <input type="radio" id="current-day-metrics" name="metric-timeline-choice" value="day"/>
-    <label for="historic-metrics">Past day</label>
+    <label for="current-day-metrics">Past day</label>
     <input type="radio" id="date-range-metrics" name="metric-timeline-choice" value="range"/>
-    <label for="historic-metrics">Select date range:</label>
+    <label for="date-range-metrics">Select date range:</label>
     <div id="metric-date-pickers">
       <div class="date-input">
         <label class="toolTip" for="metric_start_date">
@@ -46,11 +46,13 @@
     <%  end %>
   </div>
 
-  <div class="metric-charts" style="display:none;">
-    <% @metrics.each do |metric| %>
-      <div class="metric-chart-section" id="<%= metric.id %>-chart-section">
-        <h4><%= metric.name %></h4>
-        <canvas class="metrics-chart" id="<%= metric.id %>-canvas"></canvas>
+  <div class="metric-charts">
+    <% @metrics.each_with_index do |metric, index| %>
+      <div class="metric-chart-section" id="<%= metric.id %>-chart-section" style="display:none;" >
+        <div class="no-data-text">
+          <h4>No <%= metric.name %> data for current selection</h4>
+        </div>
+        <canvas class="metrics-chart" id="<%= metric.id %>-canvas" data-index="<%= index %>"></canvas>
       </div>
     <% end %>
   </div>
