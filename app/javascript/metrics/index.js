@@ -4,21 +4,37 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.querySelectorAll("input[type='radio']").forEach((el) => {
         el.addEventListener('change', updateDatePickerDisplay);
-    })
+    });
+
+    document.querySelectorAll(".metric-timeframe-input").forEach((el) => {
+        el.addEventListener('change', loadAllMetricsData);
+    });
 
     document.querySelectorAll(".metric-check-box").forEach((el) => {
         el.addEventListener('change', loadOrHideMetricData);
-    })
+    });
 
     document.querySelectorAll(".reset-zoom-button").forEach((el) => {
         el.addEventListener('click', resetZoom);
-    })
+    });
+
+    document.getElementById('metric_start_date').addEventListener('change', updateMinMetricEndDate);
+    document.getElementById('metric_end_date').addEventListener('change', updateMaxMetricStartDate);
 
     function updateDatePickerDisplay(event) {
         const disabled = event.target.value !== 'range';
         document.querySelectorAll('.metric-date-picker').forEach((el) => {
             el.disabled = disabled;
         })
+    }
+
+    function updateMaxMetricStartDate(event) {
+        document.getElementById('metric_start_date').max = event.target.value;
+    }
+
+    function updateMinMetricEndDate(event) {
+        const newMin = event.target.value !== '' ? event.target.value : new Date(new Date().setDate(new Date().getDate() - 90));
+        document.getElementById('metric_end_date').min = newMin;
     }
 
     function loadOrHideMetricData(event) {
@@ -35,13 +51,21 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    function loadAllMetricsData() {
+        document.querySelectorAll(".metric-check-box:checked").forEach((el) => {
+            loadMetrics(el.value);
+        })
+    }
+
     function loadMetrics(metricId) {
         let deviceId = document.getElementById("device-id").dataset.deviceId;
         let timeframe = document.querySelector("input[name='metric-timeline-choice']:checked").value;
         let dateParams = '';
         if(timeframe === "range") {
-            dateParams = `&start_date=${document.getElementById('metric_start_date').value}`;
-            dateParams += `&end_date=${document.getElementById('metric_end_date').value}`;
+            let startDate = document.getElementById('metric_start_date').value
+            let endDate = document.getElementById('metric_end_date').value
+            if(startDate === '' || endDate === '') { return; }
+            dateParams = `&start_date=${startDate}&end_date=${endDate}`;
         }
         fetch(`/api/v1/devices/${deviceId}/metrics/${metricId}?timeframe=${timeframe}${dateParams}`)
             .then(response => {
@@ -94,6 +118,14 @@ document.addEventListener("DOMContentLoaded", function () {
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
+                        scales: {
+                            xAxes: [{
+                                scaleLabel: {
+                                    display: true,
+                                    labelString: 'Time (UTC)'
+                                },
+                            }],
+                        },
                         plugins: {
                             zoom: {
                                 pan: {
@@ -126,6 +158,7 @@ document.addEventListener("DOMContentLoaded", function () {
             noDataText.style.display = 'none';
             chart.data = chartData;
             chart.update();
+            chart.resetZoom();
             resetZoomRow.style.display = 'block';
             chartSection.style.display = 'block';
         }

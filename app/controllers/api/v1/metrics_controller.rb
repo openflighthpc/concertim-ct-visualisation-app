@@ -35,7 +35,7 @@ class Api::V1::MetricsController < Api::V1::ApplicationController
                                                     start_time: start_time, end_time: end_time)
 
     if result.success?
-      render json: result.metric_values.to_json
+      render json: result.metric_values.any?(&:value) ? result.metric_values.to_json : []
     elsif result.status_code == 404
       render json: []
     else
