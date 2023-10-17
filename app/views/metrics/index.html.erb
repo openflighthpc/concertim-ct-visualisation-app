@@ -1,5 +1,7 @@
 <% content_for(:head) do %>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3"></script>
+  <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@0.7.7"></script>
   <%= javascript_import_module_tag "metrics/index" %>
 <% end %>
 
@@ -51,6 +53,10 @@
       <div class="metric-chart-section" id="<%= metric.id %>-chart-section" style="display:none;" >
         <div class="no-data-text">
           <h4>No <%= metric.name %> data for current selection</h4>
+        </div>
+        <div class="reset-zoom-row">
+          <button class="reset-zoom-button" data-metric-id="<%= metric.id %>">
+            <span class="icon-zoom-reset"></span>Reset zoom</button>
         </div>
         <canvas class="metrics-chart" id="<%= metric.id %>-canvas" data-index="<%= index %>"></canvas>
       </div>

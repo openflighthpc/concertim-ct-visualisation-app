@@ -10,6 +10,10 @@ document.addEventListener("DOMContentLoaded", function () {
         el.addEventListener('change', loadOrHideMetricData);
     })
 
+    document.querySelectorAll(".reset-zoom-button").forEach((el) => {
+        el.addEventListener('click', resetZoom);
+    })
+
     function updateDatePickerDisplay(event) {
         const disabled = event.target.value !== 'range';
         document.querySelectorAll('.metric-date-picker').forEach((el) => {
@@ -33,8 +37,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function loadMetrics(metricId) {
         let deviceId = document.getElementById("device-id").dataset.deviceId;
-        let timeframe = document.querySelector("input[name='metric-timeline-choice']").value;
-        fetch(`/api/v1/devices/${deviceId}/metrics/${metricId}?timeframe=${timeframe}`)
+        let timeframe = document.querySelector("input[name='metric-timeline-choice']:checked").value;
+        let dateParams = '';
+        if(timeframe === "range") {
+            dateParams = `&start_date=${document.getElementById('metric_start_date').value}`;
+            dateParams += `&end_date=${document.getElementById('metric_end_date').value}`;
+        }
+        fetch(`/api/v1/devices/${deviceId}/metrics/${metricId}?timeframe=${timeframe}${dateParams}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
@@ -44,15 +53,13 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 populateChart(metricId, data);
             })
-            .catch(error => {
-                console.error(error);
-            });
     }
 
     function populateChart(metricId, data) {
         let chartSection = document.getElementById(`${metricId}-chart-section`);
         let canvas = chartSection.getElementById(`${metricId}-canvas`);
         let noDataText = chartSection.getElementsByClassName('no-data-text')[0];
+        let resetZoomRow = chartSection.getElementsByClassName('reset-zoom-row')[0];
         let chart = charts[metricId];
         const colour = colours[canvas.dataset.index % colours.length];
 
@@ -73,10 +80,12 @@ document.addEventListener("DOMContentLoaded", function () {
             if(data.length === 0) {
                 noDataText.style.display = 'block';
                 chartSection.style.display = 'block';
+                resetZoomRow.style.display = 'none';
                 return;
             }
 
             noDataText.style.display = 'none';
+            resetZoomRow.style.display = 'block';
             charts[metricId] = new Chart(
                 canvas,
                 {
@@ -84,7 +93,25 @@ document.addEventListener("DOMContentLoaded", function () {
                     data: chartData,
                     options: {
                         responsive: true,
-                        maintainAspectRatio: false
+                        maintainAspectRatio: false,
+                        plugins: {
+                            zoom: {
+                                pan: {
+                                    enabled: true,
+                                    mode: 'xy',
+                                    rangeMin: {
+                                        y: 0
+                                    }
+                                },
+                                zoom: {
+                                    enabled: true,
+                                    mode: 'xy',
+                                    rangeMin: {
+                                        y: 0
+                                    }
+                                },
+                            },
+                        },
                     }
                 }
             )
@@ -93,12 +120,22 @@ document.addEventListener("DOMContentLoaded", function () {
             chart.destroy();
             charts[metricId] = null;
             noDataText.style.display = 'block';
+            resetZoomRow.style.display = 'none';
             chartSection.style.display = 'block';
         } else {
             noDataText.style.display = 'none';
             chart.data = chartData;
             chart.update();
+            resetZoomRow.style.display = 'block';
             chartSection.style.display = 'block';
+        }
+    }
+
+    function resetZoom(event) {
+        const topLevelEl = event.target.tagName === "BUTTON" ? event.target : event.target.parentNode;  // in case icon is clicked
+        let chart = charts[topLevelEl.dataset.metricId];
+        if(chart != null) {
+            chart.resetZoom();
         }
     }
 });

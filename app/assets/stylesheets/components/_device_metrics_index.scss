@@ -44,9 +44,25 @@
 .metric-chart-section {
   height: 20rem;
   margin-top: 5rem;
+  margin-right: 3rem;
 }
 
 .no-data-text {
   text-align: center;
   display: none;
+}
+
+.reset-zoom-row {
+  text-align: right;
+
+  .reset-zoom-button {
+    margin-bottom: 0;
+    margin-right: 0.75rem;
+
+    .icon-zoom-reset {
+      color: white;
+      font-size: 1rem;
+      padding-right: 0.3rem;
+    }
+  }
 }
