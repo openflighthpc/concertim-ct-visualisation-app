@@ -3,11 +3,12 @@ require 'faraday'
 class GetHistoricMetricValuesJob < ApplicationJob
   queue_as :default
 
-  def perform(metric_name:,device_id:, start_time:, end_time:, **kwargs)
+  def perform(metric_name:, device_id:, timeframe:, start_time:, end_time:, **kwargs)
     runner = Runner.new(
       cloud_service_config: nil,
       metric_name: metric_name,
       device_id: device_id,
+      timeframe: timeframe,
       start_time: start_time,
       end_time: end_time,
       logger: logger,
@@ -40,17 +41,18 @@ class GetHistoricMetricValuesJob < ApplicationJob
 
     def parse_metric_values(body)
       body.map do |mv|
-        MetricValue.new(timestamp: Time.at(mv["timestamp"]).strftime('%y-%m-%d %H:%M:%S'), value: mv["value"])
+        MetricValue.new(timestamp: Time.at(mv["timestamp"]).strftime('%Y-%m-%d %H:%M:%S'), value: mv["value"])
       end
     end
   end
 
   class Runner < HttpRequests::Faraday::JobRunner
-    def initialize(metric_name:, device_id:, start_time:, end_time:,  **kwargs)
+    def initialize(metric_name:, device_id:, timeframe:, start_time:, end_time:,  **kwargs)
       @metric_name = metric_name
       @device_id = device_id
-      @start_time = start_time.utc.to_i
-      @end_time = end_time.utc.to_i
+      @timeframe = timeframe
+      @start_time = start_time ? start_time.utc.to_i : nil
+      @end_time = end_time ? end_time.utc.to_i : nil
       super(**kwargs)
     end
 
@@ -60,7 +62,7 @@ class GetHistoricMetricValuesJob < ApplicationJob
         return Result.new(false, [], "#{error_description}: #{response.reason_phrase || "Unknown error"}")
       end
 
-      return Result.new(true, response.body, "")
+      Result.new(true, response.body, "")
 
     rescue Faraday::Error
       status_code = $!.response[:status] rescue 0
@@ -76,7 +78,11 @@ class GetHistoricMetricValuesJob < ApplicationJob
     end
 
     def path
-      "/devices/#{@device_id}/metrics/#{ERB::Util.url_encode(@metric_name)}/historic/#{@start_time}/#{@end_time}"
+      if @timeframe == "range"
+        "/devices/#{@device_id}/metrics/#{ERB::Util.url_encode(@metric_name)}/historic/#{@start_time}/#{@end_time}"
+      else
+        "/devices/#{@device_id}/metrics/#{ERB::Util.url_encode(@metric_name)}/historic/last/#{@timeframe}"
+      end
     end
 
     def error_description

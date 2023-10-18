@@ -9,7 +9,7 @@ class MetricsController < ApplicationController
     elsif result.status_code == 404
       @metrics = []
     else
-      flash[:alert] = "Unable to check device metrics: #{result.result.error_message}"
+      flash[:alert] = "Unable to check device metrics: #{result.error_message}"
       redirect_to interactive_rack_views_path
     end
   end

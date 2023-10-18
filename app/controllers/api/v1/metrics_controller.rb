@@ -19,20 +19,17 @@ class Api::V1::MetricsController < Api::V1::ApplicationController
     end
     authorize! :read, @device
 
-    case params[:timeframe]
-    when "hour"
-      end_time = Time.current
-      start_time = end_time - 60.minutes
-    when "day"
-      end_time = Time.current
-      start_time = end_time - 1.day
-    when "range"
-      end_time = Date.parse(params[:end_date]).end_of_day
+    start_time = nil
+    end_time = nil
+
+    if params[:timeframe] == "range"
       start_time = Date.parse(params[:start_date]).beginning_of_day
+      end_time = Date.parse(params[:end_date]).end_of_day
     end
 
     result = GetHistoricMetricValuesJob.perform_now(metric_name: params[:id], device_id: params[:device_id],
-                                                    start_time: start_time, end_time: end_time)
+                                                    timeframe: params[:timeframe], start_time: start_time,
+                                                    end_time: end_time)
 
     if result.success?
       render json: result.metric_values.any?(&:value) ? result.metric_values.to_json : []
