@@ -18,8 +18,11 @@ document.addEventListener("DOMContentLoaded", function () {
         el.addEventListener('click', resetZoom);
     });
 
-    document.getElementById('metric_start_date').addEventListener('change', updateMinMetricEndDate);
-    document.getElementById('metric_end_date').addEventListener('change', updateMaxMetricStartDate);
+    let startDate = document.querySelector('#metric_start_date');
+    if(startDate != null) { startDate.addEventListener('change', updateMinMetricEndDate); }
+
+    let endDate = document.querySelector('#metric_end_date');
+    if(endDate != null) { endDate.addEventListener('change', updateMaxMetricStartDate); }
 
     function updateDatePickerDisplay(event) {
         const disabled = event.target.value !== 'range';
