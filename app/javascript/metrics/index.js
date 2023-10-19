@@ -25,6 +25,9 @@ document.addEventListener("DOMContentLoaded", function () {
         el.disabled = false
     });
 
+    document.addEventListener('keydown', maybeEnableZoom);
+    document.addEventListener('keyup', maybeDisableZoom);
+
 
     function updateDatePickerDisplay(event) {
         const disabled = event.target.value !== 'range';
@@ -145,7 +148,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 }
                             },
                             zoom: {
-                                enabled: true,
+                                enabled: false,
                                 mode: 'xy',
                                 rangeMin: {
                                     y: 0
@@ -164,6 +167,24 @@ document.addEventListener("DOMContentLoaded", function () {
         let chart = charts[topLevelEl.dataset.metricId];
         if(chart != null) {
             chart.resetZoom();
+        }
+    }
+
+    function maybeEnableZoom(event) {
+        if (event.shiftKey) {
+            for (let chart of Object.values(charts)) {
+                chart.options.plugins.zoom.zoom.enabled = true;
+                chart.update();
+            }
+        }
+    }
+
+    function maybeDisableZoom(event) {
+        if (event.key === "Shift") {
+            for (let chart of Object.values(charts))  {
+                chart.options.plugins.zoom.zoom.enabled = false;
+                chart.update();
+            }
         }
     }
 });

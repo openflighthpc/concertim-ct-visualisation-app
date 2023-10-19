@@ -62,7 +62,7 @@
           <h4>No <%= metric.name %> data for current selection</h4>
         </div>
         <div class="reset-zoom-row">
-          <button class="reset-zoom-button" data-metric-id="<%= metric.id %>">
+          <button class="reset-zoom-button" data-metric-id="<%= metric.id %>" title="Hold shift to enable chart zooming, using the mouse wheel">
             <span class="icon-zoom-reset"></span>Reset zoom</button>
         </div>
         <canvas class="metrics-chart" id="<%= metric.id %>-canvas" data-index="<%= index %>"></canvas>
