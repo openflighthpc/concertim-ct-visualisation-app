@@ -10,10 +10,6 @@ document.addEventListener("DOMContentLoaded", function () {
         el.addEventListener('change', loadAllMetricsData);
     });
 
-    document.querySelectorAll(".metric-check-box").forEach((el) => {
-        el.addEventListener('change', loadOrHideMetricData);
-    });
-
     document.querySelectorAll(".reset-zoom-button").forEach((el) => {
         el.addEventListener('click', resetZoom);
     });
@@ -23,6 +19,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let endDate = document.querySelector('#metric_end_date');
     if(endDate != null) { endDate.addEventListener('change', updateMaxMetricStartDate); }
+
+    document.querySelectorAll(".metric-check-box").forEach((el) => {
+        el.addEventListener('change', loadOrHideMetricData);
+        el.disabled = false
+    });
+
 
     function updateDatePickerDisplay(event) {
         const disabled = event.target.value !== 'range';
