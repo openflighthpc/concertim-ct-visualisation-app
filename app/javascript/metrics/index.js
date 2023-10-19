@@ -90,81 +90,71 @@ document.addEventListener("DOMContentLoaded", function () {
         let chart = charts[metricId];
         const colour = colours[canvas.dataset.index % colours.length];
 
-        let chartData = {
-            labels: data.map(row => row.timestamp),
-            datasets: [
-                {
-                    label: metricId,
-                    data: data.map(row => row.value),
-                    fill: false,
-                    backgroundColor: colour,
-                    borderColor: colour
-                }
-            ]
-        };
-
-        if(chart == null) {
-            if(data.length === 0) {
-                noDataText.style.display = 'block';
-                chartSection.style.display = 'block';
-                resetZoomRow.style.display = 'none';
-                return;
-            }
-
-            noDataText.style.display = 'none';
-            resetZoomRow.style.display = 'block';
-            charts[metricId] = new Chart(
-                canvas,
-                {
-                    type: 'line',
-                    data: chartData,
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            xAxes: [{
-                                scaleLabel: {
-                                    display: true,
-                                    labelString: 'Time (UTC)'
-                                },
-                            }],
-                        },
-                        plugins: {
-                            zoom: {
-                                pan: {
-                                    enabled: true,
-                                    mode: 'xy',
-                                    rangeMin: {
-                                        y: 0
-                                    }
-                                },
-                                zoom: {
-                                    enabled: true,
-                                    mode: 'xy',
-                                    rangeMin: {
-                                        y: 0
-                                    }
-                                },
-                            },
-                        },
-                    }
-                }
-            )
-            chartSection.style.display = 'block';
-        } else if(data.length === 0) {
+        if(chart != null) {
             chart.destroy();
             charts[metricId] = null;
-            noDataText.style.display = 'block';
-            resetZoomRow.style.display = 'none';
-            chartSection.style.display = 'block';
-        } else {
-            noDataText.style.display = 'none';
-            chart.data = chartData;
-            chart.update();
-            chart.resetZoom();
-            resetZoomRow.style.display = 'block';
-            chartSection.style.display = 'block';
         }
+
+        if(data.length === 0) {
+            noDataText.style.display = 'block';
+            chartSection.style.display = 'block';
+            resetZoomRow.style.display = 'none';
+            return;
+        }
+
+        noDataText.style.display = 'none';
+        resetZoomRow.style.display = 'block';
+        charts[metricId] = new Chart(
+            canvas,
+            {
+                type: 'line',
+                data: {
+                    labels: data.map(row => row.timestamp),
+                    datasets: [
+                        {
+                            label: metricId,
+                            data: data.map(row => row.value),
+                            fill: false,
+                            backgroundColor: colour,
+                            borderColor: colour
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        xAxes: [
+                            {
+                                type: "time",
+                                ticks: {
+                                    maxTicksLimit: 50
+                                }
+                            }
+                        ],
+                    },
+                    plugins: {
+                        zoom: {
+                            pan: {
+                                enabled: true,
+                                mode: 'xy',
+                                rangeMin: {
+                                    y: 0
+                                }
+                            },
+                            zoom: {
+                                enabled: true,
+                                mode: 'xy',
+                                rangeMin: {
+                                    y: 0
+                                }
+                            },
+                        },
+                    },
+                }
+            }
+        )
+        chartSection.style.display = 'block';
     }
 
     function resetZoom(event) {

@@ -41,7 +41,7 @@ class GetHistoricMetricValuesJob < ApplicationJob
 
     def parse_metric_values(body)
       body.map do |mv|
-        MetricValue.new(timestamp: Time.at(mv["timestamp"]).strftime('%Y-%m-%d %H:%M:%S'), value: mv["value"])
+        MetricValue.new(timestamp: Time.at(mv["timestamp"]), value: mv["value"])
       end
     end
   end
