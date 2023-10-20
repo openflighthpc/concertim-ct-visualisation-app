@@ -118,7 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     datasets: [
                         {
                             label: metricId,
-                            data: data.map(row => row.value),
+                            data:  data.map(row => row.value),
                             fill: false,
                             backgroundColor: colour,
                             borderColor: colour
@@ -137,6 +137,14 @@ document.addEventListener("DOMContentLoaded", function () {
                                 }
                             }
                         ],
+                        yAxes: [
+                            {
+                                beforeBuildTicks: function(scale) {
+                                    const onlyZeroes =  scale.chart.data.datasets[0].data.every((value) => { return value === 0 || value === null; });
+                                    if(onlyZeroes) { scale.min = 0; } // without this y axis goes negative
+                                },
+                            }
+                        ]
                     },
                     plugins: {
                         zoom: {
@@ -159,6 +167,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
         )
+        console.log(charts[metricId].scales['y-axis-0'].min)
         chartSection.style.display = 'block';
     }
 
