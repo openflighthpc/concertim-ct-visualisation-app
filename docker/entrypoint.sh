@@ -22,8 +22,8 @@ fi
 
 # Support the database password being passed in via a docker secret.
 if [ "${DB_PASS}" == "" ] ; then
-    if [ -f /run/secrets/db-password ] ; then
-        DB_PASS=$(cat /run/secrets/db-password)
+    if [ "${DB_PASSWORD_FILE}" != "" -a -f "${DB_PASSWORD_FILE}" ] ; then
+        DB_PASS=$(cat "${DB_PASSWORD_FILE}")
         export DB_PASS
     else
         echo "Database password not set.  Either set DB_PASS environment variable or populate /run/secrets/db-password." >&2

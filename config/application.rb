@@ -20,12 +20,15 @@ module CtApp
     # config.eager_load_paths << Rails.root.join("extras")
     #
     #
-    if ENV['CONCERTIM_JWT_SECRET'].present?
-      config.jwt_secret_file = nil
-      config.jwt_secret = ENV['CONCERTIM_JWT_SECRET'].chomp
+    if ENV['JWT_SECRET'].present?
+      config.jwt_secret = ENV['JWT_SECRET'].chomp
     else
-      config.jwt_secret_file = Pathname('/opt/concertim/etc/secret')
-      config.jwt_secret = config.jwt_secret_file.read.chomp
+      jwt_secret_file = Pathname(ENV.fetch('JWT_SECRET_FILE', '/opt/concertim/etc/secret'))
+      if File.exist?(jwt_secret_file)
+        config.jwt_secret = jwt_secret_file.read.chomp
+      else
+        config.jwt_secret = nil
+      end
     end
     config.jwt_aud = 'alces-ct'
 

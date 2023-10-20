@@ -2,7 +2,7 @@
 
 set -e
 
-PASSWORD="$(cat /run/secrets/db-password)"
+PASSWORD="$(cat ${POSTGRES_PASSWORD_FILE})"
 
 EXISTS=$(psql postgres -tAc "SELECT 1 FROM pg_roles WHERE rolname='www-data'")
 

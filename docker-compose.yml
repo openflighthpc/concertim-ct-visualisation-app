@@ -5,12 +5,15 @@ services:
     image: ct-vis-app
     secrets:
       - db-password
+      - jwt-secret
     volumes:
       - static-content:/opt/concertim/opt/ct-visualisation-app/public
       - concertim-etc:/opt/concertim/etc
     environment:
       - METRIC_DAEMON_URL=http://metrics:3000
       - DB_HOST=db
+      - DB_PASSWORD_FILE=/run/secrets/db-password
+      - JWT_SECRET_FILE=/run/secrets/jwt-secret
     # expose:
     #   - 7000
     ports:
@@ -48,7 +51,9 @@ volumes:
 
 secrets:
   db-password:
-    file: docker/secrets/db/password.txt
+    file: docker/secrets/db-password
+  jwt-secret:
+    file: docker/secrets/jwt-secret
 
 networks:
   concertim-net:

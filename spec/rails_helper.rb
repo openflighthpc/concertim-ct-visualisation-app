@@ -2,7 +2,7 @@
 require 'spec_helper'
 require 'securerandom'
 ENV['RAILS_ENV'] ||= 'test'
-ENV['CONCERTIM_JWT_SECRET'] ||= SecureRandom.alphanumeric
+ENV['JWT_SECRET'] ||= SecureRandom.alphanumeric
 require_relative '../config/environment'
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?

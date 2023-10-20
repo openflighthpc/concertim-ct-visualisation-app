@@ -1,7 +1,6 @@
 FROM ubuntu:22.04
 LABEL com.alces-flight.concertim.role=visualisation
 
-
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
       && apt-get install --yes --no-install-recommends \
@@ -23,12 +22,8 @@ WORKDIR /opt/concertim/opt/ct-visualisation-app
 COPY . /opt/concertim/opt/ct-visualisation-app
 COPY docker/licence-limits.yml /opt/concertim/etc/licence-limits.yml
 
-
 ENV RAILS_ENV=production
-
-# XXX Do this better.  Perhaps with a docker secret.
-RUN echo s3cr3t > /opt/concertim/etc/secret
-
+ENV RAILS_LOG_TO_STDOUT=true
 RUN ./bin/bundle install
 
 # XXX Do this better.  Perhaps by commiting these files?
@@ -39,8 +34,6 @@ RUN rm -f master.key credentials.yml.enc \
 	  && ./bin/rake encryption:generate
 
 RUN ./bin/rake assets:precompile
-
-ENV RAILS_LOG_TO_STDOUT=true
 
 ENTRYPOINT ["/opt/concertim/opt/ct-visualisation-app/docker/entrypoint.sh"]
 EXPOSE 7000

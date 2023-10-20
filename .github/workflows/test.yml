@@ -12,7 +12,7 @@ jobs:
   test-ruby:
     env:
       RAILS_ENV: test
-      CONCERTIM_JWT_SECRET: "fake-but-ok"
+      JWT_SECRET: "fake-but-ok"
 
     name: Rails tests
     runs-on: ubuntu-latest
