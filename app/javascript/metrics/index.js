@@ -156,6 +156,14 @@ document.addEventListener("DOMContentLoaded", function () {
                             }
                         ]
                     },
+                    title: {
+                        display: true,
+                        fontSize: 16,
+                        text: metricId
+                    },
+                    legend: {
+                        display: false
+                    },
                     plugins: {
                         zoom: {
                             pan: {
