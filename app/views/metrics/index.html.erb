@@ -14,16 +14,16 @@
   <h4>Timeframe:</h4>
   <div id="metric-timeframe">
     <input type="radio" class="metric-timeframe-input" id="current-hour-metrics" name="metric-timeline-choice"
-           value="hour" checked />
+           value="hour" checked autocomplete="off" />
     <label for="current-hour-metrics">Past hour</label>
     <input type="radio" class="metric-timeframe-input" id="current-day-metrics" name="metric-timeline-choice"
-           value="day"/>
+           value="day" autocomplete="off"/>
     <label for="current-day-metrics">Past day</label>
     <input type="radio" class="metric-timeframe-input" id="current-quarter-metrics" name="metric-timeline-choice"
-           value="quarter"/>
+           value="quarter" autocomplete="off"/>
     <label for="current-quarter-metrics">Past quarter</label>
     <input type="radio" class="metric-timeframe-input" id="date-range-metrics" name="metric-timeline-choice"
-           value="range"/>
+           value="range" autocomplete="false"/>
     <label for="date-range-metrics">Select date range:</label>
     <div id="metric-date-pickers">
       <div class="date-input">
@@ -32,7 +32,7 @@
         </label>
         <input type="date" class="metric-date-picker metric-timeframe-input" id="metric_start_date" name="metric_start_date"
                max="<%= Date.current %>" min="<%= Date.current - 89.days %>"
-               value="<%= Date.current - 6.days %>" disabled/>
+               value="<%= Date.current - 6.days %>" disabled autocomplete="off" />
       </div>
       <div id="date-range-text">
         to
@@ -42,7 +42,8 @@
           End date
         </label>
         <input type="date" class="metric-date-picker  metric-timeframe-input" id="metric_end_date" name="metric_end_date"
-               max="<%= Date.current %>" min="<%= Date.current - 6.days %>" value="<%= Date.current %>" disabled/>
+               max="<%= Date.current %>" min="<%= Date.current - 6.days %>" value="<%= Date.current %>" disabled
+               autocomplete="off" />
       </div>
     </div>
   </div>
@@ -50,7 +51,7 @@
   <h4>Show metrics:</h4>
   <div id="metrics-choices">
     <%= collection_check_boxes(nil, :metric_ids, @metrics, :id, :name) do |b| %>
-      <%= b.check_box(class: "metric-check-box", disabled: true) %>
+      <%= b.check_box(class: "metric-check-box", disabled: true, autocomplete: "off") %>
       <%= b.label(class: "metric-check-box-label") %>
     <%  end %>
   </div>
