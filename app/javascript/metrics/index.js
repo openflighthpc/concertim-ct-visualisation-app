@@ -75,9 +75,14 @@ document.addEventListener("DOMContentLoaded", function () {
             if(startDate === '' || endDate === '') { return; }
             dateParams = `&start_date=${startDate}&end_date=${endDate}`;
         }
+        let chartSection = document.getElementById(`${metricId}-chart-section`);
+        let loadingSpinner = chartSection.getElementsByClassName('loading-metrics')[0];
+        loadingSpinner.style.visibility = 'visible';
+
         fetch(`/api/v1/devices/${deviceId}/metrics/${metricId}?timeframe=${timeframe}${dateParams}`)
             .then(response => {
                 if (!response.ok) {
+                    loadingSpinner.style.visibility = 'hidden';
                     throw new Error('Network response was not ok');
                 }
                 return response.json();
@@ -90,6 +95,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function populateChart(metricId, data) {
         let chartSection = document.getElementById(`${metricId}-chart-section`);
         let canvas = chartSection.getElementById(`${metricId}-canvas`);
+        let loadingSpinner = chartSection.getElementsByClassName('loading-metrics')[0];
         let noDataText = chartSection.getElementsByClassName('no-data-text')[0];
         let resetZoomRow = chartSection.getElementsByClassName('reset-zoom-row')[0];
         let chart = charts[metricId];
@@ -99,6 +105,8 @@ document.addEventListener("DOMContentLoaded", function () {
             chart.destroy();
             charts[metricId] = null;
         }
+
+        loadingSpinner.style.visibility = 'hidden';
 
         if(data.length === 0) {
             noDataText.style.display = 'block';

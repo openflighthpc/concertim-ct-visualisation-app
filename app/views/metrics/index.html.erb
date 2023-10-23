@@ -58,8 +58,13 @@
   <div class="metric-charts">
     <% @metrics.each_with_index do |metric, index| %>
       <div class="metric-chart-section" id="<%= metric.id %>-chart-section" style="display:none;" >
-        <div class="no-data-text">
-          <h4>No <%= metric.name %> data for current selection</h4>
+        <div class="progress-info">
+          <div class="loading-metrics">
+            <span class="metrics-loading-spinner"></span>
+          </div>
+          <div class="no-data-text">
+            <h4>No <%= metric.name %> data for current selection</h4>
+          </div>
         </div>
         <div class="reset-zoom-row">
           <button class="reset-zoom-button" data-metric-id="<%= metric.id %>" title="Hold shift to enable chart zooming, using the mouse wheel">
