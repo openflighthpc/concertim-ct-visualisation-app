@@ -23,7 +23,7 @@
            value="quarter" autocomplete="off"/>
     <label for="current-quarter-metrics">Past quarter</label>
     <input type="radio" class="metric-timeframe-input" id="date-range-metrics" name="metric-timeline-choice"
-           value="range" autocomplete="false"/>
+           value="range" autocomplete="off"/>
     <label for="date-range-metrics">Select date range:</label>
     <div id="metric-date-pickers">
       <div class="date-input">
@@ -64,7 +64,7 @@
             <span class="metrics-loading-spinner"></span>
           </div>
           <div class="no-data-text">
-            <h4>No <%= metric.name %> data for current selection</h4>
+            <h4>No <strong><%= metric.name %></strong> data for current selection</h4>
           </div>
         </div>
         <div class="reset-zoom-row">

@@ -99,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let noDataText = chartSection.getElementsByClassName('no-data-text')[0];
         let resetZoomRow = chartSection.getElementsByClassName('reset-zoom-row')[0];
         let chart = charts[metricId];
-        const colour = colours[canvas.dataset.index % colours.length];
+        const colour = colours[canvas.dataset.index % colours.length]
 
         if(chart != null) {
             chart.destroy();
@@ -110,6 +110,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         if(data.length === 0) {
             noDataText.style.display = 'block';
+            chartSection.style.height = "5rem";
             chartSection.style.display = 'block';
             resetZoomRow.style.display = 'none';
             return;
@@ -117,6 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         noDataText.style.display = 'none';
         resetZoomRow.style.display = 'block';
+        chartSection.style.height = "20rem";
         charts[metricId] = new Chart(
             canvas,
             {
@@ -175,7 +177,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
         )
-        console.log(charts[metricId].scales['y-axis-0'].min)
         chartSection.style.display = 'block';
     }
 
