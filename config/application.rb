@@ -38,5 +38,16 @@ module CtApp
     # Display a fake invoice if ENV['FAKE_INVOICE'] is set.  Otherwise the
     # concertim-openstack-service will be contacted to provide the invoice.
     config.fake_invoice = ENV['FAKE_INVOICE']
+
+    # Support storing credentials content on a docker volume.  This allows
+    # per-site credentials and master key to be provided.
+    if ENV['CREDENTIALS_CONTENT_PATH'].present?
+      config.credentials.content_path = Pathname.new(ENV['CREDENTIALS_CONTENT_PATH'])
+    end
+    if ENV['CREDENTIALS_KEY_PATH'].present?
+      config.credentials.key_path = Pathname.new(ENV['CREDENTIALS_KEY_PATH'])
+    end
+
+    # config.require_master_key = true
   end
 end

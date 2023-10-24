@@ -26,14 +26,5 @@ ENV RAILS_ENV=production
 ENV RAILS_LOG_TO_STDOUT=true
 RUN ./bin/bundle install
 
-# XXX Do this better.  Perhaps by commiting these files?
-# We want to (1) create new master.key and credentials for each site; (2) have
-# them stable across version updates; (3) not exposed.
-RUN rm -f master.key credentials.yml.enc \
-      && EDITOR=cat ./bin/rails credentials:edit \
-	  && ./bin/rake encryption:generate
-
-RUN ./bin/rake assets:precompile
-
 ENTRYPOINT ["/opt/concertim/opt/ct-visualisation-app/docker/entrypoint.sh"]
 EXPOSE 7000
