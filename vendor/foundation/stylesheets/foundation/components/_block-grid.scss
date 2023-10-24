@@ -43,7 +43,7 @@ $block-grid-media-queries: true !default;
     @if $align-block-grid-to-grid {
       margin: 0;
     } @else {
-      margin: 0 (-(calc($spacing/2)));
+      margin: 0 (calc(($spacing * -1)/2));
     }
     @include clearfix;
 
