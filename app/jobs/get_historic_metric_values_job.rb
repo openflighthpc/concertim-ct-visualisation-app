@@ -23,8 +23,8 @@ class GetHistoricMetricValuesJob < ApplicationJob
     attr_reader :metric_values, :status_code
 
     def initialize(success, metric_values, error_message, status_code=nil)
-      @success = !!success
-      @metric_values = parse_metric_values(metric_values)
+      @success = success
+      @metric_values = success ? parse_metric_values(metric_values) : []
       @error_message = error_message
       @status_code = status_code
     end

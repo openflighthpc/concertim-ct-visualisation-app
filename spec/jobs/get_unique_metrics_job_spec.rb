@@ -30,8 +30,8 @@ RSpec.describe GetUniqueMetricsJob, type: :job do
 
       let(:metrics) {
         [
-          {id: "caffeine.level", name: "caffeine.level", units: "", nature: "volatile", min: 32, max: 64},
           {id: "caffeine.consumption", name: "caffeine.consumption", units: "cups", nature: "volatile", min: 0, max: 4},
+          {id: "caffeine.level", name: "caffeine.level", units: "", nature: "volatile", min: 32, max: 64},
           {id: "power.level", name: "power.level", nature: "volatile", min: 0, max: 8999},
         ]
       }

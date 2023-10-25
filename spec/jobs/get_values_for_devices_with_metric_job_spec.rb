@@ -19,7 +19,7 @@ RSpec.describe GetValuesForDevicesWithMetricJob, type: :job do
     end
 
     it "uses the correct path" do
-      expect(subject.path).to eq "/metrics/power%20level/values"
+      expect(subject.path).to eq "/metrics/power%20level/current"
     end
   end
 
