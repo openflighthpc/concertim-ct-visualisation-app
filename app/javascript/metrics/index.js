@@ -1,5 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     let charts = {};
+    let requestControllers = {};
     let colours = ['#FF5733', '#12c432', '#5733FF', '#ffb833', '#FF33A1', '#0ef8f0'];
 
     document.querySelectorAll("input[type='radio']").forEach((el) => {
@@ -66,6 +67,11 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function loadMetrics(metricId) {
+        if(requestControllers[metricId] != null) {
+            requestControllers[metricId].abort();
+        }
+
+        requestControllers[metricId] = new AbortController();
         let deviceId = document.getElementById("device-id").dataset.deviceId;
         let timeframe = document.querySelector("input[name='metric-timeline-choice']:checked").value;
         let dateParams = '';
@@ -79,7 +85,8 @@ document.addEventListener("DOMContentLoaded", function () {
         let loadingSpinner = chartSection.getElementsByClassName('loading-metrics')[0];
         loadingSpinner.style.visibility = 'visible';
 
-        fetch(`/api/v1/devices/${deviceId}/metrics/${metricId}?timeframe=${timeframe}${dateParams}`)
+        fetch(`/api/v1/devices/${deviceId}/metrics/${metricId}?timeframe=${timeframe}${dateParams}`, 
+               {signal: requestControllers[metricId].signal} )
             .then(response => {
                 if (!response.ok) {
                     loadingSpinner.style.visibility = 'hidden';
@@ -89,7 +96,11 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .then(data => {
                 populateChart(metricId, data);
-            })
+            }).catch(error => {
+              if (error.name !== 'AbortError') {
+                  console.log(error);
+              }
+            });
     }
 
     function populateChart(metricId, data) {
