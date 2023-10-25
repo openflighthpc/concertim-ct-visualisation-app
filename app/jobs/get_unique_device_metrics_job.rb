@@ -1,6 +1,6 @@
 require 'faraday'
 
-class GetDeviceMetricDetailsJob < GetUniqueMetricsJob
+class GetUniqueDeviceMetricsJob < GetUniqueMetricsJob
   queue_as :default
 
   def perform(device_id:, **kwargs)

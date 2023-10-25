@@ -76,8 +76,8 @@ document.addEventListener("DOMContentLoaded", function () {
         let timeframe = document.querySelector("input[name='metric-timeline-choice']:checked").value;
         let dateParams = '';
         if(timeframe === "range") {
-            let startDate = document.getElementById('metric_start_date').value
-            let endDate = document.getElementById('metric_end_date').value
+            let startDate = document.getElementById('metric_start_date').value;
+            let endDate = document.getElementById('metric_end_date').value;
             if(startDate === '' || endDate === '') { return; }
             dateParams = `&start_date=${startDate}&end_date=${endDate}`;
         }

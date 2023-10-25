@@ -2,7 +2,7 @@ class MetricsController < ApplicationController
   def index
     @device = Device.find(params[:device_id])
     authorize! :read, @device
-    result = GetDeviceMetricDetailsJob.perform_now(device_id: params[:device_id])
+    result = GetUniqueDeviceMetricsJob.perform_now(device_id: params[:device_id])
 
     if result.success?
       @metrics = result.metrics.select { |metric| metric.nature == "volatile" }
