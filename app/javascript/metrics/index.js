@@ -164,8 +164,8 @@ document.addEventListener("DOMContentLoaded", function () {
                         yAxes: [
                             {
                                 beforeBuildTicks: function(scale) {
-                                    const onlyZeroes =  scale.chart.data.datasets[0].data.every((value) => { return value === 0 || value === null; });
-                                    if(onlyZeroes) { scale.min = 0; } // without this y axis goes negative
+                                    const allBelowOne =  scale.chart.data.datasets[0].data.every((value) => { return value < 1 || value === null; });
+                                    if(allBelowOne) { scale.min = 0; } // without this y axis will go negative
                                 },
                                 scaleLabel: {
                                     display: units != null,
