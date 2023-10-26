@@ -12,7 +12,7 @@ RSpec.describe CreateUserInvoiceJob, type: :job do
 
   let(:user_invoice_path) { "/get_user_invoice" }
   let(:expected_url) {
-    "#{cloud_service_config.host_url[0...-5]}:#{cloud_service_config.user_handler_port}#{user_invoice_path}"
+    "#{cloud_service_config.user_handler_base_url}#{user_invoice_path}"
   }
 
   describe "url" do

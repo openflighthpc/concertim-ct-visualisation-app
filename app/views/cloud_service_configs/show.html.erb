@@ -10,24 +10,19 @@
   <h4>Cloud environment configuration</h4>
   <dl>
 
-    <dt>Host URL</dt>
-    <dd>
-      <span><%= @cloud_service_config.host_url %></span>
-    </dd>
-
     <dt>Internal Auth URL</dt>
     <dd>
       <span><%= @cloud_service_config.internal_auth_url %></span>
     </dd>
 
-    <dt>User handler port</dt>
+    <dt>User handler URL</dt>
     <dd>
-      <span><%= @cloud_service_config.user_handler_port %></span>
+      <span><%= @cloud_service_config.user_handler_base_url %></span>
     </dd>
 
-    <dt>Cluster builder port</dt>
+    <dt>Cluster builder URL</dt>
     <dd>
-      <span><%= @cloud_service_config.cluster_builder_port %></span>
+      <span><%= @cloud_service_config.cluster_builder_base_url %></span>
     </dd>
 
     <dt>Admin User ID</dt>

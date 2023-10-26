@@ -15,7 +15,7 @@ RSpec.describe UserSignupJob, type: :job do
     subject { super().send(:url) }
 
     it "uses the correct ip, port and path" do
-      expect(subject).to eq "#{cloud_service_config.host_url[0...-5]}:#{cloud_service_config.user_handler_port}#{user_service_path}"
+      expect(subject).to eq "#{cloud_service_config.user_handler_base_url}#{user_service_path}"
     end
   end
 

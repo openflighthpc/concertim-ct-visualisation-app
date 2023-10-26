@@ -26,7 +26,7 @@ RSpec.describe RequestStatusChangeJob, type: :job do
 
     shared_examples 'correct full url' do
       it "uses the correct ip, port and path" do
-        expect(subject).to eq "#{cloud_service_config.host_url[0...-5]}:#{cloud_service_config.user_handler_port}#{user_service_path}/#{type}/#{target.openstack_id}"
+        expect(subject).to eq "#{cloud_service_config.user_handler_base_url}#{user_service_path}/#{type}/#{target.openstack_id}"
       end
     end
 
@@ -78,7 +78,7 @@ RSpec.describe RequestStatusChangeJob, type: :job do
   end
 
   describe "#perform" do
-    let(:path) { "#{cloud_service_config.host_url[0...-5]}:#{cloud_service_config.user_handler_port}#{user_service_path}/#{type}/#{target.openstack_id}" }
+    let(:path) { "#{cloud_service_config.user_handler_base_url}#{user_service_path}/#{type}/#{target.openstack_id}" }
 
     context 'given an invalid actions' do
       let(:target) { device }
