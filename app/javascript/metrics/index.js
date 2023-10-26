@@ -48,8 +48,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function loadOrHideMetricData(event) {
         const metricId = event.target.value;
+        const units = event.target.dataset.units;
         if(event.target.checked) {
-            loadMetrics(metricId);
+            loadMetrics(metricId, units);
         } else {
             document.getElementById(`${metricId}-chart-section`).style.display = "none";
             let chart = charts[metricId];
@@ -62,11 +63,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function loadAllMetricsData() {
         document.querySelectorAll(".metric-check-box:checked").forEach((el) => {
-            loadMetrics(el.value);
+            loadMetrics(el.value, el.dataset.units);
         })
     }
 
-    function loadMetrics(metricId) {
+    function loadMetrics(metricId, units) {
         if(requestControllers[metricId] != null) {
             requestControllers[metricId].abort();
         }
@@ -97,7 +98,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 return response.json();
             })
             .then(data => {
-                populateChart(metricId, data);
+                populateChart(metricId, units, data);
             }).catch(error => {
               if (error.name !== 'AbortError') {
                   console.log(error.message);
@@ -105,7 +106,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
     }
 
-    function populateChart(metricId, data) {
+    function populateChart(metricId, units, data) {
         let chartSection = document.getElementById(`${metricId}-chart-section`);
         let canvas = chartSection.getElementById(`${metricId}-canvas`);
         let loadingSpinner = chartSection.getElementsByClassName('loading-metrics')[0];
@@ -166,6 +167,10 @@ document.addEventListener("DOMContentLoaded", function () {
                                     const onlyZeroes =  scale.chart.data.datasets[0].data.every((value) => { return value === 0 || value === null; });
                                     if(onlyZeroes) { scale.min = 0; } // without this y axis goes negative
                                 },
+                                scaleLabel: {
+                                    display: units != null,
+                                    labelString: units
+                                }
                             }
                         ]
                     },

@@ -51,7 +51,7 @@
   <h4>Show metrics:</h4>
   <div id="metrics-choices">
     <%= collection_check_boxes(nil, :metric_ids, @metrics, :id, :name) do |b| %>
-      <%= b.check_box(class: "metric-check-box", disabled: true, autocomplete: "off") %>
+      <%= b.check_box(class: "metric-check-box", disabled: true, autocomplete: "off", data: {units: b.object.units}) %>
       <%= b.label(class: "metric-check-box-label") %>
     <%  end %>
   </div>
