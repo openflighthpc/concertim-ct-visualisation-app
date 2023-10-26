@@ -1,6 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe "Api::V1::MetricsController", type: :request do
+  let!(:rack_template) { create(:template, :rack_template) }
+  let!(:rack) { create(:rack, user: rack_owner, template: rack_template) }
+  let(:chassis) { create(:chassis, template: device_template, location: location) }
+  let(:location) { create(:location, rack: rack) }
+  let(:device_template) { create(:template, :device_template) }
+  let(:device) { create(:device, chassis: chassis, metadata: {foo: :bar}) }
+  let(:rack_owner) { create(:user) }
+
   let(:headers) { {} }
   let(:urls) { Rails.application.routes.url_helpers }
 
@@ -78,13 +86,6 @@ RSpec.describe "Api::V1::MetricsController", type: :request do
   end
 
   describe "GET :show" do
-    let(:rack_owner) { create(:user) }
-    let!(:device) { create(:device, chassis: chassis, metadata: {foo: :bar}) }
-    let(:chassis) { create(:chassis, template: device_template, location: location) }
-    let(:location) { create(:location, rack: rack) }
-    let(:device_template) { create(:template, :device_template) }
-    let!(:rack_template) { create(:template, :rack_template) }
-    let!(:rack) { create(:rack, user: rack_owner, template: rack_template) }
     let(:url_under_test) { urls.api_v1_device_metric_path(device, "power.level") }
     let(:headers) { {} }
 

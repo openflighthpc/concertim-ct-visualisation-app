@@ -67,7 +67,6 @@ RSpec.describe GetHistoricMetricValuesJob, type: :job do
 
     context "when request is successful" do
       before(:each) do
-        puts(path)
         stubs.get(path) { |env| [ 200, {}, metric_values] }
       end
 
