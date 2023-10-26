@@ -217,8 +217,10 @@ document.addEventListener("DOMContentLoaded", function () {
     function maybeEnableZoom(event) {
         if (event.shiftKey) {
             for (let chart of Object.values(charts)) {
-                chart.options.plugins.zoom.zoom.enabled = true;
-                chart.update();
+                if(chart != null) {
+                    chart.options.plugins.zoom.zoom.enabled = true;
+                    chart.update();
+                }
             }
         }
     }
@@ -226,8 +228,10 @@ document.addEventListener("DOMContentLoaded", function () {
     function maybeDisableZoom(event) {
         if (event.key === "Shift") {
             for (let chart of Object.values(charts))  {
-                chart.options.plugins.zoom.zoom.enabled = false;
-                chart.update();
+                if(chart != null) {
+                    chart.options.plugins.zoom.zoom.enabled = false;
+                    chart.update();
+                }
             }
         }
     }
