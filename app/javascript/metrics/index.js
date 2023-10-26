@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     let charts = {};
     let requestControllers = {};
-    let colours = ['#FF5733', '#12c432', '#5733FF', '#ffb833', '#FF33A1', '#0ef8f0'];
+    const colours = ['#FF5733', '#12c432', '#5733FF', '#ffb833', '#FF33A1', '#0ef8f0'];
 
     document.querySelectorAll("input[type='radio']").forEach((el) => {
         el.addEventListener('change', updateDatePickerDisplay);
@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.querySelectorAll(".metric-check-box").forEach((el) => {
         el.addEventListener('change', loadOrHideMetricData);
-        el.disabled = false
+        el.disabled = false;
     });
 
     document.addEventListener('keydown', maybeEnableZoom);
@@ -90,7 +90,9 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(response => {
                 if (!response.ok) {
                     loadingSpinner.style.visibility = 'hidden';
-                    throw new Error('Network response was not ok');
+                    let errorMessage = `Unable to load ${metricId} metric data: ${response.status} ${response.statusText}`;
+                    alert(errorMessage);
+                    throw new Error(errorMessage);
                 }
                 return response.json();
             })
@@ -98,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 populateChart(metricId, data);
             }).catch(error => {
               if (error.name !== 'AbortError') {
-                  console.log(error);
+                  console.log(error.message);
               }
             });
     }
@@ -110,7 +112,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let noDataText = chartSection.getElementsByClassName('no-data-text')[0];
         let resetZoomRow = chartSection.getElementsByClassName('reset-zoom-row')[0];
         let chart = charts[metricId];
-        const colour = colours[canvas.dataset.index % colours.length]
+        const colour = colours[canvas.dataset.index % colours.length];
 
         if(chart != null) {
             chart.destroy();
@@ -195,7 +197,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     },
                 }
             }
-        )
+        );
         chartSection.style.display = 'block';
     }
 
