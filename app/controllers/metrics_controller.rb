@@ -5,7 +5,7 @@ class MetricsController < ApplicationController
     result = GetUniqueDeviceMetricsJob.perform_now(device_id: params[:device_id])
 
     if result.success?
-      @metrics = result.metrics.select { |metric| metric.nature == "volatile" }
+      @metrics = result.metrics.select { |metric| metric.nature != "string_and_time" }
     elsif result.status_code == 404
       @metrics = []
     else
