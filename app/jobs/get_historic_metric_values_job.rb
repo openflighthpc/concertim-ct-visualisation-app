@@ -1,12 +1,16 @@
 require 'faraday'
 
-class GetValuesForDevicesWithMetricJob < ApplicationJob
+class GetHistoricMetricValuesJob < ApplicationJob
   queue_as :default
 
-  def perform(metric_name:, **kwargs)
+  def perform(metric_name:, device_id:, timeframe:, start_time:, end_time:, **kwargs)
     runner = Runner.new(
       cloud_service_config: nil,
       metric_name: metric_name,
+      device_id: device_id,
+      timeframe: timeframe,
+      start_time: start_time,
+      end_time: end_time,
       logger: logger,
       **kwargs
     )
@@ -14,13 +18,13 @@ class GetValuesForDevicesWithMetricJob < ApplicationJob
   end
 
   class Result
-    MetricValue = Struct.new(:id, :value, keyword_init: true)
+    MetricValue = Struct.new(:timestamp, :value, keyword_init: true)
 
     attr_reader :metric_values, :status_code
 
     def initialize(success, metric_values, error_message, status_code=nil)
-      @success = !!success
-      @metric_values = parse_metric_values(metric_values)
+      @success = success
+      @metric_values = success ? parse_metric_values(metric_values) : []
       @error_message = error_message
       @status_code = status_code
     end
@@ -37,14 +41,18 @@ class GetValuesForDevicesWithMetricJob < ApplicationJob
 
     def parse_metric_values(body)
       body.map do |mv|
-        MetricValue.new(id: mv["id"].to_i, value: mv["value"])
+        MetricValue.new(timestamp: Time.at(mv["timestamp"]), value: mv["value"])
       end
     end
   end
 
   class Runner < HttpRequests::Faraday::JobRunner
-    def initialize(metric_name:, **kwargs)
+    def initialize(metric_name:, device_id:, timeframe:, start_time:, end_time:,  **kwargs)
       @metric_name = metric_name
+      @device_id = device_id
+      @timeframe = timeframe
+      @start_time = start_time ? start_time.utc.to_i : nil
+      @end_time = end_time ? end_time.utc.to_i : nil
       super(**kwargs)
     end
 
@@ -54,7 +62,7 @@ class GetValuesForDevicesWithMetricJob < ApplicationJob
         return Result.new(false, [], "#{error_description}: #{response.reason_phrase || "Unknown error"}")
       end
 
-      return Result.new(true, response.body, "")
+      Result.new(true, response.body, "")
 
     rescue Faraday::Error
       status_code = $!.response[:status] rescue 0
@@ -70,7 +78,11 @@ class GetValuesForDevicesWithMetricJob < ApplicationJob
     end
 
     def path
-      "/metrics/#{ERB::Util.url_encode(@metric_name)}/current"
+      if @timeframe == "range"
+        "/devices/#{@device_id}/metrics/#{ERB::Util.url_encode(@metric_name)}/historic/#{@start_time}/#{@end_time}"
+      else
+        "/devices/#{@device_id}/metrics/#{ERB::Util.url_encode(@metric_name)}/historic/last/#{@timeframe}"
+      end
     end
 
     def error_description

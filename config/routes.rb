@@ -40,6 +40,10 @@ Rails.application.routes.draw do
 
   resource :invoices, only: :show
 
+  resources :devices, only: [] do
+    resources :metrics, only: [:index]
+  end
+
   # API routes
   #
   # Some of these have been done in a non-railsy way (you have "posts" where you should have 
@@ -52,7 +56,9 @@ Rails.application.routes.draw do
         resources :racks
         resources :templates, only: [:index, :create, :update, :destroy]
         resources :nodes, only: [:create]
-        resources :devices, only: [:index, :show, :update, :destroy]
+        resources :devices, only: [:index, :show, :update, :destroy] do
+          resources :metrics, :constraints => { :id => /.*/ }, only: [:show]
+        end
         resources :data_source_maps, path: 'data-source-maps', only: [:index]
 
         # For use by the interactive rack view

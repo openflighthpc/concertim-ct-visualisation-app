@@ -1,0 +1,81 @@
+<% content_for(:head) do %>
+  <%= javascript_import_module_tag "chart.js" %>
+  <%= javascript_import_module_tag "moment" %>
+  <%= javascript_import_module_tag "hammerjs" %>
+  <%= javascript_import_module_tag "chartjs-plugin-zoom" %>
+  <%= javascript_import_module_tag "metrics/index" %>
+<% end %>
+
+<% set_title "Metrics for #{@device.name}" -%>
+
+<div style="display:none;" data-device-id="<%= @device.id %>" id="device-id"></div>
+
+<% if @metrics.any? %>
+  <h4>Timeframe:</h4>
+  <div id="metric-timeframe">
+    <input type="radio" class="metric-timeframe-input" id="current-hour-metrics" name="metric-timeline-choice"
+           value="hour" checked autocomplete="off" />
+    <label for="current-hour-metrics">Past hour</label>
+    <input type="radio" class="metric-timeframe-input" id="current-day-metrics" name="metric-timeline-choice"
+           value="day" autocomplete="off"/>
+    <label for="current-day-metrics">Past day</label>
+    <input type="radio" class="metric-timeframe-input" id="current-quarter-metrics" name="metric-timeline-choice"
+           value="quarter" autocomplete="off"/>
+    <label for="current-quarter-metrics">Past quarter</label>
+    <input type="radio" class="metric-timeframe-input" id="date-range-metrics" name="metric-timeline-choice"
+           value="range" autocomplete="off"/>
+    <label for="date-range-metrics">Select date range:</label>
+    <div id="metric-date-pickers">
+      <div class="date-input">
+        <label class="toolTip" for="metric_start_date">
+          Start date
+        </label>
+        <input type="date" class="metric-date-picker metric-timeframe-input" id="metric_start_date" name="metric_start_date"
+               max="<%= Date.current %>" min="<%= Date.current - 89.days %>"
+               value="<%= Date.current - 6.days %>" disabled autocomplete="off" />
+      </div>
+      <div id="date-range-text">
+        to
+      </div>
+      <div class="date-input">
+        <label class="toolTip" for="metric_end_date">
+          End date
+        </label>
+        <input type="date" class="metric-date-picker  metric-timeframe-input" id="metric_end_date" name="metric_end_date"
+               max="<%= Date.current %>" min="<%= Date.current - 6.days %>" value="<%= Date.current %>" disabled
+               autocomplete="off" />
+      </div>
+    </div>
+  </div>
+
+  <h4>Show metrics:</h4>
+  <div id="metrics-choices">
+    <%= collection_check_boxes(nil, :metric_ids, @metrics, :id, :name) do |b| %>
+      <%= b.check_box(class: "metric-check-box", disabled: true, autocomplete: "off", data: {units: b.object.units}) %>
+      <%= b.label(class: "metric-check-box-label") %>
+    <%  end %>
+  </div>
+
+  <div class="metric-charts">
+    <% @metrics.each_with_index do |metric, index| %>
+      <div class="metric-chart-section" id="<%= metric.id %>-chart-section" style="display:none;" >
+        <div class="progress-info">
+          <div class="loading-metrics">
+            <span class="metrics-loading-spinner"></span>
+          </div>
+          <div class="no-data-text">
+            <h4>No <strong><%= metric.name %></strong> data for current selection</h4>
+          </div>
+        </div>
+        <div class="reset-zoom-row">
+          <button class="reset-zoom-button" data-metric-id="<%= metric.id %>" title="Hold shift to enable chart zooming, using the mouse wheel">
+            <span class="icon-zoom-reset"></span>Reset zoom</button>
+        </div>
+        <canvas class="metrics-chart" id="<%= metric.id %>-canvas" data-index="<%= index %>"></canvas>
+      </div>
+    <% end %>
+  </div>
+
+<% else %>
+  <h4>No metrics currently available for the selected device.</h4>
+<% end %>

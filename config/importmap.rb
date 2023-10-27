@@ -5,12 +5,17 @@ pin "application", to: "application.js"
 # Page-specific javascripts.
 pin "IRV", to: "IRV.js"
 pin "key_pairs/new", to: "key_pairs/new.js"
+pin "metrics/index", to: "metrics/index.js"
 
 # Utility Javascripts.
 pin "Profiler", to: "canvas/irv/NullProfiler.js"
 pin "util/NotImplementedError", to: "util/NotImplementedError.js"
 pin "util/ComboBox", to: "util/ComboBox.js"
 pin "util/Dialog", to: "util/Dialog.js"
+pin "chart.js" # @2.9.4
+pin "moment" # @2.29.4
+pin "hammerjs" # @2.0.8
+pin "chartjs-plugin-zoom" # @0.7.7
 # pin "util/copyToClipboard", to: "util/copyToClipboard.js"
 
 # Javascripts for the IRV.

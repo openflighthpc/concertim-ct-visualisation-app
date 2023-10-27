@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe GetValuesForDevicesWithMetricJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
-  let(:path) { "http://localhost:3000/metrics/#{ERB::Util.url_encode(metric_name)}/values" }
+  let(:path) { "http://localhost:3000/metrics/#{ERB::Util.url_encode(metric_name)}/current" }
   let(:metric_name) { "power level" }
   subject { GetValuesForDevicesWithMetricJob::Runner.new(metric_name: metric_name, cloud_service_config: nil) }
 
@@ -19,7 +19,7 @@ RSpec.describe GetValuesForDevicesWithMetricJob, type: :job do
     end
 
     it "uses the correct path" do
-      expect(subject.path).to eq "/metrics/power%20level/values"
+      expect(subject.path).to eq "/metrics/power%20level/current"
     end
   end
 

@@ -44,7 +44,7 @@ class GetUniqueMetricsJob < ApplicationJob
           min: metric["min"],
           max: metric["max"],
         )
-      end
+      end.sort_by(&:name)
     end
   end
 

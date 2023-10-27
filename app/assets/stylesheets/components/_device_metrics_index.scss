@@ -1,0 +1,97 @@
+#metrics-choices {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+
+  .metric-check-box {
+    margin-left: 0.25rem;
+    margin-bottom: 0;
+  }
+
+  .metric-check-box-label {
+    margin-left: 0.25rem;
+  }
+}
+
+#metric-timeframe {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: left;
+
+  label {
+    white-space: nowrap;
+    padding-bottom: 0.85rem;
+  }
+}
+
+#metric-date-pickers {
+  display: flex;
+  justify-content: left;
+  width: 100%;
+
+  label {
+    display: none;
+  }
+
+  #date-range-text {
+    padding-top: 0.6rem;
+    margin-left: 0.45rem;
+    margin-right: 0.45rem;
+  }
+}
+
+.metric-charts {
+  padding-bottom: 6rem;
+}
+
+.metric-chart-section {
+  height: 20rem;
+  margin: 0 4rem 6rem 0;
+}
+
+.no-data-text {
+  text-align: center;
+  display: none;
+}
+
+.reset-zoom-row {
+  text-align: right;
+
+  .reset-zoom-button {
+    margin-bottom: 0;
+    margin-right: 0.75rem;
+    margin-left: 1rem;
+
+    .icon-zoom-reset {
+      color: white;
+      font-size: 1rem;
+      padding-right: 0.3rem;
+    }
+  }
+}
+
+.loading-metrics {
+  text-align: center;
+}
+
+.metrics-loading-spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 0.4rem solid #3B5168;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

@@ -1,9 +1,10 @@
 require 'rails_helper'
 
-RSpec.describe GetUniqueMetricsJob, type: :job do
+RSpec.describe GetUniqueDeviceMetricsJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
-  let(:path) { "http://localhost:3000/metrics/unique" }
-  subject { GetUniqueMetricsJob::Runner.new(cloud_service_config: nil) }
+  let(:path) { "http://localhost:3000/devices/1/metrics/current" }
+  let(:device_id) { 1 }
+  subject { GetUniqueDeviceMetricsJob::Runner.new(device_id: device_id, cloud_service_config: nil) }
 
   describe "url" do
     before(:each) do
@@ -18,7 +19,7 @@ RSpec.describe GetUniqueMetricsJob, type: :job do
     end
 
     it "uses a hard-coded path" do
-      expect(subject.path).to eq "/metrics/unique"
+      expect(subject.path).to eq "/devices/1/metrics/current"
     end
   end
 
@@ -37,16 +38,16 @@ RSpec.describe GetUniqueMetricsJob, type: :job do
       }
 
       let(:expected_metrics) {
-        metrics.map { |m| GetUniqueMetricsJob::Result::MetricType.new(**m) }
+        metrics.map { |m| GetUniqueDeviceMetricsJob::Result::MetricType.new(**m) }
       }
 
       it "returns a successful result" do
-        result = described_class.perform_now(test_stubs: stubs)
+        result = described_class.perform_now(device_id: device_id, test_stubs: stubs)
         expect(result).to be_success
       end
 
       it "makes the metrics available" do
-        result = described_class.perform_now(test_stubs: stubs)
+        result = described_class.perform_now(device_id: device_id, test_stubs: stubs)
         expect(result.metrics).to eq expected_metrics
       end
     end
@@ -62,12 +63,12 @@ RSpec.describe GetUniqueMetricsJob, type: :job do
       }
 
       it "returns an unsuccessful result" do
-        result = described_class.perform_now(test_stubs: stubs)
+        result = described_class.perform_now(device_id: device_id, test_stubs: stubs)
         expect(result).not_to be_success
       end
 
       it "returns a sensible error_message" do
-        result = described_class.perform_now(test_stubs: stubs)
+        result = described_class.perform_now(device_id: device_id, test_stubs: stubs)
         expect(result.error_message).to eq "Parsing unique metrics failed: no implicit conversion of String into Integer"
       end
     end
@@ -78,12 +79,12 @@ RSpec.describe GetUniqueMetricsJob, type: :job do
       end
 
       it "returns an unsuccessful result" do
-        result = described_class.perform_now(test_stubs: stubs)
+        result = described_class.perform_now(device_id: device_id, test_stubs: stubs)
         expect(result).not_to be_success
       end
 
       it "returns a sensible error_message" do
-        result = described_class.perform_now(test_stubs: stubs)
+        result = described_class.perform_now(device_id: device_id, test_stubs: stubs)
         expect(result.error_message).to eq "Unable to fetch unique metrics: the server responded with status 404"
       end
     end
@@ -95,12 +96,12 @@ RSpec.describe GetUniqueMetricsJob, type: :job do
       let(:timeout) { 0.1 }
 
       it "returns an unsuccessful result" do
-        result = described_class.perform_now(test_stubs: stubs, timeout: timeout)
+        result = described_class.perform_now(device_id: device_id, test_stubs: stubs, timeout: timeout)
         expect(result).not_to be_success
       end
 
       it "returns a sensible error_message" do
-        result = described_class.perform_now(test_stubs: stubs, timeout: timeout)
+        result = described_class.perform_now(device_id: device_id, test_stubs: stubs, timeout: timeout)
         expect(result.error_message).to eq "Unable to fetch unique metrics: execution expired"
       end
     end
