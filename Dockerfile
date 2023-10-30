@@ -24,7 +24,8 @@ COPY docker/licence-limits.yml /opt/concertim/etc/licence-limits.yml
 
 ENV RAILS_ENV=production
 ENV RAILS_LOG_TO_STDOUT=true
+ENV PORT=7000
+EXPOSE 7000
 RUN ./bin/bundle install
 
 ENTRYPOINT ["/opt/concertim/opt/ct-visualisation-app/docker/entrypoint.sh"]
-EXPOSE 7000

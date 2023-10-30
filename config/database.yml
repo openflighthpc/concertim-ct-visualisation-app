@@ -6,6 +6,7 @@ pg_base: &pg_base
   adapter: postgresql
   username: <%= ENV.fetch("POSTGRES_USER") { "www-data" } %>
   host: <%= ENV.fetch("POSTGRES_HOST") { nil } %>
+  port: <%= ENV.fetch("POSTGRES_PORT") { nil } %>
   password: <%= ENV.fetch("POSTGRES_PASSWORD") { nil } %>
 
 ################################
