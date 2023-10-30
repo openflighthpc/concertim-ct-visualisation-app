@@ -1,6 +1,6 @@
 import consumer from "./consumer"
 
-consumer.subscriptions.create({ channel: "InteractiveRackViewChannel", user_id: 2}, {
+consumer.subscriptions.create("InteractiveRackViewChannel", {
   connected() {
     console.log("It begins");
   },

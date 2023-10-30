@@ -166,6 +166,9 @@ class HwRack < ApplicationRecord
   # this doesn't seem to work, possibly because changes are in a different process?
   # may work with redis/ db version of action cable instead of async
   def broadcast_change
-    ActionCable.server.broadcast("irv_2", { title: "Everybody's changing", body: self.id })
+    msg = { title: "Everybody's changing", body: self.id }
+    User.where(root: true).or(User.where(id: self.user_id)).each do |user|
+      InteractiveRackViewChannel.broadcast_to(user, msg)
+    end
   end
 end
