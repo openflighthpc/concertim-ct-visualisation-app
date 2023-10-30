@@ -653,6 +653,7 @@ class RackSpace {
     this.model.activeSelection(false);
     const device_lookup = this.model.deviceLookup();
     const racks         = this.model.racks();
+    console.log(this.model.racks());
 
     for (var deleted_id of Array.from(change_set.deleted)) {
       deleted_id = String(deleted_id);
@@ -687,6 +688,7 @@ class RackSpace {
             // as its name may have changed, thus meaning it has a new position
             // in the array
             if (rack.id === rack_def.id) {
+              console.log("reboot!");
               racks[idx] = rack_def_copy;
             }
           }

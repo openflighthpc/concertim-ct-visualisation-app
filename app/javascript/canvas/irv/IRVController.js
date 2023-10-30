@@ -32,6 +32,7 @@ import ComboBox from 'util/ComboBox';
 import Tooltip from 'canvas/irv/view/Tooltip';
 import PieCountdown from 'canvas/common/widgets/PieCountdown';
 import RBAC from 'canvas/common/util/RBAC';
+import consumer from "../../channels/consumer";
 import Dialog from 'util/Dialog';
 
 // These are all expected to provide global objects.
@@ -192,6 +193,7 @@ class IRVController {
     this.hintInfoReceived = this.hintInfoReceived.bind(this);
     this.evSwitchStat = this.evSwitchStat.bind(this);
     this.evSwitchGraphOrder = this.evSwitchGraphOrder.bind(this);
+    this.setupWebsocket = this.setupWebsocket.bind(this);
     this.config_file = '/irv/configuration';
     console.log("Constructing IRV :::: with the options :::: ",this.options);
     jQuery(document).ready(this.getConfig);
@@ -290,9 +292,36 @@ class IRVController {
       this.getRackData();
     }
 
+    this.setupWebsocket();
+
     //if @model.showingFullIrv()
     this.stylesChanges();
     return this.showHideScrollBars(0);
+  }
+
+  setupWebsocket() {
+    const self = this;
+    consumer.subscriptions.create("InteractiveRackViewChannel", {
+      connected() {
+        console.log("It begins");
+      },
+
+      disconnected() {
+        // Called when the subscription has been terminated by the server
+      },
+
+      received(data) {
+        console.log("we got one!");
+        console.log(data);
+        // assuming just modified for now
+        let rack = data["Racks"]["Rack"][0];
+        let change =  {added: [], modified: [rack.id], deleted: [0], timestamp: rack.modified_timestamp};
+        self.setModifiedRacksTimestamp(String(change.timestamp));
+        self.changeSetRacks = change;
+        --self.resourceCount;
+        self.receivedRackDefs(data);
+      }
+    });
   }
 
   stylesChanges() {
@@ -717,7 +746,7 @@ class IRVController {
     if ((this.options != null) && (this.options.applyfilter === "true")) { this.applyCrossAppSettings(); }
 
     if (this.model.showingFullIrv() || this.model.showingRacks()) {
-      this.modifiedRackDefinitionTmr = setInterval(this.getModifiedRackIds, IRVController.MODIFIED_RACK_POLL_RATE);
+      // this.modifiedRackDefinitionTmr = setInterval(this.getModifiedRackIds, IRVController.MODIFIED_RACK_POLL_RATE);
     }
 
     this._callback_store = {};
@@ -1377,6 +1406,7 @@ class IRVController {
   // called on receiving change set from the server. Triggers request for updated rack definitions necessary to synchronise the changes
   // @param  rack_data array of rack definition objects
   receivedModifiedRackIds(rack_data) {
+    console.log(rack_data);
     if (!this.dragging) {
       this.setModifiedRacksTimestamp(String(rack_data.timestamp));
       const rack_ids = rack_data.added.concat(rack_data.modified);
@@ -1412,6 +1442,7 @@ class IRVController {
   // @param  rack_defs the rack definitions as returned by the server
   receivedRackDefs(rack_defs) {
     this.debug("received rack defs");
+    console.log(rack_defs)
 
     const defs = this.parser.parseRackDefs(rack_defs);
 
