@@ -98,6 +98,7 @@ class HwRack < ApplicationRecord
   #
   ######################################
   after_initialize :set_defaults, if: Proc.new {|r| r.new_record? }
+  after_save :broadcast_change
 
   ####################################
   #
@@ -158,5 +159,13 @@ class HwRack < ApplicationRecord
 
   def metadata_format
     self.errors.add(:metadata, "Must be an object") unless metadata.is_a?(Hash)
+  end
+
+  private
+
+  # this doesn't seem to work, possibly because changes are in a different process?
+  # may work with redis/ db version of action cable instead of async
+  def broadcast_change
+    ActionCable.server.broadcast("irv_2", { title: "Everybody's changing", body: self.id })
   end
 end

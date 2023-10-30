@@ -10,6 +10,7 @@ class Api::V1::Irv::RacksController < Api::V1::Irv::BaseController
     # slow method has been kept.  The two methods should generate identical
     # JSON documents.  (Or nearly so, the XML version has everything encoded as
     # strings).
+    #
 
     if params[:slow]
       # This is the slow and easy to understand method.  We do jump through

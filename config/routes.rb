@@ -13,6 +13,8 @@ Rails.application.routes.draw do
     post "users/sign_in", to: "sessions#create"
   end
 
+  mount ActionCable.server => '/cable'
+
   # We need to redirect here, otherwise the devise redirections will take us to
   # the legacy sign up page.
   root to: redirect('/racks')

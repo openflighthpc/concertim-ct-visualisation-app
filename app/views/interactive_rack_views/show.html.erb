@@ -1,5 +1,6 @@
 <% content_for(:head) do %>
   <%= javascript_include_tag "contrib/knockout.js" %>
+  <%= javascript_import_module_tag "channels/interactive_rack_view_channel" %>
   <%= javascript_import_module_tag "IRV" %>
 <% end %>
 
