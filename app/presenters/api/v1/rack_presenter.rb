@@ -19,7 +19,7 @@ module Api::V1
     end
 
     def chassis
-      @chassis ||= o.chassis.map { |c|Api::V1::ChassisPresenter.new(c) }
+      @chassis ||= o.chassis.map { |c| Api::V1::ChassisPresenter.new(c) }
     end
 
     def user

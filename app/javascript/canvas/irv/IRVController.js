@@ -313,13 +313,18 @@ class IRVController {
       received(data) {
         console.log("we got one!");
         console.log(data);
-        // assuming just modified for now
-        let rack = data["Racks"]["Rack"][0];
-        let change =  {added: [], modified: [rack.id], deleted: [0], timestamp: rack.modified_timestamp};
-        self.setModifiedRacksTimestamp(String(change.timestamp));
+        let change =  {added: [], modified: [], deleted: [], timestamp: new Date() };
+        let action = data.action;
+        let rack = data.rack;
+        change[action] = rack.id;
         self.changeSetRacks = change;
+        self.setModifiedRacksTimestamp(String(change.timestamp));
+        if(action === "deleted") {
+          this.model.modifiedRackDefs([]); // we have only deleted racks in this request so empty the rack defs array
+          return this.synchroniseChanges();
+        }
         --self.resourceCount;
-        self.receivedRackDefs(data);
+        self.receivedRackDefs({Racks: {Rack: [rack]}});
       }
     });
   }
@@ -1406,7 +1411,6 @@ class IRVController {
   // called on receiving change set from the server. Triggers request for updated rack definitions necessary to synchronise the changes
   // @param  rack_data array of rack definition objects
   receivedModifiedRackIds(rack_data) {
-    console.log(rack_data);
     if (!this.dragging) {
       this.setModifiedRacksTimestamp(String(rack_data.timestamp));
       const rack_ids = rack_data.added.concat(rack_data.modified);
