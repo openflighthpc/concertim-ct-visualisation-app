@@ -14,9 +14,8 @@ RSpec.describe SyncAllClusterTypesJob, type: :job do
     end
 
     it "uses the host URL and cluster build port given in the config" do
-      expected_url = URI(cloud_service_config.host_url)
-      expected_url.port = cloud_service_config.cluster_builder_port
-      expect(subject.connection.url_prefix).to eq expected_url
+      expected_url = "#{cloud_service_config.cluster_builder_base_url}/"
+      expect(subject.connection.url_prefix.to_s).to eq expected_url
     end
 
     it "uses a hard-coded path" do
@@ -100,9 +99,8 @@ RSpec.describe SyncAllClusterTypesJob, type: :job do
       end
 
       before(:each) do
-        url = URI(cloud_service_config.host_url)
-        url.port = cloud_service_config.cluster_builder_port
-        stubs.get("#{url.to_s}/cluster-types/") { |env| [ 200, {}, response] }
+        url = cloud_service_config.cluster_builder_base_url
+        stubs.get("#{url}/cluster-types/") { |env| [ 200, {}, response] }
       end
 
       it "returns a successful result" do
@@ -175,9 +173,8 @@ RSpec.describe SyncAllClusterTypesJob, type: :job do
 
     context "when request returns a 304" do
       before(:each) do
-        url = URI(cloud_service_config.host_url)
-        url.port = cloud_service_config.cluster_builder_port
-        stubs.get("#{url.to_s}/cluster-types/") { |env| [ 304, {}, ""] }
+        url = cloud_service_config.cluster_builder_base_url
+        stubs.get("#{url}/cluster-types/") { |env| [ 304, {}, ""] }
       end
 
       it "returns a successful result" do
@@ -200,9 +197,8 @@ RSpec.describe SyncAllClusterTypesJob, type: :job do
 
     context "when request is not successful" do
       before(:each) do
-        url = URI(cloud_service_config.host_url)
-        url.port = cloud_service_config.cluster_builder_port
-        stubs.get("#{url.to_s}/cluster-types/") { |env| [ 404, {}, "404 Not Found"] }
+        url = cloud_service_config.cluster_builder_base_url
+        stubs.get("#{url}/cluster-types/") { |env| [ 404, {}, "404 Not Found"] }
       end
 
       it "returns an unsuccessful result" do
@@ -218,9 +214,8 @@ RSpec.describe SyncAllClusterTypesJob, type: :job do
 
     context "when request times out" do
       before(:each) do
-        url = URI(cloud_service_config.host_url)
-        url.port = cloud_service_config.cluster_builder_port
-        stubs.get("#{url.to_s}/cluster-types/") { |env| sleep timeout * 2 ; [ 200, {}, []] }
+        url = cloud_service_config.cluster_builder_base_url
+        stubs.get("#{url}/cluster-types/") { |env| sleep timeout * 2 ; [ 200, {}, []] }
       end
       let(:timeout) { 0.1 }
 

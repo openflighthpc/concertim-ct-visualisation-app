@@ -12,7 +12,7 @@ jobs:
   test-ruby:
     env:
       RAILS_ENV: test
-      CONCERTIM_JWT_SECRET: "fake-but-ok"
+      JWT_SECRET: "fake-but-ok"
 
     name: Rails tests
     runs-on: ubuntu-latest
@@ -41,10 +41,10 @@ jobs:
 
       - name: Setup database and create credentials
         env:
-          DB_DATABASE: ct-vis-test
-          DB_HOST: localhost
-          DB_USER: postgres
-          DB_PASS: db_pass
+          POSTGRES_DB: ct-vis-test
+          POSTGRES_HOST: localhost
+          POSTGRES_PASSWORD: db_pass
+          POSTGRES_USER: postgres
         run: |
           bin/rails db:create
           bin/rails db:schema:load
@@ -53,10 +53,10 @@ jobs:
 
       - name: Run rails tests
         env:
-          DB_DATABASE: ct-vis-test
-          DB_HOST: localhost
-          DB_USER: postgres
-          DB_PASS: db_pass
+          POSTGRES_DB: ct-vis-test
+          POSTGRES_HOST: localhost
+          POSTGRES_PASSWORD: db_pass
+          POSTGRES_USER: postgres
         # FSR running ./bin/bundle exec rspec does not work; it complains about
         # incompatible library versions.  However, ./bin/rails spec works just
         # fine.  :shrug:.

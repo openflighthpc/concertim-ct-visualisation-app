@@ -4,7 +4,7 @@ RSpec.describe CreateKeyPairJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
   let(:cloud_service_config) { create(:cloud_service_config) }
   let(:user) { create(:user, :with_openstack_details) }
-  let(:path) { "#{cloud_service_config.host_url[0...-5]}:#{cloud_service_config.user_handler_port}/key_pairs" }
+  let(:path) { "#{cloud_service_config.user_handler_base_url}/key_pairs" }
   let(:key_pair) { build(:key_pair, user: user) }
   subject { CreateKeyPairJob::Runner.new(key_pair: key_pair, cloud_service_config: cloud_service_config, user: user) }
 
@@ -17,7 +17,7 @@ RSpec.describe CreateKeyPairJob, type: :job do
     end
 
     it "uses the ip and port given in the config" do
-      expect(subject.connection.url_prefix.to_s).to eq "#{cloud_service_config.host_url[0...-5]}:#{cloud_service_config.user_handler_port}/"
+      expect(subject.connection.url_prefix.to_s).to eq "#{cloud_service_config.user_handler_base_url}/"
     end
 
     it "uses a hard-coded path" do

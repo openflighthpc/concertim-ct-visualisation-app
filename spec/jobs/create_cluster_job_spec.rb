@@ -16,7 +16,7 @@ RSpec.describe CreateClusterJob, type: :job do
     end
 
     it "uses the ip and port given in the config" do
-      expect(subject.connection.url_prefix.to_s).to eq "#{cloud_service_config.host_url[0...-5]}:#{cloud_service_config.cluster_builder_port}/"
+      expect(subject.connection.url_prefix.to_s).to eq "#{cloud_service_config.cluster_builder_base_url}/"
     end
 
     it "uses a hard-coded path" do
@@ -27,7 +27,7 @@ RSpec.describe CreateClusterJob, type: :job do
   describe "#perform" do
     context "when request is successful" do
       before(:each) do
-        stubs.post("#{cloud_service_config.host_url[0...-5]}:#{cloud_service_config.cluster_builder_port}/clusters/") { |env| [ 200, {}, ""] }
+        stubs.post("#{cloud_service_config.cluster_builder_base_url}/clusters/") { |env| [ 200, {}, ""] }
       end
 
       it "returns a successful result" do
@@ -38,7 +38,7 @@ RSpec.describe CreateClusterJob, type: :job do
 
     context "when request is not successful" do
       before(:each) do
-        stubs.post("#{cloud_service_config.host_url[0...-5]}:#{cloud_service_config.cluster_builder_port}/clusters/") { |env| [ 404, {}, "404 Not Found"] }
+        stubs.post("#{cloud_service_config.cluster_builder_base_url}/clusters/") { |env| [ 404, {}, "404 Not Found"] }
       end
 
       it "returns an unsuccessful result" do
@@ -54,7 +54,7 @@ RSpec.describe CreateClusterJob, type: :job do
 
     context "when request times out" do
       before(:each) do
-        stubs.post("#{cloud_service_config.host_url[0...-5]}:#{cloud_service_config.cluster_builder_port}/clusters/") { |env| sleep timeout * 2 ; [ 200, {}, ""] }
+        stubs.post("#{cloud_service_config.cluster_builder_base_url}/clusters/") { |env| sleep timeout * 2 ; [ 200, {}, ""] }
       end
       let(:timeout) { 0.1 }
 

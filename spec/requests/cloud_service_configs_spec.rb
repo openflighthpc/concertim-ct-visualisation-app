@@ -79,7 +79,7 @@ RSpec.describe "Configs", type: :request do
         {cloud_service_config: attributes_for(:cloud_service_config)}
       end
       let(:invalid_attributes) do
-        {cloud_service_config: {host_url: -1}}
+        {cloud_service_config: {cluster_builder_base_url: -1}}
       end
 
       let(:param_key) { model_under_test.model_name.param_key }
@@ -146,13 +146,13 @@ RSpec.describe "Configs", type: :request do
       let(:valid_attributes) do
         {
           cloud_service_config: {
-            host_url: config.host_url + ".updated",
+            cluster_builder_base_url: config.cluster_builder_base_url + ".updated",
             internal_auth_url: config.internal_auth_url + ".updated",
           }
         }
       end
       let(:invalid_attributes) do
-        {cloud_service_config: {host_url: -1}}
+        {cloud_service_config: {cluster_builder_base_url: -1}}
       end
 
       let(:param_key) { object_under_test.model_name.param_key }

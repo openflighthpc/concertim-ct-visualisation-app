@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_09_134153) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_26_172052) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -30,13 +30,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_09_134153) do
   create_table "cloud_service_configs", force: :cascade do |t|
     t.string "admin_user_id", limit: 255, null: false
     t.string "admin_project_id", limit: 255, null: false
-    t.integer "user_handler_port", default: 42356, null: false
-    t.integer "cluster_builder_port", default: 42378, null: false
-    t.string "host_url", limit: 255, null: false
     t.string "internal_auth_url", limit: 255, null: false
     t.string "admin_foreign_password", limit: 255, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "user_handler_base_url", limit: 255, default: "http://user_handler:42356", null: false
+    t.string "cluster_builder_base_url", limit: 255, default: "http://cluster_builder:42378", null: false
   end
 
   create_table "cluster_types", force: :cascade do |t|

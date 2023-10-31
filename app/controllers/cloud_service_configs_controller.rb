@@ -37,7 +37,7 @@ class CloudServiceConfigsController < ApplicationController
 
   private
 
-  PERMITTED_PARAMS = %w[admin_user_id admin_foreign_password admin_project_id host_url internal_auth_url user_handler_port cluster_builder_port]
+  PERMITTED_PARAMS = %w[admin_user_id admin_foreign_password admin_project_id internal_auth_url user_handler_base_url cluster_builder_base_url]
   def config_params
     params.require(:cloud_service_config).permit(*PERMITTED_PARAMS)
   end
