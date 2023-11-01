@@ -320,8 +320,8 @@ class IRVController {
         self.changeSetRacks = change;
         self.setModifiedRacksTimestamp(String(change.timestamp));
         if(action === "deleted") {
-          this.model.modifiedRackDefs([]); // we have only deleted racks in this request so empty the rack defs array
-          return this.synchroniseChanges();
+          self.model.modifiedRackDefs([]); // we have only deleted racks in this request so empty the rack defs array
+          return self.synchroniseChanges();
         }
         --self.resourceCount;
         self.receivedRackDefs({Racks: {Rack: [rack]}});
