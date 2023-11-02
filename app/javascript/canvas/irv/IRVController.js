@@ -226,7 +226,7 @@ class IRVController {
     }});
   }
 
-  // called on successful load of confuration file. Applies application configuration, overwrites view model startup state with
+  // called on successful load of configuration file. Applies application configuration, overwrites view model startup state with
   // any parameters passed in querystring, initialises model and parser and commences load sequence
   // @param  config  configuration object
   configReceived(config) {
@@ -292,6 +292,7 @@ class IRVController {
       this.getRackData();
     }
 
+    // what if change between get rack data and websocket set?
     this.setupWebsocket();
 
     //if @model.showingFullIrv()
@@ -1544,7 +1545,7 @@ class IRVController {
     return this.presets = new PresetManager(this.model, (this.crossAppSettings.selectedMetric != null) && ((this.options != null) && (this.options.applyfilter === "true")));
   }
 
-  // called during the initialisation process this stores relevent values in the model
+  // called during the initialisation process this stores relevant values in the model
   initialiseRackDefs(defs) {
     let rackAsset;
     ++this.resourceCount;

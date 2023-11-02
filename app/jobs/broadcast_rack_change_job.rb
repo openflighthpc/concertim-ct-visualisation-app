@@ -5,17 +5,16 @@ class BroadcastRackChangeJob < ApplicationJob
     if action == "deleted"
       msg = { action: action, rack: {id: rack_id}}
     else
-      rack = HwRack.find(rack_id)
-      msg = rack_content(rack, action)
+      # rack = HwRack.find(rack_id)
+      msg = rack_content(rack_id, action, user_id)
     end
     User.where(root: true).or(User.where(id: user_id)).each do |user|
       InteractiveRackViewChannel.broadcast_to(user, msg)
     end
   end
 
-  def rack_content(rack, action)
-    @rack = Api::V1::RackPresenter.new(rack)
-    renderer = Rabl::Renderer.new('api/v1/irv/racks/show', @rack, view_path: 'app/views', format: 'hash')
-   { action: action, rack: renderer.render }
+  def rack_content(rack_id, action, user_id)
+   user = User.find(user_id)
+   { action: action, rack: Irv::HwRackServices::Show.call(user, rack_id) }
   end
 end

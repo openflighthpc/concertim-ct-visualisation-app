@@ -170,6 +170,6 @@ class HwRack < ApplicationRecord
   end
 
   def broadcast_change(action)
-    BroadcastRackChangeJob.perform_later(self.id, self.user_id, action)
+    BroadcastRackChangeJob.perform_now(self.id, self.user_id, action)
   end
 end
