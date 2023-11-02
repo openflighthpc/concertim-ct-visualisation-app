@@ -1,7 +1,7 @@
 module Irv
   module HwRackServices
     class Index
-      def self.call(user, rack_ids, slow=false)
+      def self.call(user, rack_ids=nil, slow=false)
         new(user, rack_ids, slow).call
       end
 
@@ -26,6 +26,7 @@ module Irv
           # some hoops to have the output wrapped in `{"Racks": {"Rack": <the rabl
           # template>}}`.
           @racks = @user.root? ? HwRack.all : @user.racks
+          @racks = @racks.where(id: rack_ids) if rack_ids&.any?
           @racks = @racks.map { |rack| Api::V1::RackPresenter.new(rack) }
           renderer = Rabl::Renderer.new('api/v1/irv/racks/index', @racks, view_path: 'app/views', format: 'hash')
           {Racks: {Rack: renderer.render}}

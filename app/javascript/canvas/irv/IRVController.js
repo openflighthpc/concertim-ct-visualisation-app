@@ -289,7 +289,7 @@ class IRVController {
       if (this.model.showingFullIrv()) {
         IRVController.NUM_RESOURCES += 1; // metricstemplates
       }
-      this.getRackData();
+     // this.getRackData();
     }
 
     // what if change between get rack data and websocket set?
@@ -314,18 +314,32 @@ class IRVController {
       received(data) {
         console.log("we got one!");
         console.log(data);
-        let change =  {added: [], modified: [], deleted: [], timestamp: new Date() };
         let action = data.action;
-        let rack = data.rack;
-        change[action] = rack.id;
-        self.changeSetRacks = change;
-        self.setModifiedRacksTimestamp(String(change.timestamp));
-        if(action === "deleted") {
-          self.model.modifiedRackDefs([]); // we have only deleted racks in this request so empty the rack defs array
-          return self.synchroniseChanges();
+        if(action === "latest_full_data") {
+          // this logic should probably be in its own function.
+          // likely needs alternative logic for if web socket restarts (not initial load).
+          const defs = self.parser.parseRackDefs({Racks: data["Racks"]});
+          self.initialiseRackDefs(defs);
+          if (self.model.showingFullIrv()) {
+            self.debug('getting metric templates');
+            self.getMetricTemplates();
+          }
+          self.testLoadProgress();
+          if (self.initialised) { self.rackSpace.resetRackSpace(); }
+          self.getSystemDateTime();
+        } else {
+          let change =  {added: [], modified: [], deleted: [], timestamp: new Date() };
+          let rack = data.rack;
+          change[action] = rack.id;
+          self.changeSetRacks = change;
+          self.setModifiedRacksTimestamp(String(change.timestamp));
+          if(action === "deleted") {
+            self.model.modifiedRackDefs([]); // we have only deleted racks in this request so empty the rack defs array
+            return self.synchroniseChanges();
+          }
+          --self.resourceCount;
+          self.receivedRackDefs({Racks: {Rack: [rack]}});
         }
-        --self.resourceCount;
-        self.receivedRackDefs({Racks: {Rack: [rack]}});
       }
     });
   }
