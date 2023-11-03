@@ -320,13 +320,16 @@ class IRVController {
           // likely needs alternative logic for if web socket restarts (not initial load).
           const defs = self.parser.parseRackDefs({Racks: data["Racks"]});
           self.initialiseRackDefs(defs);
+          if (self.initialised) {
+            self.rackSpace.resetRackSpace();
+          } else {
+            self.testLoadProgress();
+            self.getSystemDateTime();
+          }
           if (self.model.showingFullIrv()) {
             self.debug('getting metric templates');
             self.getMetricTemplates();
           }
-          self.testLoadProgress();
-          if (self.initialised) { self.rackSpace.resetRackSpace(); }
-          self.getSystemDateTime();
         } else {
           let change =  {added: [], modified: [], deleted: [], timestamp: new Date() };
           let rack = data.rack;
