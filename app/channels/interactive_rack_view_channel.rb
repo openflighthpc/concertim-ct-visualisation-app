@@ -3,6 +3,7 @@ class InteractiveRackViewChannel < ApplicationCable::Channel
 
   def subscribed
     stream_for current_user
+    ensure_confirmation_sent # without this, after_subscribe may run before confirmation is sent
   end
 
   private
@@ -11,6 +12,6 @@ class InteractiveRackViewChannel < ApplicationCable::Channel
     all_racks = Irv::HwRackServices::Index.call(current_user)
     # all_racks = {Racks: {Rack: []}}
     all_racks[:action] = "latest_full_data"
-    InteractiveRackViewChannel.broadcast_to(current_user, all_racks)
+    transmit(all_racks)
   end
 end
