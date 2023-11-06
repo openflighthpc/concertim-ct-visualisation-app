@@ -34,6 +34,7 @@ import PieCountdown from 'canvas/common/widgets/PieCountdown';
 import RBAC from 'canvas/common/util/RBAC';
 import consumer from "../../channels/consumer";
 import Dialog from 'util/Dialog';
+import * as ActionCable from '@rails/actioncable'
 
 // These are all expected to provide global objects.
 // import 'AjaxPopup'; //legacy
@@ -292,7 +293,6 @@ class IRVController {
      // this.getRackData();
     }
 
-    // what if change between get rack data and websocket set?
     this.setupWebsocket();
 
     //if @model.showingFullIrv()
@@ -302,13 +302,56 @@ class IRVController {
 
   setupWebsocket() {
     const self = this;
+    let statusDot = document.getElementById("websocket-status-dot");
+    let statusText = document.getElementById("websocket-connection-text");
+    statusDot.style.backgroundColor = "orange";
+    statusText.innerText = "connecting";
+
+    ActionCable.Connection.prototype.events.error = function() {
+      statusDot.style.backgroundColor = "red";
+      statusText.innerText = "error connecting to server";
+    };
+
     consumer.subscriptions.create("InteractiveRackViewChannel", {
+
       connected() {
-        console.log("It begins");
+        statusDot.style.backgroundColor = "green";
+        statusText.innerText = "connected";
       },
 
-      disconnected() {
-        // Called when the subscription has been terminated by the server
+      // Either received a disconnect message or the websocket is closed.
+      // Frustratingly action cable doesn't make available the disconnect reason here, for either scenario.
+      disconnected(data) {
+        console.log(data)
+        // e.g. server restart
+        if(data.willAttemptReconnect) {
+          statusDot.style.backgroundColor = "orange";
+          statusText.innerText = "attempting to reconnect";
+          if(!self.initialised) {
+            $('dialogue').innerHTML = "Error connecting to live updates server. Retrying.";
+          }
+        } else {
+          // e.g. logged out in another tab
+          statusDot.style.backgroundColor = "red";
+          if(!self.initialised) {
+            $('dialogue').innerHTML = "Unable to connect to live updates server";
+            statusText.innerText = "Unable to connect";
+          } else {
+            statusText.innerText = "disconnected";
+          }
+        }
+      },
+
+      rejected(data) {
+        // With our backend logic setup, and because the front end library doesn't try to create a websocket connection
+        // until a subscription is specified, action cable doesn't send a rejected message but closes the websocket (handled
+        // by the disconnected function). So I'm not sure when/if this would be reached.
+        console.log(`Connection rejected: ${data}`);
+        statusDot.style.backgroundColor = "red";
+        statusText.innerText = "connection request rejected";
+        if(!self.initialised) {
+          $('dialogue').innerHTML = "Error connecting to live updates server";
+        }
       },
 
       received(data) {

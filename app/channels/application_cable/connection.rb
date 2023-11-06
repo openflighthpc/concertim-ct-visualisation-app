@@ -7,6 +7,7 @@ module ApplicationCable
     end
 
     private
+
     def find_verified_user
       if verified_user = env['warden'].user
         logger.add_tags 'ActionCable', verified_user.email

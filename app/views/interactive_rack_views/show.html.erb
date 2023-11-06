@@ -1,6 +1,5 @@
 <% content_for(:head) do %>
   <%= javascript_include_tag "contrib/knockout.js" %>
-  <%= javascript_import_module_tag "channels/interactive_rack_view_channel" %>
   <%= javascript_import_module_tag "IRV" %>
 <% end %>
 
@@ -14,7 +13,12 @@
 
 <div id="interactive_canvas_view">
   <div id="tooltip" class="rack_view_tooltip"></div>
-
+  <div id="live-update-status">
+    <div class="status-dot" id="websocket-status-dot"></div>
+    <div class="websocket-status-text">
+      Live rack updates: <span id="websocket-connection-text">not connected</span>
+    </div>
+  </div>
   <div class="shadow-box-message-container" id="loader">
     <div class="shadow-box-message" id="dialogue">Initialising</div>
   </div>

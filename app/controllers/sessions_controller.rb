@@ -24,10 +24,11 @@ class SessionsController < Devise::SessionsController
   #   super { |resource| @resource = resource }
   # end
 
-  # DELETE /resource/sign_out
-  # def destroy
-  #   super
-  # end
+  def destroy
+    user_id = current_user.id
+    super
+    DisconnectIrvWebsocketJob.perform_later(user_id)
+  end
 
   # protected
 

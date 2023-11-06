@@ -127,7 +127,7 @@ class PieCountdown {
     
   showHint(coords, hint) {
     if ((coords.x > this.x) && (coords.x < (this.x + this.width)) && (coords.y > this.y) && (coords.y < (this.y + this.height))) {
-      return hint.showMessage("Refresh time remaining",coords.x,coords.y);
+      return hint.showMessage("Metrics refresh time remaining",coords.x,coords.y);
     } else {
       return hint.hide();
     }
