@@ -195,6 +195,7 @@ class IRVController {
     this.evSwitchStat = this.evSwitchStat.bind(this);
     this.evSwitchGraphOrder = this.evSwitchGraphOrder.bind(this);
     this.setupWebsocket = this.setupWebsocket.bind(this);
+    this.cancelDragging = this.cancelDragging.bind(this);
     this.config_file = '/irv/configuration';
     console.log("Constructing IRV :::: with the options :::: ",this.options);
     jQuery(document).ready(this.getConfig);
@@ -354,6 +355,9 @@ class IRVController {
       },
 
       received(data) {
+        if(self.initialised) {
+          self.cancelDragging();
+        }
         console.log("we got one!");
         console.log(data);
         let action = data.action;
@@ -387,6 +391,21 @@ class IRVController {
         }
       }
     });
+  }
+
+  cancelDragging() {
+    console.log("here")
+    this.upCoords = {x: 0, y: 0};
+    clearTimeout(this.clickTmr);
+    Events.removeEventListener(this.rackEl, 'mousemove', this.evDrag);
+
+    if (this.dragging) {
+      this.rackSpace.stopDrag(0, 0);
+      this.clickAssigned = true;
+      this.dragging      = false;
+      this.dragCancelled = true;
+      return this.model.dragging(this.dragging);
+    }
   }
 
   stylesChanges() {
@@ -721,7 +740,6 @@ class IRVController {
     Events.addEventListener(this.rackEl, 'rackSpaceClearDeselected', this.evClearDeselected);
     Events.addEventListener(this.rackParent, 'scroll', this.evScrollRacks);
     Events.addEventListener(this.rackEl, 'redrawRackSpace', this.evRedrawRackSpace);
-    Events.addEventListener(this.rackEl, 'getModifiedRackIds', this.getModifiedRackIds);
     Events.addEventListener(this.rackEl, 'reloadMetrics', this.evResetMetricPoller);
     Events.addEventListener(window, 'keydown', this.evKeyDown);
     Events.addEventListener(window, 'keyup', this.evKeyUp);
@@ -1991,6 +2009,14 @@ class IRVController {
         clearTimeout(this.clickTmr);
         Events.removeEventListener(this.rackEl, 'mousemove', this.evDrag);
 
+        // If a rack update has been received mid drag, the dragging will have been cancelled to prevent
+        // unwanted/unexpected behaviour (e.g. dragging a device that has moved/ been deleted).
+        // In this scenario we don't want lifting the mouse button to trigger selecting a rack/ device.
+        if(this.dragCancelled) {
+          this.dragCancelled = false;
+          return;
+        }
+
         // decide if this is a single or double-click
         if (this.dragging) {
           const coords = Util.resolveMouseCoords(this.rackSpace.coordReferenceEl, ev);
@@ -2474,7 +2500,7 @@ class IRVController {
 
 
   // filter bar drag complete handler, invoked on mouse up during dragging. It'll take you longer to read this comment than it will the
-  // code beolw... see? wasn't that a waste of time?
+  // code below... see? wasn't that a waste of time?
   evFilterStopDrag(ev) {
     this.filterBar.stopDrag();
     return Events.removeEventListener(document.window, 'mousemove', this.evMouseMoveFilter);

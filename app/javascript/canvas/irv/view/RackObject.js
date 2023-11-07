@@ -285,6 +285,7 @@ class RackObject extends RackSpaceObject {
     }
   }
 
+  // can this entire function go?
   sendMessageMovingDevice(config_success) {
     if (config_success === true) {
       let name_to_show, type_to_show;
@@ -301,6 +302,7 @@ class RackObject extends RackSpaceObject {
     }
   }
 
+  // can this entire function go?
   sendMessageMovingBlade(config_success) {
     if (config_success === true) {
       const name_to_show = this.name; 
