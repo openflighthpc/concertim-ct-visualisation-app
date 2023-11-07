@@ -290,10 +290,8 @@ class IRVController {
       if (this.model.showingFullIrv()) {
         IRVController.NUM_RESOURCES += 1; // metricstemplates
       }
-     // this.getRackData();
+      this.setupWebsocket();
     }
-
-    this.setupWebsocket();
 
     //if @model.showingFullIrv()
     this.stylesChanges();
@@ -317,6 +315,7 @@ class IRVController {
       connected() {
         statusDot.style.backgroundColor = "green";
         statusText.innerText = "connected";
+        this.perform("all_racks_sync");
       },
 
       // Either received a disconnect message or the websocket is closed.
@@ -374,13 +373,13 @@ class IRVController {
             self.getMetricTemplates();
           }
         } else {
-          let change =  {added: [], modified: [], deleted: [], timestamp: new Date() };
+          let change =  { added: [], modified: [], deleted: [], timestamp: new Date() };
           let rack = data.rack;
           change[action] = rack.id;
           self.changeSetRacks = change;
           self.setModifiedRacksTimestamp(String(change.timestamp));
           if(action === "deleted") {
-            self.model.modifiedRackDefs([]); // we have only deleted racks in this request so empty the rack defs array
+            self.model.modifiedRackDefs([]);
             return self.synchroniseChanges();
           }
           --self.resourceCount;
