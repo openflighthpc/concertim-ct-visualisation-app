@@ -322,7 +322,6 @@ class IRVController {
       // Either received a disconnect message or the websocket is closed.
       // Frustratingly action cable doesn't make available the disconnect reason here, for either scenario.
       disconnected(data) {
-        console.log(data)
         // e.g. server restart
         if(data.willAttemptReconnect) {
           statusDot.style.backgroundColor = "orange";
@@ -358,8 +357,6 @@ class IRVController {
         if(self.initialised) {
           self.cancelDragging();
         }
-        console.log("we got one!");
-        console.log(data);
         let action = data.action;
         if(action === "latest_full_data") {
           // this logic should probably be in its own function.
@@ -394,7 +391,6 @@ class IRVController {
   }
 
   cancelDragging() {
-    console.log("here")
     this.upCoords = {x: 0, y: 0};
     clearTimeout(this.clickTmr);
     Events.removeEventListener(this.rackEl, 'mousemove', this.evDrag);
@@ -1524,7 +1520,6 @@ class IRVController {
   // @param  rack_defs the rack definitions as returned by the server
   receivedRackDefs(rack_defs) {
     this.debug("received rack defs");
-    console.log(rack_defs)
 
     const defs = this.parser.parseRackDefs(rack_defs);
 
@@ -2041,7 +2036,7 @@ class IRVController {
   evClick(ev) {
     if (!this.clickAssigned) {
       this.clickAssigned = true;
-      const coords         = Util.resolveMouseCoords(this.rackSpace.coordReferenceEl, ev);
+      const coords       = Util.resolveMouseCoords(this.rackSpace.coordReferenceEl, ev);
       this.dragging      = false;
 
       this.rackSpace.click(coords.x, coords.y, this.keysPressed[IRVController.MULTI_SELECT_KEY]);

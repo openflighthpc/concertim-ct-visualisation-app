@@ -108,6 +108,7 @@ class RackSpace {
     this.evRedrawComplete = this.evRedrawComplete.bind(this);
     this.switchView = this.switchView.bind(this);
     this.setMetricLevel = this.setMetricLevel.bind(this);
+    this.synchroniseSelected = this.synchroniseSelected.bind(this);
     this.rackEl = rackEl;
     this.chartEl = chartEl;
     this.model = model;
@@ -650,11 +651,8 @@ class RackSpace {
   synchroniseRacks(rack_defs, change_set) {
     let idx, rack;
     if ((change_set == null) || (rack_defs == null)) { return; }
-    this.model.activeSelection(false);
     const device_lookup = this.model.deviceLookup();
     const racks         = this.model.racks();
-    console.log(this.model.racks());
-
     for (var deleted_id of Array.from(change_set.deleted)) {
       deleted_id = String(deleted_id);
       var iterable = racks.slice(0).reverse();
@@ -668,6 +666,8 @@ class RackSpace {
       delete device_lookup.racks[deleted_id];
     }
 
+    // why is this in an arrow function? Moving it out of the function doesn't seem
+    // to make an obvious difference.
     return (() => {
       const result = [];
       for (var rack_def of Array.from(rack_defs)) {
@@ -675,8 +675,8 @@ class RackSpace {
       // and insert new rack at its position
         if (device_lookup.racks[rack_def.id] != null) {
           for (idx = 0; idx < racks.length; idx++) {
-            // to maintain the selected rack across the resynch set the 'selected'
-            // parameter if present
+            // to maintain the selected rack across the resync set the 'selected'
+            // parameter if present --- what/where/how?
             //
             rack = racks[idx];
             var rack_def_copy          = {};
@@ -710,8 +710,26 @@ class RackSpace {
       
         result.push(device_lookup.racks[rack_def.id] = rack_def);
       }
+
       return result;
     })();
+  }
+
+  // Remove any previously selected items that are no longer present
+  synchroniseSelected() {
+    let selected = this.model.selectedDevices();
+    let deviceLookup = this.model.deviceLookup();
+    let anySelected = false;
+    Object.keys(selected).forEach((type) => {
+      Object.keys(selected[type]).forEach((selectedId) => {
+        if(!deviceLookup[type][selectedId]) {
+          delete selected[type][selectedId];
+        } else {
+          anySelected = true;
+        }
+      });
+    });
+    this.model.activeSelection(anySelected);
   }
 
   resetRackSpace() {
@@ -719,8 +737,8 @@ class RackSpace {
     this.racks = [];
     if (this.model.showingRacks() && !this.model.showingFullIrv()) {
       this.setUpRacks();
+      this.synchroniseSelected();
       this.centreRacks();
-      this.model.activeSelection(true);
       for (var oneRack of Array.from(this.racks)) {
         for (var oneInstance of Array.from(this.model.deviceLookup().racks[oneRack.id].instances)) {
           oneInstance.included = true;
@@ -728,6 +746,7 @@ class RackSpace {
       }
     } else if (this.model.showingFullIrv()) {
       this.setUpRacks();
+      this.synchroniseSelected();
       this.refreshRacks();
     }
 

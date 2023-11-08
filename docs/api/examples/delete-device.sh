@@ -14,7 +14,6 @@ BASE_URL="https://${CONCERTIM_HOST}/api/v1"
 AUTH_TOKEN=${AUTH_TOKEN:-$("${SCRIPT_DIR}"/get-auth-token.sh)}
 
 DEVICE_ID="${1}"
-sleep 10
 
 # Delete the device.
 curl -s -k \
