@@ -1,5 +1,13 @@
 FROM ubuntu:22.04
-LABEL com.alces-flight.concertim.role=visualisation
+
+ARG BUILD_DATE
+ARG BUILD_VERSION
+ARG BUILD_REVISION
+
+LABEL org.opencontainers.image.created=$BUILD_DATE
+LABEL org.opencontainers.image.version=$BUILD_VERSION
+LABEL org.opencontainers.image.revision=$BUILD_REVISION
+LABEL org.opencontainers.image.title="Alces Concertim Visualisation App"
 
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
