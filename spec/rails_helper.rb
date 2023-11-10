@@ -69,6 +69,7 @@ RSpec.configure do |config|
   # config.filter_gems_from_backtrace("gem name")
 
   config.include Concertim::Matchers::Model, type: :model
+  config.include ActionCable::TestHelper
 
   config.before(:each, type: :system) do
     # Rack test by default for performance.
