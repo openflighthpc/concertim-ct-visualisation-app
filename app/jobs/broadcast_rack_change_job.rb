@@ -5,7 +5,6 @@ class BroadcastRackChangeJob < ApplicationJob
     if action == "deleted"
       msg = { action: action, rack: {id: rack_id}}
     else
-      # rack = HwRack.find(rack_id)
       msg = rack_content(rack_id, action, user_id)
     end
     User.where(root: true).or(User.where(id: user_id)).each do |user|

@@ -359,8 +359,6 @@ class IRVController {
         }
         let action = data.action;
         if(action === "latest_full_data") {
-          // this logic should probably be in its own function.
-          // likely needs alternative logic for if web socket restarts (not initial load).
           const defs = self.parser.parseRackDefs({Racks: data["Racks"]});
           self.initialiseRackDefs(defs);
           if (self.initialised) {
@@ -823,10 +821,6 @@ class IRVController {
     this.tooltip = new Tooltip();
 
     if ((this.options != null) && (this.options.applyfilter === "true")) { this.applyCrossAppSettings(); }
-
-    if (this.model.showingFullIrv() || this.model.showingRacks()) {
-      // this.modifiedRackDefinitionTmr = setInterval(this.getModifiedRackIds, IRVController.MODIFIED_RACK_POLL_RATE);
-    }
 
     this._callback_store = {};
   
