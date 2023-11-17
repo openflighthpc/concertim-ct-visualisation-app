@@ -28,14 +28,11 @@ the architecture of `ct-vis-app` has been kept deliberately similar to
 ### Non-standard rails application folders
 
 `ct-vis-app` makes use of non-standard rails components, such as `cells`,
-`facades`, `presenters`, `services` and `utilities`.
+`presenters`, `services` and `utilities`.
 
 The following READMEs are worth reading:
 
 * [cells README](/app/cells/README.md): encapsulate view components.
-* [facades README](/app/facades/README): used to provide a simpler
-  interface to the use of memcache as a data interchange.  This use of memcache
-  should be removed and probably the use of facades too.
 * [models README](/app/models/README.md): README on model expectations.
 * [presenters README](/app/presenters/README): Used to simplify view
   logic.
