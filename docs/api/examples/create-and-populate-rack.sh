@@ -21,13 +21,16 @@ if [ $? -ne 0 ] ; then
 fi
 RACK_ID=$(echo "${OUTPUT}" | jq -r .id)
 RACK_NAME=$(echo "${OUTPUT}" | jq -r .name)
+RACK_HEIGHT=$(echo "${OUTPUT}" | jq -r .u_height)
 echo "Created empty rack ${RACK_NAME}" >&2
 "${SCRIPT_DIR}/show-rack.sh" "${RACK_ID}"
 echo
 
 # Create a badly named and located device in that empty rack.
 LARGE_TEMPLATE_ID=4
-OUTPUT=$("${SCRIPT_DIR}/create-device.sh" comp-101 "${RACK_ID}" f 11 "${LARGE_TEMPLATE_ID}")
+TEMPLATE_HEIGHT=$("${SCRIPT_DIR}/list-templates.sh" | jq -r ".[] | select(.id == ${LARGE_TEMPLATE_ID}) | .height")
+START_U=$(( ${RACK_HEIGHT} - ${TEMPLATE_HEIGHT} + 1 ))
+OUTPUT=$("${SCRIPT_DIR}/create-device.sh" comp-101 "${RACK_ID}" f ${START_U} "${LARGE_TEMPLATE_ID}")
 if [ $? -ne 0 ] ; then
     # Errors will have been sent to stderr.
     exit
@@ -57,7 +60,9 @@ echo "Moved device" >&2
 "${SCRIPT_DIR}/show-device.sh" "${DEVICE_ID}"
 echo
 
-./populate-rack.sh ${RACK_ID} 4 39 comp102
+# Leave some space at the top to allow dragging devices around the IRV.
+END_U=$(( $RACK_HEIGHT - 1 ))
+./populate-rack.sh ${RACK_ID} 4 ${END_U} comp102
 
 "${SCRIPT_DIR}/show-rack.sh" "${RACK_ID}"
 echo
