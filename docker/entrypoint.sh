@@ -35,10 +35,10 @@ fi
 if [ $# -gt 0 ] ; then
   exec "$@"
 else
-  /opt/concertim/opt/ct-visualisation-app/bin/rails server -b 0.0.0.0 -e production &
+  /opt/concertim/opt/ct-visualisation-app/bin/rails server -b 0.0.0.0 &
 
   cd /opt/concertim/opt/ct-visualisation-app/
-  GOOD_JOB_WORKER=true RAILS_ENV=production /opt/concertim/opt/ct-visualisation-app/bin/bundle exec good_job start &
+  GOOD_JOB_WORKER=true /opt/concertim/opt/ct-visualisation-app/bin/bundle exec good_job start &
 
   # Wait for any process to exit.
   wait -n
