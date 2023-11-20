@@ -20,24 +20,27 @@ class GetDraftInvoiceJob < ApplicationJob
       @success = !!success
       @error_message = error_message
       @status_code = status_code
-
-      @invoice = Invoice.new(
-        account: user,
-        balance: invoice_data["balance"],
-        currency: invoice_data["currency"],
-        invoice_date: invoice_data["invoice_date"],
-        invoice_id: invoice_data["invoice_id"],
-        invoice_number: invoice_data["invoice_number"],
-      )
-      invoice_data["items"].each do |item|
-        @invoice.items << Invoice::Item.new(
-          amount: item["amount"],
-          currency: item["currency"],
-          description: item["description"],
-          end_date: item["end_date"],
-          plan_name: item["plan_name"],
-          start_date: item["start_date"],
+      if success? && !invoice_data.nil?
+        @invoice = Invoice.new(
+          account: user,
+          amount: invoice_data["amount"],
+          amount_paid: invoice_data["amount_paid"],
+          balance: invoice_data["balance"],
+          currency: invoice_data["currency"],
+          invoice_date: invoice_data["invoice_date"],
+          invoice_id: invoice_data["invoice_id"],
+          invoice_number: invoice_data["invoice_number"],
         )
+        invoice_data["items"].each do |item|
+          @invoice.items << Invoice::Item.new(
+            amount: item["amount"],
+            currency: item["currency"],
+            description: item["description"],
+            end_date: item["end_date"],
+            plan_name: item["plan_name"],
+            start_date: item["start_date"],
+          )
+        end
       end
     end
 

@@ -48,10 +48,23 @@ RSpec.describe "InvoicesControllers", type: :request do
 
       context "when prerequisites are met" do
         before(:each) { allow(GetDraftInvoiceJob).to receive(:perform_now).and_return(result) }
-        let(:result) { GetDraftInvoiceJob::Result.new(true, invoice_document, nil, 201) }
+        let(:result) { GetDraftInvoiceJob::Result.new(true, invoice_data, authenticated_user, nil, 201) }
         let(:invoice_document) { "<html><head></head><body><h1>This is your invoice</h1></body></html>" }
         let(:authenticated_user) { create(:user, :with_openstack_details) }
         let!(:cloud_service_config) { create(:cloud_service_config) }
+        let(:invoice_data) {
+          {
+            amount: 1,
+            balance: 2,
+            currency: "coffee",
+            draft: true,
+            invoice_date: Date.today.to_formatted_s(:db),
+            invoice_id: 3,
+            invoice_number: nil,
+            items: [],
+            amount_paid: 4,
+          }.with_indifferent_access
+        }
 
         include_examples "successful HTML response"
 
@@ -62,8 +75,14 @@ RSpec.describe "InvoicesControllers", type: :request do
         end
 
         it "displays the invoice" do
+          # XXX Re-write this entire file as a feature spec.  We'd have much
+          # more meaningful specs that way.
           get url_under_test, headers: headers
-          expect(response.body).to eq invoice_document
+          expect(response.body).to include("Invoice (draft)")
+          expect(response.body).to include("#{Date.today.to_formatted_s(:rfc822)}")
+          expect(response.body).to include("1.00 coffee")
+          expect(response.body).to include("2.00 coffee")
+          expect(response.body).to include("4.00 coffee")
         end
       end
     end
