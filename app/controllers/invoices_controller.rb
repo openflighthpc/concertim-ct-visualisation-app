@@ -19,7 +19,7 @@ class InvoicesController < ApplicationController
       return
     end
 
-    result = CreateUserInvoiceJob.perform_now(@cloud_service_config, current_user)
+    result = GetDraftInvoiceJob.perform_now(@cloud_service_config, current_user)
     if result.success?
       @invoice = result.invoice
       render

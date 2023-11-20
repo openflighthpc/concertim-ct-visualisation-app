@@ -1,6 +1,6 @@
 require 'faraday'
 
-class CreateUserInvoiceJob < ApplicationJob
+class GetDraftInvoiceJob < ApplicationJob
   queue_as :default
 
   def perform(cloud_service_config, user, **options)

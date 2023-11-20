@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe CreateUserInvoiceJob, type: :job do
+RSpec.describe GetDraftInvoiceJob, type: :job do
 
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
   let(:cloud_service_config) { create(:cloud_service_config) }

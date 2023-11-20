@@ -16,8 +16,8 @@ RSpec.describe "InvoicesControllers", type: :request do
 
       it "does not fetch an invoice" do
         get url_under_test, headers: headers
-        expect(CreateUserInvoiceJob).not_to have_been_enqueued
-        expect(CreateUserInvoiceJob).not_to have_been_performed
+        expect(GetDraftInvoiceJob).not_to have_been_enqueued
+        expect(GetDraftInvoiceJob).not_to have_been_performed
       end
 
       # it "displays an error flash" do
@@ -47,8 +47,8 @@ RSpec.describe "InvoicesControllers", type: :request do
       end
 
       context "when prerequisites are met" do
-        before(:each) { allow(CreateUserInvoiceJob).to receive(:perform_now).and_return(result) }
-        let(:result) { CreateUserInvoiceJob::Result.new(true, invoice_document, nil, 201) }
+        before(:each) { allow(GetDraftInvoiceJob).to receive(:perform_now).and_return(result) }
+        let(:result) { GetDraftInvoiceJob::Result.new(true, invoice_document, nil, 201) }
         let(:invoice_document) { "<html><head></head><body><h1>This is your invoice</h1></body></html>" }
         let(:authenticated_user) { create(:user, :with_openstack_details) }
         let!(:cloud_service_config) { create(:cloud_service_config) }
@@ -58,7 +58,7 @@ RSpec.describe "InvoicesControllers", type: :request do
         it "fetches an invoice" do
           pending "perform now and have_been_performed do not work together"
           get url_under_test, headers: headers
-          expect(CreateUserInvoiceJob).to have_been_performed
+          expect(GetDraftInvoiceJob).to have_been_performed
         end
 
         it "displays the invoice" do
