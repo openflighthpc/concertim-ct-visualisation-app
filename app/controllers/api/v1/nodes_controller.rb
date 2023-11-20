@@ -3,12 +3,12 @@ class Api::V1::NodesController < Api::V1::ApplicationController
   # create a single node based on a simple chassis template
   def create
     authorize! :create, Device
-    result = TemplatePersister.new(
+    result = NodeServices::Create.call(
       find_template,
       location_params.to_h,
       device_params.to_h,
       current_user,
-    ).call
+    )
     if result.success?
       device = result.chassis.device
       @device = Api::V1::DevicePresenter.new(device)

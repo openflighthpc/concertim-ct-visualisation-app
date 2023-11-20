@@ -1,0 +1,25 @@
+/*
+Styles wrapped inside `#interactive_canvas_view` to isolate the rest of the
+HTML them.  Having these styles redefined and isolated allows refactoring the
+"main" CSS without breaking the IRV.
+ */
+
+#interactive_canvas_view {
+  .hidden {
+    display: none !important;
+  }
+}
+
+
+/* Similarly these are wrapped inside `.irv_side_bar`. */
+.irv_side_bar {
+  a.disabled {
+    color: $grey !important;
+  }
+
+  a.disabled:hover {
+    color: $grey !important;
+    text-decoration: none !important;
+    cursor: text;
+  }
+}

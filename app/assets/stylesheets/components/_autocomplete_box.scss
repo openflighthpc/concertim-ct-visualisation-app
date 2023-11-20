@@ -1,3 +1,9 @@
+/* The auto completing dropdown used for selecting metrics on the interactive
+ * rack view page.
+
+ * Ideally, this would live with the other irv-only styles, but it has a
+ * dependency on foundation.css (`@include grid-column()`), so it doesn't.
+ */
 .cbox {
   clear: both;
 
