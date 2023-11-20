@@ -48,6 +48,11 @@ module CtApp
       config.credentials.key_path = Pathname.new(ENV['CREDENTIALS_KEY_PATH'])
     end
 
+    config.dartsass.builds = {
+      "application.scss" => "application.css",
+      "irv.scss" => "irv.css",
+    }
+
     # config.require_master_key = true
   end
 end

@@ -1,0 +1,28 @@
+/*
+  Styles that are needed for the interactive rack view (IRV) to function.
+
+  Some of the styles here are deliberately duplicated from the main styles.
+  The intention is that it should be possible refactor the "main" styles
+  without changing the styling of the IRV.
+*/
+
+@import "helpers/color_variables";
+
+/* The IRV expects certain layout.  This is collected here.  The main
+ * `application.scss` also provides the expected structure.  This import only
+ * exists to allow me to disable application.scss and still have a "working"
+ * IRV.
+ *
+ * Disabling application.scss is useful to see which if any styles defined in
+ * application.scss are required to have a functioning IRV.  This in turn is
+ * useful to aid in improving the main application styles.
+ */
+/* @import "irv/irv_structure_requirements"; */
+
+@import "irv/canvas";
+@import "irv/zoom_controls";
+@import "irv/dropdown_button";
+
+@import "irv/irv_utils";
+@import "irv/interactive_canvas_view";
+@import "irv/irv_sidebar";
