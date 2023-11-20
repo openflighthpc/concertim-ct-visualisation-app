@@ -1,9 +1,6 @@
+# Presenter Classes
 
-Presenter Classes 
-
-
-**********************************************************************
-1. Introduction
+## Introduction
 
 The primary role of a presenter class is to simplify view logic.
 
@@ -12,7 +9,9 @@ active record models) and provide additional methods.
 
 Suppose you had the following logic in your view to render a device title:
 
-  <%= device.rack ? "Device #{device.name} of rack #{device.rack.name}" : "Device #{device.name}"  %>
+```ruby
+<%= device.rack ? "Device #{device.name} of rack #{device.rack.name}" : "Device #{device.name}"  %>
+```
 
 It's not very neat, and you've encoded that knowledge in a single place, 
 what if you need to use it in other places? What if other types of device 
@@ -25,9 +24,7 @@ need to use that same type of logic? You will end up:
 No - use a presenter!
 
 
-
-**********************************************************************
-2. Implementation
+## Implementation
 
 * Presenters go into the "presenters" folder of an engine.
 
@@ -37,39 +34,38 @@ No - use a presenter!
 * Presenters should inherit from Presenter.
 
 * Presenters are constructed by default with two arguments:
-
-  => The object being presented
-  => The view context (so you have access to helpers etc.)
+  * The object being presented
+  * The view context (so you have access to helpers etc.)
 
 * From a controller, you would construct a presenter like this: 
 
-    @foo_presenter = FooPresenter.new(@foo, view_context)
-
+  ```ruby
+  @foo_presenter = FooPresenter.new(@foo, view_context)
+  ```
   Then in the views:
-
-    @foo_presenter.title
+  ```ruby
+  @foo_presenter.title
+  ```
 
 * A helper method also exists for constructing presenters from the views:
-
-    presenter_for(@foo) do |foo_presenter| 
-      foo_presenter.title
-    end
+  ```ruby
+  presenter_for(@foo) do |foo_presenter| 
+    foo_presenter.title
+  end
+  ```
 
 
 * Within a presenter you have access to two "convenience methods" called "o" and "h".
-
-  => o: is a reference to the presented object
-  => h: is a reference to the view context (or "helpers", for accessing link_to etc.)
-
-  Why use "o" and "h"? Because that's what draper uses and it's short/sweet/standard.
+  * o: is a reference to the presented object
+  * h: is a reference to the view context (or "helpers", for accessing link_to etc.)
+  * Why use "o" and "h"? Because that's what draper uses and it's short/sweet/standard.
 
 
 
-**********************************************************************
-3. Further Reading
+## Further Reading
 
-Implementation heavily inspired by Railscast #287 by Ryan Bates
+* Implementation heavily inspired by Railscast #287 by Ryan Bates
 http://railscasts.com/episodes/287-presenters-from-scratch?view=asciicast
 
-Implementation also heavily inspired by the "draper" gem:
+* Implementation also heavily inspired by the "draper" gem:
 https://github.com/drapergem/draper
