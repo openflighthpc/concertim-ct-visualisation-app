@@ -131,7 +131,7 @@ group :development, :test do
   gem "rspec-rails", "~> 6.0.3"
   # Included in development to have generators use factory bot instead of
   # fixutres.
-  gem "factory_bot_rails", "~> 6.2.0"
+  gem "factory_bot_rails", "~> 6.4.0"
 end
 
 
