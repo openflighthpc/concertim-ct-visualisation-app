@@ -5,7 +5,7 @@ SimpleNavigation::Configuration.run do |navigation|
   view_invoice_link = ->(parent, alignment) {
     parent.item :view_invoice, "View invoice", url_helpers.invoices_path,
       icon: :reports,
-      link_html: {title: "View invoice for current billing period", target: "_blank"},
+      link_html: {title: "View invoice for current billing period"},
       align: alignment
   }
 
