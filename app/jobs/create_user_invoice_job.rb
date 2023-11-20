@@ -16,11 +16,29 @@ class CreateUserInvoiceJob < ApplicationJob
   class Result
     attr_reader :status_code
 
-    def initialize(success, invoice, error_message, status_code=nil)
+    def initialize(success, invoice_data, user, error_message, status_code=nil)
       @success = !!success
-      @invoice = invoice
       @error_message = error_message
       @status_code = status_code
+
+      @invoice = Invoice.new(
+        account: user,
+        balance: invoice_data["balance"],
+        currency: invoice_data["currency"],
+        invoice_date: invoice_data["invoice_date"],
+        invoice_id: invoice_data["invoice_id"],
+        invoice_number: invoice_data["invoice_number"],
+      )
+      invoice_data["items"].each do |item|
+        @invoice.items << Invoice::Item.new(
+          amount: item["amount"],
+          currency: item["currency"],
+          description: item["description"],
+          end_date: item["end_date"],
+          plan_name: item["plan_name"],
+          start_date: item["start_date"],
+        )
+      end
     end
 
     def success?
@@ -50,13 +68,13 @@ class CreateUserInvoiceJob < ApplicationJob
           super
         end
       unless response.success?
-        return Result.new(false, nil, response.reason_phrase || "Unknown error")
+        return Result.new(false, nil, nil, response.reason_phrase || "Unknown error")
       end
-      return Result.new(true, response.body["invoice_html"], "", response.status)
+      return Result.new(true, response.body["draft_invoice"], @user, "", response.status)
 
     rescue Faraday::Error
       status_code = $!.response[:status] rescue 0
-      Result.new(false, nil, $!.message, status_code)
+      Result.new(false, nil, nil, $!.message, status_code)
     end
 
     private
@@ -77,7 +95,7 @@ class CreateUserInvoiceJob < ApplicationJob
 
     def url
       url = URI(@cloud_service_config.user_handler_base_url)
-      url.path = "/get_user_invoice"
+      url.path = "/get_draft_invoice"
       url.to_s
     end
 

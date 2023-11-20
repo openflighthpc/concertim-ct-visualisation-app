@@ -21,7 +21,8 @@ class InvoicesController < ApplicationController
 
     result = CreateUserInvoiceJob.perform_now(@cloud_service_config, current_user)
     if result.success?
-      render status: 200, html: result.invoice.html_safe
+      @invoice = result.invoice
+      render
     else
       flash[:alert] = "Unable to fetch user's invoice: #{result.error_message}"
       redirect_back_or_to root_path
