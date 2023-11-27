@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe HwRack, type: :model do
   subject { rack }
   let!(:template) { create(:template, :rack_template) }
-  let!(:rack) { create(:rack, user: user, template: template) }
+  let(:rack) { create(:rack, user: user, template: template) }
   let!(:user) { create(:user) }
 
   describe 'validations' do
@@ -144,6 +144,63 @@ RSpec.describe HwRack, type: :model do
       it "defaults name to increment of existing racks name" do
         rack = HwRack.new(user: user)
         expect(rack.name).to eq 'MyRack-3'
+      end
+    end
+  end
+
+  describe "broadcast changes" do
+    shared_examples 'rack details' do
+      it 'broadcasts rack details' do
+        expect { subject }.to have_broadcasted_to(user).from_channel(InteractiveRackViewChannel).with { |data|
+          expect(data["action"]).to eq action
+          rack_data = data["rack"]
+          expect(rack_data.present?).to be true
+          expect(rack_data["owner"]["id"]).to eq rack.user.id.to_s
+          expect(rack_data["template"]["name"]).to eq rack.template.name
+          expect(rack_data["id"]).to eq rack.id.to_s
+          expect(rack_data["name"]).to eq rack.name
+          expect(rack_data["cost"]).to eq "$0.00"
+        }
+      end
+    end
+
+    context 'created' do
+      let(:action) { "added" }
+      subject { rack }
+
+      include_examples 'rack details'
+    end
+
+    context 'updated' do
+      let(:action) { "modified" }
+      let!(:rack) { create(:rack, user: user, template: template) }
+      subject do
+        rack.name = "new_name"
+        rack.save!
+      end
+
+      include_examples 'rack details'
+    end
+
+    context 'deleted' do
+      let!(:rack) { create(:rack, user: user, template: template) }
+      subject { rack.destroy! }
+
+      it 'broadcasts deleted rack' do
+        msg = { action: "deleted", rack: {id: rack.id} }
+        expect { subject }.to have_broadcasted_to(user).from_channel(InteractiveRackViewChannel).with(msg)
+      end
+
+      context 'with device' do
+        let(:device_template) { create(:template, :device_template) }
+        let!(:device) { create(:device, chassis: chassis) }
+        let(:chassis) { create(:chassis, location: location, template: device_template) }
+        let(:location) { create(:location, rack: rack) }
+
+        it 'broadcasts rack deletion only' do
+          msg = { action: "deleted", rack: {id: rack.id} }
+          expect { subject }.to have_broadcasted_to(user).from_channel(InteractiveRackViewChannel).once.with(msg)
+        end
       end
     end
   end
