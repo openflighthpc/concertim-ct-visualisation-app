@@ -3,10 +3,10 @@ require 'rails_helper'
 RSpec.describe Device, type: :model do
   let!(:rack_template) { create(:template, :rack_template) }
   subject { device }
-  let!(:device) { create(:device, chassis: chassis) }
+  let(:device) { create(:device, chassis: chassis) }
   let(:chassis) { create(:chassis, location: location, template: device_template) }
   let(:location) { create(:location, rack: rack) }
-  let(:rack) { create(:rack, user: user, template: rack_template) }
+  let!(:rack) { create(:rack, user: user, template: rack_template) }
   let(:user) { create(:user) }
   let(:device_template) { create(:template, :device_template) }
 
@@ -93,6 +93,7 @@ RSpec.describe Device, type: :model do
           expect(rack_data["cost"]).to eq "$0.00"
           if rack.reload.devices.exists?
             expect(rack_data["Chassis"]["Slots"]["Machine"]["id"]).to eq device.id.to_s
+            expect(rack_data["Chassis"]["Slots"]["Machine"]["name"]).to eq device.name
           else
             expect(rack_data["Chassis"]["Slots"]).to eq nil
           end
@@ -101,7 +102,7 @@ RSpec.describe Device, type: :model do
     end
 
     context 'created' do
-      let(:action) { "added" }
+      let(:action) { "modified" }
       subject { device }
 
       include_examples 'rack details'
@@ -109,8 +110,9 @@ RSpec.describe Device, type: :model do
 
     context 'updated' do
       let(:action) { "modified" }
+      let!(:device) { create(:device, chassis: chassis) }
       subject do
-        device.name = "new_name"
+        device.name = "new-name"
         device.save!
       end
 
@@ -119,6 +121,7 @@ RSpec.describe Device, type: :model do
 
     context 'deleted' do
       let(:action) { "modified" }
+      let!(:device) { create(:device, chassis: chassis) }
       subject { device.destroy! }
 
       include_examples 'rack details'
