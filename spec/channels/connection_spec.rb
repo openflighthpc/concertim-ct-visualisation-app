@@ -15,7 +15,7 @@ RSpec.describe ApplicationCable::Connection, type: :channel do
     end
 
     it "successfully connects" do
-      connect "/cable", headers: { "X-USER-ID" => user.id }
+      connect "/cable"
       expect(connect.current_user.id).to eq user.id
     end
 
