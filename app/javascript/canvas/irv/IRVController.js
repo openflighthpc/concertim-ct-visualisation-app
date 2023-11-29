@@ -32,7 +32,7 @@ import ComboBox from 'util/ComboBox';
 import Tooltip from 'canvas/irv/view/Tooltip';
 import PieCountdown from 'canvas/common/widgets/PieCountdown';
 import RBAC from 'canvas/common/util/RBAC';
-import consumer from "../../channels/consumer";
+import consumer from "channels/consumer";
 import Dialog from 'util/Dialog';
 import * as ActionCable from '@rails/actioncable'
 
