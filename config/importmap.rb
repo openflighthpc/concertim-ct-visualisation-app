@@ -69,4 +69,4 @@ pin "canvas/common/widgets/EllipticalMetric", to: "canvas/common/widgets/Ellipti
 pin "canvas/common/widgets/MultiMetric", to: "canvas/common/widgets/MultiMetric.js"
 pin "canvas/common/widgets/ThumbNav", to: "canvas/common/widgets/ThumbNav.js"
 pin "@rails/actioncable", to: "actioncable.esm.js"
-pin_all_from "app/javascript/channels", under: "channels"
+pin "channels/consumer", to: "channels/consumer.js"
