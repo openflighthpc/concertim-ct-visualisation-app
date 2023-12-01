@@ -1,4 +1,7 @@
 class User < ApplicationRecord
+  include Searchable
+  default_search_scope :login, :name, :cloud_user_id, :project_id, :billing_acct_id
+
   encrypts :foreign_password
 
   ####################################

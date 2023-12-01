@@ -1,7 +1,9 @@
 class UsersController < ApplicationController
+  include ControllerConcerns::ResourceTable
   load_and_authorize_resource :user
 
   def index
+    @users = resource_table_collection(@users)
     render
   end
 

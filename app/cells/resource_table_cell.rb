@@ -117,7 +117,6 @@ class ResourceTableCell < Cell::ViewModel
       :items,
       :opts
       # :paginatable,
-      # :searchable
 
     attr_accessor :actions_column
 
@@ -134,7 +133,6 @@ class ResourceTableCell < Cell::ViewModel
       example_item = items.first if items
       if(example_item)
         determine_db_table(example_item)
-        establish_if_searchable(example_item)
       end
     end
     
@@ -147,8 +145,7 @@ class ResourceTableCell < Cell::ViewModel
     end
 
     def searchable?
-      false
-      # @opts[:searchable] || @paginatable == true && !(@opts[:searchable] == false)
+      !!opts[:searchable]
     end
 
     def paginatable?
@@ -172,11 +169,6 @@ class ResourceTableCell < Cell::ViewModel
       if item_example.class.respond_to? :table_name
         @default_db_table = item_example.class.table_name
       end
-    end
-
-    def establish_if_searchable(item_example)
-      @searchable = false
-      # @searchable = item_example.class.respond_to? :search_for
     end
 
     def establish_if_paginatable

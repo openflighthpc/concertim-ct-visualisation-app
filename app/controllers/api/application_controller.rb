@@ -1,6 +1,6 @@
 class Api::ApplicationController < ActionController::API
-  include Authentication
-  include Authorization
+  include ControllerConcerns::Authentication
+  include ControllerConcerns::Authorization
   include ActionController::MimeResponds
   # respond_to :json
 
