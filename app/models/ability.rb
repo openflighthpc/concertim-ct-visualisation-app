@@ -41,7 +41,12 @@ class Ability
     can :manage, RackviewPreset, user: user
 
     can :read, ClusterType
-    can :create, Cluster
+
+    if user.credits > Rails.application.config.cluster_credits_threshold
+      can :create, Cluster
+    else
+      cannot :create, Cluster
+    end
 
     can :read, KeyPair, user: user
     can :create, KeyPair, user: user

@@ -53,6 +53,8 @@ module CtApp
       "irv.scss" => "irv.css",
     }
 
+    config.cluster_credits_threshold = ENV['CLUSTER_CREDITS_THRESHOLD'] || 0
+
     # config.require_master_key = true
   end
 end
