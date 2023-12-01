@@ -53,7 +53,8 @@ module CtApp
       "irv.scss" => "irv.css",
     }
 
-    config.cluster_credits_threshold = ENV['CLUSTER_CREDITS_THRESHOLD'] || 0
+    # minimum credits user must have to create a cluster
+    config.cluster_credit_requirement = ENV['CLUSTER_CREDIT_REQUIREMENT'] || 25
 
     # config.require_master_key = true
   end
