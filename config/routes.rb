@@ -28,6 +28,12 @@ Rails.application.routes.draw do
   end
 
   resources :users, only: [:index] do
+    member do
+      # A placeholder action for developing the resource table used on the
+      # users/index page.  This should be removed once we have real actions to
+      # go in the actions dropdown.
+      get :placeholder
+    end
     collection do
       resources :key_pairs, only: [:index, :new, :create] do
         collection do

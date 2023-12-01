@@ -20,4 +20,16 @@
   <% t.attribute_column :cloud_user_id, title: "Cloud User ID" %>
   <% t.attribute_column :project_id, title: "Project ID" %>
   <% t.attribute_column :billing_acct_id, title: "Billing Account ID" %>
+
+  <% t.actions_column do |actions, user| %>
+    <%#
+        These actions don't do anthing, but they do demonstrate how to add
+        links to the actions dropdown, both with and without authentication.
+
+        These should obviously be removed/replaced when we have a real links to add here.
+      %>
+    <% actions.add title: 'Fake Edit', path: placeholder_user_path(user) %>
+    <% actions.add_with_auth can: :destroy, on: user, title: 'Fake Delete', path: placeholder_user_path(user) %>
+  <% end %>
+
 <% end %>
