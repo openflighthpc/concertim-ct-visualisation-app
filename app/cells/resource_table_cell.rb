@@ -16,6 +16,8 @@ class ResourceTableCell < Cell::ViewModel
 
   # helper PaginationHelper
 
+  delegate :sort_column, :sort_direction, to: :controller
+
   def show(items, opts = {}, block)
     Builder.new(self, items, current_user, opts).tap do |builder|
       block.call(builder)
@@ -31,6 +33,9 @@ class ResourceTableCell < Cell::ViewModel
 
   private
 
+  def controller
+    context[:controller]
+  end
 
   #
   # Builder
@@ -194,7 +199,6 @@ class ResourceTableCell < Cell::ViewModel
       @html_class = opts.delete(:class)
       @opts = opts
       @block = block if block_given?
-      @overridden_db_table   = opts[:db_table]       # For sorting, if db table is different to the main table 
       @overridden_db_column  = opts[:db_column]      # For sorting, must be specified for sortable non-attribute columns
   end
 
@@ -223,49 +227,27 @@ class ResourceTableCell < Cell::ViewModel
       item.to_s
     end
 
-
-    #
-    # sortable?
-    #
-    # Convinience method - accessor for the :sortable option.
-    #
     def sortable?
       @opts[:sortable] == true
     end   
 
-
-    #
-    # sortable_header
-    #
     # If this table is sortable, this yields the data required to render the sortable header that the
-    # user clicks on.
+    # user clicks on.  The `yield`ed values are:
     #
-    def sortable_header(action_table, sort_param, direction_param)
-      sort_expression =   (sort_table(action_table) ? "#{sort_table(action_table)}.#{sort_column}" : sort_column)
-      is_current      =   sort_expression == sort_param
-      sort_order      = (is_current && direction_param == "asc") ? "desc" : "asc" 
+    # * the name of the sort column for sorting this column.
+    # * the direction for sorting this column.  This will be "asc" unless this
+    # column is already sorted in ascending order.
+    # * whether this column is currently sorted.
+    def sortable_header(current_sort_column, current_sort_direction)
+      sort_expression = sort_column.to_s
+      is_current      = sort_expression == current_sort_column
+      sort_order      = (is_current && current_sort_direction == "asc") ? "desc" : "asc" 
 
       yield sort_expression, sort_order, is_current 
     end
 
-
-    #
-    # sort_table
-    #
-    # If sorted, the table to sort on. Will either be the action table's default table
-    # or will be the overridden one passed in for this column using the :db_table option.
-    #
-    def sort_table(action_table)
-      @overridden_db_table  || action_table.default_db_table
-    end
-
-
-    #
-    # sort_column
-    #
-    # Will either be the mehtod name (in the case of attribute columns) or will be
+    # Will either be the method name (in the case of attribute columns) or will be
     # the overridden one passed into the column using the :db_column option.
-    #
     def sort_column
       @overridden_db_column || @method
     end

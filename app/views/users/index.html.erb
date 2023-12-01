@@ -9,17 +9,17 @@
     <% end %>
   <% end %>
 
-  <% t.attribute_column :id %>
-  <% t.attribute_column :login, title: "Username" do |user, login| %>
+  <% t.attribute_column :id, sortable: true %>
+  <% t.attribute_column :login, title: "Username", sortable: true do |user, login| %>
     <% user != current_user ? login : "#{login} (you)" %>
   <% end %>
-  <% t.attribute_column :name %>
-  <% t.custom_column "Authorization Level" do |user| %>
+  <% t.attribute_column :name, sortable: true %>
+  <% t.custom_column "Authorization Level", sortable: true, db_column: :root do |user| %>
     <% presenter_for(user).authorization %>
   <% end %>
-  <% t.attribute_column :cloud_user_id, title: "Cloud User ID" %>
-  <% t.attribute_column :project_id, title: "Project ID" %>
-  <% t.attribute_column :billing_acct_id, title: "Billing Account ID" %>
+  <% t.attribute_column :cloud_user_id, title: "Cloud User ID", sortable: true %>
+  <% t.attribute_column :project_id, title: "Project ID", sortable: true %>
+  <% t.attribute_column :billing_acct_id, title: "Billing Account ID", sortable: true %>
 
   <% t.actions_column do |actions, user| %>
     <%#

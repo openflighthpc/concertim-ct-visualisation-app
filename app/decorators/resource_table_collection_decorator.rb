@@ -24,22 +24,20 @@ class ResourceTableCollectionDecorator < Decorator
       @subject = (@subject || [])
       # @subject = (@subject || []).paginate(page: 1)        
     else
-      # decorate_with_sorting!
+      decorate_with_sorting!
       # decorate_with_pagination!
       decorate_with_search!
     end
   end
 
-
-  # # decorate_with_sorting! sorts the collection if it supports it.
-  # def decorate_with_sorting!
-  #   if @subject.respond_to? :reorder
-  #     sort_column = @controller.sort_column(opts[:default_sort_column])
-  #     sort_direction = @controller.sort_direction
-  #     @subject = @subject.reorder(@controller.sort_expression(sort_column, sort_direction, opts[:human_sorting]))
-  #   end
-  # end
-
+  # decorate_with_sorting! sorts the collection if it supports it.
+  def decorate_with_sorting!
+    if @subject.respond_to? :reorder
+      sort_column = @controller.sort_column
+      sort_direction = @controller.sort_direction
+      @subject = @subject.reorder(@controller.sort_expression(sort_column, sort_direction, opts[:human_sorting]))
+    end
+  end
 
   # # decorate_with_pagination! decorates with pagination if the subject can be paginated.
   # def decorate_with_pagination!

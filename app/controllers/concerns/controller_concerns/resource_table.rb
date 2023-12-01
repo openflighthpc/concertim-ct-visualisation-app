@@ -18,7 +18,7 @@ module ControllerConcerns
     included do
       include ControllerConcerns::Search
       # include ControllerConcerns::Pagination
-      # include ControllerConcerns::Sorting
+      include ControllerConcerns::Sorting
     end
 
     # A convinience method allowing you to pass in a collection (typically an
