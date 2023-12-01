@@ -1,0 +1,53 @@
+<table class="resource_table" id="<%= @table.id %>">
+  <thead>
+    <tr class="header">
+      <% @table.columns.each_with_index do |column, idx| %>
+        <% if column.select_all_column? %>
+          <th class="<%= column.html_class(idx) %>">
+            <span class="select_all">
+              <a title="<%= column.tooltip %>"><%= column.title %></a>
+            </span>
+          </th>
+        <% else %>
+          <th class="<%= column.html_class(idx) %>">
+            <%= column.title %>
+          </th>
+        <% end %>
+      <% end %>
+      <% if @table.has_actions? %>
+        <th class="actions_column">
+          Actions
+        </th>
+      <% end %>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @table.items.each_with_index do |item, idx| %>
+      <%= content_tag(:tr, class: idx.odd? ? :odd : :even, data: {object_id: (item.id if item.respond_to?(:id))}) do %>
+        <% @table.columns.each_with_index do |column, column_idx| %>
+          <%= content_tag(:td, class: column.html_class(column_idx)) do %>
+            <%= column.render_content_for(item).tap do |content| %>
+              <% if content.blank? %>
+                &mdash;
+              <% else %>
+                <%= content %>
+              <% end %>
+            <% end %>
+          <% end %>
+        <% end %>
+        <% if @table.has_actions? %>
+          <td class="actions_column">
+            <% @table.actions_column.render_content_for(item).tap do |content| %>
+              <% if content.blank? %>
+                &mdash;
+              <% else %>
+                <%= content %>
+              <% end %>
+            <% end %>
+          </td>
+        <% end %>
+      <% end %>
+    <% end %>
+  </tbody>
+</table>

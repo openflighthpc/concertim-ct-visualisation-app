@@ -100,7 +100,7 @@ class ActionsCell < Cell::ViewModel
 
       html = (block_given? ? block.call : options[:html])
       opts = options.reject {|k, v| [:title, :html, :path, :can, :cannot, :on].include?(k)}
-      
+
       if html
         add_custom(html, opts)
       else

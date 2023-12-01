@@ -1,0 +1,23 @@
+<% set_title "Users" -%>
+
+<p>Edit your own details using the <%= link_to "Account details", edit_user_registration_path %> page.</p>
+
+<%= render_resource_table_for @users do |t| %>
+  <% t.on_empty_collection do %>
+    <% capture do %>
+      No user have been configured
+    <% end %>
+  <% end %>
+
+  <% t.attribute_column :id %>
+  <% t.attribute_column :login, title: "Username" do |user, login| %>
+    <% user != current_user ? login : "#{login} (you)" %>
+  <% end %>
+  <% t.attribute_column :name %>
+  <% t.custom_column "Authorization Level" do |user| %>
+    <% presenter_for(user).authorization %>
+  <% end %>
+  <% t.attribute_column :cloud_user_id, title: "Cloud User ID" %>
+  <% t.attribute_column :project_id, title: "Project ID" %>
+  <% t.attribute_column :billing_acct_id, title: "Billing Account ID" %>
+<% end %>

@@ -182,16 +182,16 @@ ul.monitoringProblems li {
 //  background-position: center left;
 }
 
-table.show {
+table.resource_table {
   border-bottom: 1px solid #999;
 }
 
-table.show tr td:last-child { 
+table.resource_table tr td:last-child { 
   border-bottom: solid 1px #999;
 }
 
 
-table.show tr.substatus { 
+table.resource_table tr.substatus { 
   border-top: 0;
 }
 
