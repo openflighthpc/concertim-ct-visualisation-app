@@ -18,15 +18,18 @@ USER_ID=${1}
 USER_COST=${2}
 BILLING_PERIOD_START=${3}
 BILLING_PERIOD_END=${4}
+CREDITS=${5}
 
 BODY=$(jq --null-input \
     --arg cost "${USER_COST}" \
     --arg billing_period_start "${BILLING_PERIOD_START}" \
     --arg billing_period_end "${BILLING_PERIOD_END}" \
+    --arg credits "${CREDITS}" \
     '
       {
         "user": {
-          "cost": $cost, "billing_period_start": $billing_period_start, "billing_period_end": $billing_period_end
+          "cost": $cost, "billing_period_start": $billing_period_start, "billing_period_end": $billing_period_end,
+          "credits": $credits
         }
       }
     '

@@ -7,6 +7,8 @@ SimpleNavigation::Configuration.run do |navigation|
     if user_signed_in?
       if !current_user.root?
         user = user_presenter(current_user)
+        primary.item :user_credits, "Available credits: #{user.formatted_credits}", nil,
+                     align: :right
         primary.item :user_cost, "Total cost so far this billing period: #{user.currency_cost}", nil,
                      :link_html => {:title => "Current billing period: #{user.billing_period}"},
                      align: :right

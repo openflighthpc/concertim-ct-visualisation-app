@@ -51,6 +51,11 @@
       <%= f.label :cost, "Costs this billing period", title: tooltip %>
       <%= f.text_field :cost, autocomplete: :off, disabled: true, value: user.cost  %>
     </div>
+
+    <div class="formItem">
+      <%= f.label :credits, "Available credits" %>
+      <%= f.text_field :credits, autocomplete: :off, disabled: true, value: user.formatted_credits  %>
+    </div>
   <% end %>
 
   <div class="formItem">
