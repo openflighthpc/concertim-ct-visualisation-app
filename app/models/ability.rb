@@ -42,7 +42,7 @@ class Ability
 
     can :read, ClusterType
 
-    if user.credits >= Rails.application.config.cluster_credit_requirement
+    if user.credits.positive? && user.credits >= Rails.application.config.cluster_credit_requirement
       can :create, Cluster
     else
       cannot :create, Cluster
