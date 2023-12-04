@@ -5,13 +5,14 @@ class Invoice
   attribute :account
   attribute :amount, :decimal, default: 0
   attribute :balance, :decimal, default: 0
+  attribute :credit_adj, :decimal, default: 0
   attribute :currency, :string
   attribute :draft, :boolean, default: true
   attribute :invoice_date, :date
   attribute :invoice_id, :string
   attribute :invoice_number, :string
   attribute :items, default: ->() { [] }
-  attribute :amount_paid, :decimal, default: 0
+  attribute :refund_adj, :decimal, default: 0
 
   def draft?
     !!draft
@@ -34,5 +35,11 @@ class Invoice
 
   def formatted_balance
     "#{"%0.2f" % balance} #{currency}"
+  end
+
+  private
+
+  def amount_paid
+    amount + credit_adj - refund_adj - balance
   end
 end

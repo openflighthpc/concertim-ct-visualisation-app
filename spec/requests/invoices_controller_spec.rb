@@ -54,15 +54,16 @@ RSpec.describe "InvoicesControllers", type: :request do
         let!(:cloud_service_config) { create(:cloud_service_config) }
         let(:invoice_data) {
           {
-            amount: 1,
-            balance: 2,
+            amount: 4,
+            balance: 3,
+            credit_adj: 0,
             currency: "coffee",
             draft: true,
             invoice_date: Date.today.to_formatted_s(:db),
             invoice_id: 3,
             invoice_number: nil,
             items: [],
-            amount_paid: 4,
+            refund_adj: 0,
           }.with_indifferent_access
         }
 
@@ -80,9 +81,9 @@ RSpec.describe "InvoicesControllers", type: :request do
           get url_under_test, headers: headers
           expect(response.body).to include("Invoice (draft)")
           expect(response.body).to include("#{Date.today.to_formatted_s(:rfc822)}")
-          expect(response.body).to include("1.00 coffee")
-          expect(response.body).to include("2.00 coffee")
-          expect(response.body).to include("4.00 coffee")
+          expect(response.body).to include("1.00 coffee")  # Paid
+          expect(response.body).to include("3.00 coffee")  # Balance
+          expect(response.body).to include("4.00 coffee")  # Amount
         end
       end
     end

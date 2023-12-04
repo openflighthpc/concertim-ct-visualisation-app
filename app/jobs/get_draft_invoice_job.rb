@@ -24,12 +24,13 @@ class GetDraftInvoiceJob < ApplicationJob
         @invoice = Invoice.new(
           account: user,
           amount: invoice_data["amount"],
-          amount_paid: invoice_data["amount_paid"],
           balance: invoice_data["balance"],
+          credit_adj: invoice_data["credit_adj"],
           currency: invoice_data["currency"],
           invoice_date: invoice_data["invoice_date"],
           invoice_id: invoice_data["invoice_id"],
           invoice_number: invoice_data["invoice_number"],
+          refund_adj: invoice_data["refund_adj"],
         )
         invoice_data["items"].each do |item|
           @invoice.items << Invoice::Item.new(

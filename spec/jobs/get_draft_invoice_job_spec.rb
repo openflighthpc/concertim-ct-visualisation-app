@@ -53,13 +53,14 @@ RSpec.describe GetDraftInvoiceJob, type: :job do
         {
           amount: 1,
           balance: 2,
+          credit_adj: 0,
           currency: "coffee",
           draft: true,
           invoice_date: Date.today.to_formatted_s(:db),
           invoice_id: 3,
           invoice_number: nil,
           items: [],
-          amount_paid: 4,
+          refund_adj: 0,
         }.with_indifferent_access
       }
 
@@ -74,13 +75,14 @@ RSpec.describe GetDraftInvoiceJob, type: :job do
           account: user,
           amount: 1,
           balance: 2,
+          credit_adj: 0,
           currency: "coffee",
           draft: true,
           invoice_date: Date.today,
           invoice_id: 3,
           invoice_number: nil,
           items: [],
-          amount_paid: 4,
+          refund_adj: 0,
         )
         expect(result.invoice.attributes).to eq expected_invoice.attributes
       end
