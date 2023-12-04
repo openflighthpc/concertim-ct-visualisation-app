@@ -84,16 +84,39 @@ class GetDraftInvoiceJob < ApplicationJob
     private
 
     def fake_response
-      renderer = ::ApplicationController.renderer.new
-      invoice = renderer.render(
-        template: "invoices/fake",
-        layout: false,
-        assigns: {user: UserPresenter.new(@user)},
-      )
+      invoice = {
+        amount: 5,
+        balance: 3,
+        credit_adj: 0,
+        currency: "coffee",
+        draft: true,
+        invoice_date: Date.today.to_formatted_s(:db),
+        invoice_id: 3,
+        invoice_number: nil,
+        items: [
+          {
+            amount: 4,
+            currency: "coffee",
+            description: "espresso",
+            end_date: 1.week.ago.to_formatted_s(:db),
+            plan_name: "Coffee tasting course",
+            start_date: Date.today.to_formatted_s(:db),
+          }.stringify_keys,
+          {
+            amount: 1,
+            currency: "coffee",
+            description: "americano",
+            end_date: 1.week.ago.to_formatted_s(:db),
+            plan_name: "Emergency coffee delivery",
+            start_date: Date.today.to_formatted_s(:db),
+          }.stringify_keys,
+        ],
+        refund_adj: 0,
+      }.stringify_keys
       Object.new.tap do |o|
         o.define_singleton_method(:success?) { true }
         o.define_singleton_method(:status) { 201 }
-        o.define_singleton_method(:body) { {"invoice_html" => invoice} }
+        o.define_singleton_method(:body) { {"draft_invoice" => invoice} }
       end
     end
 
