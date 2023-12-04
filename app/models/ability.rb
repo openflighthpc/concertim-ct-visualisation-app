@@ -55,7 +55,7 @@ class Ability
   end
 
   # Despite specifying what a user can/can't do, you will eventually come
-  # accross rules where you just want to stop everyone from doing it. Any rules
+  # across rules where you just want to stop everyone from doing it. Any rules
   # specified here will be applied to all users.
   def important_prohibitions(user)
   end
