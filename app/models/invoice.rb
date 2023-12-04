@@ -37,6 +37,14 @@ class Invoice
     "#{"%0.2f" % balance} #{currency}"
   end
 
+  def formatted_credit_adjustment
+    "#{"%0.2f" % credit_adj} #{currency}"
+  end
+
+  def formatted_refund_adjustment
+    "#{"%0.2f" % refund_adj} #{currency}"
+  end
+
   private
 
   def amount_paid

@@ -59,6 +59,18 @@
       <td colspan="2">Paid:</td>
       <td><%= @invoice.formatted_amount_paid %></td>
     </tr>
+    <% if @invoice.credit_adj != 0 %>
+      <tr class="invoice-items-total">
+        <td colspan="2">Credit adjustment:</td>
+        <td><%= @invoice.formatted_credit_adjustment %></td>
+      </tr>
+    <% end %>
+    <% if @invoice.refund_adj != 0 %>
+      <tr class="invoice-items-total">
+        <td colspan="2">Refund adjustment:</td>
+        <td><%= @invoice.formatted_refund_adjustment %></td>
+      </tr>
+    <% end %>
     <tr class="invoice-items-total">
       <td colspan="2">Balance:</td>
       <td><%= @invoice.formatted_balance %></td>
