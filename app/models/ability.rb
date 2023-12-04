@@ -41,12 +41,7 @@ class Ability
     can :manage, RackviewPreset, user: user
 
     can :read, ClusterType
-
-    if user.credits.positive? && user.credits >= Rails.application.config.cluster_credit_requirement
-      can :create, Cluster
-    else
-      cannot :create, Cluster
-    end
+    can :create, Cluster if user.enough_credits_to_create_cluster?
 
     can :read, KeyPair, user: user
     can :create, KeyPair, user: user

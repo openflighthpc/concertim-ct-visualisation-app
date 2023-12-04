@@ -8,4 +8,10 @@
   .card-divider {
     border-bottom: darkgray 1px solid;
   }
+
+  .disabled-cluster-link {
+    color: #63666A;
+    cursor: not-allowed;
+    font-weight: bold;
+  }
 }

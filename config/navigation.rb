@@ -44,7 +44,7 @@ SimpleNavigation::Configuration.run do |navigation|
           highlights_on: %r(/users)
       end
 
-      if current_user.can?(:create, Cluster)
+      if current_user.can?(:read, ClusterType)
         primary.item :cluster_types, 'Launch cluster', url_helpers.cluster_types_path,
           icon: :racks,
           highlights_on: %r(/cloud-env/(cluster-types|clusters))
