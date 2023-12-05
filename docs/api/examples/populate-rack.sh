@@ -31,6 +31,7 @@ RACK_NAME=$(echo "${OUTPUT}" | jq -r .name)
 SMALL_TEMPLATE_ID=2
 for i in $(seq -w 0 $(( 10#${END_U} - 10#${FIRST_U} )) ) ; do
   # i=$(( 10#${i} - 1 ))
+  sleep 0.5
   devnum=$(( 10#${i} + ${FIRST_DEVICE_NUMBER} ))
   name="${NAME_PREFIX}${devnum}"
   start_u=$(( 10#${i} + ${FIRST_U} ))
@@ -40,4 +41,12 @@ for i in $(seq -w 0 $(( 10#${END_U} - 10#${FIRST_U} )) ) ; do
       exit
   fi
   echo "Added ${name} to rack ${RACK_NAME}" >&2
+done
+
+# Update the status for each of the devices in the rack.  Starting from bottom
+# to top.
+device_ids=$("${SCRIPT_DIR}/show-rack.sh" "${RACK_ID}" | jq '.devices[] | .id ' | tac)
+for device_id in ${device_ids} ; do
+  sleep 0.5
+  "${SCRIPT_DIR}/update-device-status.sh" "${device_id}" ACTIVE Active
 done
