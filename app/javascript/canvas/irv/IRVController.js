@@ -21,6 +21,7 @@ import AssetManager from 'canvas/irv/util/AssetManager';
 import Hint from 'canvas/irv/view/Hint';
 import ThumbHint from 'canvas/irv/view/ThumbHint';
 import RackSpace from 'canvas/irv/view/RackSpace';
+import LiveUpdates from 'canvas/irv/view/LiveUpdates';
 import Rack from 'canvas/irv/view/Rack';
 import ThumbNav from 'canvas/common/widgets/ThumbNav';
 import FilterBar from 'canvas/common/widgets/FilterBar';
@@ -32,9 +33,7 @@ import ComboBox from 'util/ComboBox';
 import Tooltip from 'canvas/irv/view/Tooltip';
 import PieCountdown from 'canvas/common/widgets/PieCountdown';
 import RBAC from 'canvas/common/util/RBAC';
-import consumer from "channels/consumer";
 import Dialog from 'util/Dialog';
-import * as ActionCable from '@rails/actioncable'
 
 // These are all expected to provide global objects.
 // import 'AjaxPopup'; //legacy
@@ -281,7 +280,8 @@ class IRVController {
       if (this.model.showingFullIrv()) {
         IRVController.NUM_RESOURCES += 1; // metricstemplates
       }
-      this.setupWebsocket();
+      this.liveUpdates = new LiveUpdates(this);
+      this.liveUpdates.setupWebsocket();
     }
 
     //if @model.showingFullIrv()
@@ -289,91 +289,38 @@ class IRVController {
     return this.showHideScrollBars(0);
   }
 
-  setupWebsocket() {
-    const self = this;
-    let statusDot = document.getElementById("websocket-status-dot");
-    let statusText = document.getElementById("websocket-connection-text");
-    statusDot.style.backgroundColor = "orange";
-    statusText.innerText = "connecting";
+  fullRackDataReceived(data) {
+    if(this.initialised) {
+       this.cancelDragging();
+    }
+    const defs = this.parser.parseRackDefs({Racks: data["Racks"]});
+    this.initialiseRackDefs(defs);
+    if (this.initialised) {
+      this.rackSpace.resetRackSpace();
+    } else {
+      this.testLoadProgress();
+    }
+    if (this.model.showingFullIrv()) {
+      this.debug('getting metric templates');
+      this.getMetricTemplates();
+    }
+  }
 
-    ActionCable.Connection.prototype.events.error = function() {
-      statusDot.style.backgroundColor = "red";
-      statusText.innerText = "error connecting to server";
-    };
-
-    consumer.subscriptions.create("InteractiveRackViewChannel", {
-
-      connected() {
-        statusDot.style.backgroundColor = "green";
-        statusText.innerText = "connected";
-        this.perform("all_racks_sync");
-      },
-
-      // Either received a disconnect message or the websocket is closed.
-      // Frustratingly action cable doesn't make available the disconnect reason here, for either scenario.
-      disconnected(data) {
-        // e.g. server restart
-        if(data.willAttemptReconnect) {
-          statusDot.style.backgroundColor = "orange";
-          statusText.innerText = "attempting to reconnect";
-          if(!self.initialised) {
-            $('dialogue').innerHTML = "Error connecting to live updates server. Retrying.";
-          }
-        } else {
-          // e.g. logged out in another tab
-          statusDot.style.backgroundColor = "red";
-          if(!self.initialised) {
-            $('dialogue').innerHTML = "Unable to connect to live updates server";
-            statusText.innerText = "Unable to connect";
-          } else {
-            statusText.innerText = "disconnected";
-          }
-        }
-      },
-
-      rejected(data) {
-        // With our backend logic setup, and because the front end library doesn't try to create a websocket connection
-        // until a subscription is specified, action cable doesn't send a rejected message but closes the websocket (handled
-        // by the disconnected function). So I'm not sure when/if this would be reached.
-        console.log(`Connection rejected: ${data}`);
-        statusDot.style.backgroundColor = "red";
-        statusText.innerText = "connection request rejected";
-        if(!self.initialised) {
-          $('dialogue').innerHTML = "Error connecting to live updates server";
-        }
-      },
-
-      received(data) {
-        if(self.initialised) {
-          self.cancelDragging();
-        }
-        let action = data.action;
-        if(action === "latest_full_data") {
-          const defs = self.parser.parseRackDefs({Racks: data["Racks"]});
-          self.initialiseRackDefs(defs);
-          if (self.initialised) {
-            self.rackSpace.resetRackSpace();
-          } else {
-            self.testLoadProgress();
-          }
-          if (self.model.showingFullIrv()) {
-            self.debug('getting metric templates');
-            self.getMetricTemplates();
-          }
-        } else {
-          let change =  { added: [], modified: [], deleted: [] };
-          let rack = data.rack;
-          change[action] = rack.id;
-          self.changeSetRacks = change;
-          if(action === "deleted") {
-            self.model.modifiedRackDefs([]);
-            return self.synchroniseChanges();
-          }
-          --self.resourceCount;
-          self.receivedRackDefs({Racks: {Rack: [rack]}});
-        }
-      }
-    });
+  modifiedRackDataReceived(data) {
+    if(this.initialised) {
+      this.cancelDragging();
+    }
+    let action = data.action;
+    let change =  { added: [], modified: [], deleted: [] };
+    let rack = data.rack;
+    change[action] = rack.id;
+    this.changeSetRacks = change;
+    if(action === "deleted") {
+      this.model.modifiedRackDefs([]);
+      return this.synchroniseChanges();
+    }
+    --this.resourceCount;
+    this.receivedRackDefs({Racks: {Rack: [rack]}});
   }
 
   cancelDragging() {
