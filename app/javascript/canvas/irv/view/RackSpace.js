@@ -715,18 +715,20 @@ class RackSpace {
 
   // Remove any previously selected items that are no longer present
   synchroniseSelected() {
-    let selected = this.model.selectedDevices();
-    let deviceLookup = this.model.deviceLookup();
+    const selected = this.model.selectedDevices();
+    const deviceLookup = this.model.deviceLookup();
     let anySelected = false;
+    let newSelected = {};
     Object.keys(selected).forEach((type) => {
+      newSelected[type] = {};
       Object.keys(selected[type]).forEach((selectedId) => {
-        if(!deviceLookup[type][selectedId]) {
-          delete selected[type][selectedId];
-        } else {
+        if(deviceLookup[type][selectedId]) {
+          newSelected[type][selectedId] = deviceLookup[type][selectedId];
           anySelected = true;
         }
       });
     });
+    this.model.selectedDevices(newSelected);
     this.model.activeSelection(anySelected);
   }
 
