@@ -40,8 +40,8 @@ class RackObject extends RackSpaceObject {
   constructor(def, componentClassName, parent1) {
     super(...arguments);
     this.create_request = this.create_request.bind(this);
-    this.sendConfirmation = this.sendConfirmation.bind(this);
     this.setLayers = this.setLayers.bind(this);
+    this.confirmSuccess = this.confirmSuccess.bind(this);
     this.componentClassName = componentClassName;
     this.parent = parent1;
     this.gfx           = RackObject.RACK_GFX;
@@ -270,46 +270,16 @@ class RackObject extends RackSpaceObject {
     return new Request.JSON({
       headers    : {'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content')},
       url: '/api/v1/irv/'+this.componentClassName+'/'+this.id+'/'+this.conf.action+'/',
-      onSuccess: this.sendConfirmation,
+      onSuccess: this.confirmSuccess,
       onFail: this.loadError,
       onError: this.loadError,
       data: this.conf.data
     }).send();
   }
 
-  sendConfirmation(config) {
-    if (this.conf.action === "update_position") {
-      return this.sendMessageMovingDevice(config.success);
-    } else if (this.conf.action === "update_slot") {
-      return this.sendMessageMovingBlade(config.success);
-    }
-  }
-
-  // can this entire function go?
-  sendMessageMovingDevice(config_success) {
-    if (config_success === true) {
-      let name_to_show, type_to_show;
-      if (this.complex) {
-        name_to_show = this.name; 
-        type_to_show = "Chassis";
-      } else { 
-        name_to_show = this.children[0].name;
-        type_to_show = "Device";
-      }
-      Events.dispatchEvent(RackObject.RACK_GFX.containerEl, 'getModifiedRackIds');
-    } else {
-      alert_dialog("Device "+this.conf.action+" error!");
-    }
-  }
-
-  // can this entire function go?
-  sendMessageMovingBlade(config_success) {
-    if (config_success === true) {
-      const name_to_show = this.name; 
-      Events.dispatchEvent(RackObject.RACK_GFX.containerEl, 'getModifiedRackIds');
-    } else {
-      alert_dialog("Blade "+this.conf.action+" error!");
-    }
+  confirmSuccess(data) {
+    const type = this.conf.action === "update_position" ? "Device" : "Blade";
+    if(!data.success) { alert_dialog(`${type} ${this.conf.action} error!`); }
   }
 
   loadError(failee) {
