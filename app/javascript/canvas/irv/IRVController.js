@@ -101,7 +101,6 @@ class IRVController {
     this.evAssetLoaded = this.evAssetLoaded.bind(this);
     this.evAssetFailed = this.evAssetFailed.bind(this);
     this.evAssetDoubleFailed = this.evAssetDoubleFailed.bind(this);
-    this.getRackDefs = this.getRackDefs.bind(this);
     this.clearSelectedMetric = this.clearSelectedMetric.bind(this);
     this.configReceived = this.configReceived.bind(this);
     this.evShowHideScrollBars = this.evShowHideScrollBars.bind(this);
@@ -110,17 +109,11 @@ class IRVController {
     this.visibleNonRackIds = this.visibleNonRackIds.bind(this);
     this.idsAsParams = this.idsAsParams.bind(this);
     this.enableShowHoldingAreaCheckBox = this.enableShowHoldingAreaCheckBox.bind(this);
-    this.getModifiedRacksTimestamp = this.getModifiedRacksTimestamp.bind(this);
-    this.setModifiedRacksTimestamp = this.setModifiedRacksTimestamp.bind(this);
-    this.getSystemDateTime = this.getSystemDateTime.bind(this);
-    this.getModifiedRackIds = this.getModifiedRackIds.bind(this);
     this.getMetricTemplates = this.getMetricTemplates.bind(this);
     this.metricTemplatesPoller = this.metricTemplatesPoller.bind(this);
     this.refreshMetricTemplates = this.refreshMetricTemplates.bind(this);
     this.retryMetricTemplates = this.retryMetricTemplates.bind(this);
-    this.retryRackDefs = this.retryRackDefs.bind(this);
     this.retryNonrackDeviceDefs = this.retryNonrackDeviceDefs.bind(this);
-    this.retrySystemDateTime = this.retrySystemDateTime.bind(this);
     this.scrollPanelUp = this.scrollPanelUp.bind(this);
     this.evClearDeselected = this.evClearDeselected.bind(this);
     this.evReset = this.evReset.bind(this);
@@ -142,7 +135,6 @@ class IRVController {
     this.switchMetricLevel = this.switchMetricLevel.bind(this);
     this.receivedMetricTemplates = this.receivedMetricTemplates.bind(this);
     this.refreshedMetricTemplates = this.refreshedMetricTemplates.bind(this);
-    this.receivedModifiedRackIds = this.receivedModifiedRackIds.bind(this);
     this.receivedModifiedNonRackIds = this.receivedModifiedNonRackIds.bind(this);
     this.receivedRackDefs = this.receivedRackDefs.bind(this);
     this.recievedNonrackDeviceDefs = this.recievedNonrackDeviceDefs.bind(this);
@@ -363,18 +355,16 @@ class IRVController {
             self.rackSpace.resetRackSpace();
           } else {
             self.testLoadProgress();
-            self.getSystemDateTime();
           }
           if (self.model.showingFullIrv()) {
             self.debug('getting metric templates');
             self.getMetricTemplates();
           }
         } else {
-          let change =  { added: [], modified: [], deleted: [], timestamp: new Date() };
+          let change =  { added: [], modified: [], deleted: [] };
           let rack = data.rack;
           change[action] = rack.id;
           self.changeSetRacks = change;
-          self.setModifiedRacksTimestamp(String(change.timestamp));
           if(action === "deleted") {
             self.model.modifiedRackDefs([]);
             return self.synchroniseChanges();
@@ -489,43 +479,6 @@ class IRVController {
     }
   }
 
-  // makes server requests required for initialisation
-  getRackData() {
-    this.debug('getting rack data');
-
-    // Determine which rack IDs we are interested in.
-    let rack__ids;
-    if ((this.options != null ? this.options.rackIds : undefined) != null) {
-      rack__ids = this.rackIdsAsParams(this.options.rackIds);
-    } else if ((this.crossAppSettings != null) && (this.crossAppSettings.selectedRacks != null)) {
-      this.model.displayingAllRacks(false);
-      if (Object.keys(this.crossAppSettings.selectedRacks).length === 0) {
-        rack__ids = 'none';
-      } else if (((this.options != null) && (this.options.applyfilter === "true")) || ($(options.parent_div_id).get('data-filter') != null) || ($(this.options.parent_div_id).get('data-focus') != null)) {
-        rack__ids = this.rackIdsAsParams(Object.keys(this.crossAppSettings.selectedRacks));
-      } else {
-        rack__ids = null;
-      }
-    } else { 
-      rack__ids = null;
-    }
-
-    // If no racks to search, then skip the getRackDefs function, 
-    // and send an empty hash to the receivedRackDefs function
-    if (rack__ids === 'none') {
-      this.receivedRackDefs({});
-    } else {
-      this.getRackDefs(rack__ids);
-    }
-
-    if (this.model.showingFullIrv()) {
-      this.debug('getting metric templates');
-      this.getMetricTemplates();
-    }
-    this.testLoadProgress();
-    return this.getSystemDateTime();
-  }
-
   // turns an array of rack ids into a querystring
   // @param  rack_ids  an array of rack ids
   // @return querystring as a string
@@ -536,14 +489,6 @@ class IRVController {
     }
     return params;
   }
-
-  // load rack definitions, grabs everything unless an array of rack ids is supplied
-  // @param  rack_ids  option array of rack ids to fetch
-  getRackDefs(rack_ids) {
-    const query_str = (rack_ids != null) ? rack_ids : '';
-    new Request.JSON({url: this.resources.path + this.resources.rackDefinitions + '?' + (new Date()).getTime() + query_str, onComplete: this.receivedRackDefs, onTimeout: this.retryRackDefs}).get();
-  }
-
 
   getNonrackDeviceData() {
     this.debug('getting non rack device data');
@@ -607,37 +552,6 @@ class IRVController {
     }
   }
 
-  // returns the value stored in @modifiedRacksTimestamp, initialising it with the current timestamp if null 
-  getModifiedRacksTimestamp() {
-    return this.modifiedRacksTimestamp || (this.modifiedRacksTimestamp = Math.round(+new Date()/1000));
-  }
-
-  // called when receiving time from server, extracts time in milliseconds and stores it
-  // @param  timestamp string representation of current time from server
-  setModifiedRacksTimestamp(timestamp) {
-    //XXX Split method is used for when we load the servers time, as it comes back in the following format: '1380642828661 3600 BST 2013-10-01 16:53:48'
-    timestamp = String(timestamp);
-    if (timestamp.length >= 13) { // we have a timestamp in milliseconds
-      return this.modifiedRacksTimestamp = Math.round(timestamp.match(/.{1,13}/g)[0] / 1000);
-    } else {
-      return this.modifiedRacksTimestamp = timestamp;
-    }
-  }
-
-  // sends a request to the server for the current time
-  getSystemDateTime() {
-    return new Request({url: this.resources.systemDateTime + '?' + (new Date()).getTime(), onComplete: this.setModifiedRacksTimestamp, onTimeout: this.retrySystemDateTime}).get();
-  }
-
-  // requests a change set from the server, passing with the list of racks to report changes for and wether or not to 
-  // suppress notifications of added racks
-  getModifiedRackIds() {
-    new Request.JSON({url: this.resources.path + this.resources.modifiedRackIds + '?' + (new Date()).getTime() + '&modified_timestamp=' + this.getModifiedRacksTimestamp() + this.rackIdsAsParams(this.visibleRackIds()) + '&suppress_additions=' + !this.model.displayingAllRacks(), onComplete: this.receivedModifiedRackIds, onTimeout: this.retryModifiedRackIds}).get();
-    if (this.model.showingFullIrv()) {
-      return new Request.JSON({url: this.resources.path + this.resources.modifiedNonRackIds + '?' + (new Date()).getTime() + '&modified_timestamp=' + this.getModifiedRacksTimestamp() + this.idsAsParams(this.visibleNonRackIds(),'non_rack_ids') + '&suppress_additions=' + !this.model.displayingAllRacks(), onComplete: this.receivedModifiedNonRackIds, onTimeout: this.retryModifiedNonRackIds}).get();
-    }
-  }
-
   // requests metric definitions from the server
   getMetricTemplates() {
     return new Request.JSON({url: this.resources.path + this.resources.metricTemplates + '?' + (new Date()).getTime(), onComplete: this.receivedMetricTemplates, onTimeout: this.retryMetricTemplates}).get();
@@ -667,22 +581,9 @@ class IRVController {
     return setTimeout(this.getMetricTemplates, IRVController.API_RETRY_DELAY);
   }
 
-
-  // called should the rack definition response fail, re-submits the request. !! possibly untested, possibly redundant
-  retryRackDefs() {
-    Profiler.trace(Profiler.CRITICAL, this.retryRackDefs, 'Failed to load rack definitions, retrying in ' + IRVController.API_RETRY_DELAY + 'ms');
-    return setTimeout(this.getRackDefs, IRVController.API_RETRY_DELAY);
-  }
-
   retryNonrackDeviceDefs() {
     Profiler.trace(Profiler.CRITICAL, this.retryNonrackDeviceDefs, 'Failed to load nonrack device definitions, retrying in ' + IRVController.API_RETRY_DELAY + 'ms');
     return setTimeout(this.getNonrackDeviceDefs, IRVController.API_RETRY_DELAY);
-  }
-
-  // called should the system time response fail, re-submits the request. !! possibly untested, possibly redundant
-  retrySystemDateTime() {
-    Profiler.trace(Profiler.CRITICAL, this.retrySystemDateTime, 'Failed to load system date time, retrying in ' + IRVController.API_RETRY_DELAY + 'ms');
-    return setTimeout(this.getSystemDateTime, IRVController.API_RETRY_DELAY);
   }
 
   // triggered when all initialisation data and rack images have loaded. Sets up everything, instanciates class instances, starts
@@ -1473,28 +1374,8 @@ class IRVController {
     if (changed) { return this.model.metricTemplates(templates); }
   }
 
-
-  // called on receiving change set from the server. Triggers request for updated rack definitions necessary to synchronise the changes
-  // @param  rack_data array of rack definition objects
-  receivedModifiedRackIds(rack_data) {
-    if (!this.dragging) {
-      this.setModifiedRacksTimestamp(String(rack_data.timestamp));
-      const rack_ids = rack_data.added.concat(rack_data.modified);
-      this.changeSetRacks = rack_data;
-      if (rack_ids.length > 0) {
-        --this.resourceCount;
-        return this.getRackDefs(this.rackIdsAsParams(rack_ids)); // we have new and modified racks present, and possibly deleted, the else handles
-                               // the situation where we only have deleted racks
-      } else if (rack_data.deleted.length > 0) {
-        this.model.modifiedRackDefs([]); // we have only deleted racks in this request so empy the rack defs array
-        return this.synchroniseChanges();
-      }
-    }
-  }
-
   receivedModifiedNonRackIds(non_rack_data) {
     if (!this.dragging) {
-      this.setModifiedRacksTimestamp(String(non_rack_data.timestamp));
       const non_rack_ids = non_rack_data.added.concat(non_rack_data.modified);
       this.changeSetNonRacks = non_rack_data;
       if (non_rack_ids.length > 0) {
