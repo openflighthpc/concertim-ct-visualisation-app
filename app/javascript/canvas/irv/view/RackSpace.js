@@ -687,7 +687,6 @@ class RackSpace {
             // as its name may have changed, thus meaning it has a new position
             // in the array
             if (rack.id === rack_def.id) {
-              console.log("reboot!");
               racks[idx] = rack_def_copy;
             }
           }
