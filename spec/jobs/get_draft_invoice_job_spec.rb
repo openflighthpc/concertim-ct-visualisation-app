@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe CreateUserInvoiceJob, type: :job do
+RSpec.describe GetDraftInvoiceJob, type: :job do
 
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
   let(:cloud_service_config) { create(:cloud_service_config) }
@@ -10,7 +10,7 @@ RSpec.describe CreateUserInvoiceJob, type: :job do
     described_class::Runner.new(user: user, cloud_service_config: cloud_service_config, test_stubs: stubs)
   }
 
-  let(:user_invoice_path) { "/get_user_invoice" }
+  let(:user_invoice_path) { "/get_draft_invoice" }
   let(:expected_url) {
     "#{cloud_service_config.user_handler_base_url}#{user_invoice_path}"
   }
@@ -46,11 +46,22 @@ RSpec.describe CreateUserInvoiceJob, type: :job do
   describe "#perform" do
     context "when request is successful" do
       before(:each) do
-        stubs.post(expected_url) { |env| [ 200, {}, {"invoice_html" => invoice_document}] }
+        stubs.post(expected_url) { |env| [ 200, {}, {"draft_invoice" => draft_invoice}] }
       end
 
-      let(:invoice_document) {
-        "<html><head></head><body><h1>This is your invoice</h1></body></html>"
+      let(:draft_invoice) {
+        {
+          amount: 1,
+          balance: 2,
+          credit_adj: 0,
+          currency: "coffee",
+          draft: true,
+          invoice_date: Date.today.to_formatted_s(:db),
+          invoice_id: 3,
+          invoice_number: nil,
+          items: [],
+          refund_adj: 0,
+        }.with_indifferent_access
       }
 
       it "returns a successful result" do
@@ -60,7 +71,20 @@ RSpec.describe CreateUserInvoiceJob, type: :job do
 
       it "contains the invoice document in the result" do
         result = described_class.perform_now(cloud_service_config, user, test_stubs: stubs)
-        expect(result.invoice).to eq invoice_document
+        expected_invoice = Invoice.new(
+          account: user,
+          amount: 1,
+          balance: 2,
+          credit_adj: 0,
+          currency: "coffee",
+          draft: true,
+          invoice_date: Date.today,
+          invoice_id: 3,
+          invoice_number: nil,
+          items: [],
+          refund_adj: 0,
+        )
+        expect(result.invoice.attributes).to eq expected_invoice.attributes
       end
     end
 

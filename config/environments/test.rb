@@ -57,4 +57,8 @@ Rails.application.configure do
 
   # Annotate rendered view with file names.
   # config.action_view.annotate_rendered_view_with_filenames = true
+
+  # We don't make requests to the metric daemon in the test env.  Hardcoding
+  # this value insulates the tests from any configuration.
+  config.metric_daemon_url = "http://localhost:3000/"
 end

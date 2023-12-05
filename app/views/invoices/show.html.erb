@@ -1,0 +1,79 @@
+<div class="invoice">
+  <div class="invoice-header">
+    <img class="logo" src="/personalities/ct/images/logo-left.png" style="height: 50px">
+    <h2 class="invoice-title">
+      <% if @invoice.draft? %>
+        Invoice (draft)
+      <% else %>
+        Invoice INV#<%= @invoice.number %><br>
+        Date <%= @invoice.formatted_invoice_date %>
+    <% end %>
+    </h2>
+  </div>
+  <div class="invoice-details">
+    <div class="invoice-detail">
+      <span class="invoice-detail-key">
+        Concertim account:
+      </span>
+      <span class="invoice-detail-value">
+        <%= @invoice.account.name %>
+      </span>
+    </div>
+    <div class="invoice-detail">
+      <span class="invoice-detail-key">
+        Billing account:
+      </span>
+      <span class="invoice-detail-value">
+        <%= @invoice.account.billing_acct_id %>
+      </span>
+    </div>
+    <div class="invoice-detail">
+      <span class="invoice-detail-key">
+        Invoice date:
+      </span>
+      <span class="invoice-detail-value">
+        <%= @invoice.formatted_invoice_date %>
+      </span>
+    </div>
+  </div>
+  <table class="invoice-items" cellpadding="0" cellspacing="0">
+    <thead>
+      <tr class="invoice-items-header">
+        <th>Date</th>
+        <th>Description</th>
+        <th>Amount</th>
+      </tr>
+    </thead>
+    <% @invoice.items.each do |item| %>
+      <tr class="item last">
+        <td><%= item.formatted_date %>
+        <td><%= item.description %></td>
+        <td><%= item.formatted_amount %></td>
+      </tr>
+    <% end %>
+    <tr class="invoice-items-total">
+      <td colspan="2">Amount:</td>
+      <td><%= @invoice.formatted_amount_charged %></td>
+    </tr>
+    <tr class="invoice-items-total">
+      <td colspan="2">Paid:</td>
+      <td><%= @invoice.formatted_amount_paid %></td>
+    </tr>
+    <% if @invoice.credit_adj != 0 %>
+      <tr class="invoice-items-total">
+        <td colspan="2">Credit adjustment:</td>
+        <td><%= @invoice.formatted_credit_adjustment %></td>
+      </tr>
+    <% end %>
+    <% if @invoice.refund_adj != 0 %>
+      <tr class="invoice-items-total">
+        <td colspan="2">Refund adjustment:</td>
+        <td><%= @invoice.formatted_refund_adjustment %></td>
+      </tr>
+    <% end %>
+    <tr class="invoice-items-total">
+      <td colspan="2">Balance:</td>
+      <td><%= @invoice.formatted_balance %></td>
+    </tr>
+  </table>
+</div>
