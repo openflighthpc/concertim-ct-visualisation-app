@@ -194,8 +194,6 @@ class IRVController {
     this.hintInfoReceived = this.hintInfoReceived.bind(this);
     this.evSwitchStat = this.evSwitchStat.bind(this);
     this.evSwitchGraphOrder = this.evSwitchGraphOrder.bind(this);
-    this.setupWebsocket = this.setupWebsocket.bind(this);
-    this.cancelDragging = this.cancelDragging.bind(this);
     this.config_file = '/irv/configuration';
     console.log("Constructing IRV :::: with the options :::: ",this.options);
     jQuery(document).ready(this.getConfig);

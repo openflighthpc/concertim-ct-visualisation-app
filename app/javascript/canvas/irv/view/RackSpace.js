@@ -108,7 +108,6 @@ class RackSpace {
     this.evRedrawComplete = this.evRedrawComplete.bind(this);
     this.switchView = this.switchView.bind(this);
     this.setMetricLevel = this.setMetricLevel.bind(this);
-    this.synchroniseSelected = this.synchroniseSelected.bind(this);
     this.rackEl = rackEl;
     this.chartEl = chartEl;
     this.model = model;
