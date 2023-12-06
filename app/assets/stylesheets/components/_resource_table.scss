@@ -6,6 +6,47 @@ table {
     }
 }
 
+.table_controls {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    margin-bottom: 5px;
+
+    .search_controls {
+        flex-grow: 1;
+        margin-left: -10px;
+
+        form {
+            display: flex;
+        }
+
+        input {
+            margin-bottom: 0;
+        }
+
+        .search-input {
+            flex-grow: 1;
+            max-width: 50em;
+        }
+        .search-button {
+            width: auto;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+    }
+
+    .pagination_controls {
+        display: flex;
+        align-items: center;
+        flex-grow: 0;
+        justify-content: end;
+
+        .pagy-info {
+            margin-right: 10px;
+        }
+    }
+}
+
 table.resource_table {
     ul{
         margin-bottom: 0;

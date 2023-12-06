@@ -11,15 +11,12 @@
 #
 
 class ResourceTableCell < Cell::ViewModel
-  include Devise::Controllers::Helpers
-  # helper_method :current_user
-
-  # helper PaginationHelper
+  include Pagy::Frontend
 
   delegate :sort_column, :sort_direction, to: :controller
 
   def show(items, opts = {}, block)
-    Builder.new(self, items, current_user, opts).tap do |builder|
+    Builder.new(self, items, controller, opts).tap do |builder|
       block.call(builder)
       @table = builder.table
     end
@@ -47,9 +44,9 @@ class ResourceTableCell < Cell::ViewModel
 
     attr_reader :table
 
-    def initialize(table_cell, items, current_user, opts)
+    def initialize(table_cell, items, controller, opts)
       @table_cell = table_cell
-      @table = ResourceTable.new(opts.delete(:table_id), items, current_user, opts)
+      @table = ResourceTable.new(opts.delete(:table_id), items, controller, opts)
     end
 
     #
@@ -114,25 +111,22 @@ class ResourceTableCell < Cell::ViewModel
   #
   #
   class ResourceTable
-    attr_reader :ability,
-      :columns,
+    attr_reader :columns,
       :default_db_table,
-      :hide_horizontal_rule,
       :id,
       :items,
-      :opts
-      # :paginatable,
+      :opts,
+      :pagy
 
     attr_accessor :actions_column
 
-    def initialize(id, items, current_user, opts = {})
+    def initialize(id, items, controller, opts = {})
       @id = id
       @items = items
       @opts = opts
       @columns = Array.new
       @actions_column = nil
-      @hide_horizontal_rule = opts[:hide_horizontal_rule]   # Whether to include the horizontal rule at the footer 
-      @ability = current_user.ability
+      @controller = controller
 
       establish_if_paginatable
       example_item = items.first if items
@@ -154,7 +148,7 @@ class ResourceTableCell < Cell::ViewModel
     end
 
     def paginatable?
-      @paginatable == true
+      @paginatable
     end
 
     def empty_collection_block=(block)
@@ -177,8 +171,10 @@ class ResourceTableCell < Cell::ViewModel
     end
 
     def establish_if_paginatable
-      @paginatable = false
-      # @paginatable = @items.respond_to? :total_pages
+      if @controller.respond_to?(:get_pagy) && @controller.get_pagy.is_a?(::Pagy)
+        @pagy = @controller.get_pagy
+        @paginatable = true
+      end
     end
   end
 

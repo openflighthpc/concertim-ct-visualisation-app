@@ -26,7 +26,7 @@ module Searchable
   extend ActiveSupport::Concern
 
   included do
-    scope :search_for, ->(term, opts = {}) do 
+    scope :search_for, ->(term, search_scope: nil) do 
       return all if term.blank?
 
       #
@@ -34,8 +34,7 @@ module Searchable
       # the "default_search_scope" method, however if you pass in a "search_scope" you can
       # override this.
       #
-      if opts[:search_scope]
-        search_scope = opts[:search_scope]
+      if search_scope
         perform_search(term, search_scope)
       else
         perform_search(term)
@@ -55,16 +54,16 @@ module Searchable
 
     # Performs a database search on the current model, based on the passed-in parameters.
     #
-    #   term    - the search term (such as "A1")
-    #   columns - the columns to search 
+    #   term         - the search term (such as "A1")
+    #   search_scope - the database columns to search 
     #
     # Typically you would not call this directly, it is called from the "scope" defined above.
     #
-    def perform_search(term, columns = default_searchable_columns)
+    def perform_search(term, search_scope = default_searchable_columns)
       quote_column_name = ->(col) { connection.quote_column_name(col) }
       sanitized_term = "%#{sanitize_sql_like(term)}%"
 
-      columns.reduce(none) do |accum, column|
+      search_scope.reduce(none) do |accum, column|
         accum.or(where("#{quote_column_name.(column)} ILIKE :term", term: sanitized_term))
       end
     end

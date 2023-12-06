@@ -1,0 +1,16 @@
+<div class="table_controls">
+  <div class="search_controls">
+    <% if @table.searchable? %>
+      <%= form_tag nil, method: :get, class: :no_border do %>
+        <%= text_field_tag :search, params[:search], placeholder: "Search", class: "search-input" %>
+        <%= submit_tag "Go", class: "button postfix search-button" %>
+      <% end %>
+    <% end %>
+  </div>
+  <div class="pagination_controls">
+    <% if @table.paginatable? %>
+      <%== pagy_info(@table.pagy) %>
+      <%== pagy_nav(@table.pagy) %>
+    <% end %>
+  </div>
+</div>

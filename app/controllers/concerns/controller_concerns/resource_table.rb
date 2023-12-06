@@ -17,17 +17,29 @@ module ControllerConcerns
 
     included do
       include ControllerConcerns::Search
-      # include ControllerConcerns::Pagination
+      include ControllerConcerns::Pagination
       include ControllerConcerns::Sorting
     end
 
-    # A convinience method allowing you to pass in a collection (typically an
-    # Activercord::Relation, but you can also pass arrays). It passes this
-    # collection on to a decorator class that wires it up with
-    # sort/search/pagination functionality and returns the resultant
-    # colleciton.
-    def resource_table_collection(collection, opts = {})
-      ResourceTableCollectionDecorator.decorate!(collection, opts.merge(controller: self))
+    # Prepare the collection for use in a resource table.
+    #
+    # This will sort, search and paginate the collection.
+    def resource_table_collection(collection, human_sorting: false, search_scope: nil)
+      return [] if collection.nil?
+
+      if collection.respond_to?(:reorder)
+        collection = collection.reorder(sort_expression(sort_column, sort_direction, human_sorting))
+      end
+
+      if collection.respond_to?(:ancestors) && collection.ancestors.include?(Searchable)
+        collection = collection.search_for(search_term, search_scope: search_scope)
+      end
+
+      if respond_to?(:pagy, true)
+        @pagy, collection = pagy(collection)
+      end
+
+      collection
     end
   end
 end
