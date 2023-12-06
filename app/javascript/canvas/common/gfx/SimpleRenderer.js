@@ -21,7 +21,7 @@ import Validator from 'canvas/common/gfx/Validator';
 class SimpleRenderer {
   static initClass() {
     this.UNSUPPORTED        = 'Erk! Your browser doesn\'t support canvas :(';
-    this.DEFAULT_FRAME_RATE = 24;
+    this.DEFAULT_FRAME_RATE = 60;
 
     this.CVS_IDX = 0;
   }
