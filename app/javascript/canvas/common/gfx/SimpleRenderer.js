@@ -32,6 +32,7 @@ class SimpleRenderer {
     this.animateCVS = this.animateCVS.bind(this);
     this.runAnims = this.runAnims.bind(this);
     this.drawFrame = this.drawFrame.bind(this);
+    this.redraw = this.redraw.bind(this);
     this.containerEl = containerEl;
     this.width = width;
     this.height = height;
@@ -63,24 +64,7 @@ class SimpleRenderer {
     this.paused        = false;
     this.containerEl.appendChild(this.cvs);
 
-    if (frame_rate > 0) {
-      // requestAnimation frame (where supported) tells the browser that animation is occurring
-      // this allows for optimisation, e.g. rendering is ignored when viewing a different tab
-      window.requestAnimationFrame = this.setAnimFrame();
-      // queue initial draw
-      window.requestAnimationFrame(this.drawFrame);
-      // requestAnimationFrame runs at 60fps, the setInterval overrides this
-      this.drawId = setInterval(this.queueFrame, this.frameInterval);
-      this;
-    }
-  }
-
-
-  setAnimFrame() {
-    // return browser specific requestAnimationFrame routine with fallback where unsupported
-    let left, left1, left2, left3;
-    const fallback = callback => window.setTimeout(callback, 1000 / 60);
-    return (left = (left1 = (left2 = (left3 = window.requestAnimationFrame != null ? window.requestAnimationFrame : window.webkitRequestAnimationFrame) != null ? left3 : window.mozRequestAnimationFrame) != null ? left2 : window.oRequestAnimationFrame) != null ? left1 : window.msRequestAnimationFrame) != null ? left : fallback;
+    if (frame_rate > 0) { window.requestAnimationFrame(this.drawFrame); }
   }
 
 
@@ -114,7 +98,7 @@ class SimpleRenderer {
     this.height = height;
     this.cvs.width  = this.width * this.scale;
     this.cvs.height = this.height * this.scale;
-    return this.redraw();
+    return window.requestAnimationFrame(this.redraw);
   }
 
 
@@ -532,6 +516,7 @@ class SimpleRenderer {
     }
     this.drawList = [];
 
+    this.queueFrame();
     // drawComplete can be assigned externally. Triggers a callback when frame finishes rendering
     if (this.drawComplete != null) { return this.drawComplete(); }
   }
