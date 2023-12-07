@@ -22,7 +22,7 @@ SimpleNavigation::Configuration.run do |navigation|
       primary.item :youraccount, "#{current_user.name}", '#',
         align: :right,
         icon: :youraccount,
-        highlights_on: /\/users/ do |acc|
+        highlights_on: %r(/accounts|/key_pairs) do |acc|
           acc.item :acc_details, 'Account details', url_helpers.edit_user_registration_path, :icon => :details, :link => {:class => 'details'}
           unless current_user.root?
             view_invoice_link.call(acc, :left)
@@ -37,25 +37,25 @@ SimpleNavigation::Configuration.run do |navigation|
       if current_user.root?
         primary.item :config, 'Cloud environment', url_helpers.cloud_service_config_path,
           icon: :config,
-          highlights_on: /\/cloud-env\/configs/
+          highlights_on: %r(/cloud-env/configs)
       end
 
       if current_user.can?(:manage, User)
         primary.item :config, 'Users', url_helpers.users_path,
           icon: :users,
-          highlights_on: /\/users\//
+          highlights_on: %r(/users)
       end
 
       if current_user.can?(:create, Cluster)
         primary.item :cluster_types, 'Launch cluster', url_helpers.cluster_types_path,
           icon: :racks,
-          highlights_on: /\/cloud-env\/(cluster-types|clusters)/
+          highlights_on: %r(/cloud-env/(cluster-types|clusters))
       end
     else
       primary.item :login, 'Log in', url_helpers.new_user_session_path,
         icon: :login,
         align: :right,
-        highlights_on: /\/users\/sign_in/
+        highlights_on: %r(/accounts/sign_in)
     end
   end
 end

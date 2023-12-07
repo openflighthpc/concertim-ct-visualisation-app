@@ -4,7 +4,14 @@ Rails.application.routes.draw do
     mount GoodJob::Engine => 'good_job'
   end
 
-  devise_for :users, only: [:sessions, :registrations], controllers: { sessions: "sessions", registrations: "registrations" }
+  devise_for :users,
+    only: [:sessions, :registrations],
+    controllers: { sessions: "sessions", registrations: "registrations" },
+    path: 'accounts'
+  # Add "/users/sign_in" route to avoid breaking API clients.
+  devise_scope :user do
+    post "users/sign_in", to: "sessions#create"
+  end
 
   # We need to redirect here, otherwise the devise redirections will take us to
   # the legacy sign up page.
@@ -34,13 +41,12 @@ Rails.application.routes.draw do
       # go in the actions dropdown.
       get :placeholder
     end
+  end
+
+  resources :key_pairs, only: [:index, :new, :create] do
     collection do
-      resources :key_pairs, only: [:index, :new, :create] do
-        collection do
-          get '/success', to: 'key_pairs#success'
-          delete '/:name', to: 'key_pairs#destroy', as: :delete
-        end
-      end
+      get '/success', to: 'key_pairs#success'
+      delete '/:name', to: 'key_pairs#destroy', as: :delete
     end
   end
 

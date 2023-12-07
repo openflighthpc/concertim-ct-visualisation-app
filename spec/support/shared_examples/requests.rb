@@ -15,7 +15,7 @@ RSpec.shared_examples "unauthorised HTML request" do
 
   it "redirects to the sign in page" do
     send(request_method, url_under_test, headers: headers)
-    expect(response).to redirect_to '/users/sign_in'
+    expect(response).to redirect_to Rails.application.routes.url_helpers.new_user_session_path
   end
 end
 
