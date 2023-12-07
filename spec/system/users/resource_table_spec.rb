@@ -1,5 +1,4 @@
 require 'rails_helper'
-require Rails.root.join("spec/support/page_objects/user_index_page")
 
 RSpec.describe "users index page table", type: :system do
   let(:admin_password) { 'admin-password' }
@@ -7,9 +6,11 @@ RSpec.describe "users index page table", type: :system do
   let(:items_per_page) { 20 }
 
   before(:each) do
-    SignInPage.new
-      .visit_page
-      .sign_in(username: admin.login, password: admin_password)
+    visit new_user_session_path
+    expect(current_path).to eq(new_user_session_path)
+    fill_in "Username", with: admin.login
+    fill_in "Password", with: admin_password
+    click_on "Login"
   end
 
   describe "pagination" do
@@ -17,98 +18,133 @@ RSpec.describe "users index page table", type: :system do
       let!(:users) { create_list(:user, 10) }
 
       it "lists all users" do
-        uip = UserIndexPage.new
-          .visit_page
+        visit users_path
+        expect(current_path).to eq(users_path)
 
+        table = find('.resource_table')
         users.each do |user|
-          uip.assert_table_contains_user(user)
+          expect(table).to have_content(user.id)
+          expect(table).to have_content(user.login)
+          expect(table).to have_content(user.name)
         end
       end
 
-      it "displays disabled pagination controls 2" do
-        uip = UserIndexPage.new
-          .visit_page
-        uip.pagination
-          .assert_paginated(from: 1, to: 11, of: 11)
-          .assert_link(:prev, :disabled)
-          .assert_link(:next, :disabled)
+      it "displays disabled pagination controls" do
+        visit users_path
+        expect(current_path).to eq(users_path)
+
+        controls = find('.pagination_controls')
+        expect(controls).to have_content "Displaying 11 items"
+        # Expect prev and next navigations are disabled.
+        expect(controls).to have_css('.page.prev.disabled')
+        expect(controls).to have_css('.page.next.disabled')
       end
     end
 
     context "when there are more than 20 users" do
       let!(:users) { create_list(:user, 30) }
 
-      it "lists the first 20 users 2" do
-        uip = UserIndexPage.new
-        uip.visit_page
+      it "lists the first 20 users" do
+        visit users_path
+        expect(current_path).to eq(users_path)
 
+        table = find('.resource_table')
         users = User.all.order(:id).offset(0).limit(items_per_page)
         users.each do |user|
-          uip.assert_table_contains_user(user)
+          expect(table).to have_content(user.id)
+          expect(table).to have_content(user.login)
+          expect(table).to have_content(user.name)
         end
       end
 
       it "displays enabled pagination controls" do
-        uip = UserIndexPage.new
-          .visit_page
+        visit users_path
+        expect(current_path).to eq(users_path)
 
-        uip.pagination
-          .assert_link(:prev, :disabled)
-          .assert_link(:next, :enabled)
+        controls = find('.pagination_controls')
+        expect(controls).to have_content "Displaying items 1-20 of 31"
+        # Expect prev navigation to be disabled.
+        expect(controls).to have_css('.page.prev.disabled')
+        # Expect next navigation to not be disabled.
+        expect(controls).not_to have_css('.page.next.disabled')
+        expect(controls).to have_css('.page.next')
+        expect(controls).to have_css('a[rel="next"]')
       end
 
-      it "allows navigating to the next page 2" do
-        uip = UserIndexPage.new
-          .visit_page
+      it "allows navigating to the next page" do
+        visit users_path
+        expect(current_path).to eq(users_path)
+        table = find('.resource_table')
+        controls = find('.pagination_controls')
 
         # Users expected to be on second page are not displayed.
         second_page_users = User.all.order(:id).offset(items_per_page).limit(items_per_page)
         second_page_users.each do |user|
-          uip.assert_not_table_contains_user(user)
+          expect(table).not_to have_content(user.login)
         end
 
-        uip.pagination
-          .assert_link(:prev, :disabled)
-          .assert_link(:next, :enabled)
+        # Expect prev navigation to be disabled.
+        expect(controls).to have_css('.page.prev.disabled')
+        # Expect next navigation to not be disabled.
+        expect(controls).not_to have_css('.page.next.disabled')
+        expect(controls).to have_css('.page.next')
+        expect(controls).to have_css('a[rel="next"]')
 
-        uip.pagination
-          .click_link "Next"
+        click_link "Next"
+        table = find('.resource_table')
+        controls = find('.pagination_controls')
 
         # Users expected to be on second page are displayed.
         second_page_users.each do |user|
-          uip.assert_table_contains_user(user)
+          expect(table).to have_content(user.id)
+          expect(table).to have_content(user.login)
+          expect(table).to have_content(user.name)
         end
 
-        uip.pagination
-          .assert_link(:prev, :enabled)
-          .assert_link(:next, :disabled)
+        # Expect prev navigation to not be disabled.
+        expect(controls).not_to have_css('.page.prev.disabled')
+        expect(controls).to have_css('.page.prev')
+        expect(controls).to have_css('a[rel="prev"]')
+        # Expect next navigation to be disabled.
+        expect(controls).to have_css('.page.next.disabled')
       end
 
       it "allows navigating to the prev page" do
-        uip = UserIndexPage.new
-          .visit_page(page: 2)
+        visit users_path(page: 2)
+        expect(current_path).to eq(users_path)
+        table = find('.resource_table')
+        controls = find('.pagination_controls')
 
         # Users expected to be on first page are not displayed.
         first_page_users = User.all.order(:id).offset(0).limit(items_per_page)
         first_page_users.each do |user|
-          uip.assert_not_table_contains_user(user)
+          expect(table).not_to have_content(user.login)
         end
 
-        uip.pagination
-          .assert_link(:prev, :enabled)
-          .assert_link(:next, :disabled)
+        # Expect prev navigation to not be disabled.
+        expect(controls).not_to have_css('.page.prev.disabled')
+        expect(controls).to have_css('.page.prev')
+        expect(controls).to have_css('a[rel="prev"]')
+        # Expect next navigation to be disabled.
+        expect(controls).to have_css('.page.next.disabled')
 
-        uip.pagination
-          .click_link "Prev"
+        click_link "Prev"
+        table = find('.resource_table')
+        controls = find('.pagination_controls')
 
         # Users expected to be on first page are displayed.
         first_page_users.each do |user|
-          uip.assert_table_contains_user(user)
+          expect(table).to have_content(user.id)
+          expect(table).to have_content(user.login)
+          expect(table).to have_content(user.name)
         end
 
-        uip.pagination
-          .assert_link(:prev, :disabled)
-          .assert_link(:next, :enabled)
+        # Expect prev navigation to be disabled.
+        expect(controls).to have_css('.page.prev.disabled')
+        # Expect next navigation to not be disabled.
+        expect(controls).not_to have_css('.page.next.disabled')
+        expect(controls).to have_css('.page.next')
+        expect(controls).to have_css('a[rel="next"]')
       end
     end
   end
