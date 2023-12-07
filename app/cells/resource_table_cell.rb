@@ -112,7 +112,6 @@ class ResourceTableCell < Cell::ViewModel
   #
   class ResourceTable
     attr_reader :columns,
-      :default_db_table,
       :id,
       :items,
       :opts,
@@ -129,10 +128,6 @@ class ResourceTableCell < Cell::ViewModel
       @controller = controller
 
       establish_if_paginatable
-      example_item = items.first if items
-      if(example_item)
-        determine_db_table(example_item)
-      end
     end
     
     def empty?
@@ -163,12 +158,6 @@ class ResourceTableCell < Cell::ViewModel
     end
 
     private
-
-    def determine_db_table(item_example)
-      if item_example.class.respond_to? :table_name
-        @default_db_table = item_example.class.table_name
-      end
-    end
 
     def establish_if_paginatable
       if @controller.respond_to?(:get_pagy) && @controller.get_pagy.is_a?(::Pagy)
