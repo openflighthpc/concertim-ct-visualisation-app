@@ -76,7 +76,7 @@ RSpec.describe "InvoicesControllers", type: :request do
         end
 
         it "displays the invoice" do
-          # XXX Re-write this entire file as a feature spec.  We'd have much
+          # XXX Re-write this entire file as a system spec.  We'd have much
           # more meaningful specs that way.
           get url_under_test, headers: headers
           expect(response.body).to include("Invoice (draft)")
