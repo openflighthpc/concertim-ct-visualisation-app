@@ -21,26 +21,17 @@ class GetDraftInvoiceJob < ApplicationJob
       @error_message = error_message
       @status_code = status_code
       if success? && !invoice_data.nil?
-        @invoice = Invoice.new(
-          account: user,
-          amount: invoice_data["amount"],
-          balance: invoice_data["balance"],
-          credit_adj: invoice_data["credit_adj"],
-          currency: invoice_data["currency"],
-          invoice_date: invoice_data["invoice_date"],
-          invoice_id: invoice_data["invoice_id"],
-          invoice_number: invoice_data["invoice_number"],
-          refund_adj: invoice_data["refund_adj"],
-        )
-        invoice_data["items"].each do |item|
-          @invoice.items << Invoice::Item.new(
-            amount: item["amount"],
-            currency: item["currency"],
-            description: item["description"],
-            end_date: item["end_date"],
-            plan_name: item["plan_name"],
-            start_date: item["start_date"],
-          )
+        @invoice = Invoice.new(account: user).tap do |invoice|
+          (Invoice.attribute_names - %w(account draft items)).each do |attr|
+            invoice.send("#{attr}=", invoice_data[attr] || invoice_data[attr.camelize(:lower)])
+          end
+          invoice_data["items"].each do |item_data|
+            invoice.items << Invoice::Item.new.tap do |item|
+              Invoice::Item.attribute_names.each do |attr|
+                item.send("#{attr}=", item_data[attr] || item_data[attr.camelize(:lower)])
+              end
+            end
+          end
         end
       end
     end
@@ -84,35 +75,12 @@ class GetDraftInvoiceJob < ApplicationJob
     private
 
     def fake_response
-      invoice = {
-        amount: 5,
-        balance: 3,
-        credit_adj: 0,
-        currency: "coffee",
-        draft: true,
-        invoice_date: Date.today.to_formatted_s(:db),
-        invoice_id: 3,
-        invoice_number: nil,
-        items: [
-          {
-            amount: 4,
-            currency: "coffee",
-            description: "espresso",
-            end_date: 1.week.ago.to_formatted_s(:db),
-            plan_name: "Coffee tasting course",
-            start_date: Date.today.to_formatted_s(:db),
-          }.stringify_keys,
-          {
-            amount: 1,
-            currency: "coffee",
-            description: "americano",
-            end_date: 1.week.ago.to_formatted_s(:db),
-            plan_name: "Emergency coffee delivery",
-            start_date: Date.today.to_formatted_s(:db),
-          }.stringify_keys,
-        ],
-        refund_adj: 0,
-      }.stringify_keys
+      renderer = ::ApplicationController.renderer.new
+      data = renderer.render(
+        template: "invoices/fake",
+        layout: false,
+      )
+      invoice = JSON.parse(data)
       Object.new.tap do |o|
         o.define_singleton_method(:success?) { true }
         o.define_singleton_method(:status) { 201 }
