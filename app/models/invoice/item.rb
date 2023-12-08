@@ -13,6 +13,12 @@ class Invoice::Item
   # Extract these `formatted_*` and `pretty_*` methods to a presenter if they
   # get large/complicated/numerous.
 
+  # We don't display credit adjustments or refunds.
+  HIDDEN_TYPES = %w(REFUND CHARGED_BACK CBA_ADJ).freeze
+  def display?
+    !HIDDEN_TYPES.include?(item_type)
+  end
+
   def pretty_plan_name
     plan_name
   end
@@ -26,11 +32,7 @@ class Invoice::Item
   end
 
   def formatted_amount
-    if item_type == "CBA_ADJ"
-      "#{"%0.2f" % -amount} #{currency}"
-    else
-      "#{"%0.2f" % amount} #{currency}"
-    end
+    "#{"%0.2f" % amount} #{currency}"
   end
 
   def formatted_start_date

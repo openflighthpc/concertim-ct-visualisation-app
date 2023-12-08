@@ -45,6 +45,7 @@
       </tr>
     </thead>
     <% @invoice.items.each do |item| %>
+      <% next unless item.display? %>
       <tr class="item last">
         <td><%= item.formatted_date %>
         <td><%= item.description %></td>
@@ -54,26 +55,6 @@
     <tr class="invoice-items-total">
       <td colspan="2">Amount:</td>
       <td><%= @invoice.formatted_amount_charged %></td>
-    </tr>
-    <tr class="invoice-items-total">
-      <td colspan="2">Paid:</td>
-      <td><%= @invoice.formatted_amount_paid %></td>
-    </tr>
-    <% if @invoice.credit_adj != 0 %>
-      <tr class="invoice-items-total">
-        <td colspan="2">Credits:</td>
-        <td><%= @invoice.formatted_credit_adjustment %></td>
-      </tr>
-    <% end %>
-    <% if @invoice.refund_adj != 0 %>
-      <tr class="invoice-items-total">
-        <td colspan="2">Refund adjustment:</td>
-        <td><%= @invoice.formatted_refund_adjustment %></td>
-      </tr>
-    <% end %>
-    <tr class="invoice-items-total">
-      <td colspan="2">Balance:</td>
-      <td><%= @invoice.formatted_balance %></td>
     </tr>
   </table>
 </div>
