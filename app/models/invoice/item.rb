@@ -6,8 +6,9 @@ class Invoice::Item
   attribute :currency, :string
   attribute :description, :string
   attribute :end_date, :date
-  attribute :start_date, :date
+  attribute :item_type, :string
   attribute :plan_name, :string
+  attribute :start_date, :date
 
   # Extract these `formatted_*` and `pretty_*` methods to a presenter if they
   # get large/complicated/numerous.
@@ -25,7 +26,11 @@ class Invoice::Item
   end
 
   def formatted_amount
-    "#{"%0.2f" % amount} #{currency}"
+    if item_type == "CBA_ADJ"
+      "#{"%0.2f" % -amount} #{currency}"
+    else
+      "#{"%0.2f" % amount} #{currency}"
+    end
   end
 
   def formatted_start_date
