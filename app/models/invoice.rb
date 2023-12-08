@@ -7,15 +7,15 @@ class Invoice
   attribute :balance, :decimal, default: 0
   attribute :credit_adj, :decimal, default: 0
   attribute :currency, :string
-  attribute :draft, :boolean, default: true
   attribute :invoice_date, :date
   attribute :invoice_id, :string
   attribute :invoice_number, :string
   attribute :items, default: ->() { [] }
   attribute :refund_adj, :decimal, default: 0
+  attribute :status, :string, default: "DRAFT"
 
   def draft?
-    !!draft
+    status == "DRAFT" || invoice_number.nil?
   end
 
   # Extract these `formatted_*` methods to a presenter if they get

@@ -3,10 +3,9 @@
     <img class="logo" src="/personalities/ct/images/logo-left.png" style="height: 50px">
     <h2 class="invoice-title">
       <% if @invoice.draft? %>
-        Invoice (draft)
+        <span>Invoice (draft)</span>
       <% else %>
-        Invoice INV#<%= @invoice.number %><br>
-        Date <%= @invoice.formatted_invoice_date %>
+        <span>Invoice INV#<%= @invoice.invoice_number %></span>
     <% end %>
     </h2>
   </div>

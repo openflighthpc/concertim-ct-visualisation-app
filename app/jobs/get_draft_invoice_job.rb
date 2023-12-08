@@ -22,7 +22,7 @@ class GetDraftInvoiceJob < ApplicationJob
       @status_code = status_code
       if success? && !invoice_data.nil?
         @invoice = Invoice.new(account: user).tap do |invoice|
-          (Invoice.attribute_names - %w(account draft items)).each do |attr|
+          (Invoice.attribute_names - %w(account items)).each do |attr|
             invoice.send("#{attr}=", invoice_data[attr] || invoice_data[attr.camelize(:lower)])
           end
           invoice_data["items"].each do |item_data|
