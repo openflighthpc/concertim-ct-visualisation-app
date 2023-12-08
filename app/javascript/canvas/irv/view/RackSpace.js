@@ -396,6 +396,7 @@ class RackSpace {
 
   // called on a timeout, resizes visual assets to fit available space, recalculates any dependant values such as zoom presets
   setLayout() {
+    console.log("here")
     const showing_all = this.scale === RackSpace.MIN_ZOOM;
   
     if (this.chart != null) { this.chart.updateLayout(); }
@@ -407,8 +408,8 @@ class RackSpace {
       this.scale   = this.zoomPresets[0];
       this.model.scale(this.scale);
       this.setScaleInLayers();
-      this.draw();
     }
+    this.draw();
     if (this.model.showingRacks()) { return this.centreRacks(); }
   }
 
