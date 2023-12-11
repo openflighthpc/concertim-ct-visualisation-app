@@ -77,7 +77,7 @@ class GetDraftInvoiceJob < ApplicationJob
     def fake_response
       renderer = ::ApplicationController.renderer.new
       data = renderer.render(
-        template: "invoices/fake",
+        template: "invoices/fakes/draft",
         layout: false,
       )
       invoice = JSON.parse(data)
