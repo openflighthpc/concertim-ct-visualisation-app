@@ -19,6 +19,6 @@
   <% t.custom_column "Amount"       do |invoice| invoice.formatted_amount_charged end %>
 
   <% t.actions_column do |actions, invoice| %>
-    <% actions.add_with_auth can: :show, on: invoice, title: 'View invoice', path: draft_invoices_path %>
+    <% actions.add_with_auth can: :show, on: invoice, title: 'View invoice', path: invoice_path(invoice) %>
   <% end %>
 <% end %>

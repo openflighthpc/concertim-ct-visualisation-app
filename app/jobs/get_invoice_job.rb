@@ -1,11 +1,12 @@
 require 'faraday'
 
-class GetDraftInvoiceJob < ApplicationJob
+class GetInvoiceJob < ApplicationJob
   queue_as :default
 
-  def perform(cloud_service_config, user, **options)
+  def perform(cloud_service_config, user, invoice_id, **options)
     runner = Runner.new(
       user: user,
+      invoice_id: invoice_id,
       cloud_service_config: cloud_service_config,
       logger: logger,
       **options
@@ -54,8 +55,9 @@ class GetDraftInvoiceJob < ApplicationJob
   end
 
   class Runner < HttpRequests::Faraday::JobRunner
-    def initialize(user:, **kwargs)
+    def initialize(user:, invoice_id:, **kwargs)
       @user = user
+      @invoice_id = invoice_id
       super(**kwargs)
     end
 
@@ -69,7 +71,7 @@ class GetDraftInvoiceJob < ApplicationJob
       unless response.success?
         return Result.new(false, nil, nil, response.reason_phrase || "Unknown error")
       end
-      return Result.new(true, response.body["draft_invoice"], @user, "", response.status)
+      return Result.new(true, response.body["invoice"], @user, "", response.status)
 
     rescue Faraday::Error
       status_code = $!.response[:status] rescue 0
@@ -81,20 +83,20 @@ class GetDraftInvoiceJob < ApplicationJob
     def fake_response
       renderer = ::ApplicationController.renderer.new
       data = renderer.render(
-        template: "invoices/fakes/draft",
+        template: "invoices/fakes/#{@invoice_id}",
         layout: false,
       )
       invoice = JSON.parse(data)
       Object.new.tap do |o|
         o.define_singleton_method(:success?) { true }
-        o.define_singleton_method(:status) { 201 }
-        o.define_singleton_method(:body) { {"draft_invoice" => invoice} }
+        o.define_singleton_method(:status) { 200 }
+        o.define_singleton_method(:body) { {"invoice" => invoice} }
       end
     end
 
     def url
       url = URI(@cloud_service_config.user_handler_base_url)
-      url.path = "/get_draft_invoice"
+      url.path = "/get_account_invoice/#{@invoice_id}"
       url.to_s
     end
 
@@ -102,7 +104,7 @@ class GetDraftInvoiceJob < ApplicationJob
       {
         invoice: {
           billing_account_id: @user.billing_acct_id,
-          target_date: Date.today.to_formatted_s(:iso8601),
+          invoice_id: @invoice_id,
         },
       }
     end

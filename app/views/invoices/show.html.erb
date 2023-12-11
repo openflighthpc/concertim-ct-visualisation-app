@@ -1,3 +1,5 @@
+<% set_title(@invoice.draft? ? "Draft Invoice" : "Invoice ##{@invoice.invoice_number}") -%>
+
 <div class="invoice">
   <div class="invoice-header">
     <img class="logo" src="/personalities/ct/images/logo-left.png" style="height: 50px">

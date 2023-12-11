@@ -52,7 +52,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :invoices, only: [:index] do
+  resources :invoices, only: [:index, :show] do
     collection do
       get 'draft'
     end

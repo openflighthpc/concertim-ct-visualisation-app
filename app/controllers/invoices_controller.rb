@@ -15,6 +15,18 @@ class InvoicesController < ApplicationController
     end
   end
 
+  def show
+    result = GetInvoiceJob.perform_now(@cloud_service_config, current_user, params[:id])
+    if result.success?
+      @invoice = result.invoice
+      render
+    else
+      flash[:alert] = "Unable to fetch invoice: #{result.error_message}"
+      redirect_back_or_to root_path
+      return
+    end
+  end
+
   def draft
     result = GetDraftInvoiceJob.perform_now(@cloud_service_config, current_user)
     if result.success?
