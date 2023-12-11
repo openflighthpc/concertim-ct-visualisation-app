@@ -1,0 +1,35 @@
+<% set_title "Users" -%>
+
+<p>Edit your own details using the <%= link_to "Account details", edit_user_registration_path %> page.</p>
+
+<%= render_resource_table_for @users, searchable: true do |t| %>
+  <% t.on_empty_collection do %>
+    <% capture do %>
+      No users have been found.
+    <% end %>
+  <% end %>
+
+  <% t.attribute_column :id, sortable: true %>
+  <% t.attribute_column :login, title: "Username", sortable: true do |user, login| %>
+    <% user != current_user ? login : "#{login} (you)" %>
+  <% end %>
+  <% t.attribute_column :name, sortable: true %>
+  <% t.custom_column "Authorization Level", sortable: true, db_column: :root do |user| %>
+    <% presenter_for(user).authorization %>
+  <% end %>
+  <% t.attribute_column :cloud_user_id, title: "Cloud User ID", sortable: true %>
+  <% t.attribute_column :project_id, title: "Project ID", sortable: true %>
+  <% t.attribute_column :billing_acct_id, title: "Billing Account ID", sortable: true %>
+
+  <% t.actions_column do |actions, user| %>
+    <%#
+        These actions don't do anything, but they do demonstrate how to add
+        links to the actions dropdown, both with and without authentication.
+
+        These should obviously be removed/replaced when we have a real links to add here.
+      %>
+    <% actions.add title: 'Fake Edit', path: placeholder_user_path(user) %>
+    <% actions.add_with_auth can: :destroy, on: user, title: 'Fake Delete', path: placeholder_user_path(user) %>
+  <% end %>
+
+<% end %>

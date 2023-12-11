@@ -69,4 +69,13 @@ RSpec.configure do |config|
   # config.filter_gems_from_backtrace("gem name")
 
   config.include Concertim::Matchers::Model, type: :model
+
+  config.before(:each, type: :system) do
+    # Rack test by default for performance.
+    driven_by :rack_test
+  end
+  config.before(:each, type: :system, js: true) do
+    # selenium when we need javascript.
+    driven_by :selenium_chrome_headless
+  end
 end

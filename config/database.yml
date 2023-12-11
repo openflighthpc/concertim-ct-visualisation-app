@@ -8,6 +8,10 @@ pg_base: &pg_base
   host: <%= ENV.fetch("POSTGRES_HOST") { nil } %>
   port: <%= ENV.fetch("POSTGRES_PORT") { nil } %>
   password: <%= ENV.fetch("POSTGRES_PASSWORD") { nil } %>
+  # Enforce a sensible sort ordering.
+  collation: en_US.UTF-8
+  ctype: en_US.UTF-8
+  template: template0
 
 ################################
 #

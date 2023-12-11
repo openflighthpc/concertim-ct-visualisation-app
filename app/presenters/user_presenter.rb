@@ -6,4 +6,12 @@ class UserPresenter < Presenter
 
     "#{o.billing_period_start.strftime("%Y/%m/%d")} - #{o.billing_period_end.strftime("%Y/%m/%d")}"
   end
+
+  def authorization
+    if o.root?
+      "Administrator"
+    else
+      "User"
+    end
+  end
 end

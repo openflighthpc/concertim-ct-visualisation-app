@@ -35,8 +35,9 @@ $icon-sizes: (s: 16, m: 32, l:48, xl: 64);
 }
 
 [class^="icon-"], [class*=" icon-"],
-table.show th span.asc,
-table.show th span.desc,
+table.resource_table th span.asc,
+table.resource_table th span.desc,
+table.resource_table th span.asc-desc,
 .errorExplanation,
 .statusMessage,
 .overviewStatusMessage,
@@ -188,8 +189,9 @@ table.show th span.desc,
 
 /*** Sorting icons ***/
 .icon-sort {
-  &-asc { @include icon("\e3b4"); }
-  &-desc { @include icon("\e3b6"); }
+  &-asc { @include icon("\e3c1"); }
+  &-desc { @include icon("\e3c5"); }
+  &-asc-desc { @include icon("\e426"); }
 }
 
 // Circular Icons
