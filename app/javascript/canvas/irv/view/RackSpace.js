@@ -386,7 +386,7 @@ class RackSpace {
     })();
   }
 
-  // public method, called whenver div dimensions change, actions update on a timeout to prevent overloading
+  // public method, called whenever div dimensions change, actions update on a timeout to prevent overloading
   updateLayout() {
     // throttle the number of updates being executed using a timeout
     clearTimeout(this.layoutTmr);
@@ -396,7 +396,6 @@ class RackSpace {
 
   // called on a timeout, resizes visual assets to fit available space, recalculates any dependant values such as zoom presets
   setLayout() {
-    console.log("here")
     const showing_all = this.scale === RackSpace.MIN_ZOOM;
   
     if (this.chart != null) { this.chart.updateLayout(); }
@@ -1876,14 +1875,15 @@ class RackSpace {
     this.rackGfx.resumeAnims();
     this.holdingAreaBackGroundGfx.resumeAnims();
     this.holdingAreaGfx.resumeAnims();
-    this.rackInfoGfx.resumeAnims();
-    this.infoGfx.resumeAnims();
+    //this.rackInfoGfx.resumeAnims();
+    //this.infoGfx.resumeAnims();
     this.alertGfx.resumeAnims();
 
     this.scale = this.targetScale;
     this.model.scale(this.scale);
     this.zooming = false;
     this.synchroniseZoomIdx();
+    this.setScaleInLayers()
     if (this.model.showingRacks()) { this.centreRacks(); }
     this.placeHoldingArea(this.targetScale);
 

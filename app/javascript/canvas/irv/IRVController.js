@@ -1347,26 +1347,22 @@ class IRVController {
       defs.racks[defs.racks.length-1].nextRackId = null;
     }
 
-    if (this.initialised) {
-      ++this.resourceCount;
-      //XXX We only want to load in the new assets, the whole loading assets/redrawing is rather inefficient
-      // so just replicate it here until someone has the time and energy to rewrite it
-      //
-      //XXX is this need any more as its now in the synchroniseChanges function
-      //
-      // for asset in defs.assetList # deal with loading the images
-      // AssetManager.get(IRVController.PRIMARY_IMAGE_PATH + asset, @evAssetLoaded, @evAssetFailed)
-      this.model.assetList(defs.assetList);
-      this.model.modifiedRackDefs(defs.racks);
-      if (this.model.assetList().length === 0) {
-        // No assets to load, we must have deleted all devices from the rack, thus we need a redraw, but
-        // there is no need to go through the asset loading routine
-        return this.testLoadProgress();
-      } else {
-        this.synchroniseChanges();
-      }
+    ++this.resourceCount;
+    //XXX We only want to load in the new assets, the whole loading assets/redrawing is rather inefficient
+    // so just replicate it here until someone has the time and energy to rewrite it
+    //
+    //XXX is this need any more as its now in the synchroniseChanges function
+    //
+    // for asset in defs.assetList # deal with loading the images
+    // AssetManager.get(IRVController.PRIMARY_IMAGE_PATH + asset, @evAssetLoaded, @evAssetFailed)
+    this.model.assetList(defs.assetList);
+    this.model.modifiedRackDefs(defs.racks);
+    if (this.model.assetList().length === 0) {
+      // No assets to load, we must have deleted all devices from the rack, thus we need a redraw, but
+      // there is no need to go through the asset loading routine
+      return this.testLoadProgress();
     } else {
-      this.initialiseRackDefs(defs);
+      this.synchroniseChanges();
     }
   }
 
