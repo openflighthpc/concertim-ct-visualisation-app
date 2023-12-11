@@ -14,14 +14,15 @@ class GetInvoicesJob < ApplicationJob
   end
 
   class Result
-    attr_reader :status_code
+    attr_reader :status_code, :invoices_count
 
-    def initialize(success, invoices_data, user, error_message, status_code=nil)
+    def initialize(success, body, user, error_message, status_code=nil)
       @success = !!success
       @error_message = error_message
       @status_code = status_code
-      if success? && !invoices_data.nil?
-        @invoices = invoices_data.map { |data| parse_invoice(data, user) }
+      @invoices_count = body["total_invoices"]
+      if success? && !body["invoices"].nil?
+        @invoices = body["invoices"].map { |data| parse_invoice(data, user) }
       end
     end
 
@@ -54,8 +55,10 @@ class GetInvoicesJob < ApplicationJob
   end
 
   class Runner < HttpRequests::Faraday::JobRunner
-    def initialize(user:, **kwargs)
+    def initialize(user:, offset:, limit:, **kwargs)
       @user = user
+      @offset = offset
+      @limit = limit
       super(**kwargs)
     end
 
@@ -69,7 +72,7 @@ class GetInvoicesJob < ApplicationJob
       unless response.success?
         return Result.new(false, nil, nil, response.reason_phrase || "Unknown error")
       end
-      return Result.new(true, response.body["invoices"], @user, "", response.status)
+      return Result.new(true, response.body, @user, "", response.status)
 
     rescue Faraday::Error
       status_code = $!.response[:status] rescue 0
@@ -84,11 +87,13 @@ class GetInvoicesJob < ApplicationJob
         template: "invoices/fakes/list",
         layout: false,
       )
-      invoices = JSON.parse(data)
+      body = JSON.parse(data)
+      # Return a slice of all invoices just as the real API does.
+      body["invoices"] = body["invoices"][@offset, @limit]
       Object.new.tap do |o|
         o.define_singleton_method(:success?) { true }
         o.define_singleton_method(:status) { 200 }
-        o.define_singleton_method(:body) { invoices }
+        o.define_singleton_method(:body) { body }
       end
     end
 
@@ -102,8 +107,8 @@ class GetInvoicesJob < ApplicationJob
       {
         invoices: {
           billing_account_id: @user.billing_acct_id,
-          offset: 0,
-          limit: 10,
+          offset: @offset,
+          limit: @limit,
         },
       }
     end

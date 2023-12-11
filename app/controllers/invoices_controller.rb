@@ -1,11 +1,17 @@
+require 'pagy/delayed_count'
+
 class InvoicesController < ApplicationController
+  include ControllerConcerns::Pagination
+
   before_action :redirect_if_root
   before_action :redirect_unless_cloud_config
   before_action :redirect_unless_billing_account
 
   def index
-    result = GetInvoicesJob.perform_now(@cloud_service_config, current_user)
+    @pagy = Pagy::DelayedCount.new(pagy_get_vars_without_count)
+    result = GetInvoicesJob.perform_now(@cloud_service_config, current_user, offset: @pagy.offset, limit: @pagy.items)
     if result.success?
+      @pagy.finalize(result.invoices_count)
       @invoices = result.invoices
       render
     else
