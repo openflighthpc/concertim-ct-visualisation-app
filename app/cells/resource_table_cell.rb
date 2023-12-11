@@ -143,7 +143,7 @@ class ResourceTableCell < Cell::ViewModel
     end
 
     def paginatable?
-      @paginatable
+      @paginatable && @pagy.pages > 1
     end
 
     def empty_collection_block=(block)

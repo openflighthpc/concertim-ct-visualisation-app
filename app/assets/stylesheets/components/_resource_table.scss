@@ -134,7 +134,7 @@ table.resource_table {
         background-position: right center;
     }
 
-    th span.asc, th span.desc {
+    th span.asc, th span.desc, th span.asc-desc {
         padding-right: 5px;
         width: 10px;
         display: inline-block;
@@ -148,10 +148,13 @@ table.resource_table {
         @extend .icon-sort-desc;
     }
 
+    th span.asc-desc {
+        @extend .icon-sort-asc-desc;
+    }
 }
 
 table.resource_table .actions_column {
-    width: 125px;
+    width: 100px;
 }
 table.resource_table .dropdown_actions {
     float: none;

@@ -11,6 +11,10 @@
 
   .button.dropdown {
     top: rem-calc(1); 
+    padding-right: 2em;
+    &::after {
+	    right: 10px;
+    }
   }
 
   .f-dropdown {

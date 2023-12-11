@@ -29,15 +29,14 @@ RSpec.describe "users index page table", type: :system do
         end
       end
 
-      it "displays disabled pagination controls" do
+      it "does not display pagination controls" do
         visit users_path
         expect(current_path).to eq(users_path)
 
         controls = find('.pagination_controls')
-        expect(controls).to have_content "Displaying 11 items"
-        # Expect prev and next navigations are disabled.
-        expect(controls).to have_css('.page.prev.disabled')
-        expect(controls).to have_css('.page.next.disabled')
+        expect(controls).not_to have_content "Displaying"
+        expect(controls).not_to have_css('.page.prev')
+        expect(controls).not_to have_css('.page.next')
       end
     end
 

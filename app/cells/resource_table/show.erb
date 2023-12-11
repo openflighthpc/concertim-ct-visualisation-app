@@ -16,6 +16,8 @@
               <%= link_to params.permit!.to_h.merge(sort: sort, direction: direction), title: column.tooltip do %>
                 <% if current %>
                   <%= tag.span(class: [:current, direction]) %>
+                <% else %>
+                  <%= tag.span(class: ['asc-desc']) %>
                 <% end %>
                 <%= column.title %>
               <% end %>
