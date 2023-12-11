@@ -28,7 +28,8 @@ module ControllerConcerns
       return [] if collection.nil?
 
       if collection.respond_to?(:reorder)
-        collection = collection.reorder(sort_expression(sort_column, sort_direction, human_sorting))
+        exp = sort_expression(sort_column, sort_direction, human_sorting)
+        collection = collection.reorder(Arel.sql(exp))
       end
 
       if collection.respond_to?(:ancestors) && collection.ancestors.include?(Searchable)

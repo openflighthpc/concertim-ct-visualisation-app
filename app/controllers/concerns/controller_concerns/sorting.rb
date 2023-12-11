@@ -30,12 +30,16 @@ module ControllerConcerns
     # If the human_sorting parameter is true, it will sort them alphanumerically using a SORT BY of 2 arguments 
     # - 1st argument will be ALL (and I mean ALL) the letters of the column
     # - 2nd argument will be ALL (and I mean ALL) the numbers of the column
-    def sort_expression(column, direction = 'asc', human_sorting = 'false')
+    def sort_expression(column, direction = 'asc', human_sorting = false)
       unless %w(asc desc).include?(direction.downcase)
         raise ArgumentError, "unsupported direction #{direction}"
       end
+      model = controller_name.classify.constantize
+      unless model.column_names.include?(column)
+        raise ArgumentError, "unknown column #{column} for #{model}"
+      end
       quoted_column = ApplicationRecord.connection.quote_column_name(column)
-      if human_sorting == 'true'
+      if human_sorting == true
         "regexp_replace(#{quoted_column}, '[^a-zA-Z]', '', 'g') #{direction}, NULLIF(regexp_replace(#{quoted_column}, E'\\\\D','','g'), '')::bigint #{direction}" 
       else
         "#{quoted_column} #{direction}"
