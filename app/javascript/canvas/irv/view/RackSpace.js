@@ -1872,18 +1872,20 @@ class RackSpace {
       this.rackParent.scrollTop  = this.targetOffset.y;
     }
 
+    this.rackInfoGfx.setScale(this.targetScale);
+    this.infoGfx.setScale(this.targetScale);
+
     this.rackGfx.resumeAnims();
     this.holdingAreaBackGroundGfx.resumeAnims();
     this.holdingAreaGfx.resumeAnims();
-    //this.rackInfoGfx.resumeAnims();
-    //this.infoGfx.resumeAnims();
+    this.rackInfoGfx.resumeAnims();
+    this.infoGfx.resumeAnims();
     this.alertGfx.resumeAnims();
 
     this.scale = this.targetScale;
     this.model.scale(this.scale);
     this.zooming = false;
     this.synchroniseZoomIdx();
-    this.setScaleInLayers()
     if (this.model.showingRacks()) { this.centreRacks(); }
     this.placeHoldingArea(this.targetScale);
 
