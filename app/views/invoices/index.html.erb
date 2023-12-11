@@ -1,0 +1,24 @@
+<% set_title "Invoices" -%>
+
+<%=
+  render_action_dropdown 'Rack actions' do |builder|
+    builder.add title: 'View draft invoice', path: draft_invoices_path
+  end
+%>
+
+<%= render_resource_table_for @invoices, searchable: false do |t| %>
+  <% t.on_empty_collection do %>
+    <% capture do %>
+      No invoices have been found.
+    <% end %>
+  <% end %>
+
+  <% t.attribute_column :invoice_id %>
+  <% t.attribute_column :invoice_number %>
+  <% t.custom_column "Invoice Data" do |invoice| invoice.formatted_invoice_date end %>
+  <% t.custom_column "Amount"       do |invoice| invoice.formatted_amount_charged end %>
+
+  <% t.actions_column do |actions, invoice| %>
+    <% actions.add_with_auth can: :show, on: invoice, title: 'View invoice', path: draft_invoices_path %>
+  <% end %>
+<% end %>

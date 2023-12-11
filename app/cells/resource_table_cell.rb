@@ -337,7 +337,9 @@ class ResourceTableCell < Cell::ViewModel
 
     def render_content_for(item)
       block = ->(builder) { @block.call(builder, item) }
-      dropdown_id = item.respond_to?(:to_gid_param) ? item.to_gid_param : item.id
+      dropdown_id = item.respond_to?(:to_gid_param) ?
+        item.to_gid_param :
+        [item.model_name.param_key, item.to_param].compact.join('-')
       opts = @opts.merge(is_dropdown: true, dropdown_id: dropdown_id)
       @table_cell.cell(:actions).(:show, 'Actions', block, opts)
     end
