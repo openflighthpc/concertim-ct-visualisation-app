@@ -58,7 +58,7 @@ RSpec.describe "InvoicesControllers", type: :request do
             balance: 3,
             credit_adj: 0,
             currency: "coffee",
-            draft: true,
+            status: 'DRAFT',
             invoice_date: Date.today.to_formatted_s(:db),
             invoice_id: 3,
             invoice_number: nil,
@@ -81,8 +81,8 @@ RSpec.describe "InvoicesControllers", type: :request do
           get url_under_test, headers: headers
           expect(response.body).to include("Invoice (draft)")
           expect(response.body).to include("#{Date.today.to_formatted_s(:rfc822)}")
-          expect(response.body).to include("1.00 coffee")  # Paid
-          expect(response.body).to include("3.00 coffee")  # Balance
+          expect(response.body).not_to include("1.00 coffee")  # Paid
+          expect(response.body).not_to include("3.00 coffee")  # Balance
           expect(response.body).to include("4.00 coffee")  # Amount
         end
       end

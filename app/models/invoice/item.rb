@@ -6,11 +6,18 @@ class Invoice::Item
   attribute :currency, :string
   attribute :description, :string
   attribute :end_date, :date
-  attribute :start_date, :date
+  attribute :item_type, :string
   attribute :plan_name, :string
+  attribute :start_date, :date
 
   # Extract these `formatted_*` and `pretty_*` methods to a presenter if they
   # get large/complicated/numerous.
+
+  # We don't display credit adjustments or refunds.
+  HIDDEN_TYPES = %w(REFUND CHARGED_BACK CBA_ADJ).freeze
+  def display?
+    !HIDDEN_TYPES.include?(item_type)
+  end
 
   def pretty_plan_name
     plan_name
