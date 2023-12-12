@@ -1886,9 +1886,13 @@ class RackSpace {
     this.model.scale(this.scale);
     this.zooming = false;
     this.synchroniseZoomIdx();
+    // if a rack update received during zoom, this helps ensure layers' images are in same scale.
     this.setScaleInLayers();
     if (this.model.showingRacks()) { this.centreRacks(); }
     this.placeHoldingArea(this.targetScale);
+    // if a rack update received during zoom, this prevents titles ending up the wrong size
+    // I'm not certain which part of setLayout resolves the issue.
+    setTimeout(this.setLayout, 1);
 
     return Events.dispatchEvent(this.rackEl, 'rackSpaceZoomComplete');
   }
