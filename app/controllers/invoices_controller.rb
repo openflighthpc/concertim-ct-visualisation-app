@@ -4,8 +4,8 @@ class InvoicesController < ApplicationController
   include ControllerConcerns::Pagination
 
   before_action :redirect_if_root
-  before_action :redirect_unless_cloud_config
-  before_action :redirect_unless_billing_account
+  before_action :ensure_cloud_service_configured
+  before_action :ensure_billing_account_configured
 
   def index
     @pagy = Pagy::DelayedCount.new(pagy_get_vars_without_count)
@@ -28,8 +28,7 @@ class InvoicesController < ApplicationController
       render
     else
       flash[:alert] = "Unable to fetch invoice: #{result.error_message}"
-      redirect_back_or_to root_path
-      return
+      redirect_to invoices_path
     end
   end
 
@@ -40,8 +39,7 @@ class InvoicesController < ApplicationController
       render action: :show
     else
       flash[:alert] = "Unable to fetch draft invoice: #{result.error_message}"
-      redirect_back_or_to root_path
-      return
+      redirect_to invoices_path
     end
   end
 
@@ -54,20 +52,20 @@ class InvoicesController < ApplicationController
     end
   end
 
-  def redirect_unless_cloud_config
+  def ensure_cloud_service_configured
     @cloud_service_config = CloudServiceConfig.first
     if @cloud_service_config.nil?
-      flash[:alert] = "Unable to fetch invoice: cloud environment config
+      flash.now[:alert] = "Unable to fetch invoice: cloud environment config
         not set. Please contact an admin."
-      redirect_back_or_to root_path
+      render action: :index
     end
   end
 
-  def redirect_unless_billing_account
-    unless current_user.billing_acct_id
-      flash[:alert] = "Unable to fetch invoice: you do not yet have a " \
+  def ensure_billing_account_configured
+    if current_user.billing_acct_id.blank?
+      flash.now[:alert] = "Unable to fetch invoices. You do not yet have a " \
         "billing account id. This will be added automatically shortly."
-      redirect_back_or_to root_path
+      render action: :index
     end
   end
 end

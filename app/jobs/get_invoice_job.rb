@@ -47,6 +47,13 @@ class GetInvoiceJob < ApplicationJob
         o.define_singleton_method(:status) { 200 }
         o.define_singleton_method(:body) { {"invoice" => invoice} }
       end
+    rescue ActionView::MissingTemplate
+      Object.new.tap do |o|
+        o.define_singleton_method(:success?) { false }
+        o.define_singleton_method(:status) { 404 }
+        o.define_singleton_method(:body) { {"error" => "Invoice Not Found"} }
+        o.define_singleton_method(:reason_phrase) { "Invoice Not Found" }
+      end
     end
 
     def url
