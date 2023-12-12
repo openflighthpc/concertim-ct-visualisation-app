@@ -1832,6 +1832,8 @@ class RackSpace {
 
   // called when zoom animation completes, commences fading in of info layer animation
   evRackZoomComplete() {
+    // if a rack update has come in during zoom, the info image may be based on the old scale
+    this.infoGfx.setScale(this.targetScale);
     // fade in info layer
     const info_img = this.fx2.addImg({ img: this.infoGfx.cvs, x: -this.targetOffset.x, y: -this.targetOffset.y, alpha: 0 });
     return this.fx2.animate(info_img, { alpha: 1 }, RackSpace.INFO_FADE_DURATION, Easing.Quad.easeOut, this.evZoomComplete);
@@ -1844,9 +1846,10 @@ class RackSpace {
     if (this.model.showingRacks()) { this.fx.destroy(); }
     //@fxHoldingArea.destroy() if @model.showHoldingArea()
     //@fxHoldingAreaBackGround.destroy() if @model.showHoldingArea()
-    this.fx2.destroy();
 
     this.rackGfx.setScale(this.targetScale);
+    this.infoGfx.setScale(this.targetScale);
+    this.fx2.destroy();
     if (this.model.showingFullIrv() || this.model.showingRacks()) {
       this.holdingAreaGfx.setScale(this.targetScale*this.holdingArea.factor);
       this.holdingAreaInfoGfx.setScale(this.targetScale*this.holdingArea.factor);
@@ -1872,9 +1875,6 @@ class RackSpace {
       this.rackParent.scrollTop  = this.targetOffset.y;
     }
 
-    this.rackInfoGfx.setScale(this.targetScale);
-    this.infoGfx.setScale(this.targetScale);
-
     this.rackGfx.resumeAnims();
     this.holdingAreaBackGroundGfx.resumeAnims();
     this.holdingAreaGfx.resumeAnims();
@@ -1886,6 +1886,7 @@ class RackSpace {
     this.model.scale(this.scale);
     this.zooming = false;
     this.synchroniseZoomIdx();
+    this.setScaleInLayers();
     if (this.model.showingRacks()) { this.centreRacks(); }
     this.placeHoldingArea(this.targetScale);
 

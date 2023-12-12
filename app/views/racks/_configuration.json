@@ -8,7 +8,7 @@
     "rackVSpacing"           : 300,
     "uLblScaleCutoff"        : 0.20,
     "nameLblScaleCutoff"     : 0.038,
-    "zoomDuration"           : 1000,
+    "zoomDuration"           : 2500,
     "flipDuration"           : 400,
     "flipDelay"              : 15,
     "infoFadeDuration"       : 200,
