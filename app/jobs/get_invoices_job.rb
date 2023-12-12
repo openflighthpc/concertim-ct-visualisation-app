@@ -13,70 +13,27 @@ class GetInvoicesJob < ApplicationJob
     runner.call
   end
 
-  class Result
-    attr_reader :status_code, :invoices_count
-
-    def initialize(success, body, user, error_message, status_code=nil)
-      @success = !!success
-      @error_message = error_message
-      @status_code = status_code
-      @invoices_count = body["total_invoices"]
-      if success? && !body["invoices"].nil?
-        @invoices = body["invoices"].map { |data| parse_invoice(data, user) }
-      end
-    end
-
-    def parse_invoice(invoice_data, user)
-      Invoice.new(account: user).tap do |invoice|
-        (invoice.attribute_names - %w(account items)).each do |attr|
-          invoice.send("#{attr}=", invoice_data[attr] || invoice_data[attr.camelize(:lower)])
-        end
-        invoice_data["items"].each do |item_data|
-          invoice.items << Invoice::Item.new.tap do |item|
-            item.attribute_names.each do |attr|
-              item.send("#{attr}=", item_data[attr] || item_data[attr.camelize(:lower)])
-            end
-          end
-        end
-      end
-    end
-
-    def success?
-      @success
-    end
+  class Result < InvoiceBaseJob::Result
+    attr_reader :invoices_count
 
     def invoices
       success? ? @invoices : nil
     end
 
-    def error_message
-      success? ? nil : @error_message
+    private
+
+    def parse_body(body, user)
+      @invoices_count = body["total_invoices"]
+      @invoices = body["invoices"].map { |data| parse_invoice(data, user) }
     end
   end
 
-  class Runner < HttpRequests::Faraday::JobRunner
+  class Runner < InvoiceBaseJob::Runner
     def initialize(user:, offset:, limit:, **kwargs)
       @user = user
       @offset = offset
       @limit = limit
       super(**kwargs)
-    end
-
-    def call
-      response =
-        if Rails.application.config.fake_invoice
-          fake_response
-        else
-          super
-        end
-      unless response.success?
-        return Result.new(false, nil, nil, response.reason_phrase || "Unknown error")
-      end
-      return Result.new(true, response.body, @user, "", response.status)
-
-    rescue Faraday::Error
-      status_code = $!.response[:status] rescue 0
-      Result.new(false, nil, nil, $!.message, status_code)
     end
 
     private
