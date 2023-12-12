@@ -317,6 +317,10 @@ Devise.setup do |config|
   config.jwt do |jwt|
     jwt.secret = Rails.application.config.jwt_secret
     jwt.request_formats = { user: [:json] }
+    jwt.dispatch_requests = [
+      ['POST', %r{^/users/sign_in(\.json)?$}],
+      ['POST', %r{^/accounts/sign_in(\.json)?$}],
+    ]
     jwt.expiration_time = 1.day
   end
 end
