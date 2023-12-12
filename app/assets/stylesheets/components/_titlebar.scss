@@ -7,10 +7,6 @@
   padding: 0 0.5em;
   text-align: left;
 
-  &.inlineActions {
-    height: 48px;
-  }
-
   h2
   {
     color: $dark-blue;
@@ -29,5 +25,9 @@
     [class^="title_"], [class*=" title_"] {
       line-height: 1;
     }
+  }
+
+  .title_actions {
+    float: right;
   }
 }

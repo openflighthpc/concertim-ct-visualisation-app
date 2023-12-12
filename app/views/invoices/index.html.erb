@@ -1,9 +1,11 @@
 <% set_title "Invoices" -%>
 
-<%=
-  render_action_dropdown 'Rack actions' do |builder|
-    builder.add title: 'View draft invoice', path: draft_invoices_path
-  end
+<%
+    content_for :title_actions do
+      link_to 'Preview invoice', draft_invoices_path,
+        title: 'Preview invoice for current billing period',
+        class: 'button'
+    end
 %>
 
 <%= render_resource_table_for @invoices, searchable: false do |t| %>

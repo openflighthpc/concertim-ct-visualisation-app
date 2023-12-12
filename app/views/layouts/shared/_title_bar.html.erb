@@ -1,11 +1,13 @@
 <% if content_for? :custom_title_bar %>
   <%= yield :custom_title_bar %>
 <% else %>
-  <div id="titleBar" class="<%= content_for?(:title_actions) ? 'inlineActions' : nil %>">
+  <div id="titleBar">
     <%= yield :dropdown_actions %>
+    <div class="title_actions">
+      <%= yield :title_actions %>
+    </div>
     <h2 class="<%= title_css_classes %>">
       <%= "#{yield :title}".strip.html_safe %>
     </h2>
-    <%= yield :title_actions %>
   </div>
 <% end %>
