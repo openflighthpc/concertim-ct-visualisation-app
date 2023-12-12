@@ -1,0 +1,20 @@
+#live-update-status {
+  position: absolute;
+  top: 0.5rem;
+  right: 0rem;
+  z-index: 100;
+  display: inline-flex;
+
+  .websocket-status-text {
+    padding-left: 0.5rem;
+  }
+}
+
+.status-dot {
+  height: 1rem;
+  width: 1rem;
+  background-color: red;
+  border-radius: 50%;
+  display: inline-block;
+  margin-top: 0.1rem;
+}

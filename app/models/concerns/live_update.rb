@@ -68,6 +68,7 @@ module LiveUpdate
       # unnecessary work and (2) potentially having a partially created
       # simple chassis appear on the rack.
       after_create :update_rack_modified_timestamp, if: :complex?
+      after_destroy :update_rack_modified_timestamp, unless: :being_destroyed_as_dependent?
     end
 
     # Update the relevant racks when moving location.
@@ -80,11 +81,17 @@ module LiveUpdate
     # Update either this chassis modified_timestamp or this chassis's rack's
     # modified_timestamp.
     def update_modified_timestamp_of_chassis_or_rack
-      if nonrack?
+      if nonrack? && id.present?
         update_modified_timestamp
       else
         update_rack_modified_timestamp
       end
+    end
+
+    private
+
+    def being_destroyed_as_dependent?
+      destroyed_by_association.present?
     end
 
   end
@@ -99,7 +106,7 @@ module LiveUpdate
       # Maintain modification timestamps for self and associated chassis.
       after_save :update_modified_timestamp, :update_rack_modified_timestamp
       before_destroy :update_modified_timestamp
-      after_destroy :update_rack_modified_timestamp
+      after_destroy :update_rack_modified_timestamp, unless: :being_destroyed_as_dependent?
     end
 
     private
@@ -128,6 +135,10 @@ module LiveUpdate
       if previous_chassis.present?
         previous_chassis.update_modified_timestamp_of_chassis_or_rack
       end
+    end
+
+    def being_destroyed_as_dependent?
+      destroyed_by_association.present?
     end
   end
 end

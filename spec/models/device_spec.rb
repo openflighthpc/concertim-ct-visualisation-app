@@ -3,10 +3,10 @@ require 'rails_helper'
 RSpec.describe Device, type: :model do
   let!(:rack_template) { create(:template, :rack_template) }
   subject { device }
-  let!(:device) { create(:device, chassis: chassis) }
+  let(:device) { create(:device, chassis: chassis) }
   let(:chassis) { create(:chassis, location: location, template: device_template) }
   let(:location) { create(:location, rack: rack) }
-  let(:rack) { create(:rack, user: user, template: rack_template) }
+  let!(:rack) { create(:rack, user: user, template: rack_template) }
   let(:user) { create(:user) }
   let(:device_template) { create(:template, :device_template) }
 
@@ -76,6 +76,55 @@ RSpec.describe Device, type: :model do
     it "is not valid with a negative cost" do
       subject.cost = -99
       expect(subject).to have_error(:cost, :greater_than_or_equal_to)
+    end
+  end
+
+  describe "broadcast changes" do
+    shared_examples 'rack details' do
+      it 'broadcasts rack details' do
+        expect { subject }.to have_broadcasted_to(user).from_channel(InteractiveRackViewChannel).with { |data|
+          expect(data["action"]).to eq action
+          rack_data = data["rack"]
+          expect(rack_data.present?).to be true
+          expect(rack_data["owner"]["id"]).to eq rack.user.id.to_s
+          expect(rack_data["template"]["name"]).to eq rack.template.name
+          expect(rack_data["id"]).to eq rack.id.to_s
+          expect(rack_data["name"]).to eq rack.name
+          expect(rack_data["cost"]).to eq "$0.00"
+          if rack.reload.devices.exists?
+            expect(rack_data["Chassis"]["Slots"]["Machine"]["id"]).to eq device.id.to_s
+            expect(rack_data["Chassis"]["Slots"]["Machine"]["name"]).to eq device.name
+          else
+            expect(rack_data["Chassis"]["Slots"]).to eq nil
+          end
+        }
+      end
+    end
+
+    context 'created' do
+      let(:action) { "modified" }
+      subject { device }
+
+      include_examples 'rack details'
+    end
+
+    context 'updated' do
+      let(:action) { "modified" }
+      let!(:device) { create(:device, chassis: chassis) }
+      subject do
+        device.name = "new-name"
+        device.save!
+      end
+
+      include_examples 'rack details'
+    end
+
+    context 'deleted' do
+      let(:action) { "modified" }
+      let!(:device) { create(:device, chassis: chassis) }
+      subject { device.destroy! }
+
+      include_examples 'rack details'
     end
   end
 end

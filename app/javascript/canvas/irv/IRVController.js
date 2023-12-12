@@ -21,6 +21,7 @@ import AssetManager from 'canvas/irv/util/AssetManager';
 import Hint from 'canvas/irv/view/Hint';
 import ThumbHint from 'canvas/irv/view/ThumbHint';
 import RackSpace from 'canvas/irv/view/RackSpace';
+import LiveUpdates from 'canvas/irv/view/LiveUpdates';
 import Rack from 'canvas/irv/view/Rack';
 import ThumbNav from 'canvas/common/widgets/ThumbNav';
 import FilterBar from 'canvas/common/widgets/FilterBar';
@@ -99,7 +100,6 @@ class IRVController {
     this.evAssetLoaded = this.evAssetLoaded.bind(this);
     this.evAssetFailed = this.evAssetFailed.bind(this);
     this.evAssetDoubleFailed = this.evAssetDoubleFailed.bind(this);
-    this.getRackDefs = this.getRackDefs.bind(this);
     this.clearSelectedMetric = this.clearSelectedMetric.bind(this);
     this.configReceived = this.configReceived.bind(this);
     this.evShowHideScrollBars = this.evShowHideScrollBars.bind(this);
@@ -108,17 +108,11 @@ class IRVController {
     this.visibleNonRackIds = this.visibleNonRackIds.bind(this);
     this.idsAsParams = this.idsAsParams.bind(this);
     this.enableShowHoldingAreaCheckBox = this.enableShowHoldingAreaCheckBox.bind(this);
-    this.getModifiedRacksTimestamp = this.getModifiedRacksTimestamp.bind(this);
-    this.setModifiedRacksTimestamp = this.setModifiedRacksTimestamp.bind(this);
-    this.getSystemDateTime = this.getSystemDateTime.bind(this);
-    this.getModifiedRackIds = this.getModifiedRackIds.bind(this);
     this.getMetricTemplates = this.getMetricTemplates.bind(this);
     this.metricTemplatesPoller = this.metricTemplatesPoller.bind(this);
     this.refreshMetricTemplates = this.refreshMetricTemplates.bind(this);
     this.retryMetricTemplates = this.retryMetricTemplates.bind(this);
-    this.retryRackDefs = this.retryRackDefs.bind(this);
     this.retryNonrackDeviceDefs = this.retryNonrackDeviceDefs.bind(this);
-    this.retrySystemDateTime = this.retrySystemDateTime.bind(this);
     this.scrollPanelUp = this.scrollPanelUp.bind(this);
     this.evClearDeselected = this.evClearDeselected.bind(this);
     this.evReset = this.evReset.bind(this);
@@ -140,7 +134,6 @@ class IRVController {
     this.switchMetricLevel = this.switchMetricLevel.bind(this);
     this.receivedMetricTemplates = this.receivedMetricTemplates.bind(this);
     this.refreshedMetricTemplates = this.refreshedMetricTemplates.bind(this);
-    this.receivedModifiedRackIds = this.receivedModifiedRackIds.bind(this);
     this.receivedModifiedNonRackIds = this.receivedModifiedNonRackIds.bind(this);
     this.receivedRackDefs = this.receivedRackDefs.bind(this);
     this.recievedNonrackDeviceDefs = this.recievedNonrackDeviceDefs.bind(this);
@@ -224,7 +217,7 @@ class IRVController {
     }});
   }
 
-  // called on successful load of confuration file. Applies application configuration, overwrites view model startup state with
+  // called on successful load of configuration file. Applies application configuration, overwrites view model startup state with
   // any parameters passed in querystring, initialises model and parser and commences load sequence
   // @param  config  configuration object
   configReceived(config) {
@@ -287,12 +280,61 @@ class IRVController {
       if (this.model.showingFullIrv()) {
         IRVController.NUM_RESOURCES += 1; // metricstemplates
       }
-      this.getRackData();
+      this.liveUpdates = new LiveUpdates(this);
+      this.liveUpdates.setupWebsocket();
     }
 
     //if @model.showingFullIrv()
     this.stylesChanges();
     return this.showHideScrollBars(0);
+  }
+
+  fullRackDataReceived(data) {
+    if(this.initialised) {
+       this.cancelDragging();
+    }
+    const defs = this.parser.parseRackDefs({Racks: data["Racks"]});
+    this.initialiseRackDefs(defs);
+    if (this.initialised) {
+      this.rackSpace.resetRackSpace();
+    } else {
+      this.testLoadProgress();
+    }
+    if (this.model.showingFullIrv()) {
+      this.debug('getting metric templates');
+      this.getMetricTemplates();
+    }
+  }
+
+  modifiedRackDataReceived(data) {
+    if(this.initialised) {
+      this.cancelDragging();
+    }
+    let action = data.action;
+    let change =  { added: [], modified: [], deleted: [] };
+    let rack = data.rack;
+    change[action] = rack.id;
+    this.changeSetRacks = change;
+    if(action === "deleted") {
+      this.model.modifiedRackDefs([]);
+      return this.synchroniseChanges();
+    }
+    --this.resourceCount;
+    this.receivedRackDefs({Racks: {Rack: [rack]}});
+  }
+
+  cancelDragging() {
+    this.upCoords = {x: 0, y: 0};
+    clearTimeout(this.clickTmr);
+    Events.removeEventListener(this.rackEl, 'mousemove', this.evDrag);
+
+    if (this.dragging) {
+      this.rackSpace.stopDrag(0, 0);
+      this.clickAssigned = true;
+      this.dragging      = false;
+      this.dragCancelled = true;
+      return this.model.dragging(this.dragging);
+    }
   }
 
   stylesChanges() {
@@ -384,43 +426,6 @@ class IRVController {
     }
   }
 
-  // makes server requests required for initialisation
-  getRackData() {
-    this.debug('getting rack data');
-
-    // Determine which rack IDs we are interested in.
-    let rack__ids;
-    if ((this.options != null ? this.options.rackIds : undefined) != null) {
-      rack__ids = this.rackIdsAsParams(this.options.rackIds);
-    } else if ((this.crossAppSettings != null) && (this.crossAppSettings.selectedRacks != null)) {
-      this.model.displayingAllRacks(false);
-      if (Object.keys(this.crossAppSettings.selectedRacks).length === 0) {
-        rack__ids = 'none';
-      } else if (((this.options != null) && (this.options.applyfilter === "true")) || ($(options.parent_div_id).get('data-filter') != null) || ($(this.options.parent_div_id).get('data-focus') != null)) {
-        rack__ids = this.rackIdsAsParams(Object.keys(this.crossAppSettings.selectedRacks));
-      } else {
-        rack__ids = null;
-      }
-    } else { 
-      rack__ids = null;
-    }
-
-    // If no racks to search, then skip the getRackDefs function, 
-    // and send an empty hash to the receivedRackDefs function
-    if (rack__ids === 'none') {
-      this.receivedRackDefs({});
-    } else {
-      this.getRackDefs(rack__ids);
-    }
-
-    if (this.model.showingFullIrv()) {
-      this.debug('getting metric templates');
-      this.getMetricTemplates();
-    }
-    this.testLoadProgress();
-    return this.getSystemDateTime();
-  }
-
   // turns an array of rack ids into a querystring
   // @param  rack_ids  an array of rack ids
   // @return querystring as a string
@@ -431,14 +436,6 @@ class IRVController {
     }
     return params;
   }
-
-  // load rack definitions, grabs everything unless an array of rack ids is supplied
-  // @param  rack_ids  option array of rack ids to fetch
-  getRackDefs(rack_ids) {
-    const query_str = (rack_ids != null) ? rack_ids : '';
-    new Request.JSON({url: this.resources.path + this.resources.rackDefinitions + '?' + (new Date()).getTime() + query_str, onComplete: this.receivedRackDefs, onTimeout: this.retryRackDefs}).get();
-  }
-
 
   getNonrackDeviceData() {
     this.debug('getting non rack device data');
@@ -502,37 +499,6 @@ class IRVController {
     }
   }
 
-  // returns the value stored in @modifiedRacksTimestamp, initialising it with the current timestamp if null 
-  getModifiedRacksTimestamp() {
-    return this.modifiedRacksTimestamp || (this.modifiedRacksTimestamp = Math.round(+new Date()/1000));
-  }
-
-  // called when receiving time from server, extracts time in milliseconds and stores it
-  // @param  timestamp string representation of current time from server
-  setModifiedRacksTimestamp(timestamp) {
-    //XXX Split method is used for when we load the servers time, as it comes back in the following format: '1380642828661 3600 BST 2013-10-01 16:53:48'
-    timestamp = String(timestamp);
-    if (timestamp.length >= 13) { // we have a timestamp in milliseconds
-      return this.modifiedRacksTimestamp = Math.round(timestamp.match(/.{1,13}/g)[0] / 1000);
-    } else {
-      return this.modifiedRacksTimestamp = timestamp;
-    }
-  }
-
-  // sends a request to the server for the current time
-  getSystemDateTime() {
-    return new Request({url: this.resources.systemDateTime + '?' + (new Date()).getTime(), onComplete: this.setModifiedRacksTimestamp, onTimeout: this.retrySystemDateTime}).get();
-  }
-
-  // requests a change set from the server, passing with the list of racks to report changes for and wether or not to 
-  // suppress notifications of added racks
-  getModifiedRackIds() {
-    new Request.JSON({url: this.resources.path + this.resources.modifiedRackIds + '?' + (new Date()).getTime() + '&modified_timestamp=' + this.getModifiedRacksTimestamp() + this.rackIdsAsParams(this.visibleRackIds()) + '&suppress_additions=' + !this.model.displayingAllRacks(), onComplete: this.receivedModifiedRackIds, onTimeout: this.retryModifiedRackIds}).get();
-    if (this.model.showingFullIrv()) {
-      return new Request.JSON({url: this.resources.path + this.resources.modifiedNonRackIds + '?' + (new Date()).getTime() + '&modified_timestamp=' + this.getModifiedRacksTimestamp() + this.idsAsParams(this.visibleNonRackIds(),'non_rack_ids') + '&suppress_additions=' + !this.model.displayingAllRacks(), onComplete: this.receivedModifiedNonRackIds, onTimeout: this.retryModifiedNonRackIds}).get();
-    }
-  }
-
   // requests metric definitions from the server
   getMetricTemplates() {
     return new Request.JSON({url: this.resources.path + this.resources.metricTemplates + '?' + (new Date()).getTime(), onComplete: this.receivedMetricTemplates, onTimeout: this.retryMetricTemplates}).get();
@@ -562,22 +528,9 @@ class IRVController {
     return setTimeout(this.getMetricTemplates, IRVController.API_RETRY_DELAY);
   }
 
-
-  // called should the rack definition response fail, re-submits the request. !! possibly untested, possibly redundant
-  retryRackDefs() {
-    Profiler.trace(Profiler.CRITICAL, this.retryRackDefs, 'Failed to load rack definitions, retrying in ' + IRVController.API_RETRY_DELAY + 'ms');
-    return setTimeout(this.getRackDefs, IRVController.API_RETRY_DELAY);
-  }
-
   retryNonrackDeviceDefs() {
     Profiler.trace(Profiler.CRITICAL, this.retryNonrackDeviceDefs, 'Failed to load nonrack device definitions, retrying in ' + IRVController.API_RETRY_DELAY + 'ms');
     return setTimeout(this.getNonrackDeviceDefs, IRVController.API_RETRY_DELAY);
-  }
-
-  // called should the system time response fail, re-submits the request. !! possibly untested, possibly redundant
-  retrySystemDateTime() {
-    Profiler.trace(Profiler.CRITICAL, this.retrySystemDateTime, 'Failed to load system date time, retrying in ' + IRVController.API_RETRY_DELAY + 'ms');
-    return setTimeout(this.getSystemDateTime, IRVController.API_RETRY_DELAY);
   }
 
   // triggered when all initialisation data and rack images have loaded. Sets up everything, instanciates class instances, starts
@@ -627,7 +580,6 @@ class IRVController {
     Events.addEventListener(this.rackEl, 'rackSpaceClearDeselected', this.evClearDeselected);
     Events.addEventListener(this.rackParent, 'scroll', this.evScrollRacks);
     Events.addEventListener(this.rackEl, 'redrawRackSpace', this.evRedrawRackSpace);
-    Events.addEventListener(this.rackEl, 'getModifiedRackIds', this.getModifiedRackIds);
     Events.addEventListener(this.rackEl, 'reloadMetrics', this.evResetMetricPoller);
     Events.addEventListener(window, 'keydown', this.evKeyDown);
     Events.addEventListener(window, 'keyup', this.evKeyUp);
@@ -715,10 +667,6 @@ class IRVController {
     this.tooltip = new Tooltip();
 
     if ((this.options != null) && (this.options.applyfilter === "true")) { this.applyCrossAppSettings(); }
-
-    if (this.model.showingFullIrv() || this.model.showingRacks()) {
-      this.modifiedRackDefinitionTmr = setInterval(this.getModifiedRackIds, IRVController.MODIFIED_RACK_POLL_RATE);
-    }
 
     this._callback_store = {};
   
@@ -1373,28 +1321,8 @@ class IRVController {
     if (changed) { return this.model.metricTemplates(templates); }
   }
 
-
-  // called on receiving change set from the server. Triggers request for updated rack definitions necessary to synchronise the changes
-  // @param  rack_data array of rack definition objects
-  receivedModifiedRackIds(rack_data) {
-    if (!this.dragging) {
-      this.setModifiedRacksTimestamp(String(rack_data.timestamp));
-      const rack_ids = rack_data.added.concat(rack_data.modified);
-      this.changeSetRacks = rack_data;
-      if (rack_ids.length > 0) {
-        --this.resourceCount;
-        return this.getRackDefs(this.rackIdsAsParams(rack_ids)); // we have new and modified racks present, and possibly deleted, the else handles
-                               // the situation where we only have deleted racks
-      } else if (rack_data.deleted.length > 0) {
-        this.model.modifiedRackDefs([]); // we have only deleted racks in this request so empy the rack defs array
-        return this.synchroniseChanges();
-      }
-    }
-  }
-
   receivedModifiedNonRackIds(non_rack_data) {
     if (!this.dragging) {
-      this.setModifiedRacksTimestamp(String(non_rack_data.timestamp));
       const non_rack_ids = non_rack_data.added.concat(non_rack_data.modified);
       this.changeSetNonRacks = non_rack_data;
       if (non_rack_ids.length > 0) {
@@ -1509,7 +1437,7 @@ class IRVController {
     return this.presets = new PresetManager(this.model, (this.crossAppSettings.selectedMetric != null) && ((this.options != null) && (this.options.applyfilter === "true")));
   }
 
-  // called during the initialisation process this stores relevent values in the model
+  // called during the initialisation process this stores relevant values in the model
   initialiseRackDefs(defs) {
     let rackAsset;
     ++this.resourceCount;
@@ -1896,6 +1824,14 @@ class IRVController {
         clearTimeout(this.clickTmr);
         Events.removeEventListener(this.rackEl, 'mousemove', this.evDrag);
 
+        // If a rack update has been received mid drag, the dragging will have been cancelled to prevent
+        // unwanted/unexpected behaviour (e.g. dragging a device that has moved/ been deleted).
+        // In this scenario we don't want lifting the mouse button to trigger selecting a rack/ device.
+        if(this.dragCancelled) {
+          this.dragCancelled = false;
+          return;
+        }
+
         // decide if this is a single or double-click
         if (this.dragging) {
           const coords = Util.resolveMouseCoords(this.rackSpace.coordReferenceEl, ev);
@@ -1920,7 +1856,7 @@ class IRVController {
   evClick(ev) {
     if (!this.clickAssigned) {
       this.clickAssigned = true;
-      const coords         = Util.resolveMouseCoords(this.rackSpace.coordReferenceEl, ev);
+      const coords       = Util.resolveMouseCoords(this.rackSpace.coordReferenceEl, ev);
       this.dragging      = false;
 
       this.rackSpace.click(coords.x, coords.y, this.keysPressed[IRVController.MULTI_SELECT_KEY]);
@@ -2379,7 +2315,7 @@ class IRVController {
 
 
   // filter bar drag complete handler, invoked on mouse up during dragging. It'll take you longer to read this comment than it will the
-  // code beolw... see? wasn't that a waste of time?
+  // code below... see? wasn't that a waste of time?
   evFilterStopDrag(ev) {
     this.filterBar.stopDrag();
     return Events.removeEventListener(document.window, 'mousemove', this.evMouseMoveFilter);

@@ -98,6 +98,15 @@ class HwRack < ApplicationRecord
   #
   ######################################
   after_initialize :set_defaults, if: Proc.new {|r| r.new_record? }
+  after_create do
+    broadcast_change("added")
+  end
+  after_update do
+    broadcast_change("modified")
+  end
+  after_destroy do
+    broadcast_change("deleted")
+  end
 
   ####################################
   #
@@ -158,5 +167,9 @@ class HwRack < ApplicationRecord
 
   def metadata_format
     self.errors.add(:metadata, "Must be an object") unless metadata.is_a?(Hash)
+  end
+
+  def broadcast_change(action)
+    BroadcastRackChangeJob.perform_now(self.id, self.user_id, action)
   end
 end

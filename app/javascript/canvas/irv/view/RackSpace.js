@@ -650,10 +650,8 @@ class RackSpace {
   synchroniseRacks(rack_defs, change_set) {
     let idx, rack;
     if ((change_set == null) || (rack_defs == null)) { return; }
-    this.model.activeSelection(false);
     const device_lookup = this.model.deviceLookup();
     const racks         = this.model.racks();
-
     for (var deleted_id of Array.from(change_set.deleted)) {
       deleted_id = String(deleted_id);
       var iterable = racks.slice(0).reverse();
@@ -667,49 +665,67 @@ class RackSpace {
       delete device_lookup.racks[deleted_id];
     }
 
-    return (() => {
-      const result = [];
-      for (var rack_def of Array.from(rack_defs)) {
-      // See if the rack exists in our racks array, if so delete 
+    const result = [];
+    for (var rack_def of Array.from(rack_defs)) {
+      // See if the rack exists in our racks array, if so delete
       // and insert new rack at its position
-        if (device_lookup.racks[rack_def.id] != null) {
-          for (idx = 0; idx < racks.length; idx++) {
-            // to maintain the selected rack across the resynch set the 'selected'
-            // parameter if present
-            //
-            rack = racks[idx];
-            var rack_def_copy          = {};
-            for (var i in rack_def) { rack_def_copy[i]       = rack_def[i]; }
-            rack_def_copy.focused  = rack.focused;
-            rack_def_copy.bothView = rack.bothView;
+      if (device_lookup.racks[rack_def.id] != null) {
+        for (idx = 0; idx < racks.length; idx++) {
+          // to maintain the selected rack across the resync set the 'selected'
+          // parameter if present --- what/where/how?
+          //
+          rack = racks[idx];
+          var rack_def_copy          = {};
+          for (var i in rack_def) { rack_def_copy[i]       = rack_def[i]; }
+          rack_def_copy.focused  = rack.focused;
+          rack_def_copy.bothView = rack.bothView;
 
-            // We have found the existing rack we are modifiying, so delete it
-            // as its name may have changed, thus meaning it has a new position
-            // in the array
-            if (rack.id === rack_def.id) {
-              racks[idx] = rack_def_copy;
+          // We have found the existing rack we are modifiying, so delete it
+          // as its name may have changed, thus meaning it has a new position
+          // in the array
+          if (rack.id === rack_def.id) {
+            racks[idx] = rack_def_copy;
+          }
+        }
+      } else {
+        // It must be a new rack as we didn't match it in our rack array
+        //
+        if (device_lookup.racks[rack_def.nextRackId] != null) {
+          for (idx = 0; idx < racks.length; idx++) {
+            rack = racks[idx];
+            if (rack.id === rack_def.nextRackId) {
+              racks.splice(idx, 0, rack_def);
+              break;
             }
           }
         } else {
-          // It must be a new rack as we didn't match it in our rack array
-          //
-          if (device_lookup.racks[rack_def.nextRackId] != null) {
-            for (idx = 0; idx < racks.length; idx++) {
-              rack = racks[idx];
-              if (rack.id === rack_def.nextRackId) {
-                racks.splice(idx, 0, rack_def);
-                break;
-              }
-            }
-          } else {
-            racks.push(rack_def);
-          }
+          racks.push(rack_def);
         }
-      
-        result.push(device_lookup.racks[rack_def.id] = rack_def);
       }
-      return result;
-    })();
+
+      result.push(device_lookup.racks[rack_def.id] = rack_def);
+    }
+
+    return result;
+  }
+
+  // Remove any previously selected items that are no longer present
+  synchroniseSelected() {
+    const selected = this.model.selectedDevices();
+    const deviceLookup = this.model.deviceLookup();
+    let anySelected = false;
+    let newSelected = {};
+    Object.keys(selected).forEach((type) => {
+      newSelected[type] = {};
+      Object.keys(selected[type]).forEach((selectedId) => {
+        if(deviceLookup[type][selectedId]) {
+          newSelected[type][selectedId] = deviceLookup[type][selectedId];
+          anySelected = true;
+        }
+      });
+    });
+    this.model.selectedDevices(newSelected);
+    this.model.activeSelection(anySelected);
   }
 
   resetRackSpace() {
@@ -717,8 +733,8 @@ class RackSpace {
     this.racks = [];
     if (this.model.showingRacks() && !this.model.showingFullIrv()) {
       this.setUpRacks();
+      this.synchroniseSelected();
       this.centreRacks();
-      this.model.activeSelection(true);
       for (var oneRack of Array.from(this.racks)) {
         for (var oneInstance of Array.from(this.model.deviceLookup().racks[oneRack.id].instances)) {
           oneInstance.included = true;
@@ -726,6 +742,7 @@ class RackSpace {
       }
     } else if (this.model.showingFullIrv()) {
       this.setUpRacks();
+      this.synchroniseSelected();
       this.refreshRacks();
     }
 
