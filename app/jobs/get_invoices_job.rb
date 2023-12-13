@@ -24,6 +24,7 @@ class GetInvoicesJob < ApplicationJob
 
     def parse_body(body, user)
       @invoices_count = body["total_invoices"]
+      @invoices_count = Integer(@invoices_count) if @invoices_count.is_a?(String)
       @invoices = body["invoices"].map { |data| parse_invoice(data, user) }
     end
   end

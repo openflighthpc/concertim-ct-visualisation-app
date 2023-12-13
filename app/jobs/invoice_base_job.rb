@@ -51,24 +51,26 @@ module InvoiceBaseJob
     end
 
     def call
-      response =
-        if Rails.application.config.fake_invoice
-          fake_response
-        else
-          super
-        end
       # Find the sibling Result class.  E.g., for GetInvoicesJob::Runner we
       # find GetInvoicesJob::Result.  It is a programmer error if that result
       # class is not defined.
       result_klass = self.class.module_parent.const_get(:Result)
-      unless response.success?
-        return result_klass.new(false, nil, nil, response.reason_phrase || "Unknown error")
-      end
-      return result_klass.new(true, response.body, @user, "", response.status)
+      begin
+        response =
+          if Rails.application.config.fake_invoice
+            fake_response
+          else
+            super
+          end
+        unless response.success?
+          return result_klass.new(false, nil, nil, response.reason_phrase || "Unknown error")
+        end
+        return result_klass.new(true, response.body, @user, "", response.status)
 
-    rescue Faraday::Error
-      status_code = $!.response[:status] rescue 0
-      result_klass.new(false, nil, nil, $!.message, status_code)
+      rescue Faraday::Error
+        status_code = $!.response[:status] rescue 0
+        result_klass.new(false, nil, nil, $!.message, status_code)
+      end
     end
   end
 end

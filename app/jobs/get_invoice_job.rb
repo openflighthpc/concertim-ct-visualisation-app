@@ -22,7 +22,7 @@ class GetInvoiceJob < ApplicationJob
     private
 
     def parse_body(body, user)
-      @invoice = parse_invoice(body["invoice"], user)
+      @invoice = parse_invoice(body["account_invoice"], user)
     end
   end
 
@@ -45,7 +45,7 @@ class GetInvoiceJob < ApplicationJob
       Object.new.tap do |o|
         o.define_singleton_method(:success?) { true }
         o.define_singleton_method(:status) { 200 }
-        o.define_singleton_method(:body) { {"invoice" => invoice} }
+        o.define_singleton_method(:body) { {"account_invoice" => invoice} }
       end
     rescue ActionView::MissingTemplate
       Object.new.tap do |o|
@@ -58,7 +58,7 @@ class GetInvoiceJob < ApplicationJob
 
     def url
       url = URI(@cloud_service_config.user_handler_base_url)
-      url.path = "/get_account_invoice/#{@invoice_id}"
+      url.path = "/get_account_invoice"
       url.to_s
     end
 
