@@ -42,25 +42,30 @@ module HttpRequests
     end
 
     class_methods do
-      def property(attr, from: nil)
+      def property(attr, from: nil, context: nil)
         attr_accessor(attr)
-        properties[from || attr] = attr
+        properties[from || attr] = {to: attr, context: context}
       end
 
       # Load properties from the given source.
       def from(source)
         new.tap do |instance|
-          properties.each do |from, to|
+          properties.each do |from, prop|
+            to = prop[:to]
             instance.send("#{to}=", source[from.to_s])
           end
         end
       end
     end
 
-    # Sync and persist the properties to the model.
-    def sync(model)
-      properties.each do |_, to|
-        model.send("#{to}=", send(to))
+    # Sync and persist the properties to the model.  If `context` is given,
+    # only properties for that context will be synced.
+    def sync(model, context=nil)
+      properties.each do |_, prop|
+        to = prop[:to]
+        if context.nil? || context == prop[:context]
+          model.send("#{to}=", send(to))
+        end
       end
       model.save!
     end

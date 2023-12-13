@@ -105,7 +105,7 @@ RSpec.describe UserSignupJob, type: :job do
       let(:project_id) { SecureRandom.uuid }
       let(:billing_acct_id) { SecureRandom.uuid }
       let(:response_body) {
-        {user_id: cloud_user_id, project_id: project_id, billing_acct_id: billing_acct_id}
+        {user_id: cloud_user_id, project_id: project_id, billing_account_id: billing_acct_id}
           .stringify_keys
       }
 
