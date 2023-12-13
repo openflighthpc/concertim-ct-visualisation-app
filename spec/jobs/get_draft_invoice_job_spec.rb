@@ -37,7 +37,7 @@ RSpec.describe GetDraftInvoiceJob, type: :job do
 
     it "contains invoice config" do
       expect(subject[:invoice]).to eq({
-        "billing_acct_id" => user.billing_acct_id,
+        "billing_account_id" => user.billing_acct_id,
         "target_date" => "#{Date.today.year}-#{Date.today.month}-#{"%02d" % Date.today.day}",
       })
     end
