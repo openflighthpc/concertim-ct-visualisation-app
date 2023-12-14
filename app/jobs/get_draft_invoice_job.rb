@@ -34,18 +34,25 @@ class GetDraftInvoiceJob < ApplicationJob
 
     private
 
+    def process_response(response)
+      if response.status == 204
+        result_klass.new(false, nil, nil, "Nothing to generate", response.status)
+      else
+        super
+      end
+    end
+
     def fake_response
       renderer = ::ApplicationController.renderer.new
       data = renderer.render(
         template: "invoices/fakes/draft",
         layout: false,
       )
-      invoice = JSON.parse(data)
-      Object.new.tap do |o|
-        o.define_singleton_method(:success?) { true }
-        o.define_singleton_method(:status) { 201 }
-        o.define_singleton_method(:body) { {"draft_invoice" => invoice} }
-      end
+      build_fake_response(
+        success: true,
+        status: 201,
+        body: {"draft_invoice" => JSON.parse(data)},
+      )
     end
 
     def url

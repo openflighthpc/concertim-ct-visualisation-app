@@ -51,29 +51,76 @@ module InvoiceBaseJob
     end
 
     def call
-      # Find the sibling Result class.  E.g., for GetInvoicesJob::Runner we
-      # find GetInvoicesJob::Result.  It is a programmer error if that result
-      # class is not defined.
-      result_klass = self.class.module_parent.const_get(:Result)
-      begin
-        response =
-          if Rails.application.config.fake_invoice
-            fake_response
-          else
-            super
-          end
-        if response.status == 204
-          result_klass.new(false, nil, nil, "Nothing to generate", response.status)
-        elsif response.success?
-          result_klass.new(true, response.body, @user, "", response.status)
-        else
-          result_klass.new(false, nil, nil, response.reason_phrase || "Unknown error")
-        end
+      response = send_request
+      process_response(response)
+    rescue Faraday::Error
+      status_code = $!.response[:status] rescue 0
+      result_klass.new(false, nil, nil, $!.message, status_code)
+    end
 
-      rescue Faraday::Error
-        status_code = $!.response[:status] rescue 0
-        result_klass.new(false, nil, nil, $!.message, status_code)
+    private
+
+    def send_request
+      connection.post("", body)
+    end
+
+    def process_response(response)
+      if response.success?
+        result_klass.new(true, response.body, @user, "", response.status)
+      else
+        result_klass.new(false, nil, nil, response.reason_phrase || "Unknown error")
       end
     end
+
+    def result_klass
+      # Find the sibling Result class.  E.g., for GetInvoicesJob::Runner we
+      # find GetInvoicesJob::Result.  It is a programmer error if that Result
+      # class is not defined.
+      result_klass = self.class.module_parent.const_get(:Result)
+    end
+  end
+
+  module FakeInvoiceResponse
+    include ActiveSupport::Concern
+
+    private
+
+    def send_request
+      if Rails.application.config.fake_invoice
+        fake_response
+      else
+        super
+      end
+    end
+
+    # Creates a fake response for developing without needing to have our
+    # middleware stack and killbill available.
+    #
+    # The returned object should respond to the following methods:
+    #
+    # * `success?` - returns true if the object fakes a successful request.
+    # * `status` - the HTTP status that the response fakes.
+    # * `body` - an object representing a parsed JSON body.  It should already
+    #   be parsed so a Hash or an Array rather than a string.
+    # * `reason_phrase` - when `success?` is false, the reason it failed.  Not
+    #   needed if `success?` is true.
+    #
+    # The helper method `build_fake_response` can be used to return a suitable object.
+    def fake_response
+      raise NotImplementedError
+    end
+
+    def build_fake_response(success:, status:, body:, reason_phrase: nil)
+      Object.new.tap do |o|
+        o.define_singleton_method(:success?) { success }
+        o.define_singleton_method(:status) { status }
+        o.define_singleton_method(:body) { body }
+        o.define_singleton_method(:reason_phrase) { reason_phrase }
+      end
+    end
+  end
+
+  if Rails.env.development?
+    Runner.prepend(FakeInvoiceResponse)
   end
 end

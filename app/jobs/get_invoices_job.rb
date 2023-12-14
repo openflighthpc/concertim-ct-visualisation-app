@@ -48,11 +48,7 @@ class GetInvoicesJob < ApplicationJob
       body = JSON.parse(data)
       # Return a slice of all invoices just as the real API does.
       body["invoices"] = body["invoices"][@offset, @limit]
-      Object.new.tap do |o|
-        o.define_singleton_method(:success?) { true }
-        o.define_singleton_method(:status) { 200 }
-        o.define_singleton_method(:body) { body }
-      end
+      build_fake_response(success: true, status: 200, body: body)
     end
 
     def url

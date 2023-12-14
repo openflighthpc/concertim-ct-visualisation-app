@@ -41,19 +41,18 @@ class GetInvoiceJob < ApplicationJob
         template: "invoices/fakes/#{@invoice_id}",
         layout: false,
       )
-      invoice = JSON.parse(data)
-      Object.new.tap do |o|
-        o.define_singleton_method(:success?) { true }
-        o.define_singleton_method(:status) { 200 }
-        o.define_singleton_method(:body) { {"account_invoice" => invoice} }
-      end
+      build_fake_response(
+        success: true,
+        status: 200,
+        body: {"account_invoice" => JSON.parse(data)},
+      )
     rescue ActionView::MissingTemplate
-      Object.new.tap do |o|
-        o.define_singleton_method(:success?) { false }
-        o.define_singleton_method(:status) { 404 }
-        o.define_singleton_method(:body) { {"error" => "Invoice Not Found"} }
-        o.define_singleton_method(:reason_phrase) { "Invoice Not Found" }
-      end
+      build_fake_response(
+        success: false,
+        status: 404,
+        body: {"error" => "Invoice Not Found"},
+        reason_phrase: "Invoice Not Found",
+      )
     end
 
     def url
