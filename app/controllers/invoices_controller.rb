@@ -13,11 +13,10 @@ class InvoicesController < ApplicationController
     if result.success?
       @pagy.finalize(result.invoices_count)
       @invoices = result.invoices
-      render
     else
-      flash[:alert] = "Unable to fetch invoices: #{result.error_message}"
-      redirect_back_or_to root_path
-      return
+      flash.now[:alert] = "Unable to fetch invoices: #{result.error_message}"
+      @pagy.finalize(0)
+      @invoices = []
     end
   end
 
@@ -55,8 +54,8 @@ class InvoicesController < ApplicationController
   def ensure_cloud_service_configured
     @cloud_service_config = CloudServiceConfig.first
     if @cloud_service_config.nil?
-      flash.now[:alert] = "Unable to fetch invoice: cloud environment config
-        not set. Please contact an admin."
+      flash.now[:alert] = "Unable to fetch invoice: cloud environment config " \
+        "not set. Please contact an admin."
       render action: :index
     end
   end

@@ -39,7 +39,7 @@
 
   <tbody>
     <% @table.items.each_with_index do |item, idx| %>
-      <%= content_tag(:tr, class: idx.odd? ? :odd : :even, data: {object_id: (item.id if item.respond_to?(:id))}) do %>
+      <%= content_tag(:tr, class: idx.odd? ? :odd : :even, data: {test: @table.test_data_for_item(item)}) do %>
         <% @table.columns.each_with_index do |column, column_idx| %>
           <%= content_tag(:td, class: column.html_class(column_idx)) do %>
             <%= column.render_content_for(item).tap do |content| %>
