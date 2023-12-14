@@ -1,0 +1,27 @@
+<% set_title 'Add credits' -%>
+
+<p>Add credits for user <strong><%= @user.name %></strong>.</p>
+
+<p>They currently have <strong><%= pluralize(presenter_for(@user).formatted_credits, 'credit') %>.</strong></p>
+
+<%= form_for(@credit_deposit, url: credit_deposits_path) do |f| %>
+
+  <% if @credit_deposit.errors.any? %>
+    <div id="error_explanation">
+      <h2>There <%= "#{@credit_deposit.errors.count == 1 ? 'is' : 'are'}" %> <%= pluralize(@credit_deposit.errors.count, "error") %>:</h2>
+
+      <ul>
+        <% @credit_deposit.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="formItem">
+    <%= f.label :name, "Amount", class: 'required_field' %>
+    <%= f.number_field :amount, autocomplete: :off, min: 1 %>
+  </div>
+
+  <%= f.submit 'Create' %>
+<% end %>

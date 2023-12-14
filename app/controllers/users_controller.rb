@@ -4,7 +4,7 @@ class UsersController < ApplicationController
 
   def index
     @users = resource_table_collection(@users)
-    render
+    #render
   end
 
   def edit
