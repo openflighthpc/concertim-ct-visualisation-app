@@ -62,10 +62,13 @@ module InvoiceBaseJob
           else
             super
           end
-        unless response.success?
-          return result_klass.new(false, nil, nil, response.reason_phrase || "Unknown error")
+        if response.status == 204
+          result_klass.new(false, nil, nil, "Nothing to generate", response.status)
+        elsif response.success?
+          result_klass.new(true, response.body, @user, "", response.status)
+        else
+          result_klass.new(false, nil, nil, response.reason_phrase || "Unknown error")
         end
-        return result_klass.new(true, response.body, @user, "", response.status)
 
       rescue Faraday::Error
         status_code = $!.response[:status] rescue 0
