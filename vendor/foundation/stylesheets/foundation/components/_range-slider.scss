@@ -126,7 +126,7 @@ $range-slider-disabled-opacity: 0.7 !default;
         @include range-slider-bar-base($vertical: true);
         .range-slider-handle {
           margin-top: 0;
-          margin-#{$default-float}: -($range-slider-handle-width / 4);
+          margin-#{$default-float}: -(calc($range-slider-handle-width / 4));
           position: absolute;
           bottom: -($range-slider-vertical-bar-height - $range-slider-handle-width);
         }

@@ -21,13 +21,13 @@
     z-index: 99999999;
     
     &.content {
-      padding: ($f-dropdown-content-padding / 2) 0;
+      padding: (calc($f-dropdown-content-padding / 2)) 0;
       max-width: 200px;
     }
 
     li {
       &.divider {
-        * { padding-left: ($f-dropdown-content-padding / 1.5); }
+        * { padding-left: (calc($f-dropdown-content-padding / 1.5)); }
 
         hr { padding-left: 0; }
       }

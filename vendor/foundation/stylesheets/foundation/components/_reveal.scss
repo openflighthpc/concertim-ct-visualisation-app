@@ -92,7 +92,7 @@ $close-reveal-modal-class: "close-reveal-modal" !default;
 
   @if $width {
     @media #{$medium-up} {
-      margin-#{$default-float}: -($width / 2);
+      margin-#{$default-float}: -(calc($width / 2));
       width: $width;
     }
   }

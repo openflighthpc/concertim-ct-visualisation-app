@@ -48,7 +48,7 @@ $switch-active-color: $primary-color;
   // Default label styles for type and transition
   label {
     display: block;
-    margin-bottom: $switch-height-med / 2;
+    margin-bottom: calc($switch-height-med / 2);
     position: relative;
     color: transparent;
     background: $switch-bg;

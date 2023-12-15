@@ -83,10 +83,10 @@ $select-hover-bg-color: scale-color($select-bg-color, $lightness: -3%) !default;
 
 // We use this mixin to give us form styles for rows inside of forms
 @mixin form-row-base {
-  .row { margin: 0 ((-$form-spacing) / 2);
+  .row { margin: 0 calc(($form-spacing * -1) / 2);
 
     .column,
-    .columns { padding: 0 $form-spacing / 2; }
+    .columns { padding: 0 calc($form-spacing / 2); }
 
     // Use this to collapse the margins of a form row
     &.collapse { margin: 0;
@@ -102,7 +102,7 @@ $select-hover-bg-color: scale-color($select-bg-color, $lightness: -3%) !default;
   input.column,
   input.columns,
   textarea.column,
-  textarea.columns { padding-#{$default-float}: $form-spacing / 2; }
+  textarea.columns { padding-#{$default-float}: calc($form-spacing / 2); }
 }
 
 // @MIXIN
@@ -117,8 +117,8 @@ $select-hover-bg-color: scale-color($select-bg-color, $lightness: -3%) !default;
   display: block;
   font-size: $input-font-size;
   margin: 0 0 $form-spacing 0;
-  padding: $form-spacing / 2;
-  height: ($input-font-size + ($form-spacing * 1.5) - rem-calc(1));
+  padding: calc($form-spacing / 2);
+  height: (calc($input-font-size + ($form-spacing * 1.5) - rem-calc(1)));
   width: 100%;
   @include box-sizing(border-box);
   @if $input-include-glowing-effect {
@@ -171,7 +171,7 @@ $select-hover-bg-color: scale-color($select-bg-color, $lightness: -3%) !default;
   }
   @else if $alignment == inline {
     margin: 0 0 $form-spacing 0;
-    padding: $form-spacing / 2 + rem-calc($input-border-width) 0;
+    padding: calc($form-spacing / 2 + rem-calc($input-border-width)) 0;
   }
 }
 
@@ -331,7 +331,7 @@ $select-hover-bg-color: scale-color($select-bg-color, $lightness: -3%) !default;
   
   background-repeat: no-repeat;
   border: $input-border-width $input-border-style $input-border-color;
-  padding: $form-spacing / 2;
+  padding: calc($form-spacing / 2);
   font-size: $input-font-size;
   color: $input-font-color;
   line-height: normal;
