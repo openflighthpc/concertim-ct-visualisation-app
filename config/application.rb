@@ -54,7 +54,20 @@ module CtApp
     }
 
     # minimum credits user must have to create a cluster
-    config.cluster_credit_requirement = ENV['CLUSTER_CREDIT_REQUIREMENT'] || 25
+    config.after_initialize do
+      config.cluster_credit_requirement = if ENV['CLUSTER_CREDIT_REQUIREMENT']
+        begin
+          config.cluster_credit_requirement = Float(ENV['CLUSTER_CREDIT_REQUIREMENT'])
+        rescue ArgumentError
+          msg = 'ENV variable CLUSTER_CREDIT_REQUIREMENT is not a valid number. Please update its value, or leave it blank.'
+          Rails.logger.warn(msg) # Log warning to Rails log file
+          $stderr.puts(msg) # Output to stderr
+          raise msg
+        end
+      else
+        25
+      end
+    end
 
     # config.require_master_key = true
   end
