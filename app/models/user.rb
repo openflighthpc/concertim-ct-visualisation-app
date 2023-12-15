@@ -97,10 +97,6 @@ class User < ApplicationRecord
     end
   end
 
-  def enough_credits_to_create_cluster?
-    credits > 0 && credits >= Rails.application.config.cluster_credit_requirement
-  end
-
   ####################################
   #
   # Private Instance Methods

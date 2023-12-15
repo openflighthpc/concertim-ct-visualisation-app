@@ -2,7 +2,12 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
-    enable_abilities(user || User.new)
+    @user = user || User.new
+    enable_abilities(@user)
+  end
+
+  def enough_credits_to_create_cluster?(user=@user)
+    user.credits > 0 && user.credits >= Rails.application.config.cluster_credit_requirement
   end
 
   private
@@ -41,7 +46,7 @@ class Ability
     can :manage, RackviewPreset, user: user
 
     can :read, ClusterType
-    can :create, Cluster if user.enough_credits_to_create_cluster?
+    can :create, Cluster if enough_credits_to_create_cluster?(user)
 
     can :read, KeyPair, user: user
     can :create, KeyPair, user: user
