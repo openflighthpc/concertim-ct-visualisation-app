@@ -21,7 +21,7 @@ import Validator from 'canvas/common/gfx/Validator';
 class SimpleRenderer {
   static initClass() {
     this.UNSUPPORTED        = 'Erk! Your browser doesn\'t support canvas :(';
-    this.DEFAULT_FRAME_RATE = 24;
+    this.DEFAULT_FRAME_RATE = 60;
 
     this.CVS_IDX = 0;
   }
@@ -63,26 +63,8 @@ class SimpleRenderer {
     this.paused        = false;
     this.containerEl.appendChild(this.cvs);
 
-    if (frame_rate > 0) {
-      // requestAnimation frame (where supported) tells the browser that animation is occurring
-      // this allows for optimisation, e.g. rendering is ignored when viewing a different tab
-      window.requestAnimationFrame = this.setAnimFrame();
-      // queue initial draw
-      window.requestAnimationFrame(this.drawFrame);
-      // requestAnimationFrame runs at 60fps, the setInterval overrides this
-      this.drawId = setInterval(this.queueFrame, this.frameInterval);
-      this;
-    }
+    if (frame_rate > 0) { this.queueFrame(); }
   }
-
-
-  setAnimFrame() {
-    // return browser specific requestAnimationFrame routine with fallback where unsupported
-    let left, left1, left2, left3;
-    const fallback = callback => window.setTimeout(callback, 1000 / 60);
-    return (left = (left1 = (left2 = (left3 = window.requestAnimationFrame != null ? window.requestAnimationFrame : window.webkitRequestAnimationFrame) != null ? left3 : window.mozRequestAnimationFrame) != null ? left2 : window.oRequestAnimationFrame) != null ? left1 : window.msRequestAnimationFrame) != null ? left : fallback;
-  }
-
 
   queueFrame() {
     return window.requestAnimationFrame(this.drawFrame);
@@ -399,7 +381,6 @@ class SimpleRenderer {
     }
 
     const asset = this.assetDir[asset_id];
-  
     // prepare anim objet
     const anim_obj = {
       id         : asset_id,
@@ -532,6 +513,7 @@ class SimpleRenderer {
     }
     this.drawList = [];
 
+    this.queueFrame();
     // drawComplete can be assigned externally. Triggers a callback when frame finishes rendering
     if (this.drawComplete != null) { return this.drawComplete(); }
   }
@@ -589,7 +571,7 @@ class SimpleRenderer {
 
 
   stopAnim(asset_id) {
-    // maintaining animsById allows us to check if the asset is animating 
+    // maintaining animsById allows us to check if the asset is animating
     // without iterating through the whole anims array
     if (this.animsById[asset_id] != null) {
       delete this.animsById[asset_id];

@@ -12,7 +12,7 @@
     "flipDuration"           : 400,
     "flipDelay"              : 15,
     "infoFadeDuration"       : 200,
-    "fps"                    : 24,
+    "fps"                    : 60,
     "metricFadeFill"         : "#000000",
     "metricFadeAlpha"        : 1,
     "additionalRowTolerance" : 0,
