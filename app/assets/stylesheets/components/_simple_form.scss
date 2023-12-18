@@ -23,4 +23,20 @@ form.simple_form {
     .field_with_hint input {
         margin-bottom: 0;
     }
+
+    // Styling for the fields with a clipboard button added.  This is very
+    // quick and dirty and I'd expect a refresh of the UI to use a CSS
+    // framwork that support this such as
+    // https://getbootstrap.com/docs/5.1/forms/input-group/#button-addons.
+    // But for now this will do.
+    .field_with_clipboard {
+        input {
+            display: inline-block;
+            width: calc( 450px - 75px );
+        }
+        button {
+            height: 33px;
+            top: -3px;
+        }
+    }
 }
