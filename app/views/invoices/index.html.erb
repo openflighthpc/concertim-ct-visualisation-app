@@ -17,7 +17,7 @@
 
   <% t.attribute_column :invoice_id %>
   <% t.attribute_column :invoice_number %>
-  <% t.custom_column "Invoice Data" do |invoice| invoice.formatted_invoice_date end %>
+  <% t.custom_column "Invoice Date" do |invoice| invoice.formatted_invoice_date end %>
   <% t.custom_column "Amount"       do |invoice| invoice.formatted_amount_charged end %>
 
   <% t.actions_column do |actions, invoice| %>
