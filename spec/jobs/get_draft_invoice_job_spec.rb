@@ -42,6 +42,7 @@ RSpec.describe GetDraftInvoiceJob, type: :job do
 
       let(:draft_invoice) {
         {
+          account_id: user.billing_acct_id,
           amount: 1,
           balance: 2,
           credit_adj: 0,

@@ -22,10 +22,10 @@ class GetInvoicesJob < ApplicationJob
 
     private
 
-    def parse_body(body, user)
+    def parse_body(body)
       @invoices_count = body["total_invoices"]
       @invoices_count = Integer(@invoices_count) if @invoices_count.is_a?(String)
-      @invoices = body["invoices"].map { |data| parse_invoice(data, user) }
+      @invoices = body["invoices"].map { |data| parse_invoice(data) }
     end
   end
 
@@ -44,6 +44,7 @@ class GetInvoicesJob < ApplicationJob
       data = renderer.render(
         template: "invoices/fakes/list",
         layout: false,
+        locals: {account_id: @user.root? ? "034796e0-4129-45cd-b2ed-fcfc27cd8a7f" : @user.billing_acct_id},
       )
       body = JSON.parse(data)
       # Return a slice of all invoices just as the real API does.

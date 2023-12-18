@@ -18,16 +18,20 @@ RSpec.describe "invoices index page table", type: :system do
   end
 
   before(:each) { allow(GetInvoicesJob).to receive(:perform_now).and_return(result) }
-  let(:result) { GetInvoicesJob::Result.new(true, invoice_request_response_body, user, nil, 200) }
+  let(:result) { GetInvoicesJob::Result.new(true, invoice_request_response_body, nil, 200) }
   let(:invoice_request_response_body) {
     {
       "total_invoices" => total_invoices,
-      "invoices" => invoices.map(&:attributes),
+      "invoices" => invoices.map do |invoice|
+        attrs = invoice.attributes.except("account")
+        attrs["account_id"] = user.billing_acct_id
+        attrs
+      end,
     }
   }
 
   # The API does the pagination for us, we emulate that here.
-  let(:invoices) { build_list(:invoice, [total_invoices, items_per_page].min) }
+  let(:invoices) { build_list(:invoice, [total_invoices, items_per_page].min, account: user) }
 
   describe "pagination" do
     context "when there are 20 or fewer invoices" do

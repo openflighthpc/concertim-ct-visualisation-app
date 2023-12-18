@@ -20,8 +20,8 @@ class GetDraftInvoiceJob < ApplicationJob
 
     private
 
-    def parse_body(body, user)
-      @invoice = parse_invoice(body["draft_invoice"], user)
+    def parse_body(body)
+      @invoice = parse_invoice(body["draft_invoice"])
     end
 
   end
@@ -36,7 +36,7 @@ class GetDraftInvoiceJob < ApplicationJob
 
     def process_response(response)
       if response.status == 204
-        result_klass.new(false, nil, nil, "Nothing to generate", response.status)
+        result_klass.new(false, nil, "Nothing to generate", response.status)
       else
         super
       end
@@ -47,6 +47,7 @@ class GetDraftInvoiceJob < ApplicationJob
       data = renderer.render(
         template: "invoices/fakes/draft",
         layout: false,
+        locals: {account_id: @user.root? ? "034796e0-4129-45cd-b2ed-fcfc27cd8a7f" : @user.billing_acct_id},
       )
       build_fake_response(
         success: true,

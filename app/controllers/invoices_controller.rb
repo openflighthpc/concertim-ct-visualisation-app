@@ -8,6 +8,7 @@ class InvoicesController < ApplicationController
   before_action :ensure_billing_account_configured
 
   def index
+    authorize! :index, Invoice
     @pagy = Pagy::DelayedCount.new(pagy_get_vars_without_count)
     result = GetInvoicesJob.perform_now(@cloud_service_config, current_user, offset: @pagy.offset, limit: @pagy.items)
     if result.success?
@@ -24,6 +25,7 @@ class InvoicesController < ApplicationController
     result = GetInvoiceJob.perform_now(@cloud_service_config, current_user, params[:id])
     if result.success?
       @invoice = result.invoice
+      authorize! :show, @invoice
       render
     else
       flash[:alert] = "Unable to fetch invoice: #{result.error_message}"
@@ -35,6 +37,7 @@ class InvoicesController < ApplicationController
     result = GetDraftInvoiceJob.perform_now(@cloud_service_config, current_user)
     if result.success?
       @invoice = result.invoice
+      authorize! :show, @invoice
       render action: :show
     else
       flash[:alert] = "Unable to fetch draft invoice: #{result.error_message}"

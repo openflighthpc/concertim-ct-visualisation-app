@@ -4,12 +4,12 @@ module InvoiceBaseJob
   class Result
     attr_reader :status_code
 
-    def initialize(success, body, user, error_message, status_code=nil)
+    def initialize(success, body, error_message, status_code=nil)
       @success = !!success
       @error_message = error_message
       @status_code = status_code
       if success? && !body.nil?
-        parse_body(body, user)
+        parse_body(body)
       end
     end
 
@@ -25,12 +25,24 @@ module InvoiceBaseJob
 
     # Called on initialization.  It should parse the body and set any needed
     # instance variables.
-    def parse_body(body, user)
+    def parse_body(body)
       raise NotImplementedError
     end
 
-    def parse_invoice(invoice_data, user)
-      Invoice.new(account: user).tap do |invoice|
+    # Return the user that the given invoice was generated for.
+    def user_for_invoice(invoice_data)
+      billing_account_id = invoice_data["accountId"] || invoice_data["account_id"]
+      User.find_by(billing_acct_id: billing_account_id).tap do |user|
+        if user.nil?
+          invoice_id = invoice_data["invoiceId"] || invoice_data["invoice_id"]
+          Rails.logger.warn("Unable to find matching user for invoice. invoice_id:#{invoice_id} account_id:#{billing_account_id}")
+        end
+      end
+    end
+
+    def parse_invoice(invoice_data)
+      Invoice.new.tap do |invoice|
+        invoice.account = user_for_invoice(invoice_data)
         (invoice.attribute_names - %w(account items)).each do |attr|
           invoice.send("#{attr}=", invoice_data[attr] || invoice_data[attr.camelize(:lower)])
         end
@@ -55,7 +67,7 @@ module InvoiceBaseJob
       process_response(response)
     rescue Faraday::Error
       status_code = $!.response[:status] rescue 0
-      result_klass.new(false, nil, nil, $!.message, status_code)
+      result_klass.new(false, nil, $!.message, status_code)
     end
 
     private
@@ -66,9 +78,9 @@ module InvoiceBaseJob
 
     def process_response(response)
       if response.success?
-        result_klass.new(true, response.body, @user, "", response.status)
+        result_klass.new(true, response.body, "", response.status)
       else
-        result_klass.new(false, nil, nil, response.reason_phrase || "Unknown error")
+        result_klass.new(false, nil, response.reason_phrase || "Unknown error")
       end
     end
 

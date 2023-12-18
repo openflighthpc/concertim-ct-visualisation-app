@@ -21,8 +21,8 @@ class GetInvoiceJob < ApplicationJob
 
     private
 
-    def parse_body(body, user)
-      @invoice = parse_invoice(body["account_invoice"], user)
+    def parse_body(body)
+      @invoice = parse_invoice(body["account_invoice"])
     end
   end
 
@@ -40,6 +40,7 @@ class GetInvoiceJob < ApplicationJob
       data = renderer.render(
         template: "invoices/fakes/#{@invoice_id}",
         layout: false,
+        locals: {account_id: @user.root? ? "034796e0-4129-45cd-b2ed-fcfc27cd8a7f" : @user.billing_acct_id},
       )
       build_fake_response(
         success: true,
