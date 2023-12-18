@@ -24,6 +24,7 @@ class CreditDeposit
   ####################################
 
   attr_accessor :amount, :user
+  delegate :billing_acct_id, to: :user
 
   ############################
   #

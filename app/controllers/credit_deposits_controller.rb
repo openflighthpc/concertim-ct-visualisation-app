@@ -19,14 +19,14 @@ class CreditDepositsController < ApplicationController
         return
       end
 
-      flash[:success] = "Pretend credit deposit request made"
-      # result = CreateCreditDepositJob.perform_now(@credit_deposit, @cloud_service_config)
-      # if result.success?
-      #   flash[:success] = "Credit deposit submitted. It may take a few minutes for the user's new balance to be reflected."
-      # else
-      #   flash[:alert] = "Unable to submit credit deposit: #{result.error_message}"
-      # end
-      redirect_to users_path
+      result = CreateCreditDepositJob.perform_now(@credit_deposit, @cloud_service_config, @user)
+      if result.success?
+        flash[:success] = "Credit deposit submitted for #{@user.name}. It may take a few minutes for the user's new balance to be reflected."
+        redirect_to users_path
+      else
+        flash[:alert] = "Unable to submit credit deposit: #{result.error_message}"
+        render :new
+      end
     end
   end
 
