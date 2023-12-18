@@ -18,7 +18,7 @@ module HttpRequests
     # retried by adding `retry_on ::Faraday::Error, ...` to the `ActiveJob` class.
     #
     class JobRunner
-      DEFAULT_TIMEOUT = 5
+      DEFAULT_TIMEOUT = 60
 
       def initialize(cloud_service_config:, logger:nil, timeout:nil, test_stubs:nil)
         @cloud_service_config = cloud_service_config
