@@ -42,6 +42,7 @@ table.resource_table th span.asc-desc,
 .statusMessage,
 .overviewStatusMessage,
 .required_field,
+.required,
 .alc_hideable,
 .ajax-loading, .pleasewait {
   &:before, &:after { @include icon-style; }
@@ -337,7 +338,8 @@ table.resource_table th span.asc-desc,
 /*
   Form icons
 */
-label.required_field {
+label.required_field,
+label.required {
   @extend .icon-circle-left-filled;
   &:before {
     float: right;
