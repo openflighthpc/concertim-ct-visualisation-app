@@ -37,8 +37,4 @@ module UiHelper
       cell(:actions).(:show, title, block, opts.merge(is_dropdown: true))
     end
   end
-
-  def form_element(form, attribute, opts={})
-    cell('form_element').(:show, form, attribute, opts)
-  end
 end
