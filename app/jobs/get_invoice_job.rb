@@ -1,11 +1,12 @@
 require 'faraday'
 
-class GetDraftInvoiceJob < ApplicationJob
+class GetInvoiceJob < ApplicationJob
   queue_as :default
 
-  def perform(cloud_service_config, user, **options)
+  def perform(cloud_service_config, user, invoice_id, **options)
     runner = Runner.new(
       user: user,
+      invoice_id: invoice_id,
       cloud_service_config: cloud_service_config,
       logger: logger,
       **options
@@ -21,44 +22,43 @@ class GetDraftInvoiceJob < ApplicationJob
     private
 
     def parse_body(body)
-      @invoice = parse_invoice(body["draft_invoice"])
+      @invoice = parse_invoice(body["account_invoice"])
     end
-
   end
 
   class Runner < InvoiceBaseJob::Runner
-    def initialize(user:, **kwargs)
+    def initialize(user:, invoice_id:, **kwargs)
       @user = user
+      @invoice_id = invoice_id
       super(**kwargs)
     end
 
     private
 
-    def process_response(response)
-      if response.status == 204
-        result_klass.new(false, nil, "Nothing to generate", response.status)
-      else
-        super
-      end
-    end
-
     def fake_response
       renderer = ::ApplicationController.renderer.new
       data = renderer.render(
-        template: "invoices/fakes/draft",
+        template: "invoices/fakes/#{@invoice_id}",
         layout: false,
         locals: {account_id: @user.root? ? "034796e0-4129-45cd-b2ed-fcfc27cd8a7f" : @user.billing_acct_id},
       )
       build_fake_response(
         success: true,
-        status: 201,
-        body: {"draft_invoice" => JSON.parse(data)},
+        status: 200,
+        body: {"account_invoice" => JSON.parse(data)},
+      )
+    rescue ActionView::MissingTemplate
+      build_fake_response(
+        success: false,
+        status: 404,
+        body: {"error" => "Invoice Not Found"},
+        reason_phrase: "Invoice Not Found",
       )
     end
 
     def url
       url = URI(@cloud_service_config.user_handler_base_url)
-      url.path = "/get_draft_invoice"
+      url.path = "/get_account_invoice"
       url.to_s
     end
 
@@ -66,7 +66,7 @@ class GetDraftInvoiceJob < ApplicationJob
       {
         invoice: {
           billing_account_id: @user.billing_acct_id,
-          target_date: Date.today.to_formatted_s(:iso8601),
+          invoice_id: @invoice_id,
         },
       }
     end

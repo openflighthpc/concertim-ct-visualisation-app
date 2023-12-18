@@ -26,18 +26,9 @@ RSpec.describe GetDraftInvoiceJob, type: :job do
   describe "body" do
     subject { super().send(:body).with_indifferent_access }
 
-    it "contains the correct cloud environment config" do
-      expect(subject[:cloud_env]).to eq({
-        "auth_url" => cloud_service_config.internal_auth_url,
-        "user_id" => user.cloud_user_id,
-        "password" => user.foreign_password,
-        "project_id" => user.project_id,
-      })
-    end
-
     it "contains invoice config" do
       expect(subject[:invoice]).to eq({
-        "billing_acct_id" => user.billing_acct_id,
+        "billing_account_id" => user.billing_acct_id,
         "target_date" => "#{Date.today.year}-#{Date.today.month}-#{"%02d" % Date.today.day}",
       })
     end
@@ -51,6 +42,7 @@ RSpec.describe GetDraftInvoiceJob, type: :job do
 
       let(:draft_invoice) {
         {
+          account_id: user.billing_acct_id,
           amount: 1,
           balance: 2,
           credit_adj: 0,

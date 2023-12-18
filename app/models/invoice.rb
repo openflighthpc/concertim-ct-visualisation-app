@@ -18,6 +18,14 @@ class Invoice
     status == "DRAFT" || invoice_number.nil?
   end
 
+  def to_key
+    [invoice_id]
+  end
+
+  def persisted?
+    !draft?
+  end
+
   # Extract these `formatted_*` methods to a presenter if they get
   # large/complicated/numerous.
 

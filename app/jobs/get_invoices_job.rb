@@ -1,6 +1,6 @@
 require 'faraday'
 
-class GetDraftInvoiceJob < ApplicationJob
+class GetInvoicesJob < ApplicationJob
   queue_as :default
 
   def perform(cloud_service_config, user, **options)
@@ -14,59 +14,56 @@ class GetDraftInvoiceJob < ApplicationJob
   end
 
   class Result < InvoiceBaseJob::Result
-    def invoice
-      success? ? @invoice : nil
+    attr_reader :invoices_count
+
+    def invoices
+      success? ? @invoices : nil
     end
 
     private
 
     def parse_body(body)
-      @invoice = parse_invoice(body["draft_invoice"])
+      @invoices_count = body["total_invoices"]
+      @invoices_count = Integer(@invoices_count) if @invoices_count.is_a?(String)
+      @invoices = body["invoices"].map { |data| parse_invoice(data) }
     end
-
   end
 
   class Runner < InvoiceBaseJob::Runner
-    def initialize(user:, **kwargs)
+    def initialize(user:, offset:, limit:, **kwargs)
       @user = user
+      @offset = offset
+      @limit = limit
       super(**kwargs)
     end
 
     private
 
-    def process_response(response)
-      if response.status == 204
-        result_klass.new(false, nil, "Nothing to generate", response.status)
-      else
-        super
-      end
-    end
-
     def fake_response
       renderer = ::ApplicationController.renderer.new
       data = renderer.render(
-        template: "invoices/fakes/draft",
+        template: "invoices/fakes/list",
         layout: false,
         locals: {account_id: @user.root? ? "034796e0-4129-45cd-b2ed-fcfc27cd8a7f" : @user.billing_acct_id},
       )
-      build_fake_response(
-        success: true,
-        status: 201,
-        body: {"draft_invoice" => JSON.parse(data)},
-      )
+      body = JSON.parse(data)
+      # Return a slice of all invoices just as the real API does.
+      body["invoices"] = body["invoices"][@offset, @limit]
+      build_fake_response(success: true, status: 200, body: body)
     end
 
     def url
       url = URI(@cloud_service_config.user_handler_base_url)
-      url.path = "/get_draft_invoice"
+      url.path = "/list_paginated_invoices"
       url.to_s
     end
 
     def body
       {
-        invoice: {
+        invoices: {
           billing_account_id: @user.billing_acct_id,
-          target_date: Date.today.to_formatted_s(:iso8601),
+          offset: @offset,
+          limit: @limit,
         },
       }
     end

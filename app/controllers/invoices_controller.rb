@@ -1,32 +1,73 @@
-class InvoicesController < ApplicationController
-  def show
-    if current_user.root?
-      flash[:alert] = "Unable to fetch invoice for admin user"
-      redirect_back_or_to root_path
-      return
-    end
-    @cloud_service_config = CloudServiceConfig.first
-    if @cloud_service_config.nil?
-      flash[:alert] = "Unable to fetch user's invoice: cloud environment config
-        not set. Please contact an admin."
-      redirect_back_or_to root_path
-      return
-    end
-    unless current_user.billing_acct_id
-      flash[:alert] = "Unable to fetch user's invoice: you do not yet have a " \
-        "billing account id. This will be added automatically shortly."
-      redirect_back_or_to root_path
-      return
-    end
+require 'pagy/delayed_count'
 
+class InvoicesController < ApplicationController
+  include ControllerConcerns::Pagination
+
+  before_action :redirect_if_root
+  before_action :ensure_cloud_service_configured
+  before_action :ensure_billing_account_configured
+
+  def index
+    authorize! :index, Invoice
+    @pagy = Pagy::DelayedCount.new(pagy_get_vars_without_count)
+    result = GetInvoicesJob.perform_now(@cloud_service_config, current_user, offset: @pagy.offset, limit: @pagy.items)
+    if result.success?
+      @pagy.finalize(result.invoices_count)
+      @invoices = result.invoices
+    else
+      flash.now[:alert] = "Unable to fetch invoices: #{result.error_message}"
+      @pagy.finalize(0)
+      @invoices = []
+    end
+  end
+
+  def show
+    result = GetInvoiceJob.perform_now(@cloud_service_config, current_user, params[:id])
+    if result.success?
+      @invoice = result.invoice
+      authorize! :show, @invoice
+      render
+    else
+      flash[:alert] = "Unable to fetch invoice: #{result.error_message}"
+      redirect_to invoices_path
+    end
+  end
+
+  def draft
     result = GetDraftInvoiceJob.perform_now(@cloud_service_config, current_user)
     if result.success?
       @invoice = result.invoice
-      render
+      authorize! :show, @invoice
+      render action: :show
     else
-      flash[:alert] = "Unable to fetch user's invoice: #{result.error_message}"
+      flash[:alert] = "Unable to fetch draft invoice: #{result.error_message}"
+      redirect_to invoices_path
+    end
+  end
+
+  private
+
+  def redirect_if_root
+    if current_user.root?
+      flash[:alert] = "Unable to fetch invoice for admin user"
       redirect_back_or_to root_path
-      return
+    end
+  end
+
+  def ensure_cloud_service_configured
+    @cloud_service_config = CloudServiceConfig.first
+    if @cloud_service_config.nil?
+      flash.now[:alert] = "Unable to fetch invoice: cloud environment config " \
+        "not set. Please contact an admin."
+      render action: :index
+    end
+  end
+
+  def ensure_billing_account_configured
+    if current_user.billing_acct_id.blank?
+      flash.now[:alert] = "Unable to fetch invoices. You do not yet have a " \
+        "billing account id. This will be added automatically shortly."
+      render action: :index
     end
   end
 end

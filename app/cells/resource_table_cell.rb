@@ -157,6 +157,16 @@ class ResourceTableCell < Cell::ViewModel
       nil
     end
 
+    # Return a value suitable for use as `data-test` attribute to identify this
+    def test_data_for_item(item)
+      # This implementation will work well for all persisted
+      # ActiveModel::Models.  It may not work well otherwise.
+      [item.model_name.param_key, item.to_param].compact.join('-')
+    rescue
+      nil
+    end
+
+
     private
 
     def establish_if_paginatable
@@ -199,7 +209,6 @@ class ResourceTableCell < Cell::ViewModel
       html_classes << @html_class
       html_classes
     end
-
 
     #
     # render_content_for
@@ -337,7 +346,9 @@ class ResourceTableCell < Cell::ViewModel
 
     def render_content_for(item)
       block = ->(builder) { @block.call(builder, item) }
-      dropdown_id = item.respond_to?(:to_gid_param) ? item.to_gid_param : item.id
+      dropdown_id = item.respond_to?(:to_gid_param) ?
+        item.to_gid_param :
+        [item.model_name.param_key, item.to_param].compact.join('-')
       opts = @opts.merge(is_dropdown: true, dropdown_id: dropdown_id)
       @table_cell.cell(:actions).(:show, 'Actions', block, opts)
     end

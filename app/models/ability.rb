@@ -48,6 +48,10 @@ class Ability
     can :destroy, KeyPair, user: user
 
     can [:read, :update], User, id: user.id
+
+    # Invoice is an ActiveModel::Model, but not an ActiveRecord::Base.  Setting
+    # abilities like this might not work too well.  Or perhaps its fine.
+    can :read, Invoice, account: user
   end
 
   # Despite specifying what a user can/can't do, you will eventually come
