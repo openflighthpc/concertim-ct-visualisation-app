@@ -60,9 +60,9 @@ module CtApp
           config.cluster_credit_requirement = Float(ENV['CLUSTER_CREDIT_REQUIREMENT'])
         rescue ArgumentError
           msg = 'ENV variable CLUSTER_CREDIT_REQUIREMENT is not a valid number. Please update its value, or leave it blank.'
-          Rails.logger.warn(msg) # Log warning to Rails log file
-          $stderr.puts(msg) # Output to stderr
-          raise msg
+          Rails.logger.warn(msg)
+          $stderr.puts(msg)
+          exit(1)
         end
       else
         25
