@@ -4,76 +4,66 @@
 
 <%= form_for(@user, as: 'user', url: user_path(@user), html: { class: :no_border }) do |f| %>
 
-  <div class="formItem">
-    <%= f.label :login, "Username", :class => 'required_field' %>
-    <%= f.text_field :login, :autocomplete => :off %>
-    <div class="form-text">
-      Changing a user's username will prevent them from logging in using their
-      current username.  Care should be taken to ensure that the user has been
-      informed of the change.
-    </div>
-  </div>
+  <%=
+    form_element(f, :login,
+                 label: 'Username',
+                 label_html: { class: "required_field" },
+                 hint: "Changing a user's username will prevent them from
+                        logging in using their current username.  Care should
+                        be taken to ensure that the user has been informed of
+                        the change.",
+                )
+  %>
 
-  <div class="formItem">
-    <%= f.label :name, "Name", :class => 'required_field' %>
-    <%= f.text_field :name, :autocomplete => :off %>
-  </div>
+  <%= form_element(f, :name, label_html: { class: "required_field" }) %>
 
   <% unless @user.root? %>
-    <div class="formItem">
-      <%= f.label :cloud_user_id, "Cloud User ID" %>
-      <%= f.text_field :cloud_user_id, autocomplete: :off %>
-      <div class="form-text">
-        <% if @user.cloud_user_id.blank? %>
-          Under normal operation, the user's cloud user ID will be updated
+    <%
+        hint = if @user.cloud_user_id.blank?
+          "Under normal operation, the user's cloud user ID will be updated
           automatically.  If this has not happened for some reason, you can
-          manually enter it here.
-        <% else %>
-          Changing the user's cloud user ID will change the cloud environment
+          manually enter it here."
+        else
+          "Changing the user's cloud user ID will change the cloud environment
           user that the Concertim user is linked to.  If the user has already
           interacted with the cloud environment such as launching clusters or
-          uploaded key pairs, this could have unexpected consequences.
-        <% end %>
-      </div>
-    </div>
+            uploaded key pairs, this could have unexpected consequences."
+        end
+
+    %>
+    <%= form_element(f, :cloud_user_id, label: 'Cloud User ID', hint: hint) %>
   <% end %>
 
   <% unless @user.root? %>
-    <div class="formItem">
-      <%= f.label :project_id, "Project ID" %>
-      <%= f.text_field :project_id, autocomplete: :off %>
-      <div class="form-text">
-        <% if @user.project_id.blank? %>
-          Under normal operation, the user's project ID will be updated
+    <%
+        hint = if @user.project_id.blank?
+          "Under normal operation, the user's project ID will be updated
           automatically.  If this has not happened for some reason, you can
-          manually enter it here.
-        <% else %>
-          Changing the user's project ID will change the cloud environment
+          manually enter it here."
+        else
+          "Changing the user's project ID will change the cloud environment
           project that the Concertim user is linked to.  If the user has
           already interacted with the cloud environment such as launching
-          clusters this could have unexpected consequences.
-        <% end %>
-      </div>
-    </div>
+          clusters this could have unexpected consequences."
+        end
+      %>
+    <%= form_element(f, :project_id, label: 'Project ID', hint: hint) %>
   <% end %>
 
   <% unless @user.root? %>
-    <div class="formItem">
-      <%= f.label :billing_acct_id, "Billing account ID" %>
-      <%= f.text_field :billing_acct_id, autocomplete: :off %>
-      <div class="form-text">
-        <% if @user.billing_acct_id.blank? %>
-          Under normal operation, the user's billing account ID will be updated
+    <%
+        hint = if @user.billing_acct_id.blank?
+          "Under normal operation, the user's billing account ID will be updated
           automatically.  If this has not happened for some reason, you can
-          manually enter it here.
-        <% else %>
-          Changing the user's billing account ID will change the billing
+          manually enter it here."
+        else
+          "Changing the user's billing account ID will change the billing
           account that the Concertim user is linked to.  If the user has
           already interacted with the cloud environment such as launching
-          clusters this could have unexpected consequences.
-        <% end %>
-      </div>
-    </div>
+          clusters this could have unexpected consequences."
+        end
+      %>
+    <%= form_element(f, :billing_acct_id, label: 'Billing Account ID', hint: hint) %>
   <% end %>
 
   <%= f.submit "Update" %>
