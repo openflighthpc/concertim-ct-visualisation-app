@@ -36,7 +36,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :users, only: [:index] do
+  resources :users, only: [:index, :edit, :update] do
     member do
       # A placeholder action for developing the resource table used on the
       # users/index page.  This should be removed once we have real actions to

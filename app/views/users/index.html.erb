@@ -28,7 +28,7 @@
 
         These should obviously be removed/replaced when we have a real links to add here.
       %>
-    <% actions.add title: 'Fake Edit', path: placeholder_user_path(user) %>
+    <% actions.add_with_auth can: :edit, on: user, title: 'Edit', path: edit_user_path(user) %>
     <% actions.add_with_auth can: :destroy, on: user, title: 'Fake Delete', path: placeholder_user_path(user) %>
   <% end %>
 
