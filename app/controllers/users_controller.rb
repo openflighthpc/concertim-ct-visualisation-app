@@ -20,13 +20,14 @@ class UsersController < ApplicationController
     end
   end
 
-  # A placeholder action for developing the resource table used on the
-  # users/index page.  This should be removed once we have real actions to go
-  # in the actions dropdown.
-  def placeholder
-    user = User.find(params[:id])
-    flash[:info] = "placeholder action: found user: #{user.login}"
-    redirect_back_or_to root_path
+  def destroy
+    if UserServices::Delete.call(@user)
+      flash[:info] = "Scheduled user for deletion"
+      redirect_to users_path
+    else
+      flash[:alert] = "Unable to scheduled user for deletion"
+      redirect_to users_path
+    end
   end
 
   private

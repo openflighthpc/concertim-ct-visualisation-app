@@ -30,7 +30,7 @@ class Api::V1::UsersController < Api::V1::ApplicationController
     if !@user.racks.empty? && !ActiveModel::Type::Boolean.new.cast(params[:recurse])
       error = {status: "422", title: "Unprocessable Content", description: "Cannot delete user as they have active racks"}
       render json: {errors: [error]}, status: :unprocessable_entity
-    elsif @user.destroy
+    elsif UserServices::Delete.call(@user)
       render json: {}, status: :ok
     else
       render json: @user.errors.as_json, status: :unprocessable_entity
