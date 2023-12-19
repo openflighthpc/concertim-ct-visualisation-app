@@ -20,7 +20,6 @@ RSpec.describe "users edit page", type: :system do
         visit edit_user_path(user)
         form = find("form[id='edit_user_#{user.id}']")
         expect(form).to have_field("Name", with: user.name)
-        expect(form).to have_field("Username", with: user.login)
         expect(form).to have_field("Cloud User ID")
         expect(form.find_field("Cloud User ID").text).to be_blank
         expect(form.find_field("Project ID").text).to be_blank
@@ -50,7 +49,6 @@ RSpec.describe "users edit page", type: :system do
         visit edit_user_path(user)
         form = find("form[id='edit_user_#{user.id}']")
         expect(form).to have_field("Name", with: user.name)
-        expect(form).to have_field("Username", with: user.login)
         expect(form).to have_field("Cloud User ID", with: user.cloud_user_id)
         expect(form).to have_field("Project ID", with: user.project_id)
         expect(form).to have_field("Billing Account ID", with: user.billing_acct_id)

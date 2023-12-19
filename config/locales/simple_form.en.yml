@@ -17,12 +17,6 @@ en:
           cloud_user_id: Cloud User ID
           project_id: Project ID
           billing_acct_id: Billing Account ID
-    hints:
-      user:
-        edit:
-          login: Changing a user's username will prevent them from logging in
-            using their current username.  Care should be taken to ensure that
-            the user has been informed of the change.
 
     # The following translations do not follow the format that simple form
     # expects.  They are added here under the `simple_form.customisations`

@@ -31,7 +31,7 @@ class UsersController < ApplicationController
 
   private
 
-  PERMITTED_PARAMS = %w[login name cloud_user_id project_id billing_acct_id]
+  PERMITTED_PARAMS = %w[name cloud_user_id project_id billing_acct_id]
   def user_params
     params.fetch(:user).permit(*PERMITTED_PARAMS)
   end

@@ -3,7 +3,6 @@
 -%>
 
 <%= simple_form_for @user, html: {class: 'no_border'} do |f| %>
-  <%= f.input :login %>
   <%= f.input :name %>
   <% unless @user.root? %>
     <%= f.input :cloud_user_id, hint: presenter_for(@user).cloud_user_id_form_hint, clipboard: true %>
