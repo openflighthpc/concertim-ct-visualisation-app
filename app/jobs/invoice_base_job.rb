@@ -46,9 +46,10 @@ module InvoiceBaseJob
         (invoice.attribute_names - %w(account items)).each do |attr|
           invoice.send("#{attr}=", invoice_data[attr] || invoice_data[attr.camelize(:lower)])
         end
-        invoice_data["items"].each do |item_data|
+        invoice_data["items"].each do |item_id, item_data|
           invoice.items << Invoice::Item.new.tap do |item|
-            item.attribute_names.each do |attr|
+            item.invoice = invoice
+            (item.attribute_names - %w(invoice)).each do |attr|
               item.send("#{attr}=", item_data[attr] || item_data[attr.camelize(:lower)])
             end
           end
