@@ -7,6 +7,8 @@ SimpleNavigation::Configuration.run do |navigation|
     if user_signed_in?
       if !current_user.root?
         user = user_presenter(current_user)
+        primary.item :user_credits, "Available credits: #{user.formatted_credits}", nil,
+                     align: :right
         primary.item :user_cost, "Total cost so far this billing period: #{user.currency_cost}", nil,
                      :link_html => {:title => "Current billing period: #{user.billing_period}"},
                      align: :right
@@ -42,9 +44,16 @@ SimpleNavigation::Configuration.run do |navigation|
           highlights_on: %r(/users)
       end
 
-      if current_user.can?(:create, Cluster)
+      if current_user.can?(:read, ClusterType)
+        html_options = {}
+        if !current_ability.enough_credits_to_create_cluster?
+          html_options[:class] = "limited-action-icon"
+          html_options[:title] = "You must have at least #{Rails.application.config.cluster_credit_requirement} credits to create a cluster"
+        end
+
         primary.item :cluster_types, 'Launch cluster', url_helpers.cluster_types_path,
           icon: :racks,
+          html: html_options,
           highlights_on: %r(/cloud-env/(cluster-types|clusters))
       end
     else

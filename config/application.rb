@@ -53,6 +53,22 @@ module CtApp
       "irv.scss" => "irv.css",
     }
 
+    # minimum credits user must have to create a cluster
+    config.after_initialize do
+      config.cluster_credit_requirement = if ENV['CLUSTER_CREDIT_REQUIREMENT']
+        begin
+          config.cluster_credit_requirement = Float(ENV['CLUSTER_CREDIT_REQUIREMENT'])
+        rescue ArgumentError
+          msg = 'ENV variable CLUSTER_CREDIT_REQUIREMENT is not a valid number. Please update its value, or unset it.'
+          Rails.logger.warn(msg)
+          $stderr.puts(msg)
+          exit(1)
+        end
+      else
+        25
+      end
+    end
+
     # config.require_master_key = true
   end
 end

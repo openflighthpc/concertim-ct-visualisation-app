@@ -28,7 +28,7 @@ class User < ApplicationRecord
   #
   ###############################
   validates :encrypted_password, length: { maximum: 60 }
-  validates :name, :email, :login, presence: true
+  validates :name, :email, :login, :credits, presence: true
   validates :login,
     uniqueness: true,
     format: { with: /\A[a-zA-Z0-9\-\_\.]*\Z/, message: "can contain only alphanumeric characters, hyphens, underscores and periods."}

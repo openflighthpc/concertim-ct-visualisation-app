@@ -76,7 +76,7 @@ class Api::V1::UsersController < Api::V1::ApplicationController
   def user_params
     permitted_params =
       if current_user.root?
-        [:project_id, :cloud_user_id, :cost, :billing_acct_id, :billing_period_start, :billing_period_end]
+        [:project_id, :cloud_user_id, :cost, :credits, :billing_acct_id, :billing_period_start, :billing_period_end]
       else
         []
       end

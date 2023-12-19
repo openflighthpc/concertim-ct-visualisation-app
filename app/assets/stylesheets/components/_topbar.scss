@@ -41,3 +41,7 @@ nav.expanded .top-bar-section ul li.has-dropdown .dropdown {
   transition-delay: 0s !important;
   visibility: visible;
 }
+
+nav.top-bar .limited-action-icon * {
+  color: darkgrey;
+}

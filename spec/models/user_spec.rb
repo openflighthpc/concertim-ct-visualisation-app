@@ -54,6 +54,11 @@ RSpec.describe User, type: :model do
       expect(subject).to be_valid
     end
 
+    it "is not valid with nil credits" do
+      subject.credits = nil
+      expect(subject).to have_error(:credits, :blank)
+    end
+
     describe "project_id" do
       it "must be unique if present" do
         user.project_id = SecureRandom.uuid

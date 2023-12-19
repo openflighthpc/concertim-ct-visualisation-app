@@ -14,4 +14,8 @@ class UserPresenter < Presenter
       "User"
     end
   end
+
+  def formatted_credits
+    '%.2f' % o.credits
+  end
 end
