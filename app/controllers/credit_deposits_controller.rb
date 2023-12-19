@@ -2,7 +2,7 @@ class CreditDepositsController < ApplicationController
   def new
     @user = User.find(params[:id])
     @credit_deposit = CreditDeposit.new(user: @user)
-    authorize! :read, @credit_deposit
+    authorize! :create, @credit_deposit
     @cloud_service_config = CloudServiceConfig.first
     check_config_and_external_ids
   end
@@ -11,7 +11,7 @@ class CreditDepositsController < ApplicationController
     @user = User.find(params[:id])
     @cloud_service_config = CloudServiceConfig.first
     @credit_deposit = CreditDeposit.new(user: @user, amount: credit_deposit_params[:amount])
-    authorize! :create, @key_pair
+    authorize! :create, @credit_deposit
 
     if check_config_and_external_ids
       unless @credit_deposit.valid?
