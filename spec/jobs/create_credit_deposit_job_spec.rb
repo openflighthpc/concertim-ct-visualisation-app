@@ -80,14 +80,5 @@ RSpec.describe CreateCreditDepositJob, type: :job do
                                          "credits_to_add" => credit_deposit.amount
                                        })
     end
-
-    it "contains the correct config and user details" do
-      expect(subject[:cloud_env]).to eq({
-                                          "auth_url" => cloud_service_config.internal_auth_url,
-                                          "user_id" => cloud_service_config.admin_user_id,
-                                          "password" => cloud_service_config.admin_foreign_password,
-                                          "project_id" => cloud_service_config.admin_project_id
-                                        })
-    end
   end
 end

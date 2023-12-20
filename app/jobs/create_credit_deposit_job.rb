@@ -63,24 +63,10 @@ class CreateCreditDepositJob < ApplicationJob
 
     def body
       {
-        cloud_env: cloud_env_details,
-        credits: credits_details
-      }
-    end
-
-    def credits_details
-      {
-        billing_account_id: @credit_deposit.billing_acct_id,
-        credits_to_add: @credit_deposit.amount
-      }
-    end
-
-    def cloud_env_details
-      {
-        auth_url: @cloud_service_config.internal_auth_url,
-        user_id: @cloud_service_config.admin_user_id,
-        password: @cloud_service_config.admin_foreign_password,
-        project_id: @cloud_service_config.admin_project_id,
+        credits: {
+          billing_account_id: @credit_deposit.billing_acct_id,
+          credits_to_add: @credit_deposit.amount
+        }
       }
     end
   end
