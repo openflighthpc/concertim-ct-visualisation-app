@@ -1,0 +1,42 @@
+// Styling for forms created using the simple_form form library
+// https://github.com/heartcombo/simple_form
+//
+// This is likely a stop-gap measure until the UI is revisited.  At that point
+// I would imagine we will be using an up-to-date CSS framework such as
+// Bootstrap 5.  If that's the case, all of the simple_form generated forms can
+// be updated to Bootstrap styled forms by following
+// https://github.com/heartcombo/simple_form/#bootstrap-5
+//
+// If a different CSS framework is used, there may already be a suitable
+// simple_form integration.
+form.simple_form {
+    // We have this here for consistency with the other concertim forms.  We
+    // really ought to be using some other method.
+    width: 450px;
+
+    .hint {
+        color: $dark-grey;
+        margin-bottom: 1rem;
+        display: inline-block;
+    }
+
+    .field_with_hint input {
+        margin-bottom: 0;
+    }
+
+    // Styling for the fields with a clipboard button added.  This is very
+    // quick and dirty and I'd expect a refresh of the UI to use a CSS
+    // framwork that support this such as
+    // https://getbootstrap.com/docs/5.1/forms/input-group/#button-addons.
+    // But for now this will do.
+    .field_with_clipboard {
+        input {
+            display: inline-block;
+            width: calc( 450px - 75px );
+        }
+        button {
+            height: 33px;
+            top: -3px;
+        }
+    }
+}

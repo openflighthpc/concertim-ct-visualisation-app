@@ -28,10 +28,16 @@ class User < ApplicationRecord
   #
   ###############################
   validates :encrypted_password, length: { maximum: 60 }
-  validates :name, :email, :login, :credits, presence: true
+  validates :name,
+    length: { maximum: 56 },
+    presence: true
   validates :login,
+    presence: true,
     uniqueness: true,
+    length: { maximum: 80 },
     format: { with: /\A[a-zA-Z0-9\-\_\.]*\Z/, message: "can contain only alphanumeric characters, hyphens, underscores and periods."}
+  validates :email,
+    presence: true
   validates :project_id,
     uniqueness: true,
     length: { maximum: 255 },
@@ -41,6 +47,9 @@ class User < ApplicationRecord
     uniqueness: true,
     allow_nil: true,
     allow_blank: true
+  validates :credits,
+    numericality: true,
+    presence: true
   validates :cost,
     numericality: { greater_than_or_equal_to: 0 },
     allow_blank: true

@@ -1,0 +1,81 @@
+en:
+  simple_form:
+    "yes": 'Yes'
+    "no": 'No'
+    required:
+      text: 'required'
+      mark: '*'
+      # You can uncomment the line below if you need to overwrite the whole required html.
+      # When using html, text and mark won't be used.
+      # html: '<abbr title="required">*</abbr>'
+    error_notification:
+      default_message: "Please review the problems below:"
+    labels:
+      user:
+        edit:
+          login: Username
+          cloud_user_id: Cloud User ID
+          project_id: Project ID
+          billing_acct_id: Billing Account ID
+
+    # The following translations do not follow the format that simple form
+    # expects.  They are added here under the `simple_form.customisations`
+    # namespace so that, they don't conflict with any assumptions simple form
+    # makes and they are in the same file as the other simple form
+    # customisations.
+    customisations:
+      hints:
+        user:
+          edit:
+            cloud_user_id:
+              blank:
+                Under normal operation, the user's cloud user ID will be
+                updated automatically.  If this has not happened for some
+                reason, you can manually enter it here.
+              present:
+                Changing the user's cloud user ID will change the cloud
+                environment user that the Concertim user is linked to.  If the
+                user has already interacted with the cloud environment such as
+                launching clusters or uploaded key pairs, this could have
+                unexpected consequences.
+            project_id:
+              blank:
+                Under normal operation, the user's project ID will be updated
+                automatically.  If this has not happened for some reason, you can
+                manually enter it here.
+              present:
+                Changing the user's project ID will change the cloud environment
+                project that the Concertim user is linked to.  If the user has
+                already interacted with the cloud environment such as launching
+                clusters this could have unexpected consequences.
+            billing_acct_id:
+              blank:
+                Under normal operation, the user's billing account ID will be
+                updated automatically.  If this has not happened for some reason,
+                you can manually enter it here.
+              present:
+                Changing the user's billing account ID will change the billing
+                account that the Concertim user is linked to.  If the user has
+                already interacted with the cloud environment such as launching
+                clusters this could have unexpected consequences.
+
+
+    # Examples
+    # labels:
+    #   defaults:
+    #     password: 'Password'
+    #   user:
+    #     new:
+    #       email: 'E-mail to sign in.'
+    #     edit:
+    #       email: 'E-mail.'
+    # hints:
+    #   defaults:
+    #     username: 'User name to sign in.'
+    #     password: 'No special characters, please.'
+    # include_blanks:
+    #   defaults:
+    #     age: 'Rather not say'
+    # prompts:
+    #   defaults:
+    #     age: 'Select your age'

@@ -42,6 +42,12 @@ en:
         user_id: "user_id"
         project_id: "project_id"
 
+      user:
+        login: Username
+        cloud_user_id: Cloud User ID
+        project_id: Project ID
+        billing_acct_id: Billing Account ID
+
   unauthorized:
     destroy:
       user: "You are not authorized to delete this user"

@@ -1,0 +1,13 @@
+<%
+    set_title "Edit user #{@user.name} (#{@user.login})"
+-%>
+
+<%= simple_form_for @user, html: {class: 'no_border'} do |f| %>
+  <%= f.input :name %>
+  <% unless @user.root? %>
+    <%= f.input :cloud_user_id, hint: presenter_for(@user).cloud_user_id_form_hint, clipboard: true %>
+    <%= f.input :project_id, hint: presenter_for(@user).project_id_form_hint, clipboard: true %>
+    <%= f.input :billing_acct_id, hint: presenter_for(@user).billing_acct_id_form_hint, clipboard: true %>
+  <% end %>
+  <%= f.button :submit %>
+<% end %>

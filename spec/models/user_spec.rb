@@ -18,9 +18,16 @@ RSpec.describe User, type: :model do
       expect(user).to be_valid
     end
 
-    it "is not valid without a name" do
-      subject.name = nil
-      expect(subject).to have_error(:name, :blank)
+    describe "name" do
+      it "is not valid without a name" do
+        subject.name = nil
+        expect(subject).to have_error(:name, :blank)
+      end
+
+      it "is not valid if too long" do
+        subject.name = "a" * 57
+        expect(subject).to have_error(:name, :too_long)
+      end
     end
 
     it "is not valid without an email" do
@@ -34,29 +41,45 @@ RSpec.describe User, type: :model do
       expect(user).to have_error(:password, :blank)
     end
 
-    it "is not valid without a login" do
-      subject.login = nil
-      expect(subject).to have_error(:login, :blank)
+    describe "login" do
+      it "is not valid without a login" do
+        subject.login = nil
+        expect(subject).to have_error(:login, :blank)
+      end
+
+      it "is not valid if too long" do
+        subject.login = "a" * 81
+        expect(subject).to have_error(:login, :too_long)
+      end
+
+      it "must be unique" do
+        new_user = build(:user, login: user.login)
+        expect(new_user).to have_error(:login, :taken)
+      end
     end
 
-    it "must have a unique login" do
-      new_user = build(:user, login: user.login)
-      expect(new_user).to have_error(:login, :taken)
+    describe "cost" do
+      it "is not valid when negative" do
+        subject.cost = -99
+        expect(subject).to have_error(:cost, :greater_than_or_equal_to)
+      end
+
+      it "is valid with no cost" do
+        subject.cost = nil
+        expect(subject).to be_valid
+      end
     end
 
-    it "is not valid with a negative cost" do
-      subject.cost = -99
-      expect(subject).to have_error(:cost, :greater_than_or_equal_to)
-    end
+    describe "credits" do
+      it "is not valid with nil credits" do
+        subject.credits = nil
+        expect(subject).to have_error(:credits, :blank)
+      end
 
-    it "is valid with no cost" do
-      subject.cost = nil
-      expect(subject).to be_valid
-    end
-
-    it "is not valid with nil credits" do
-      subject.credits = nil
-      expect(subject).to have_error(:credits, :blank)
+      it "must be a number" do
+        subject.credits = "not a number"
+        expect(subject).to have_error(:credits, :not_a_number)
+      end
     end
 
     describe "project_id" do
