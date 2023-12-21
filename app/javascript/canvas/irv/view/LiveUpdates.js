@@ -64,7 +64,6 @@ class LiveUpdates {
             received(data) {
                 let action = data.action;
                 if(action === "latest_full_data") {
-                    console.log("all data received");
                     self.controller.fullRackDataReceived(data);
                 } else {
                     self.controller.modifiedRackDataReceived(data);

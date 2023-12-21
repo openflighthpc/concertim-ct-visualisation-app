@@ -292,6 +292,10 @@ class IRVController {
   }
 
   fullRackDataReceived(data) {
+    if(this.zooming) {
+      return this.functionQueue.addToQueue(this.fullRackDataReceived, [data], this);
+    }
+
     if(this.initialised) {
        this.cancelDragging();
     }
@@ -309,10 +313,9 @@ class IRVController {
   }
 
   modifiedRackDataReceived(data) {
-    if(!this.initialised) {
+    if(!this.initialised || this.zooming || this.rackSpace.zooming) {
       return this.functionQueue.addToQueue(this.modifiedRackDataReceived, [data], this);
     }
-
     this.cancelDragging();
     let action = data.action;
     let change =  { added: [], modified: [], deleted: [] };
@@ -1993,9 +1996,11 @@ class IRVController {
   // @param  ev  the event object which invoked execution
   evZoomComplete(ev) {
     if (this.model.showingFullIrv()) { this.hideUpdateMsg(); }
-    this.zooming = false;
     if (this.thumbEl != null) { this.updateThumb(); }
-    return this.enableMouse();
+    this.enableMouse();
+    this.zooming = false;
+    // timeout prevents white flash. Because allows browser to animate?
+    window.setTimeout(this.functionQueue.executeAll.bind(this.functionQueue), 0);
   }
 
 

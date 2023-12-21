@@ -1,17 +1,14 @@
-import IRVChart from "./IRVChart";
-
 class FunctionQueue {
     constructor() {
         this.queue = [];
     }
 
-    addToQueue(func, args, context=null) {
+    addToQueue(func, args, context) {
         this.queue.push({ func, args, context });
     }
 
     executeNext() {
-        console.log("next please")
-       if (this.has_pending) {
+       if (this.has_pending()) {
             const { func, args, context } = this.queue.shift();
             func.apply(context, args);
         }
