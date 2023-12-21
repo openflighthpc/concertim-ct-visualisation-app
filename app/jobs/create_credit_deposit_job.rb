@@ -43,8 +43,6 @@ class CreateCreditDepositJob < ApplicationJob
         return Result.new(false, "#{error_description}: #{response.reason_phrase || "Unknown error"}")
       end
 
-      details = response.body["credits"]
-      puts details
       Result.new(true, "")
     rescue Faraday::Error
       status_code = $!.response[:status] rescue 0
