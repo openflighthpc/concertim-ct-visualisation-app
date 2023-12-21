@@ -4,24 +4,7 @@
 
 <p>They currently have <strong><%= pluralize(presenter_for(@user).formatted_credits, 'credit') %>.</strong></p>
 
-<%= form_for(@credit_deposit, url: credit_deposits_path) do |f| %>
-
-  <% if @credit_deposit.errors.any? %>
-    <div id="error_explanation">
-      <h2>There <%= "#{@credit_deposit.errors.count == 1 ? 'is' : 'are'}" %> <%= pluralize(@credit_deposit.errors.count, "error") %>:</h2>
-
-      <ul>
-        <% @credit_deposit.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
-
-  <div class="formItem">
-    <%= f.label :name, "Amount", class: 'required_field' %>
-    <%= f.number_field :amount, autocomplete: :off, min: 0.01, step: 0.01, value: 1 %>
-  </div>
-
-  <%= f.submit 'Create' %>
+<%= simple_form_for @credit_deposit, html: { class: 'no_border' } do |f| %>
+  <%= f.input :amount, as: :float, input_html: { min: 0.01, step: 0.01 } %>
+  <%= f.button :submit %>
 <% end %>
