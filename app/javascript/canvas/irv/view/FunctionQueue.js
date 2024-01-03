@@ -8,19 +8,19 @@ class FunctionQueue {
     }
 
     executeNext() {
-       if (this.has_pending()) {
+       if (this.hasPending()) {
             const { func, args, context } = this.queue.shift();
             func.apply(context, args);
         }
     }
 
     executeAll() {
-        while(this.has_pending()) {
+        while(this.hasPending()) {
             this.executeNext();
         }
     }
 
-    has_pending() {
+    hasPending() {
         return this.queue.length > 0;
     }
 }

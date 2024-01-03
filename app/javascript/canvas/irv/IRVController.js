@@ -833,7 +833,6 @@ class IRVController {
     clearTimeout(this.hintTmr);
     this.disableMouse();
     this.rackSpace.zoomToPreset(direction, x, y, cyclical);
-    return this.showHideScrollBars(this.rackSpace.zoomIdx);
   }
 
   zoomHoldingArea(direction, x, y) {
@@ -1998,8 +1997,9 @@ class IRVController {
     if (this.model.showingFullIrv()) { this.hideUpdateMsg(); }
     if (this.thumbEl != null) { this.updateThumb(); }
     this.enableMouse();
+    this.showHideScrollBars(this.rackSpace.zoomIdx);
     this.zooming = false;
-    // timeout prevents white flash. Because allows browser to animate?
+    // timeout prevents a white flash if any queued updates, by allowing requestAnimationFrame calls in the call stack to execute first.
     window.setTimeout(this.functionQueue.executeAll.bind(this.functionQueue), 0);
   }
 
