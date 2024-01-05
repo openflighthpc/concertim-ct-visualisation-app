@@ -105,4 +105,6 @@ RSpec.describe GetUniqueMetricsJob, type: :job do
       end
     end
   end
+
+  include_examples 'auth token header'
 end

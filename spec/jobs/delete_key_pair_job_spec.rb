@@ -103,4 +103,6 @@ RSpec.describe DeleteKeyPairJob, type: :job do
                                         })
     end
   end
+
+  include_examples 'auth token header'
 end

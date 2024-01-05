@@ -11,6 +11,7 @@ require 'rspec/rails'
 
 require_relative 'support/shared_contexts/requests/authentication'
 require_relative 'support/shared_examples/requests'
+require_relative 'support/shared_examples/jobs'
 require_relative 'support/factory_bot'
 require_relative 'support/matchers/model'
 

@@ -63,12 +63,21 @@ module HttpRequests
         raise NotImplementedError
       end
 
+      # Include an auth token, so receiving service can validate the
+      # request is from concertim visualiser.
+      def auth_token
+        payload = { "exp" => Time.now.to_i + 60 }
+        "Bearer #{Warden::JWTAuth::TokenEncoder.new.call(payload)}"
+      end
+
       def connection
         @connection ||= ::Faraday.new(
           url: url,
         ) do |f|
             # Use the same timeout for open, read and write.
             f.options.timeout = @timeout
+
+            f.headers["Authorization"] = auth_token
 
             f.request :json
 
