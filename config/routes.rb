@@ -42,6 +42,7 @@ Rails.application.routes.draw do
       # users/index page.  This should be removed once we have real actions to
       # go in the actions dropdown.
       get :placeholder
+      resources :credit_deposits, only: [:new, :create]
     end
   end
 

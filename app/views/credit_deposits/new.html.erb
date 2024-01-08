@@ -1,0 +1,10 @@
+<% set_title 'Add credits' -%>
+
+<p>Add credits for user <strong><%= @user.name %></strong>.</p>
+
+<p>They currently have <strong><%= pluralize(presenter_for(@user).formatted_credits, 'credit') %>.</strong></p>
+
+<%= simple_form_for @credit_deposit, html: { class: 'no_border' } do |f| %>
+  <%= f.input :amount, as: :float, input_html: { min: 0.01, step: 0.01 } %>
+  <%= f.button :submit %>
+<% end %>
