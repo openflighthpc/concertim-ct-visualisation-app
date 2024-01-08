@@ -27,7 +27,7 @@ FactoryBot.define do
 
   trait :with_empty_rack do
     after(:create) do |user, context|
-      rack_template = Template.find_by_id(HwRack::DEFAULT_TEMPLATE_ID)
+      rack_template = Template.default_rack_template
       if rack_template.nil?
         rack_template = create(:template, :rack_template)
       end
