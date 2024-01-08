@@ -46,10 +46,9 @@
       </tr>
     </thead>
     <% @invoice.items.each do |item| %>
-      <% next unless item.display? %>
       <tr class="item last">
         <td><%= item.formatted_date %>
-        <td><%= item.description %></td>
+        <td><%= item.openstack_stack_name %></td>
         <td><%= item.formatted_amount %></td>
       </tr>
     <% end %>

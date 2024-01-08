@@ -4,24 +4,18 @@ class Invoice::Item
 
   attribute :amount, :decimal, default: 0
   attribute :currency, :string
-  attribute :description, :string
   attribute :end_date, :date
-  attribute :item_type, :string
-  attribute :plan_name, :string
+  attribute :invoice
+  attribute :openstack_stack_id, :string
+  attribute :openstack_stack_name, :string
   attribute :start_date, :date
+
+  def rack
+    HwRack.find_by_openstack_id(openstack_stack_id)
+  end
 
   # Extract these `formatted_*` and `pretty_*` methods to a presenter if they
   # get large/complicated/numerous.
-
-  # We don't display credit adjustments or refunds.
-  HIDDEN_TYPES = %w(REFUND CHARGED_BACK CBA_ADJ).freeze
-  def display?
-    !HIDDEN_TYPES.include?(item_type)
-  end
-
-  def pretty_plan_name
-    plan_name
-  end
 
   def formatted_date
     if end_date.nil?

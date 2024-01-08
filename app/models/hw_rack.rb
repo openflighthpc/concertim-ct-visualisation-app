@@ -116,6 +116,10 @@ class HwRack < ApplicationRecord
 
   scope :excluding_ids,  ->(ids) { where.not(id: ids) }
 
+  def self.find_by_openstack_id(openstack_stack_id)
+    where("metadata ->> 'openstack_stack_id' = ?", openstack_stack_id).first
+  end
+
 
   ############################
   #
