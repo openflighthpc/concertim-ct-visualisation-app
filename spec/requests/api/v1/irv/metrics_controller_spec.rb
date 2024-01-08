@@ -58,7 +58,7 @@ RSpec.describe "Api::V1::Irv::MetricsController", type: :request do
 
         it "includes the expected metric_values" do
           post url_under_test, headers: headers, as: :json
-          expected_metric_values = [{"id" => 1, "value" => 32}, {"id" => 2, "value" => 64}]
+          expected_metric_values = [{"id" => "1", "value" => 32}, {"id" => "2", "value" => 64}]
           expected_response = {
             "name" => metric_name, "values" => {"devices" => expected_metric_values, "chassis" => []}
           }
@@ -66,8 +66,8 @@ RSpec.describe "Api::V1::Irv::MetricsController", type: :request do
         end
 
         it "supports filtering values by device id" do
-          post url_under_test, headers: headers, as: :json, params: {device_ids: [2], tagged_devices_ids: []}
-          expected_metric_values = [{"id" => 2, "value" => 64}]
+          post url_under_test, headers: headers, as: :json, params: {device_ids: ["2"], tagged_devices_ids: []}
+          expected_metric_values = [{"id" => "2", "value" => 64}]
           expected_response = {
             "name" => metric_name, "values" => {"devices" => expected_metric_values, "chassis" => []}
           }

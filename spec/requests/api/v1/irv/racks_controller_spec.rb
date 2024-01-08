@@ -47,7 +47,7 @@ RSpec.describe "Api::V1::Irv::RacksControllers", type: :request do
           it "has the correct attributes" do
             get url_under_test, headers: headers, as: :json
             parsed_rack = parsed_racks.first
-            expect(parsed_rack["id"].to_i).to eq rack.id
+            expect(parsed_rack["id"]).to eq rack.id
             expect(parsed_rack["name"]).to eq rack.name
             expect(parsed_rack["uHeight"].to_i).to eq rack.u_height
             expect(parsed_rack["cost"]).to eq "$9.99"
@@ -94,7 +94,7 @@ RSpec.describe "Api::V1::Irv::RacksControllers", type: :request do
 
             get url_under_test, headers: headers, as: :json
 
-            retrieved_ids = parsed_racks.map { |r| r["id"].to_i }.sort
+            retrieved_ids = parsed_racks.map { |r| r["id"] }.sort
             expect(retrieved_ids).to eq expected_ids
           end
         end

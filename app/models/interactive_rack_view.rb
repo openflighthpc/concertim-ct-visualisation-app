@@ -35,11 +35,11 @@ class InteractiveRackView
       requested_ids =
         case racks
         when Array
-          racks.map{|rack_id| rack_id.to_i}
+          racks.map{|rack_id| rack_id}
         when Integer
           [racks]
         when String
-          [racks.to_i]
+          [racks]
         else
           nil
         end
@@ -53,7 +53,8 @@ class InteractiveRackView
 
     def generate_sql(racks, user)
       ids = rack_ids(racks, user)
-      condition = ids.empty? ? " WHERE 1 = 0 " : " WHERE R.id in (#{ids.join(',')})"
+      sanitized_ids = ids.map { |id| "'#{ApplicationRecord.sanitize_sql(id)}'" }.join(',')
+      condition = ids.empty? ? " WHERE 1 = 0 " : " WHERE R.id in (#{sanitized_ids})"
 
       ret = (<<SQL)
 WITH sorted_racks AS (

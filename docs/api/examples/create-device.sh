@@ -37,7 +37,7 @@ BODY=$(jq --null-input \
         "description": $description,
         "location": {
             "facing": $facing,
-            "rack_id": $rack_id|tonumber,
+            "rack_id": $rack_id,
             "start_u": $start_u|tonumber
         },
         "status": "IN_PROGRESS",

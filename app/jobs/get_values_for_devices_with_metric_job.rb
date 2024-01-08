@@ -37,7 +37,7 @@ class GetValuesForDevicesWithMetricJob < ApplicationJob
 
     def parse_metric_values(body)
       body.map do |mv|
-        MetricValue.new(id: mv["id"].to_i, value: mv["value"])
+        MetricValue.new(id: mv["id"], value: mv["value"])
       end
     end
   end

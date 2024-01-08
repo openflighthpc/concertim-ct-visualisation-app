@@ -151,8 +151,8 @@ RSpec.describe "users index page table", type: :system do
   describe "sorting" do
     before(:each) do
       create_list(:user, items_per_page)
-      create(:user, login: 'AAA') # Create a user with an "earlier" login, but later id.
-      create(:user, login: 'ZZZ')
+      create(:user, login: 'aaa', name: 'ZZZ-aaa') # Create a user with an "earlier" login, but "later" name.
+      create(:user, login: 'ZZZ', name: 'ZZZ-ZZZ') # Create a user with a "later" login, and name.
       create_list(:user, items_per_page)
     end
 
@@ -195,47 +195,52 @@ RSpec.describe "users index page table", type: :system do
     end
 
     it "respects both sort order and pagination" do
-      visit users_path
+      #visit users_path
+      visit users_path(direction: :asc, sort: :name)
       table = find('.resource_table')
 
-      expect(table).not_to have_content('AAA')
-      expect(table).not_to have_content('ZZZ')
+      expect(table).not_to have_content('ZZZ-aaa')
+      expect(table).not_to have_content('ZZZ-ZZZ')
 
       header = table.find('thead')
       header.click_link "Username"
 
       table = find('.resource_table')
-      expect(table).to have_content('AAA')
-      expect(table).not_to have_content('ZZZ')
+      expect(table).to have_content('ZZZ-aaa')
+      expect(table).not_to have_content('ZZZ-ZZZ')
 
       click_link "Next"
 
       table = find('.resource_table')
-      expect(table).not_to have_content('AAA')
-      expect(table).not_to have_content('ZZZ')
+      expect(table).not_to have_content('ZZZ-aaa')
+      expect(table).not_to have_content('ZZZ-ZZZ')
 
       click_link "Next"
       table = find('.resource_table')
-      expect(table).not_to have_content('AAA')
-      expect(table).to have_content('ZZZ')
+      expect(table).not_to have_content('ZZZ-aaa')
+      expect(table).to have_content('ZZZ-ZZZ')
     end
   end
 
   describe "searching" do
     before(:each) do
+      # Create enough users to fill an entire page.  They will have login's
+      # such as `user-1`, `user-2`, etc..
       create_list(:user, items_per_page)
-      create(:user, login: 'wanted-1')
-      create(:user, login: 'wanted-2')
+      # Create a couple of users with login's that sort after the earlier
+      # users.  They will not be displayed on the initial page load.
+      create(:user, login: 'zzz-wanted-1')
+      create(:user, login: 'zzz-wanted-2')
     end
 
     it "allows filtering for users" do
-      visit users_path
+      visit users_path(direction: :asc, sort: :login)
       table = find('.resource_table')
 
       # The table displays 20 users and none are the wanted ones.
       expect(table.all('tbody tr').count).to eq 20
-      expect(table).not_to have_content('wanted-1')
-      expect(table).not_to have_content('wanted-2')
+      expect(table).not_to have_content('zzz-wanted-1')
+      expect(table).not_to have_content('zzz-wanted-2')
 
       controls = find('.search_controls')
       within(controls) do
@@ -244,8 +249,8 @@ RSpec.describe "users index page table", type: :system do
       end
 
       # The table displays the wanted users and no others.
-      expect(table).to have_content('wanted-1')
-      expect(table).to have_content('wanted-2')
+      expect(table).to have_content('zzz-wanted-1')
+      expect(table).to have_content('zzz-wanted-2')
       expect(table.all('tbody tr').count).to eq 2
     end
   end

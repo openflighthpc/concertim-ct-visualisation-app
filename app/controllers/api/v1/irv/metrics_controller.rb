@@ -5,7 +5,6 @@ class Api::V1::Irv::MetricsController < Api::V1::Irv::BaseController
     # XXX Add authorization!  :index metrics/devices/chassis?  Or something
     # else.  Filter device ids according to which can be read?
     device_ids  = params.delete(:device_ids)
-    device_ids.map! {|id| Integer(id) rescue id } if device_ids
     @metric  = OpenStruct.new(:name => params[:id])
     result = GetValuesForDevicesWithMetricJob.perform_now(metric_name: @metric.name)
     if result.success?
