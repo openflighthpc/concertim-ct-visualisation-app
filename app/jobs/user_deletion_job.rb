@@ -44,9 +44,7 @@ class UserDeletionJob < ApplicationJob
     end
 
     def call
-      # XXX Should this be POST / DELETE ?
-      # XXX What is the correct URL.
-      response = super
+      response = connection.delete("", body)
       if response.success?
         @user.destroy!
       end
@@ -68,9 +66,11 @@ class UserDeletionJob < ApplicationJob
           password: @cloud_service_config.admin_foreign_password,
           project_id: @cloud_service_config.admin_project_id,
         },
-        cloud_user_id: @user.cloud_user_id,
-        project_id: @user.project_id,
-        billing_account_id: @user.billing_acct_id,
+        user_info: {
+          billing_acct_id: @user.billing_acct_id,
+          cloud_user_id: @user.cloud_user_id,
+          project_id: @user.project_id,
+        }
       }
     end
   end
