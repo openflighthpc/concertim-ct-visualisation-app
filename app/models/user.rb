@@ -19,6 +19,11 @@ class User < ApplicationRecord
     class_name: 'HwRack',
     dependent: :destroy
 
+  has_many :team_roles,
+    dependent: :destroy
+
+  has_many :teams, through: :team_roles
+
   ####################################
   #
   # Hooks
