@@ -173,8 +173,7 @@ class HwRack < ApplicationRecord
     self.errors.add(:metadata, "Must be an object") unless metadata.is_a?(Hash)
   end
 
-  # this logic needs updating
   def broadcast_change(action)
-    # BroadcastRackChangeJob.perform_now(self.id, self.user_id, action)
+    BroadcastRackChangeJob.perform_now(self.id, self.team_id, action)
   end
 end
