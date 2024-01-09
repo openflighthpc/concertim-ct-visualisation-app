@@ -539,7 +539,7 @@ class RackSpace {
 
     const show_u_labels = this.scale >= RackSpace.U_LBL_SCALE_CUTOFF;
     const show_name_label = this.scale >= RackSpace.NAME_LBL_SCALE_CUTOFF;
-    const show_owner_label = show_name_label && this.model.RBAC.can_i("view", "all");
+    const show_owner_label = show_name_label;
     if (this.model.showingRacks()) {
       for (var rack of Array.from(this.racks)) { rack.draw(show_u_labels, show_name_label, show_owner_label); }
       this.updateRackImage();
