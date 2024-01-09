@@ -62,10 +62,10 @@ class InteractiveRackView
 
       ret = (<<SQL)
 WITH sorted_racks AS (
-        SELECT racks.id AS id, racks.name AS name, racks.u_height AS u_height, racks.status AS status, ROUND(racks.cost, 2) AS cost, racks.template_id AS template_id, racks.user_id AS user_id
+        SELECT racks.id AS id, racks.name AS name, racks.u_height AS u_height, racks.status AS status, ROUND(racks.cost, 2) AS cost, racks.template_id AS template_id, racks.team_id AS team_id
           FROM racks
-          JOIN users as users ON racks.user_id = users.id
-      ORDER BY LOWER(users.name)
+          JOIN teams as teams ON racks.team_id = teams.id
+      ORDER BY LOWER(teams.name)
              , SUBSTRING("racks"."name" FROM E'^(.*?)(\\\\d+)?$')
              , LPAD(SUBSTRING( "racks"."name" FROM E'(\\\\d+)$'), 30, '0') ASC
 )
@@ -79,8 +79,8 @@ SELECT
                        R.status AS "buildStatus" ,
                        cast(R.cost as money) AS "cost",
                        ( SELECT id FROM sorted_racks OFFSET (SELECT row_num FROM (SELECT id,row_number() OVER () AS row_num FROM sorted_racks) t WHERE id=R.id) LIMIT 1) AS "nextRackId"),
-                       ( SELECT XmlElement( name "owner", XmlAttributes (O.id, O.name, O.login))
-                           FROM users O WHERE O.id = R.user_id LIMIT 1 
+                       ( SELECT XmlElement( name "owner", XmlAttributes (O.id, O.name))
+                           FROM teams O WHERE O.id = R.team_id LIMIT 1 
                        ),
                        ( SELECT XmlAgg( XmlElement( name "template",
                                           XmlAttributes (T.id,T.name,T.model,T.rackable,

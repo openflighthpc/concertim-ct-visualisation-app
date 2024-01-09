@@ -8,6 +8,9 @@ class Team < ApplicationRecord
 
   has_many :user_roles
   has_many :users, through: :user_roles
+  has_many :racks,
+           class_name: 'HwRack',
+           dependent: :destroy
 
   ############################
   #
@@ -19,8 +22,8 @@ class Team < ApplicationRecord
             presence: true,
             uniqueness: true,
             format: {
-              with: /\A[a-zA-Z0-9\-\_]*\Z/,
-              message: "can contain only alphanumeric characters, hyphens and underscores."
+              with: /\A[a-zA-Z0-9\-_\s]*\z/,
+              message: "can contain only alphanumeric characters, spaces, hyphens and underscores."
             }
 
 end
