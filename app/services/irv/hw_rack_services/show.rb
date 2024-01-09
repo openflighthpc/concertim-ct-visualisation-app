@@ -2,8 +2,8 @@ module Irv
   module HwRackServices
     class Show < Irv::HwRackServices::Index
 
-      def initialize(user, rack_id, slow)
-        @user = user
+      def initialize(team, rack_id, slow)
+        @team = team
         @rack_id = rack_id
         @slow = slow
       end

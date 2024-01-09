@@ -35,7 +35,7 @@ class HwRack < ApplicationRecord
   has_many :chassis, through: :locations
   has_many :devices, through: :chassis
 
-  belongs_to :user, class_name: 'User'
+  belongs_to :team
 
 
   ############################
@@ -46,7 +46,7 @@ class HwRack < ApplicationRecord
 
   validates :name,
             presence: true,
-            uniqueness: {scope: :user},
+            uniqueness: {scope: :team},
             format: {
               with: /\A[a-zA-Z0-9\-\_]*\Z/,
               message: "can contain only alphanumeric characters, hyphens and underscores."
@@ -78,7 +78,7 @@ class HwRack < ApplicationRecord
 
     # The remaining defaults take their value from that given to the last
     # rack.
-    last_rack = HwRack.where(user: user).order(:created_at).last
+    last_rack = HwRack.where(team: team).order(:created_at).last
 
     self.u_height ||= last_rack.nil? ? 42 : last_rack.u_height
     self.name ||=
@@ -87,7 +87,7 @@ class HwRack < ApplicationRecord
           sprintf("%0#{$1.length}d%s", $1.to_i + 1, $2)
         end
       else
-        "Rack-#{HwRack.where(user: user).count + 1}"
+        "Rack-#{HwRack.where(team: team).count + 1}"
       end
   end
 
@@ -173,7 +173,8 @@ class HwRack < ApplicationRecord
     self.errors.add(:metadata, "Must be an object") unless metadata.is_a?(Hash)
   end
 
+  # this logic needs updating
   def broadcast_change(action)
-    BroadcastRackChangeJob.perform_now(self.id, self.user_id, action)
+    # BroadcastRackChangeJob.perform_now(self.id, self.user_id, action)
   end
 end
