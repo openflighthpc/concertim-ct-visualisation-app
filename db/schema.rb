@@ -232,6 +232,25 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_19_161225) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "team_roles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id"
+    t.uuid "team_id"
+    t.string "role", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["team_id"], name: "index_team_roles_on_team_id"
+    t.index ["user_id", "team_id"], name: "index_team_roles_on_user_id_and_team_id", unique: true
+    t.index ["user_id"], name: "index_team_roles_on_user_id"
+  end
+
+  create_table "teams", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", limit: 255, null: false
+    t.string "project_id", limit: 255
+    t.string "billing_acct_id", limit: 255
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "templates", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name", limit: 255, default: "", null: false
     t.integer "height", null: false
@@ -304,4 +323,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_19_161225) do
   add_foreign_key "racks", "templates", on_update: :cascade, on_delete: :restrict
   add_foreign_key "racks", "users", on_update: :cascade, on_delete: :restrict
   add_foreign_key "rackview_presets", "users", on_update: :cascade, on_delete: :cascade
+  add_foreign_key "team_roles", "teams"
+  add_foreign_key "team_roles", "users"
 end
