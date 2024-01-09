@@ -46,9 +46,10 @@ class Ability
     can :read, InteractiveRackView
 
     can :read, Template
-    can :manage, Chassis, location: {rack: {user: @user}}
-    can :manage, Device, chassis: {location: {rack: {user: @user}}}
-    can :manage, HwRack, user: @user
+    can :manage, Chassis, location: {rack: {team_id: @user.team_roles.pluck(:team_id) }}
+    can :manage, Device, chassis: {location: {rack: {team_id: @user.team_roles.pluck(:team_id) }}}
+    can :manage, HwRack, team_id: @user.team_roles.pluck(:team_id)
+
     can :manage, RackviewPreset, user: @user
 
     can :read, ClusterType
