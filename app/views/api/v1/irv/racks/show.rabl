@@ -3,8 +3,8 @@ attributes :id, :name
 attribute :currency_cost => :cost
 attributes u_height: :uHeight, status: :buildStatus
 
-child :user, root: 'owner' do
-  extends 'api/v1/users/show'
+child :team, root: 'owner' do
+  extends 'api/v1/teams/show'
 end
 
 node(:template) do |rack|
