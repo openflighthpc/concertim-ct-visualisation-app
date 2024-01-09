@@ -15,14 +15,11 @@ class User < ApplicationRecord
   #
   ####################################
 
-  has_many :racks,
-    class_name: 'HwRack',
-    dependent: :destroy
-
   has_many :team_roles,
     dependent: :destroy
 
   has_many :teams, through: :team_roles
+  has_many :racks, through: :teams
 
   ####################################
   #

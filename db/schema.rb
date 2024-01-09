@@ -207,12 +207,12 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_19_161225) do
     t.jsonb "network_details", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "order_id"
     t.uuid "template_id", null: false
-    t.uuid "user_id", null: false
+    t.string "order_id"
+    t.uuid "team_id", null: false
     t.index ["order_id"], name: "index_racks_on_order_id", unique: true
+    t.index ["team_id"], name: "index_racks_on_team_id"
     t.index ["template_id"], name: "index_racks_on_template_id"
-    t.index ["user_id"], name: "index_racks_on_user_id"
   end
 
   create_table "rackview_presets", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -247,8 +247,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_19_161225) do
     t.string "name", limit: 255, null: false
     t.string "project_id", limit: 255
     t.string "billing_acct_id", limit: 255
+    t.decimal "cost", default: "0.0", null: false
+    t.date "billing_period_start"
+    t.date "billing_period_end"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["billing_acct_id"], name: "index_teams_on_billing_acct_id", unique: true, where: "(NOT NULL::boolean)"
+    t.index ["project_id"], name: "index_teams_on_project_id", unique: true, where: "(NOT NULL::boolean)"
   end
 
   create_table "templates", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -294,15 +299,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_19_161225) do
     t.string "reset_password_token", limit: 255
     t.datetime "reset_password_sent_at"
     t.boolean "root", default: false, null: false
-    t.string "project_id", limit: 255
     t.string "cloud_user_id"
-    t.decimal "cost", default: "0.0", null: false
-    t.date "billing_period_start"
-    t.date "billing_period_end"
     t.string "foreign_password"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "billing_acct_id", limit: 255
     t.decimal "credits", default: "0.0", null: false
     t.datetime "deleted_at"
     t.string "pending_foreign_password"
@@ -311,7 +311,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_19_161225) do
     t.index ["deleted_at"], name: "users_deleted_at_null", where: "(deleted_at IS NULL)"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["login"], name: "index_users_on_login", unique: true
-    t.index ["project_id"], name: "index_users_on_project_id", unique: true, where: "(NOT NULL::boolean)"
   end
 
   add_foreign_key "allowlisted_jwts", "users", on_delete: :cascade
@@ -320,6 +319,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_19_161225) do
   add_foreign_key "data_source_maps", "devices", on_update: :cascade, on_delete: :cascade
   add_foreign_key "devices", "base_chassis", on_update: :cascade, on_delete: :cascade
   add_foreign_key "locations", "racks", on_update: :cascade, on_delete: :restrict
+  add_foreign_key "racks", "teams", on_update: :cascade, on_delete: :restrict
   add_foreign_key "racks", "templates", on_update: :cascade, on_delete: :restrict
   add_foreign_key "racks", "users", on_update: :cascade, on_delete: :restrict
   add_foreign_key "rackview_presets", "users", on_update: :cascade, on_delete: :cascade
