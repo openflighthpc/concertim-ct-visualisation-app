@@ -10,7 +10,12 @@ class InteractiveRackView
   # Canvas functions
 
   class << self
-    def get_structure(racks=nil, user)
+    def get_structure(racks=nil, user=nil)
+      unless racks || user
+        Rails.logger.debug("Argument error: must have racks or a user")
+        return ['<error>Missing arguments</error>']
+      end
+
       sql = generate_sql(racks, user)
       begin
         xml = ApplicationRecord.connection.exec_query(sql).rows.join
@@ -47,11 +52,16 @@ class InteractiveRackView
         else
           nil
         end
-      permitted_ids = HwRack.accessible_by(user.ability).pluck('id')
-      if requested_ids.nil?
-        permitted_ids
+      # This is a temporary hacky solution, as only applicable for show subclass, which should have its own logic
+      if user
+        permitted_ids = HwRack.accessible_by(user.ability).pluck('id')
+        if requested_ids.nil?
+          permitted_ids
+        else
+          requested_ids & permitted_ids
+        end
       else
-        requested_ids & permitted_ids
+        requested_ids
       end
     end
 
