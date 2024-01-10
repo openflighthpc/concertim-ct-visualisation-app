@@ -6,7 +6,7 @@ module Api::V1
   class UserPresenter < Presenter
 
     # Be selective about what attributes and methods we expose.
-    delegate :id, :login, :name, :email, :cloud_user_id,:root?,
+    delegate :id, :login, :name, :email, :cloud_user_id, :root?, :team_roles,
              to: :o
 
     def status

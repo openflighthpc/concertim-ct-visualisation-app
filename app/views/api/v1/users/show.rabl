@@ -5,10 +5,9 @@ node :fullname do |user|
 end
 attribute :email
 attribute :cloud_user_id, if: ->(user) { !user.root? }
-attribute :project_id, if: ->(user) { !user.root? }
-attribute :cost, if: ->(user) { !user.root? }
-attribute :billing_period_start, if: ->(user) { !user.root? }
-attribute :billing_period_end, if: ->(user) { !user.root? }
-attribute :billing_acct_id, if: ->(user) { !user.root? }
 attribute root?: :root
 attribute :status
+
+child :team_roles do
+  extends 'api/v1/team_roles/show'
+end

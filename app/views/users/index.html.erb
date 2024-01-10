@@ -17,6 +17,9 @@
   <% t.custom_column "Authorization Level", sortable: true, db_column: :root do |user| %>
     <% presenter_for(user).authorization %>
   <% end %>
+  <% t.custom_column "Teams" do |user| %>
+    <% presenter_for(user).team_role_list %>
+  <% end %>
   <% t.attribute_column :cloud_user_id, title: "Cloud User ID", sortable: true %>
   <% t.custom_column "Status", sortable: true, db_column: :deleted_at do |user| %>
     <% presenter_for(user).status %>
@@ -28,7 +31,6 @@
     <% else %>
       <% actions.add_with_auth can: :edit, on: user, title: 'Edit', path: edit_user_path(user) %>
     <% end %>
-    <% actions.add_with_auth can: :create, on: CreditDeposit.new(user: user), title: 'Add Credits', path: new_credit_deposit_path(user) %>
     <%
         actions.add_with_auth(can: :destroy, on: user,
           title: 'Delete',
@@ -36,7 +38,7 @@
           method: 'delete',
           data: {confirm: presenter_for(user).delete_confirmation_message},
         )
-      %>
+    %>
   <% end %>
 
 <% end %>
