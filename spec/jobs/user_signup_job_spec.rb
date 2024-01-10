@@ -121,4 +121,13 @@ RSpec.describe UserSignupJob, type: :job do
       end
     end
   end
+
+  describe "skipping deleted users" do
+    let(:user) { create(:user, deleted_at: Time.current) }
+
+    it "skips users which have already been deleted" do
+      expect(described_class::Runner).not_to receive(:new)
+      described_class.perform_now(user, cloud_service_config, test_stubs: stubs)
+    end
+  end
 end
