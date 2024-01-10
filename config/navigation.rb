@@ -45,7 +45,7 @@ SimpleNavigation::Configuration.run do |navigation|
         html_options = {}
         if !current_ability.enough_credits_to_create_cluster?
           html_options[:class] = "limited-action-icon"
-          html_options[:title] = "You must have at least #{Rails.application.config.cluster_credit_requirement} credits to create a cluster"
+          html_options[:title] = "You must belong to a team with at least #{Rails.application.config.cluster_credit_requirement} credits to create a cluster"
         end
 
         primary.item :cluster_types, 'Launch cluster', url_helpers.cluster_types_path,
