@@ -15,6 +15,19 @@ class UserPresenter < Presenter
     end
   end
 
+  def status
+    if o.deleted_at.nil?
+      "Active"
+    else
+      "Pending deletion"
+    end
+  end
+
+  def delete_confirmation_message
+    "Are you sure you want to delete user #{o.name} (#{o.login})?" \
+      " This will delete all of their racks and devices."
+  end
+
   def formatted_credits
     '%.2f' % o.credits
   end

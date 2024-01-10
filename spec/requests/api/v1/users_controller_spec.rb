@@ -369,6 +369,7 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
       # expectation may not work correctly.
       authenticated_user
       user_to_delete
+      create(:cloud_service_config)
     end
 
     let(:url_under_test) { urls.api_v1_user_path(user_to_delete) }
@@ -408,9 +409,11 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
         let(:user_to_delete) { create(:user) }
 
         it "deletes the user" do
-          expect {
-            send_request
-          }.to change(User, :count).by(-1)
+          expect(user_to_delete.deleted_at).to be_nil
+          send_request
+          user_to_delete.reload
+          expect(user_to_delete.deleted_at).not_to be_nil
+          expect(UserDeletionJob).to have_been_enqueued
         end
       end
 

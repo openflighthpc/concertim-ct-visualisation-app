@@ -61,4 +61,7 @@ Rails.application.configure do
   # We don't make requests to the metric daemon in the test env.  Hardcoding
   # this value insulates the tests from any configuration.
   config.metric_daemon_url = "http://localhost:3000/"
+
+  # This allows us to use have_been_enqueued etc. in system tests.
+  config.active_job.queue_adapter = :test
 end

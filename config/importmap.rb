@@ -71,3 +71,4 @@ pin "canvas/common/widgets/MultiMetric", to: "canvas/common/widgets/MultiMetric.
 pin "canvas/common/widgets/ThumbNav", to: "canvas/common/widgets/ThumbNav.js"
 pin "@rails/actioncable", to: "actioncable.esm.js"
 pin "channels/consumer", to: "channels/consumer.js"
+pin "@rails/ujs", to: "https://ga.jspm.io/npm:@rails/ujs@7.0.8/lib/assets/compiled/rails-ujs.js"

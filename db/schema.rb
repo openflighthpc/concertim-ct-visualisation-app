@@ -10,10 +10,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_12_01_160206) do
+ActiveRecord::Schema[7.0].define(version: 2023_12_21_131603) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
+
+  create_table "allowlisted_jwts", force: :cascade do |t|
+    t.string "jti", null: false
+    t.string "aud"
+    t.datetime "exp", null: false
+    t.bigint "user_id", null: false
+    t.index ["jti"], name: "index_allowlisted_jwts_on_jti", unique: true
+    t.index ["user_id"], name: "index_allowlisted_jwts_on_user_id"
+  end
 
   create_table "base_chassis", force: :cascade do |t|
     t.string "name", limit: 255, default: "", null: false
@@ -247,12 +256,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_01_160206) do
     t.datetime "updated_at", null: false
     t.string "billing_acct_id", limit: 255
     t.decimal "credits", default: "0.0", null: false
+    t.datetime "deleted_at"
     t.index ["billing_acct_id"], name: "index_users_on_billing_acct_id", unique: true, where: "(NOT NULL::boolean)"
+    t.index ["deleted_at"], name: "users_deleted_at_not_null", where: "(deleted_at IS NOT NULL)"
+    t.index ["deleted_at"], name: "users_deleted_at_null", where: "(deleted_at IS NULL)"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["login"], name: "index_users_on_login", unique: true
     t.index ["project_id"], name: "index_users_on_project_id", unique: true, where: "(NOT NULL::boolean)"
   end
 
+  add_foreign_key "allowlisted_jwts", "users", on_delete: :cascade
   add_foreign_key "base_chassis", "locations", on_update: :cascade, on_delete: :restrict
   add_foreign_key "base_chassis", "templates", on_update: :cascade, on_delete: :restrict
   add_foreign_key "data_source_maps", "devices", on_update: :cascade, on_delete: :cascade

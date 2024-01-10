@@ -1,4 +1,8 @@
 class User < ApplicationRecord
+  # We allow multiple valid JWTs for each user and revoke them all when the
+  # user is deleted.
+  include Devise::JWT::RevocationStrategies::Allowlist
+
   include Searchable
   default_search_scope :login, :name, :cloud_user_id, :project_id, :billing_acct_id
 
@@ -84,7 +88,7 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
     :recoverable, :rememberable, :validatable,
-    :jwt_authenticatable, jwt_revocation_strategy: Devise::JWT::RevocationStrategies::Null
+    :jwt_authenticatable, jwt_revocation_strategy: self
 
   def ability
     return @__ability if defined?(@__ability)
@@ -104,6 +108,21 @@ class User < ApplicationRecord
         self.foreign_password = @password
       end
     end
+  end
+
+  def active_for_authentication?
+    super && deleted_at.nil?
+  end
+
+  def inactive_message
+    # If the account is pending deletion, we return :invalid to be
+    # indistinguishable from the account not existing.
+    deleted_at.nil? ? super : :invalid
+  end
+
+  def mark_as_pending_deletion
+    update(deleted_at: Time.current)
+    allowlisted_jwts.destroy_all
   end
 
   ####################################

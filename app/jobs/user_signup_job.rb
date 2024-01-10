@@ -7,6 +7,10 @@ class UserSignupJob < ApplicationJob
   retry_on ::ActiveModel::ValidationError, wait: :exponentially_longer, attempts: 10
 
   def perform(user, cloud_service_config, **options)
+    if user.deleted_at
+      logger.info("Skipping job; user was deleted at #{user.deleted_at.inspect}")
+      return
+    end
     runner = Runner.new(
       user: user,
       cloud_service_config: cloud_service_config,
