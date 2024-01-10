@@ -18,8 +18,6 @@
     <% presenter_for(user).authorization %>
   <% end %>
   <% t.attribute_column :cloud_user_id, title: "Cloud User ID", sortable: true %>
-  <% t.attribute_column :project_id, title: "Project ID", sortable: true %>
-  <% t.attribute_column :billing_acct_id, title: "Billing Account ID", sortable: true %>
   <% t.custom_column "Status", sortable: true, db_column: :deleted_at do |user| %>
     <% presenter_for(user).status %>
   <% end %>

@@ -259,6 +259,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_20_150125) do
     t.string "project_id", limit: 255
     t.string "billing_acct_id", limit: 255
     t.decimal "cost", default: "0.0", null: false
+    t.decimal "credits", default: "0.0", null: false
     t.date "billing_period_start"
     t.date "billing_period_end"
     t.datetime "created_at", null: false
@@ -314,17 +315,14 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_20_150125) do
     t.string "foreign_password"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.decimal "credits", default: "0.0", null: false
     t.datetime "deleted_at"
     t.string "pending_foreign_password"
-    t.index ["billing_acct_id"], name: "index_users_on_billing_acct_id", unique: true, where: "(NOT NULL::boolean)"
     t.index ["deleted_at"], name: "users_deleted_at_not_null", where: "(deleted_at IS NOT NULL)"
     t.index ["deleted_at"], name: "users_deleted_at_null", where: "(deleted_at IS NULL)"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["login"], name: "index_users_on_login", unique: true
   end
 
-  add_foreign_key "allowlisted_jwts", "users", on_delete: :cascade
   add_foreign_key "base_chassis", "locations", on_update: :cascade, on_delete: :restrict
   add_foreign_key "base_chassis", "templates", on_update: :cascade, on_delete: :restrict
   add_foreign_key "data_source_maps", "devices", on_update: :cascade, on_delete: :cascade

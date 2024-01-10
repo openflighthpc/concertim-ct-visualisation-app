@@ -293,9 +293,10 @@ class IRVController {
        this.cancelDragging();
     }
     const defs = this.parser.parseRackDefs({Racks: data["Racks"]});
+    this.assetCount = 0;
     this.initialiseRackDefs(defs);
     if (this.initialised) {
-      this.rackSpace.resetRackSpace();
+      this.synchroniseChanges();
     } else {
       this.testLoadProgress();
     }
@@ -1389,7 +1390,8 @@ class IRVController {
       this.assetCount = 0;
     }
     Array.from(assets).map((asset) => // deal with loading the images
-      AssetManager.get(IRVController.PRIMARY_IMAGE_PATH + asset, this.evAssetLoaded, this.evAssetFailed));
+      AssetManager.get(IRVController.PRIMARY_IMAGE_PATH + asset, this.evAssetLoaded, this.evAssetFailed)
+    );
   }
 
   // asset manager callback invoked when an image finishes loading. Tests if all assets have been loaded successfully
@@ -1507,7 +1509,7 @@ class IRVController {
       const num_assets = assets.length;
       progress   = this.calculateProgress(num_assets);
       this.debug(`load progress: resources:${this.resourceCount}/${IRVController.NUM_RESOURCES} assets:${this.assetCount}/${num_assets} progress:${progress}`);
-      if ((this.resourceCount === IRVController.NUM_RESOURCES) && (this.assetCount === num_assets)) {
+      if ((this.resourceCount >= IRVController.NUM_RESOURCES) && (this.assetCount === num_assets)) {
         // We have loaded everything now, this is where we action any
         // rebuilding and redrawing
         this.assetCount = 0;
