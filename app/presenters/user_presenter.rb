@@ -2,7 +2,7 @@ class UserPresenter < Presenter
 
   def authorization
     if o.root?
-      "Administrator"
+      "Super Admin"
     else
       "User"
     end
@@ -21,8 +21,8 @@ class UserPresenter < Presenter
       " This will delete all of their racks and devices."
   end
 
-  def formatted_credits
-    '%.2f' % o.credits
+  def team_role_list
+    o.team_roles.map {|team_role| "#{team_role.team.name} (#{team_role.role})" }.sort.join(", ")
   end
 
   def cloud_user_id_form_hint
