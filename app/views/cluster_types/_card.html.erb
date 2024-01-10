@@ -14,7 +14,7 @@
       <% title =  if current_ability.enough_credits_to_create_cluster?
                     "You do not have permission to create clusters"
                   else
-                    "Insufficient credits. You must have at least #{Rails.application.config.cluster_credit_requirement} credits to create a cluster"
+                    "Insufficient credits. You must belong to a team with at least #{Rails.application.config.cluster_credit_requirement} credits to create a cluster"
                   end
       %>
       <span title="<%= title %>" class="disabled-cluster-link">Select</span>
