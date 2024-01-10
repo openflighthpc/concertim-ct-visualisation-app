@@ -110,8 +110,14 @@ class User < ApplicationRecord
     end
   end
 
-  def valid_for_authentication?
+  def active_for_authentication?
     super && deleted_at.nil?
+  end
+
+  def inactive_message
+    # If the account is pending deletion, we return :invalid to be
+    # indistinguishable from the account not existing.
+    deleted_at.nil? ? super : :invalid
   end
 
   def mark_as_pending_deletion
