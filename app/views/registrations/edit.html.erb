@@ -18,45 +18,6 @@
     </div>
   <% end %>
 
-  <% unless current_user.root? %>
-    <div class="formItem">
-      <%
-          tooltip = current_user.project_id.blank? ? "A project ID will be automatically created" : "Once set project IDs can only be changed by an admin user"
-      %>
-      <%= f.label :project_id, "Project ID", title: tooltip %>
-      <%= f.text_field :project_id, autocomplete: :off, disabled: true %>
-    </div>
-  <% end %>
-
-  <% unless current_user.root? %>
-    <div class="formItem">
-      <%
-          tooltip = current_user.billing_acct_id.blank? ? "A billing account ID will be automatically created" : "Once set billing account IDs can only be changed by an admin user"
-      %>
-      <%= f.label :billing_acct_id, "Billing account ID", title: tooltip %>
-      <%= f.text_field :billing_acct_id, autocomplete: :off, disabled: true %>
-    </div>
-  <% end %>
-
-  <% unless current_user.root? %>
-    <% user = user_presenter(current_user) %>
-    <div class="formItem">
-      <%= f.label :billing_period, "Current billing period" %>
-      <%= f.text_field :billing_period, autocomplete: :off, disabled: true, value: user.billing_period %>
-    </div>
-
-    <div class="formItem">
-      <% tooltip = "Total cumulative costs accrued so far this billing period" %>
-      <%= f.label :cost, "Costs this billing period", title: tooltip %>
-      <%= f.text_field :cost, autocomplete: :off, disabled: true, value: user.cost  %>
-    </div>
-
-    <div class="formItem">
-      <%= f.label :credits, "Available credits" %>
-      <%= f.text_field :credits, autocomplete: :off, disabled: true, value: user.formatted_credits  %>
-    </div>
-  <% end %>
-
   <div class="formItem">
     <%= f.label :password %> <i>(leave blank if you don't want to change it)</i>
     <%= f.password_field :password %>

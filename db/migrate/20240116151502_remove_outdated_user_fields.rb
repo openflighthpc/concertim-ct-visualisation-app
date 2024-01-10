@@ -7,5 +7,6 @@ class RemoveOutdatedUserFields < ActiveRecord::Migration[7.0]
     remove_column :users, :billing_period_start, :date
     remove_column :users, :billing_period_end, :date
     remove_column :users, :cost, :decimal, default: 0.00, null: false
+    remove_column :users, :credits, :decimal, default: 0.00, null: false
   end
 end
