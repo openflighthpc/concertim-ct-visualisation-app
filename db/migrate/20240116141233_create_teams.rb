@@ -4,7 +4,8 @@ class CreateTeams < ActiveRecord::Migration[7.0]
       t.string :name, limit: 255, null: false
       t.string :project_id, limit: 255
       t.string :billing_acct_id, limit: 255
-      t.decimal "cost", default: "0.0", null: false
+      t.decimal :cost, default: 0.00, null: false
+      t.decimal :credits, default: 0.00, null: false
       t.date :billing_period_start
       t.date :billing_period_end
 

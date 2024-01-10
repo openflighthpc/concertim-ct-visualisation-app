@@ -6,8 +6,8 @@ class Team < ApplicationRecord
   #
   ####################################
 
-  has_many :user_roles
-  has_many :users, through: :user_roles
+  has_many :team_roles
+  has_many :users, through: :team_roles
   has_many :racks,
            class_name: 'HwRack',
            dependent: :destroy
@@ -31,8 +31,10 @@ class Team < ApplicationRecord
             length: { maximum: 255 },
             allow_nil: true,
             allow_blank: true
-  validates :cloud_user_id,
+
+  validates :billing_acct_id,
             uniqueness: true,
+            length: { maximum: 255 },
             allow_nil: true,
             allow_blank: true
 
@@ -44,10 +46,8 @@ class Team < ApplicationRecord
   validates :cost,
             numericality: { greater_than_or_equal_to: 0 },
             allow_blank: true
-  validates :billing_acct_id,
-            uniqueness: true,
-            length: { maximum: 255 },
-            allow_nil: true,
+  validates :credits,
+            numericality: { greater_than_or_equal_to: 0 },
             allow_blank: true
   validates :billing_period_end, comparison: { greater_than: :billing_period_start },
             unless: -> { billing_period_start.blank? || billing_period_end.blank? }

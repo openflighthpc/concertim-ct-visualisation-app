@@ -6,8 +6,8 @@ class TeamRole < ApplicationRecord
   #
   ############################
 
-  has_one :user
-  has_one :team
+  belongs_to :user
+  belongs_to :team
 
   ############################
   #
@@ -23,6 +23,13 @@ class TeamRole < ApplicationRecord
 
   validate :user_not_root
 
+  ######################################
+  #
+  # Hooks
+  #
+  ######################################
+
+  after_commit :broadcast_change
 
   ############################
   #
@@ -34,5 +41,10 @@ class TeamRole < ApplicationRecord
 
   def user_not_root
     self.errors.add(:user, 'must not be super admin') if user&.root?
+  end
+
+  # What user can see in irv may have changed
+  def broadcast_change
+    BroadcastUserRacksJob.perform_now(self.user_id)
   end
 end
