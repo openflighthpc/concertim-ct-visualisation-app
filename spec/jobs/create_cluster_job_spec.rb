@@ -89,5 +89,15 @@ RSpec.describe CreateClusterJob, type: :job do
                                           "project_id" => user.project_id
                                         })
     end
+
+    it "contains the users billing account id" do
+      expect(user.billing_acct_id).not_to be_nil
+      expect(subject[:billing_account_id]).to eq user.billing_acct_id
+    end
+
+    it "contains the middleware url" do
+      expect(cloud_service_config.user_handler_base_url).not_to be_nil
+      expect(subject[:middleware_url]).to eq cloud_service_config.user_handler_base_url
+    end
   end
 end

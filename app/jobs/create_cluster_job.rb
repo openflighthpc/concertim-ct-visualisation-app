@@ -72,7 +72,9 @@ class CreateClusterJob < ApplicationJob
     def body
       {
         cloud_env: cloud_env_details,
-        cluster: cluster_details
+        cluster: cluster_details,
+        billing_account_id: @user.billing_acct_id,
+        middleware_url: @cloud_service_config.user_handler_base_url,
       }
     end
 
