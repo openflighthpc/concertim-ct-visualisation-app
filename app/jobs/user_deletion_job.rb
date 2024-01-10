@@ -44,7 +44,9 @@ class UserDeletionJob < ApplicationJob
     end
 
     def call
-      response = connection.delete("", body)
+      response = connection.delete("") do |request|
+        request.body = body
+      end
       if response.success?
         @user.destroy!
       end
