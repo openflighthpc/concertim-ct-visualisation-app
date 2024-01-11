@@ -13,8 +13,10 @@
 
   <% t.attribute_column :id, sortable: true %>
   <% t.attribute_column :name, sortable: true %>
-  <% t.custom_column "Users" do |team| %>
-    <% presenter_for(team).team_role_list %>
+  <% TeamRole::VALID_ROLES.each do |role| %>
+    <% t.custom_column role.pluralize.capitalize do |team| %>
+      <% presenter_for(team).team_users_list(role) %>
+    <% end %>
   <% end %>
   <% t.attribute_column :project_id, title: "Project ID", sortable: true %>
   <% t.attribute_column :billing_acct_id, title: "Billing Account ID", sortable: true %>
