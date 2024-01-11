@@ -41,6 +41,12 @@ SimpleNavigation::Configuration.run do |navigation|
           highlights_on: %r(/settings)
       end
 
+      if current_user.can?(:manage, Team)
+        primary.item :config, 'Teams', url_helpers.teams_path,
+                     icon: :groups,
+                     highlights_on: %r(/teams)
+      end
+
       if current_user.can?(:read, ClusterType)
         html_options = {}
         if !current_ability.enough_credits_to_create_cluster?

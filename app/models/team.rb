@@ -2,6 +2,17 @@ class Team < ApplicationRecord
   include Searchable
   default_search_scope :name
 
+  def self.perform_search(term, search_scope = default_searchable_columns, include_users=true)
+    matches = super(term, search_scope)
+    return matches unless include_users
+
+    matching_users = User.perform_search(term, [:name], false)
+    return matches if matching_users.empty?
+
+    matching_team_roles = TeamRole.where(user_id: matching_users)
+    matches.or(Team.where(id: matching_team_roles.pluck(:team_id)))
+  end
+
   ####################################
   #
   # Associations
