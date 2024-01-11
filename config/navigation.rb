@@ -29,24 +29,6 @@ SimpleNavigation::Configuration.run do |navigation|
           highlights_on: %r(/cloud-env/configs)
       end
 
-      if current_user.can?(:manage, User)
-        primary.item :config, 'Users', url_helpers.users_path,
-          icon: :users,
-          highlights_on: %r(/users)
-      end
-
-      if current_user.can?(:manage, Setting)
-        primary.item :config, 'Settings', url_helpers.edit_settings_path,
-          icon: :config,
-          highlights_on: %r(/settings)
-      end
-
-      if current_user.can?(:manage, Team)
-        primary.item :config, 'Teams', url_helpers.teams_path,
-                     icon: :groups,
-                     highlights_on: %r(/teams)
-      end
-
       if current_user.can?(:read, ClusterType)
         html_options = {}
         if !current_ability.enough_credits_to_create_cluster?
@@ -55,9 +37,27 @@ SimpleNavigation::Configuration.run do |navigation|
         end
 
         primary.item :cluster_types, 'Launch cluster', url_helpers.cluster_types_path,
-          icon: :racks,
-          html: html_options,
-          highlights_on: %r(/cloud-env/(cluster-types|clusters))
+                     icon: :racks,
+                     html: html_options,
+                     highlights_on: %r(/cloud-env/(cluster-types|clusters))
+      end
+
+      if current_user.can?(:manage, User)
+        primary.item :config, 'Users', url_helpers.users_path,
+          icon: :users,
+          highlights_on: %r(/users)
+      end
+
+      if current_user.can?(:read, Team)
+        primary.item :config, 'Teams', url_helpers.teams_path,
+                     icon: :groups,
+                     highlights_on: %r(/teams)
+      end
+
+      if current_user.can?(:manage, Setting)
+        primary.item :config, 'Settings', url_helpers.edit_settings_path,
+                     icon: :config,
+                     highlights_on: %r(/settings)
       end
     else
       primary.item :login, 'Log in', url_helpers.new_user_session_path,
