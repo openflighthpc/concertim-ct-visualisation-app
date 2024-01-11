@@ -20,6 +20,12 @@
   <% end %>
   <% t.attribute_column :project_id, title: "Project ID", sortable: true %>
   <% t.attribute_column :billing_acct_id, title: "Billing Account ID", sortable: true %>
+  <% t.custom_column "Credits", sortable: true, db_column: :credits do |team| %>
+    <% presenter_for(team).formatted_credits %>
+  <% end %>
+  <% t.custom_column "Cost", sortable: true, db_column: :cost do |team| %>
+    <% presenter_for(team).currency_cost %>
+  <% end %>
 
   <% t.actions_column do |actions, team| %>
     <%#
