@@ -1,0 +1,31 @@
+<% set_title "Manage Teams" -%>
+
+<%= link_to "+ New Team", new_team_path, class: "button" %>
+
+<%= render_resource_table_for @teams, searchable: true do |t| %>
+  <% t.on_empty_collection do %>
+    <% capture do %>
+      No teams have been found.
+    <% end %>
+  <% end %>
+
+  <% t.attribute_column :id, sortable: true %>
+  <% t.attribute_column :name, sortable: true %>
+  <% t.custom_column "Users" do |team| %>
+    <% presenter_for(team).team_role_list %>
+  <% end %>
+  <% t.attribute_column :project_id, title: "Project ID", sortable: true %>
+  <% t.attribute_column :billing_acct_id, title: "Billing Account ID", sortable: true %>
+
+  <% t.actions_column do |actions, team| %>
+    <%#
+        These actions don't do anything, but they do demonstrate how to add
+        links to the actions dropdown, both with and without authentication.
+
+        These should obviously be removed/replaced when we have a real links to add here.
+    %>
+    <% actions.add_with_auth can: :edit, on: team, title: 'Edit', path: edit_team_path(team) %>
+    <% actions.add_with_auth can: :destroy, on: team, title: 'Fake Delete', path: placeholder_team_path(team) %>
+  <% end %>
+
+<% end %>

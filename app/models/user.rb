@@ -9,13 +9,15 @@ class User < ApplicationRecord
   encrypts :foreign_password
   encrypts :pending_foreign_password
 
+  def self.perform_search(term, search_scope = default_searchable_columns, include_teams = true)
+    matches = super(term, search_scope)
+    return matches unless include_teams
 
-  def self.perform_search(term, search_scope = default_searchable_columns)
-    matching_teams = Team.perform_search(term)
-    return super if matching_teams.empty?
+    matching_teams = Team.perform_search(term, [:name], false)
+    return matches if matching_teams.empty?
 
     matching_team_roles = TeamRole.where(team_id: matching_teams)
-    super.or(User.where(id: matching_team_roles.pluck(:user_id)))
+    matches.or(User.where(id: matching_team_roles.pluck(:user_id)))
   end
 
   ####################################
