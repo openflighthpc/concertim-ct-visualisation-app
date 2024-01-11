@@ -97,13 +97,14 @@ class HwRack < ApplicationRecord
   #
   ######################################
   after_initialize :set_defaults, if: Proc.new {|r| r.new_record? }
-  after_create do
+
+  after_commit on: :create do
     broadcast_change("added")
   end
-  after_update do
+  after_commit on: :update do
     broadcast_change("modified")
   end
-  after_destroy do
+  after_commit on: :destroy do
     broadcast_change("deleted")
   end
 
