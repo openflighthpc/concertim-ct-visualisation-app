@@ -46,9 +46,9 @@ class Ability
     can :read, InteractiveRackView
 
     can :read, Template
-    can :manage, Chassis, location: {rack: {team_id: @user.team_roles.pluck(:team_id) }}
-    can :manage, Device, chassis: {location: {rack: {team_id: @user.team_roles.pluck(:team_id) }}}
-    can :manage, HwRack, team_id: @user.team_roles.pluck(:team_id)
+    can :manage, Chassis, location: {rack: {team_id: @user.team_ids }}
+    can :manage, Device, chassis: {location: {rack: {team_id: @user.team_ids }}}
+    can :manage, HwRack, team_id: @user.team_ids
 
     can :manage, RackviewPreset, user: @user
 
@@ -60,6 +60,8 @@ class Ability
     can :destroy, KeyPair, user: @user
 
     can [:read, :update], User, id: @user.id
+    can :read, Team, id: @user.team_ids
+    can :read, TeamRole, team_id: @user.team_ids
 
     # Invoice is an ActiveModel::Model, but not an ActiveRecord::Base.  Setting
     # abilities like this might not work too well.  Or perhaps its fine.
