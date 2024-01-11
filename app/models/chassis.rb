@@ -26,10 +26,7 @@ class Chassis < ApplicationRecord
   #######################
 
   validates :name, presence: true, uniqueness: true
-  validates :location_id,
-            numericality: { only_integer: true }
-  validates :location,
-            presence: true
+  validates :location, presence: true
 
 
   ####################################

@@ -469,9 +469,9 @@ class Chassis extends RackObject {
           var this_x = (this.x + this.template.padding.left + (one_col * this.slotWidth));
           var this_y = (this.y + this.template.padding.top + ((this.template.rows - one_row - 1) * this.slotHeight));
           this.freeSlots.push({
-                            rack_id:parseInt(this.parent().id),
-                            chassis_id:parseInt(this.id),
-                            slot_id:parseInt(this.slotIds[one_col][one_row]),
+                            rack_id:this.parent().id,
+                            chassis_id:this.id,
+                            slot_id:this.slotIds[one_col][one_row],
                             row:one_row,
                             col:one_col,
                             x:this_x,
@@ -493,7 +493,7 @@ class Chassis extends RackObject {
       const result = [];
       for (let index = 0; index < this.children.length; index++) {
         var oneBlade = this.children[index];
-        if (parseInt(oneBlade.id) === blade_id) {
+        if (oneBlade.id === blade_id) {
           delete RackObject.MODEL.deviceLookup().devices[blade_id];
           oneBlade.metric.destroy();
           this.children.splice(index,1);

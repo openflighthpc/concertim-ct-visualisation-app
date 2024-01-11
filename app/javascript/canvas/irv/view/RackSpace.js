@@ -765,10 +765,10 @@ class RackSpace {
     }
 
     const new_non_racks = [];
-    const selected_chassis_id = Object.keys(device_lookup.chassis).map(oneK => parseInt(oneK));
+    const selected_chassis_id = Object.keys(device_lookup.chassis).map(oneK => oneK);
     for (var chassis of Array.from(this.model.dcrvShowableNonRackChassis())) {
       if (Array.from(selected_chassis_id).includes(chassis.id)) {
-        var current_ids = new_non_racks.map(oneC => parseInt(oneC.id));
+        var current_ids = new_non_racks.map(oneC => oneC.id);
         if (!(Util.arrayIndexOf(current_ids, chassis.id) >= 0)) { new_non_racks.push(chassis); }
       }
     }
@@ -1226,7 +1226,7 @@ class RackSpace {
 
       // the cassis is the one storing the image for the device
       if (this.selection instanceof Machine) {
-        chassis_id = parseInt(this.selection.parent().id);
+        chassis_id = this.selection.parent().id;
         if (this.selection.parent().complex === true) {
           this.moving_a_blade = true;
           the_image = this.selection.img;
@@ -1236,7 +1236,7 @@ class RackSpace {
           selection_height = this.selection.parent().uHeight;
         }
       } else { //if @selection instanceof Chassis
-        chassis_id = parseInt(this.selection.id);
+        chassis_id = this.selection.id;
         the_image = this.selection.img;
         selection_height = this.selection.uHeight;
       }
@@ -1460,11 +1460,11 @@ class RackSpace {
       const chassisToBeUpdated = this.selection instanceof Chassis ? this.selection : this.selection.parent();
       chassisToBeUpdated.hide();
       const oneChassisObject = this.holdingArea.remove(chassisToBeUpdated.id);
-      this.addChildToRack(parseInt(this.nearest.rack_id),chassisToBeUpdated);
+      this.addChildToRack(this.nearest.rack_id, chassisToBeUpdated);
       const next_rack = this.model.deviceLookup()['racks'][this.nearest.rack_id];
       chassisToBeUpdated.parent(next_rack.instances[0]);
       next_rack.chassis.push(oneChassisObject);
-      this.model.deviceLookup()['racks'][parseInt(next_rack.id)] = next_rack;
+      this.model.deviceLookup()['racks'][next_rack.id] = next_rack;
 
       this.updateChassisPositionInARack(this.nearest.rack_id, chassisToBeUpdated.id, this.nearest.u, this.nearest.face, chassisToBeUpdated.face);
       return chassisToBeUpdated.moveToOrFromHoldingArea("RackChassis",this.nearest.rack_id,(this.nearest.u+1),this.nearest.face);
@@ -1487,8 +1487,8 @@ class RackSpace {
     if (this.selection instanceof Machine || this.selection instanceof Chassis) {
       const chassisToBeUpdated = this.selection instanceof Chassis ? this.selection : this.selection.parent();
       const previous_rack = null;
-      const moving_to_different_rack = parseInt(chassisToBeUpdated.parent().id) !== this.nearest.rack_id;
-      this.addChildToRack(parseInt(this.nearest.rack_id),chassisToBeUpdated);
+      const moving_to_different_rack = chassisToBeUpdated.parent().id !== this.nearest.rack_id;
+      this.addChildToRack(this.nearest.rack_id, chassisToBeUpdated);
       chassisToBeUpdated.parent(this.model.deviceLookup()['racks'][this.nearest.rack_id].instances[0]);
       this.updateChassisPositionInARack(this.nearest.rack_id, chassisToBeUpdated.id, this.nearest.u, this.nearest.face, chassisToBeUpdated.face);
       return chassisToBeUpdated.updatePosition();
@@ -1500,14 +1500,14 @@ class RackSpace {
       this.selection.hideMetric();
       const bladeToBeUpdated = this.selection;
       let previous_chassis = null;
-      const moving_to_different_chassis = parseInt(bladeToBeUpdated.parent().id) !== this.nearest.chassis_id;
+      const moving_to_different_chassis = bladeToBeUpdated.parent().id !== this.nearest.chassis_id;
       if (moving_to_different_chassis) {
         previous_chassis = this.model.deviceLookup()['chassis'][bladeToBeUpdated.parent().id];
-        const previous_chassis_rack_id = parseInt(previous_chassis.instances[0].parent().id);
+        const previous_chassis_rack_id = previous_chassis.instances[0].parent().id;
         for (let index = 0; index < previous_chassis.Slots.length; index++) {
           var oneSlot = previous_chassis.Slots[index];
-          if ((oneSlot.Machine != null) && (parseInt(oneSlot.Machine.id) === parseInt(bladeToBeUpdated.id))) {
-            this.removeBladeFromChassisFromRack(previous_chassis_rack_id, parseInt(previous_chassis.id), parseInt(bladeToBeUpdated.id));
+          if ((oneSlot.Machine != null) && (oneSlot.Machine.id === bladeToBeUpdated.id)) {
+            this.removeBladeFromChassisFromRack(previous_chassis_rack_id, previous_chassis.id, bladeToBeUpdated.id);
             this.addBladeToChassisInRack(this.nearest.rack_id, this.nearest.chassis_id, bladeToBeUpdated);
             var next_chassis = this.model.deviceLookup()['chassis'][this.nearest.chassis_id];
             bladeToBeUpdated.parent(next_chassis.instances[0]);
@@ -1518,8 +1518,8 @@ class RackSpace {
                 next_chassis.Slots[slotIndex].Machine = oneSlot.Machine;
               }
             }
-            this.model.deviceLookup()['chassis'][parseInt(previous_chassis.id)] = previous_chassis;
-            this.model.deviceLookup()['chassis'][parseInt(next_chassis.id)] = next_chassis;
+            this.model.deviceLookup()['chassis'][previous_chassis.id] = previous_chassis;
+            this.model.deviceLookup()['chassis'][next_chassis.id] = next_chassis;
             break;
           }
         }
@@ -1534,8 +1534,8 @@ class RackSpace {
     return (() => {
       const result = [];
       for (var oneRack of Array.from(this.racks)) {
-        if (parseInt(oneRack.id) === rack_id) {
-          result.push(oneRack.updateChassisPosition(parseInt(chassis_id), new_u, new_face));
+        if (oneRack.id === rack_id) {
+          result.push(oneRack.updateChassisPosition(chassis_id, new_u, new_face));
         } else {
           result.push(undefined);
         }
@@ -1562,7 +1562,7 @@ class RackSpace {
       const result = [];
       for (let index = 0; index < this.racks.length; index++) {
         var oneRack = this.racks[index];
-        if (parseInt(oneRack.id) === rack_id) {
+        if (oneRack.id === rack_id) {
           result.push(this.racks[index].children.push(child));
         } else {
           result.push(undefined);
@@ -1577,7 +1577,7 @@ class RackSpace {
       const result = [];
       for (let index = 0; index < this.racks.length; index++) {
         var oneRack = this.racks[index];
-        if (parseInt(oneRack.id) === rack_id) {
+        if (oneRack.id === rack_id) {
           this.racks[index].removeBladeFromChassis(chassis_id, blade_id);
           break;
         } else {
@@ -1593,7 +1593,7 @@ class RackSpace {
       const result = [];
       for (let index = 0; index < this.racks.length; index++) {
         var oneRack = this.racks[index];
-        if (parseInt(oneRack.id) === rack_id) {
+        if (oneRack.id === rack_id) {
           this.racks[index].addBladeToChassis(chassis_id, blade);
           break;
         } else {

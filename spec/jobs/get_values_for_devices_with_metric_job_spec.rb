@@ -38,7 +38,7 @@ RSpec.describe GetValuesForDevicesWithMetricJob, type: :job do
 
       let(:expected_metric_values) {
         klass = GetValuesForDevicesWithMetricJob::Result::MetricValue
-        metric_values.map { |m| klass.new(**m) }.each { |m| m.id = m.id.to_i }
+        metric_values.map { |m| klass.new(**m) }.each { |m| m.id = m.id }
       }
 
       it "returns a successful result" do

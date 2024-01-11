@@ -58,6 +58,13 @@ class Template < ApplicationRecord
   validates :rack_repeat_ratio,
             length: { maximum: 255 }
 
+  # Allow a single default rack template.
+  validates :default_rack_template,
+            inclusion: { in: [true, false] }
+  validates :default_rack_template,
+            uniqueness: true,
+            if: :default_rack_template
+
   # The following attributes have different validations depending on whether
   # this is a template for a rack or a device.
   validates :rows,
@@ -94,6 +101,16 @@ class Template < ApplicationRecord
   validates :disk,
             numericality: { only_integer: true, greater_than: 0 },
             allow_nil: true
+
+  ####################################
+  #
+  # Class Methods
+  #
+  ####################################
+
+  def self.default_rack_template
+    find_by(default_rack_template: true)
+  end
 
   #######################
   #

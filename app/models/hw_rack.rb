@@ -14,7 +14,6 @@ class HwRack < ApplicationRecord
   #
   ############################
 
-  DEFAULT_TEMPLATE_ID = 1
   VALID_STATUSES = %w(IN_PROGRESS FAILED ACTIVE STOPPED)
   VALID_STATUS_ACTION_MAPPINGS = {
     "IN_PROGRESS" => [],
@@ -75,7 +74,7 @@ class HwRack < ApplicationRecord
 
   def set_defaults
     self.u_depth ||= 2
-    self.template_id ||= DEFAULT_TEMPLATE_ID
+    self.template_id ||= Template.default_rack_template&.id
 
     # The remaining defaults take their value from that given to the last
     # rack.
@@ -98,13 +97,14 @@ class HwRack < ApplicationRecord
   #
   ######################################
   after_initialize :set_defaults, if: Proc.new {|r| r.new_record? }
-  after_create do
+
+  after_commit on: :create do
     broadcast_change("added")
   end
-  after_update do
+  after_commit on: :update do
     broadcast_change("modified")
   end
-  after_destroy do
+  after_commit on: :destroy do
     broadcast_change("deleted")
   end
 

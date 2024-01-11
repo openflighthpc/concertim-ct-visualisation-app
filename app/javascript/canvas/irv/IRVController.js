@@ -1492,7 +1492,7 @@ class IRVController {
       nonRackChassisToShow = [];
       for (var oneN in this.crossAppSettings.selectedNonRackChassis) {
         for (var oneD of Array.from(defs.dcrvShowableNonRackChassis)) {
-          if (oneD.id === parseInt(oneN)) {
+          if (oneD.id === oneN) {
             nonRackChassisToShow.push(oneD);
           }
         }

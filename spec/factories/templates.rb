@@ -11,17 +11,10 @@ FactoryBot.define do
   end
 
   trait :rack_template do
-    id { HwRack::DEFAULT_TEMPLATE_ID }
+    default_rack_template { true }
     template_type { "HwRack" }
     rackable { "nonrackable" }
     height { 40 }
-
-    after(:create) do
-      max_id = Template.pluck(:id).max
-      Template.connection.execute <<-SQL
-        ALTER SEQUENCE templates_id_seq RESTART WITH #{max_id + 1}
-      SQL
-    end
   end
 
   trait :device_template do

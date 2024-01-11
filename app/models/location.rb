@@ -45,8 +45,6 @@ class Location < ApplicationRecord
   validates :facing,
             inclusion: { in: %w( b f ), permitted: %w( b f ), message: "must be either 'b' or 'f'" }
 
-  validates :rack_id,
-            numericality: { only_integer: true }
   validates :rack,
             presence: true
   validate :rack_has_not_changed

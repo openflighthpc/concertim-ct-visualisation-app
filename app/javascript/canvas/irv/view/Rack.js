@@ -214,34 +214,13 @@ class Rack extends RackObject {
     return this.name;
   }
 
-  //XXX 
-  //
-  // rack_id=5;
-  // rs = document.IRV.rackSpace;
-  // rack = rs.racks[rack_id];
-  // rack.destroy()
-  //
   destroy() {
     super.destroy();
     this.showULabels(false);
     this.showNameLabel(false);
     this.showOwnerLabel(false);
   }
-    //model = RackObject.MODEL
-    //model_racks = model.racks()
 
-    //for model_rack, index in model_racks
-    //  if model_rack.id is @.id
-    //    console.log "Deleteing for shizzle this is ID " + @.id
-    //    model_racks.splice(index, 1)
-    //    break
-
-  //removeChassis: (chassis_id) ->
-  //  chassis_to_remove = null
-  //  for oneChassis in @chassis
-  //    if parseInt(oneChassis.id) is chassis_id
-  //      chassis_to_remove = oneChassis
-  //  @chassis.splice(chassis_to_remove,1) if chassis_to_remove?
 
   // This method creates 3 objects to define the occupied slots for 3 scenarios
   // @uOccupied will be used when moving a full depth device
@@ -275,7 +254,7 @@ class Rack extends RackObject {
     return (() => {
       const result = [];
       for (var oneChild of Array.from(this.children)) {
-        if (parseInt(oneChild.id) === chassis_id) {
+        if (oneChild.id === chassis_id) {
           oneChild.uStartDef = new_start_u;
           oneChild.face = new_face === 'f' ? 'front' : 'rear';
           oneChild.setCoordsBasedOnUStart();
@@ -293,10 +272,10 @@ class Rack extends RackObject {
       const result = [];
       for (let indexChassis = 0; indexChassis < this.children.length; indexChassis++) {
         var oneChassis = this.children[indexChassis];
-        if (parseInt(oneChassis.id) === chassis_id) {
+        if (oneChassis.id === chassis_id) {
           for (var indexMachine = 0; indexMachine < oneChassis.children.length; indexMachine++) {
             var oneMachine = oneChassis.children[indexMachine];
-            if (parseInt(oneMachine.id) === blade_id) {
+            if (oneMachine.id === blade_id) {
               this.children[indexChassis].children[indexMachine].row = new_row;
               this.children[indexChassis].children[indexMachine].column = new_col;
               this.children[indexChassis].children[indexMachine].setCoordsBasedOnRowAndCol();
@@ -317,7 +296,7 @@ class Rack extends RackObject {
       const result = [];
       for (let index = 0; index < this.children.length; index++) {
         var oneChild = this.children[index];
-        if (parseInt(oneChild.id) === chassis_id) {
+        if (oneChild.id === chassis_id) {
           this.children[index].updateOccupiedSlots();
           break;
         } else {
@@ -439,7 +418,7 @@ class Rack extends RackObject {
         var space_u_height = 0;
         // scan unoccupied region
         var inicial_count = count;
-        while (((occupiedHash[count] == null) || (parseInt(occupiedHash[count].id) === chassis_id)) && (count < u_height)) {
+        while (((occupiedHash[count] == null) || (occupiedHash[count].id === chassis_id)) && (count < u_height)) {
           ++space_u_height;
           ++count;
         }
@@ -462,7 +441,7 @@ class Rack extends RackObject {
               top       : (y + ((u_height - (inicial_count + count2)) * u_px_height)) - (u_px_height * min_height),
               bottom    : y + ((u_height - (inicial_count + count2)) * u_px_height),
               rack_name : this.name,
-              rack_id   : parseInt(this.id)
+              rack_id   : this.id
             });
             ++count2;
           }
@@ -545,7 +524,7 @@ class Rack extends RackObject {
       const result = [];
       for (let index = 0; index < this.children.length; index++) {
         var oneChassis = this.children[index];
-        if (parseInt(oneChassis.id) === chassis_id) {
+        if (oneChassis.id === chassis_id) {
           this.children[index].removeBlade(blade_id);
           break;
         } else {
@@ -561,7 +540,7 @@ class Rack extends RackObject {
       const result = [];
       for (let index = 0; index < this.children.length; index++) {
         var oneChassis = this.children[index];
-        if (parseInt(oneChassis.id) === chassis_id) {
+        if (oneChassis.id === chassis_id) {
           this.children[index].addBlade(blade);
           break;
         } else {

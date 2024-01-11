@@ -28,7 +28,7 @@ fi
 RACK_HEIGHT=$(echo "${OUTPUT}" | jq -r .u_height)
 RACK_NAME=$(echo "${OUTPUT}" | jq -r .name)
 
-SMALL_TEMPLATE_ID=2
+SMALL_TEMPLATE_ID=$( "${SCRIPT_DIR}/list-templates.sh" | jq -r "sort_by(.height) | .[0] | .id" )
 for i in $(seq -w 0 $(( 10#${END_U} - 10#${FIRST_U} )) ) ; do
   # i=$(( 10#${i} - 1 ))
   sleep 0.5
@@ -45,7 +45,7 @@ done
 
 # Update the status for each of the devices in the rack.  Starting from bottom
 # to top.
-device_ids=$("${SCRIPT_DIR}/show-rack.sh" "${RACK_ID}" | jq '.devices[] | .id ' | tac)
+device_ids=$("${SCRIPT_DIR}/show-rack.sh" "${RACK_ID}" | jq -r '.devices[] | .id ' | tac)
 for device_id in ${device_ids} ; do
   sleep 0.5
   "${SCRIPT_DIR}/update-device-status.sh" "${device_id}" ACTIVE Active

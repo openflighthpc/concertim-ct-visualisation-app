@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_12_21_131603) do
+ActiveRecord::Schema[7.0].define(version: 2024_01_08_150119) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -19,24 +19,24 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_21_131603) do
     t.string "jti", null: false
     t.string "aud"
     t.datetime "exp", null: false
-    t.bigint "user_id", null: false
+    t.uuid "user_id", null: false
     t.index ["jti"], name: "index_allowlisted_jwts_on_jti", unique: true
     t.index ["user_id"], name: "index_allowlisted_jwts_on_user_id"
   end
 
-  create_table "base_chassis", force: :cascade do |t|
+  create_table "base_chassis", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name", limit: 255, default: "", null: false
     t.integer "modified_timestamp", default: 0, null: false
     t.boolean "show_in_dcrv", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "template_id", null: false
-    t.bigint "location_id", null: false
+    t.uuid "location_id", null: false
+    t.uuid "template_id", null: false
     t.index ["location_id"], name: "index_base_chassis_on_location_id"
     t.index ["template_id"], name: "index_base_chassis_on_template_id"
   end
 
-  create_table "cloud_service_configs", force: :cascade do |t|
+  create_table "cloud_service_configs", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "admin_user_id", limit: 255, null: false
     t.string "admin_project_id", limit: 255, null: false
     t.string "internal_auth_url", limit: 255, null: false
@@ -47,7 +47,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_21_131603) do
     t.string "cluster_builder_base_url", limit: 255, default: "http://cluster_builder:42378", null: false
   end
 
-  create_table "cluster_types", force: :cascade do |t|
+  create_table "cluster_types", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name", limit: 255, null: false
     t.string "description", limit: 1024, null: false
     t.string "foreign_id", null: false
@@ -57,17 +57,17 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_21_131603) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "data_source_maps", force: :cascade do |t|
+  create_table "data_source_maps", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "map_to_grid", limit: 56, null: false
     t.string "map_to_cluster", limit: 56, null: false
     t.string "map_to_host", limit: 150, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "device_id", null: false
+    t.uuid "device_id", null: false
     t.index ["device_id"], name: "index_data_source_maps_on_device_id"
   end
 
-  create_table "devices", force: :cascade do |t|
+  create_table "devices", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name", limit: 255, null: false
     t.string "description", limit: 255
     t.boolean "hidden", default: false, null: false
@@ -82,7 +82,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_21_131603) do
     t.jsonb "volume_details", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "base_chassis_id", null: false
+    t.uuid "base_chassis_id", null: false
     t.index ["base_chassis_id"], name: "index_devices_on_base_chassis_id"
   end
 
@@ -163,7 +163,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_21_131603) do
     t.index ["scheduled_at"], name: "index_good_jobs_on_scheduled_at", where: "(finished_at IS NULL)"
   end
 
-  create_table "locations", force: :cascade do |t|
+  create_table "locations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "u_depth", default: 2, null: false
     t.integer "u_height", default: 1, null: false
     t.integer "start_u", null: false
@@ -171,11 +171,11 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_21_131603) do
     t.string "facing", default: "f", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "rack_id", null: false
+    t.uuid "rack_id", null: false
     t.index ["rack_id"], name: "index_locations_on_rack_id"
   end
 
-  create_table "racks", force: :cascade do |t|
+  create_table "racks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name", limit: 255, null: false
     t.integer "u_height", default: 42, null: false
     t.integer "u_depth", default: 2, null: false
@@ -187,25 +187,26 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_21_131603) do
     t.jsonb "network_details", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "template_id", null: false
-    t.bigint "user_id", null: false
     t.string "order_id"
+    t.uuid "template_id", null: false
+    t.uuid "user_id", null: false
     t.index ["order_id"], name: "index_racks_on_order_id", unique: true
     t.index ["template_id"], name: "index_racks_on_template_id"
     t.index ["user_id"], name: "index_racks_on_user_id"
   end
 
-  create_table "rackview_presets", force: :cascade do |t|
+  create_table "rackview_presets", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name", limit: 255, null: false
     t.boolean "default", default: false, null: false
     t.jsonb "values"
-    t.integer "user_id"
     t.boolean "global", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "user_id"
+    t.index ["user_id"], name: "index_rackview_presets_on_user_id"
   end
 
-  create_table "templates", force: :cascade do |t|
+  create_table "templates", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name", limit: 255, default: "", null: false
     t.integer "height", null: false
     t.integer "depth", null: false
@@ -229,9 +230,11 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_21_131603) do
     t.string "rack_repeat_ratio", limit: 255
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "default_rack_template", default: false, null: false
+    t.index ["default_rack_template"], name: "index_templates_on_default_rack_template", unique: true, where: "(default_rack_template = true)"
   end
 
-  create_table "users", force: :cascade do |t|
+  create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "login", limit: 80, null: false
     t.string "name", limit: 56, null: false
     t.text "email", default: "", null: false
@@ -273,4 +276,5 @@ ActiveRecord::Schema[7.0].define(version: 2023_12_21_131603) do
   add_foreign_key "locations", "racks", on_update: :cascade, on_delete: :restrict
   add_foreign_key "racks", "templates", on_update: :cascade, on_delete: :restrict
   add_foreign_key "racks", "users", on_update: :cascade, on_delete: :restrict
+  add_foreign_key "rackview_presets", "users", on_update: :cascade, on_delete: :cascade
 end
