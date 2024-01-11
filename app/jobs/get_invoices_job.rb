@@ -16,6 +16,13 @@ class GetInvoicesJob < ApplicationJob
   class Result < InvoiceBaseJob::Result
     attr_reader :invoices_count
 
+    validates :invoices_count, numericality: {only_integer: true, greater_than_or_equal_to: 0}
+    validate do
+      unless @invoices.is_a?(Array) && @invoices.all? { |invoice| invoice.valid? }
+        errors.add(:invoices, message: "failed to parse")
+      end
+    end
+
     def invoices
       success? ? @invoices : nil
     end
@@ -23,9 +30,15 @@ class GetInvoicesJob < ApplicationJob
     private
 
     def parse_body(body)
+      parse_invoices_count(body)
+      @invoices = body["invoices"].map { |data| parse_invoice(data) }
+    end
+
+    def parse_invoices_count(body)
       @invoices_count = body["total_invoices"]
       @invoices_count = Integer(@invoices_count) if @invoices_count.is_a?(String)
-      @invoices = body["invoices"].map { |data| parse_invoice(data) }
+    rescue ArgumentError, TypeError
+      # We don't need to do anything here the validation will catch this.
     end
   end
 

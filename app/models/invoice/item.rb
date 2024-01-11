@@ -10,6 +10,14 @@ class Invoice::Item
   attribute :openstack_stack_name, :string
   attribute :start_date, :date
 
+  validates :amount, presence: true, numericality: true
+  validates :currency, presence: true
+  validates :end_date, presence: true
+  validates :invoice, presence: true
+  validates :openstack_stack_id, presence: true
+  validates :openstack_stack_name, presence: true
+  validates :start_date, presence: true
+
   def rack
     HwRack.find_by_openstack_id(openstack_stack_id)
   end

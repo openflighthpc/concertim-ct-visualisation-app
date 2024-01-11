@@ -2,23 +2,38 @@ require 'faraday'
 
 module InvoiceBaseJob
   class Result
+    include ActiveModel::Validations
+
     attr_reader :status_code
 
     def initialize(success, body, error_message, status_code=nil)
       @success = !!success
       @error_message = error_message
       @status_code = status_code
-      if success? && !body.nil?
-        parse_body(body)
+      if success && !body.nil?
+        begin
+          parse_body(body)
+        rescue
+          # We assume here that the result will not be valid? and other than
+          # logging the error no further error handling is required here.
+          Rails.logger.info("error parsing body: #{([$!.message]+$!.backtrace).join("\n")}")
+        end
       end
     end
 
+    # Return true if the HTTP request was successful and the body is valid.
     def success?
-      @success
+      @success && valid?
     end
 
     def error_message
-      success? ? nil : @error_message
+      if !@success
+        @error_message
+      elsif !valid?
+        errors.full_messages.to_sentence
+      else
+        nil
+      end
     end
 
     private
@@ -53,6 +68,9 @@ module InvoiceBaseJob
               item.send("#{attr}=", item_data[attr] || item_data[attr.camelize(:lower)])
             end
           end
+        end
+        unless invoice.valid?
+          Rails.logger.info("Failed to parse invoice #{invoice.invoice_id}: #{invoice.errors.details}")
         end
       end
     end
