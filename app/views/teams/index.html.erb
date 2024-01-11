@@ -1,6 +1,8 @@
-<% set_title "Manage Teams" -%>
+<% set_title "Teams" -%>
 
-<%= link_to "+ New Team", new_team_path, class: "button" %>
+<% if current_user.can?(:create, Team) %>
+  <%= link_to "+ New Team", new_team_path, class: "button" %>
+<% end %>
 
 <%= render_resource_table_for @teams, searchable: true do |t| %>
   <% t.on_empty_collection do %>
