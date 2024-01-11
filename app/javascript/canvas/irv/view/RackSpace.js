@@ -1487,7 +1487,6 @@ class RackSpace {
     if (this.selection instanceof Machine || this.selection instanceof Chassis) {
       const chassisToBeUpdated = this.selection instanceof Chassis ? this.selection : this.selection.parent();
       const previous_rack = null;
-      // XXX These aren't integers any more.  Need to find every where else that we make that assumption.
       const moving_to_different_rack = chassisToBeUpdated.parent().id !== this.nearest.rack_id;
       this.addChildToRack(this.nearest.rack_id, chassisToBeUpdated);
       chassisToBeUpdated.parent(this.model.deviceLookup()['racks'][this.nearest.rack_id].instances[0]);
