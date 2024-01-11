@@ -2,6 +2,12 @@ class Team < ApplicationRecord
   include Searchable
   default_search_scope :name
 
+  ############################
+  #
+  # Class Methods
+  #
+  ############################
+
   def self.perform_search(term, search_scope = default_searchable_columns, include_users=true)
     matches = super(term, search_scope)
     return matches unless include_users
