@@ -1,0 +1,8 @@
+<%
+  set_title "New Team"
+-%>
+
+<%= simple_form_for @team, html: {class: 'no_border'} do |f| %>
+  <%= f.input :name %>
+  <%= f.button :submit %>
+<% end %>
