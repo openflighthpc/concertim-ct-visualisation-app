@@ -24,7 +24,7 @@ RSpec.describe User, type: :model do
       expect(users[2].login).to eq "test-user-2"
       expected_users = [users[2]]
 
-      found_users = User.search_for("test-user-2").order(:id)
+      found_users = User.search_for("test-user-2").order(:created_at)
 
       expect(found_users.to_a).to eq expected_users
     end
@@ -33,33 +33,33 @@ RSpec.describe User, type: :model do
       expect(users[2].name).to eq "Test User 2"
       expected_users = [users[2]]
 
-      found_users = User.search_for("Test User 2").order(:id)
+      found_users = User.search_for("Test User 2").order(:created_at)
 
       expect(found_users.to_a).to eq expected_users
     end
 
     it "searches don't have to be exact" do
-      found_users = User.search_for("alternative").order(:id)
+      found_users = User.search_for("alternative").order(:created_at)
       expect(found_users.to_a).to eq [alt_user]
     end
 
     it "searches are case insensitive" do
-      found_users = User.search_for("AlTeRnAtIvE").order(:id)
+      found_users = User.search_for("AlTeRnAtIvE").order(:created_at)
       expect(found_users.to_a).to eq [alt_user]
     end
 
     it "searches find all matching users" do
       expect(users[1].login).to eq "test-user-1"
       expect(users[10].login).to eq "test-user-10"
-      expected_users = [users[1], users[10]]
+      expected_users = [users[1], users[10]].sort_by(&:created_at)
 
-      found_users = User.search_for("test-user-1").order(:id)
+      found_users = User.search_for("test-user-1").order(:created_at)
 
       expect(found_users.to_a).to eq expected_users
     end
 
     it "searches escape like special chars" do
-      found_users = User.search_for("% char in name").order(:id)
+      found_users = User.search_for("% char in name").order(:created_at)
 
       expect(found_users.to_a).to eq [percent_in_name]
     end
