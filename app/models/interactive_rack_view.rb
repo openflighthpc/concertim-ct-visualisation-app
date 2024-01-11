@@ -35,9 +35,7 @@ class InteractiveRackView
       requested_ids =
         case racks
         when Array
-          racks.map{|rack_id| rack_id}
-        when Integer
-          [racks]
+          racks
         when String
           [racks]
         else
