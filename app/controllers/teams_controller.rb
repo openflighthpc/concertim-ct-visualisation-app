@@ -1,6 +1,6 @@
 class TeamsController < ApplicationController
   include ControllerConcerns::ResourceTable
-  load_and_authorize_resource :team
+  load_and_authorize_resource :team, except: :create
 
   def index
     @teams = resource_table_collection(@teams)
@@ -8,6 +8,30 @@ class TeamsController < ApplicationController
   end
 
   def edit
+  end
+
+  def new
+  end
+
+  def create
+    @cloud_service_config = CloudServiceConfig.first
+    @team = Team.new(name: team_params[:name])
+    authorize! :create, @team
+
+    if @cloud_service_config.nil?
+      flash[:alert] = "Unable to create new team: cloud environment config not set."
+      redirect_to new_team_path
+      return
+    end
+
+    if @team.save
+      # CreateTeamJob.perform_later(@team, @cloud_service_config)
+      flash[:success] = "Team created. Project id and billing account id will be added automatically."
+      redirect_to teams_path
+    else
+      flash.now[:alert] = "Unable to create team"
+      render action: :new
+    end
   end
 
   def update
@@ -31,7 +55,7 @@ class TeamsController < ApplicationController
 
   private
 
-  PERMITTED_PARAMS = %w[name cloud_user_id project_id billing_acct_id]
+  PERMITTED_PARAMS = %w[name project_id billing_acct_id]
   def team_params
     params.fetch(:team).permit(*PERMITTED_PARAMS)
   end
