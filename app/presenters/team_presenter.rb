@@ -7,8 +7,8 @@ class TeamPresenter < Presenter
     "#{o.billing_period_start.strftime("%Y/%m/%d")} - #{o.billing_period_end.strftime("%Y/%m/%d")}"
   end
 
-  def team_role_list
-    o.team_roles.map {|team_role| "#{team_role.user.login} (#{team_role.role})" }.sort.join(", ")
+  def team_users_list(role)
+    o.team_roles.where(role: role).map {|team_role| team_role.user.name }.join(", ")
   end
 
   # def formatted_credits

@@ -2,6 +2,14 @@ class TeamRole < ApplicationRecord
 
   ############################
   #
+  # Constants
+  #
+  ############################
+
+  VALID_ROLES = %w(admin member)
+
+  ############################
+  #
   # Associations
   #
   ############################
@@ -17,7 +25,7 @@ class TeamRole < ApplicationRecord
 
   validates :role,
             presence: true,
-            inclusion: { in: %w(admin member), message: "%{value} is not a valid role" }
+            inclusion: { in: VALID_ROLES, message: "%{value} is not a valid role" }
 
   validates :user_id, uniqueness: { scope: :team_id, message: "User can only have one role per team" }
 
