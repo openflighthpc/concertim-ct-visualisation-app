@@ -53,6 +53,15 @@ Rails.application.routes.draw do
 
   resource :settings, only: [:edit, :update]
 
+  resources :teams do
+    member do
+      # A placeholder action for developing the resource table used on the
+      # team/index page.  This should be removed once we have real actions to
+      # go in the actions dropdown.
+      get :placeholder
+    end
+  end
+
   resources :key_pairs, only: [:index, :new, :create] do
     collection do
       get '/success', to: 'key_pairs#success'
