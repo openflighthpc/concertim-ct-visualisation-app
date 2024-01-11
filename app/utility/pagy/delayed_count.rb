@@ -60,9 +60,9 @@ class Pagy
 
     # Finalize the instance variables based on the now available count.
     def finalize(count)
-      @count = count
-      raise VariableError.new(self, :count, "to be >= 0", @count) if @count < 0 \
-        unless @count&.respond_to?(:to_i) && @count.to_i >= 0
+      raise VariableError.new(self, :count, "to be >= 0", count) \
+        unless count&.respond_to?(:to_i) && count.to_i >= 0
+      @count = count.to_i
       setup_pages_var
       raise OverflowError.new(self, :page, "in 1..#{@last}", @page) if @page > @last
 
