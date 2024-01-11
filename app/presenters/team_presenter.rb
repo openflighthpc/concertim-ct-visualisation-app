@@ -11,7 +11,7 @@ class TeamPresenter < Presenter
     o.team_roles.where(role: role).map {|team_role| team_role.user.name }.join(", ")
   end
 
-  # def formatted_credits
-  #   '%.2f' % o.credits
-  # end
+  def formatted_credits
+    '%.2f' % o.credits
+  end
 end
