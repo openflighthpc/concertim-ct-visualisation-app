@@ -40,7 +40,7 @@ class KeyPairsController < ApplicationController
     @cloud_service_config = CloudServiceConfig.first
     @user = current_user
     public_key = key_pair_params[:public_key].blank? ? nil : key_pair_params[:public_key]
-    @key_pair = @key_pair = KeyPair.new(user: @user, name: key_pair_params[:name], key_type: key_pair_params[:key_type],
+    @key_pair = KeyPair.new(user: @user, name: key_pair_params[:name], key_type: key_pair_params[:key_type],
                                                 public_key: public_key)
     authorize! :create, @key_pair
 
