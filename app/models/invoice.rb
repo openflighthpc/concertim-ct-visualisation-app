@@ -14,6 +14,19 @@ class Invoice
   attribute :refund_adj, :decimal, default: 0
   attribute :status, :string, default: "DRAFT"
 
+  validates :account, presence: true
+  validates :amount, presence: true, numericality: true
+  validates :balance, presence: true, numericality: true
+  validates :credit_adj, presence: true, numericality: true
+  validates :currency, presence: true
+  validates :invoice_date, presence: true
+  validates :invoice_id, presence: true
+  validate do
+    errors.add(:items, message: "is not an array") unless items.is_a?(Array)
+  end
+  validates :refund_adj, presence: true, numericality: true
+  validates :status, presence: true
+
   def draft?
     status == "DRAFT" || invoice_number.nil?
   end

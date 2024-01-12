@@ -14,6 +14,12 @@ class GetDraftInvoiceJob < ApplicationJob
   end
 
   class Result < InvoiceBaseJob::Result
+    validate do
+      unless @invoice.is_a?(Invoice) && @invoice.valid?
+        errors.add(:invoice, message: "failed to parse")
+      end
+    end
+
     def invoice
       success? ? @invoice : nil
     end
