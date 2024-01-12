@@ -55,6 +55,7 @@ Rails.application.routes.draw do
   resource :settings, only: [:edit, :update]
 
   resources :teams do
+    resources :team_roles
     member do
       # A placeholder action for developing the resource table used on the
       # team/index page.  This should be removed once we have real actions to
