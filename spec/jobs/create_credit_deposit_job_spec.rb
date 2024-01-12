@@ -81,4 +81,6 @@ RSpec.describe CreateCreditDepositJob, type: :job do
                                        })
     end
   end
+
+  include_examples 'auth token header'
 end

@@ -114,4 +114,6 @@ RSpec.describe UserDeletionJob, type: :job do
       end
     end
   end
+
+  include_examples 'auth token header'
 end
