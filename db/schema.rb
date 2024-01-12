@@ -218,8 +218,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_20_150125) do
     t.jsonb "network_details", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "template_id", null: false
     t.string "order_id"
+    t.uuid "template_id", null: false
     t.uuid "team_id", null: false
     t.index ["order_id"], name: "index_racks_on_order_id", unique: true
     t.index ["team_id"], name: "index_racks_on_team_id"
@@ -323,6 +323,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_20_150125) do
     t.index ["login"], name: "index_users_on_login", unique: true
   end
 
+  add_foreign_key "allowlisted_jwts", "users", on_delete: :cascade
   add_foreign_key "base_chassis", "locations", on_update: :cascade, on_delete: :restrict
   add_foreign_key "base_chassis", "templates", on_update: :cascade, on_delete: :restrict
   add_foreign_key "data_source_maps", "devices", on_update: :cascade, on_delete: :cascade
@@ -330,7 +331,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_20_150125) do
   add_foreign_key "locations", "racks", on_update: :cascade, on_delete: :restrict
   add_foreign_key "racks", "teams", on_update: :cascade, on_delete: :restrict
   add_foreign_key "racks", "templates", on_update: :cascade, on_delete: :restrict
-  add_foreign_key "racks", "users", on_update: :cascade, on_delete: :restrict
   add_foreign_key "rackview_presets", "users", on_update: :cascade, on_delete: :cascade
   add_foreign_key "team_roles", "teams"
   add_foreign_key "team_roles", "users"
