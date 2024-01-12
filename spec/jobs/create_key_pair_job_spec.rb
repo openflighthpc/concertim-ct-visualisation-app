@@ -113,4 +113,6 @@ RSpec.describe CreateKeyPairJob, type: :job do
                                         })
     end
   end
+
+  include_examples 'auth token header'
 end

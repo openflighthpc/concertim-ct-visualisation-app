@@ -100,4 +100,6 @@ RSpec.describe CreateClusterJob, type: :job do
       expect(subject[:middleware_url]).to eq cloud_service_config.user_handler_base_url
     end
   end
+
+  include_examples 'auth token header'
 end

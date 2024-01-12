@@ -130,4 +130,6 @@ RSpec.describe UserSignupJob, type: :job do
       described_class.perform_now(user, cloud_service_config, test_stubs: stubs)
     end
   end
+
+  include_examples 'auth token header'
 end

@@ -85,4 +85,6 @@ RSpec.describe GetValuesForDevicesWithMetricJob, type: :job do
       end
     end
   end
+
+  include_examples 'auth token header'
 end
