@@ -241,7 +241,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_13_153255) do
     t.date "billing_period_end"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.datetime "deleted_at"
     t.index ["billing_acct_id"], name: "index_teams_on_billing_acct_id", unique: true, where: "(NOT NULL::boolean)"
+    t.index ["deleted_at"], name: "teams_deleted_at_not_null", where: "(deleted_at IS NOT NULL)"
+    t.index ["deleted_at"], name: "teams_deleted_at_null", where: "(deleted_at IS NULL)"
     t.index ["project_id"], name: "index_teams_on_project_id", unique: true, where: "(NOT NULL::boolean)"
   end
 

@@ -7,12 +7,6 @@ class TeamsController < ApplicationController
     render
   end
 
-  def edit
-  end
-
-  def new
-  end
-
   def create
     @cloud_service_config = CloudServiceConfig.first
     @team = Team.new(name: team_params[:name])
@@ -41,6 +35,16 @@ class TeamsController < ApplicationController
     else
       flash[:alert] = "Unable to update team"
       render action: :edit
+    end
+  end
+
+  def destroy
+    if TeamServices::Delete.call(@team)
+      flash[:info] = "Scheduled team for deletion"
+      redirect_to teams_path
+    else
+      flash[:alert] = "Unable to schedule team for deletion"
+      redirect_to teams_path
     end
   end
 
