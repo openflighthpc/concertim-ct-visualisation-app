@@ -78,6 +78,22 @@ class Team < ApplicationRecord
 
   ####################################
   #
+  # Public Instance Methods
+  #
+  ####################################
+
+  def inactive_message
+    # If the account is pending deletion, we return :invalid to be
+    # indistinguishable from the account not existing.
+    deleted_at.nil? ? super : :invalid
+  end
+
+  def mark_as_pending_deletion
+    update(deleted_at: Time.current)
+  end
+
+  ####################################
+  #
   # Private Instance Methods
   #
   ####################################
