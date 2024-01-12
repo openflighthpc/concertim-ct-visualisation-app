@@ -22,6 +22,7 @@ import Hint from 'canvas/irv/view/Hint';
 import ThumbHint from 'canvas/irv/view/ThumbHint';
 import RackSpace from 'canvas/irv/view/RackSpace';
 import LiveUpdates from 'canvas/irv/view/LiveUpdates';
+import FunctionQueue from 'canvas/irv/view/FunctionQueue';
 import Rack from 'canvas/irv/view/Rack';
 import ThumbNav from 'canvas/common/widgets/ThumbNav';
 import FilterBar from 'canvas/common/widgets/FilterBar';
@@ -282,6 +283,7 @@ class IRVController {
       }
       this.liveUpdates = new LiveUpdates(this);
       this.liveUpdates.setupWebsocket();
+      this.functionQueue = new FunctionQueue();
     }
 
     //if @model.showingFullIrv()
@@ -290,6 +292,11 @@ class IRVController {
   }
 
   fullRackDataReceived(data) {
+    if(this.zooming) {
+      this.functionQueue.addToQueue(this.fullRackDataReceived, [data], this);
+      return;
+    }
+
     if(this.initialised) {
        this.cancelDragging();
     }
@@ -307,9 +314,11 @@ class IRVController {
   }
 
   modifiedRackDataReceived(data) {
-    if(this.initialised) {
-      this.cancelDragging();
+    if(!this.initialised || this.zooming || this.rackSpace.zooming) {
+      this.functionQueue.addToQueue(this.modifiedRackDataReceived, [data], this);
+      return;
     }
+    this.cancelDragging();
     let action = data.action;
     let change =  { added: [], modified: [], deleted: [] };
     let rack = data.rack;
@@ -317,7 +326,8 @@ class IRVController {
     this.changeSetRacks = change;
     if(action === "deleted") {
       this.model.modifiedRackDefs([]);
-      return this.synchroniseChanges();
+      this.synchroniseChanges();
+      return;
     }
     --this.resourceCount;
     this.receivedRackDefs({Racks: {Rack: [rack]}});
@@ -671,6 +681,7 @@ class IRVController {
     this._callback_store = {};
   
     this.initialised = true;
+    this.functionQueue.executeAll();
     //console.log "DCRV INITIALISED!!!"
     if (this.waitingForInitialisation === true) {
       this.displayTheMetrics(this.metricValues);
@@ -825,7 +836,6 @@ class IRVController {
     clearTimeout(this.hintTmr);
     this.disableMouse();
     this.rackSpace.zoomToPreset(direction, x, y, cyclical);
-    return this.showHideScrollBars(this.rackSpace.zoomIdx);
   }
 
   zoomHoldingArea(direction, x, y) {
@@ -1335,8 +1345,7 @@ class IRVController {
     }
   }
 
-  // triggered when the server responds with rack definitions. This can be during the initialise process or as a result of changes to
-  // the data centre. Actions the data accordingly
+  // triggered when the server responds with rack definitions.
   // @param  rack_defs the rack definitions as returned by the server
   receivedRackDefs(rack_defs) {
     this.debug("received rack defs");
@@ -1347,26 +1356,22 @@ class IRVController {
       defs.racks[defs.racks.length-1].nextRackId = null;
     }
 
-    if (this.initialised) {
-      ++this.resourceCount;
-      //XXX We only want to load in the new assets, the whole loading assets/redrawing is rather inefficient
-      // so just replicate it here until someone has the time and energy to rewrite it
-      //
-      //XXX is this need any more as its now in the synchroniseChanges function
-      //
-      // for asset in defs.assetList # deal with loading the images
-      // AssetManager.get(IRVController.PRIMARY_IMAGE_PATH + asset, @evAssetLoaded, @evAssetFailed)
-      this.model.assetList(defs.assetList);
-      this.model.modifiedRackDefs(defs.racks);
-      if (this.model.assetList().length === 0) {
-        // No assets to load, we must have deleted all devices from the rack, thus we need a redraw, but
-        // there is no need to go through the asset loading routine
-        return this.testLoadProgress();
-      } else {
-        this.synchroniseChanges();
-      }
+    ++this.resourceCount;
+    //XXX We only want to load in the new assets, the whole loading assets/redrawing is rather inefficient
+    // so just replicate it here until someone has the time and energy to rewrite it
+    //
+    //XXX is this need any more as its now in the synchroniseChanges function
+    //
+    // for asset in defs.assetList # deal with loading the images
+    // AssetManager.get(IRVController.PRIMARY_IMAGE_PATH + asset, @evAssetLoaded, @evAssetFailed)
+    this.model.assetList(defs.assetList);
+    this.model.modifiedRackDefs(defs.racks);
+    if (this.model.assetList().length === 0) {
+      // No assets to load, we must have deleted all devices from the rack, thus we need a redraw, but
+      // there is no need to go through the asset loading routine
+      return this.testLoadProgress();
     } else {
-      this.initialiseRackDefs(defs);
+      this.synchroniseChanges();
     }
   }
 
@@ -1993,9 +1998,12 @@ class IRVController {
   // @param  ev  the event object which invoked execution
   evZoomComplete(ev) {
     if (this.model.showingFullIrv()) { this.hideUpdateMsg(); }
-    this.zooming = false;
     if (this.thumbEl != null) { this.updateThumb(); }
-    return this.enableMouse();
+    this.enableMouse();
+    this.showHideScrollBars(this.rackSpace.zoomIdx);
+    this.zooming = false;
+    // timeout prevents a white flash if any queued updates, by allowing requestAnimationFrame calls in the call stack to execute first.
+    window.setTimeout(this.functionQueue.executeAll.bind(this.functionQueue), 0);
   }
 
 
