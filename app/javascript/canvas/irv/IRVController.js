@@ -293,7 +293,8 @@ class IRVController {
 
   fullRackDataReceived(data) {
     if(this.zooming) {
-      return this.functionQueue.addToQueue(this.fullRackDataReceived, [data], this);
+      this.functionQueue.addToQueue(this.fullRackDataReceived, [data], this);
+      return;
     }
 
     if(this.initialised) {
@@ -314,7 +315,8 @@ class IRVController {
 
   modifiedRackDataReceived(data) {
     if(!this.initialised || this.zooming || this.rackSpace.zooming) {
-      return this.functionQueue.addToQueue(this.modifiedRackDataReceived, [data], this);
+      this.functionQueue.addToQueue(this.modifiedRackDataReceived, [data], this);
+      return;
     }
     this.cancelDragging();
     let action = data.action;
@@ -324,7 +326,8 @@ class IRVController {
     this.changeSetRacks = change;
     if(action === "deleted") {
       this.model.modifiedRackDefs([]);
-      return this.synchroniseChanges();
+      this.synchroniseChanges();
+      return;
     }
     --this.resourceCount;
     this.receivedRackDefs({Racks: {Rack: [rack]}});
