@@ -1,0 +1,10 @@
+<%
+  set_title "Edit Team"
+-%>
+
+<%= simple_form_for @team, html: {class: 'no_border'} do |f| %>
+  <%= f.input :name %>
+  <%= f.input :project_id, label: "Project ID", hint: presenter_for(@team).project_id_form_hint, clipboard: true %>
+  <%= f.input :billing_acct_id, label: "Billing Account ID", hint: presenter_for(@team).billing_acct_id_form_hint, clipboard: true %>
+  <%= f.button :submit %>
+<% end %>
