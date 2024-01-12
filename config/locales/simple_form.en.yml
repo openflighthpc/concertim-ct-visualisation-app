@@ -38,24 +38,26 @@ en:
                 user has already interacted with the cloud environment such as
                 launching clusters or uploaded key pairs, this could have
                 unexpected consequences.
+        team:
+          edit:
             project_id:
               blank:
-                Under normal operation, the user's project ID will be updated
+                Under normal operation, the team's project ID will be updated
                 automatically.  If this has not happened for some reason, you can
                 manually enter it here.
               present:
-                Changing the user's project ID will change the cloud environment
-                project that the Concertim user is linked to.  If the user has
+                Changing the team's project ID will change the cloud environment
+                project that the team is linked to.  If the team has
                 already interacted with the cloud environment such as launching
                 clusters this could have unexpected consequences.
             billing_acct_id:
               blank:
-                Under normal operation, the user's billing account ID will be
+                Under normal operation, the tem's billing account ID will be
                 updated automatically.  If this has not happened for some reason,
                 you can manually enter it here.
               present:
-                Changing the user's billing account ID will change the billing
-                account that the Concertim user is linked to.  If the user has
+                Changing the team's billing account ID will change the billing
+                account that the team is linked to.  If the team has
                 already interacted with the cloud environment such as launching
                 clusters this could have unexpected consequences.
 
