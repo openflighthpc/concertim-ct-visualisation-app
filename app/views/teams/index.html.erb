@@ -26,6 +26,9 @@
   <% t.custom_column "Cost", sortable: true, db_column: :cost do |team| %>
     <% presenter_for(team).currency_cost %>
   <% end %>
+  <% t.custom_column "Status", sortable: true, db_column: :deleted_at do |team| %>
+    <% presenter_for(team).status %>
+  <% end %>
 
   <% t.actions_column do |actions, team| %>
     <%#
@@ -35,7 +38,14 @@
         These should obviously be removed/replaced when we have a real links to add here.
     %>
     <% actions.add_with_auth can: :edit, on: team, title: 'Edit', path: edit_team_path(team) %>
-    <% actions.add_with_auth can: :destroy, on: team, title: 'Fake Delete', path: placeholder_team_path(team) %>
+    <%
+      actions.add_with_auth(can: :destroy, on: team,
+                            title: 'Delete',
+                            path: team_path(team),
+                            method: 'delete',
+                            data: {confirm: presenter_for(team).delete_confirmation_message},
+                            )
+    %>
   <% end %>
 
 <% end %>

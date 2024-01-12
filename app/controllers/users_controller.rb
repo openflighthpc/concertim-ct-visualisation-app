@@ -25,7 +25,7 @@ class UsersController < ApplicationController
       flash[:info] = "Scheduled user for deletion"
       redirect_to users_path
     else
-      flash[:alert] = "Unable to scheduled user for deletion"
+      flash[:alert] = "Unable to schedule user for deletion"
       redirect_to users_path
     end
   end

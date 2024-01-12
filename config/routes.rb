@@ -56,12 +56,6 @@ Rails.application.routes.draw do
 
   resources :teams do
     resources :team_roles
-    member do
-      # A placeholder action for developing the resource table used on the
-      # team/index page.  This should be removed once we have real actions to
-      # go in the actions dropdown.
-      get :placeholder
-    end
   end
 
   resources :key_pairs, only: [:index, :new, :create] do
