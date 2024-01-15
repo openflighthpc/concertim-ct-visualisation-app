@@ -24,7 +24,13 @@ class InteractiveRackView
 
     def get_canvas_config
       racks_config_hash = HwRack.get_canvas_config
-      irv_config_hash   = JSON.parse(File.read(Rails.root.join("app/views/interactive_rack_views/_configuration.json")))
+      irv_config_hash   = JSON.parse(File.read(Rails.root.join("app/views/interactive_rack_views/_configuration.json"))).tap do |config|
+        settings = Setting.first
+        if settings && settings.metric_refresh_interval.present?
+          config['CONTROLLER']['minMetricPollRate'] = settings.metric_refresh_interval * 1000
+          config['VIEWMODEL']['startUp']['metricPollRate'] = settings.metric_refresh_interval * 1000
+        end
+      end
       racks_config_hash.each{|k,v| irv_config_hash[k] = irv_config_hash[k].merge(racks_config_hash[k]) }
       irv_config_hash
     end

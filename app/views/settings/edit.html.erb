@@ -1,0 +1,8 @@
+<%
+    set_title "Edit settings"
+-%>
+
+<%= simple_form_for @setting, url: settings_path, html: {class: 'no_border'} do |f| %>
+  <%= f.input :metric_refresh_interval, hint: 'How frequently, in seconds, to update the metric values on interactive rack page.' %>
+  <%= f.button :submit %>
+<% end %>
