@@ -18,7 +18,7 @@ class Api::V1::UsersController < Api::V1::ApplicationController
   end
 
   def update
-    if @user.update(user_params)
+    if UserServices::Update.call(@user, user_params, current_user)
       @user = Api::V1::UserPresenter.new(@user)
       render action: :show
     else

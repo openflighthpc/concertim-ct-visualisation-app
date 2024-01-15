@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_01_08_150119) do
+ActiveRecord::Schema[7.0].define(version: 2024_01_15_115919) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -260,6 +260,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_01_08_150119) do
     t.string "billing_acct_id", limit: 255
     t.decimal "credits", default: "0.0", null: false
     t.datetime "deleted_at"
+    t.string "pending_foreign_password"
     t.index ["billing_acct_id"], name: "index_users_on_billing_acct_id", unique: true, where: "(NOT NULL::boolean)"
     t.index ["deleted_at"], name: "users_deleted_at_not_null", where: "(deleted_at IS NOT NULL)"
     t.index ["deleted_at"], name: "users_deleted_at_null", where: "(deleted_at IS NULL)"
