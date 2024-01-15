@@ -86,18 +86,23 @@
         <a href="#" id="reset_metric" class="disabled" data-bind="click: document.IRV.clearSelectedMetric">Clear</a>
       </div>
     </div>
+
+    <%
+        metric_refresh = Setting.first&.metric_refresh_interval || 60
+    %>
     <div class="div_row">
       <div class="div_cell">
-        <label class="toolTip" title="Minimum value: <%= Setting.first.metric_refresh_interval %>, set to 0 to switch off metric polling">
+        <label class="toolTip" title="Minimum value: <%= metric_refresh %>, set to 0 to switch off metric polling">
           Metric refresh rate (s)
         </label>
       </div>
     </div>
-    <div class="div_row toolTip" title="Minimum value: <%= Setting.first.metric_refresh_interval %>, set to 0 to switch off metric polling">
+    <div class="div_row toolTip" title="Minimum value: <%= metric_refresh %>, set to 0 to switch off metric polling">
       <div class="div_cell">
         <input type="text" name="metric_poll_rate" id="metric_poll_input" />
       </div>
     </div>
+
     <div class="div_row">
       <div class="div_cell">
         <label>
