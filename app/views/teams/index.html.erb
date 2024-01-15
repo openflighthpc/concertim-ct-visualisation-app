@@ -31,13 +31,8 @@
   <% end %>
 
   <% t.actions_column do |actions, team| %>
-    <%#
-        These actions don't do anything, but they do demonstrate how to add
-        links to the actions dropdown, both with and without authentication.
-
-        These should obviously be removed/replaced when we have a real links to add here.
-    %>
     <% actions.add_with_auth can: :edit, on: team, title: 'Edit', path: edit_team_path(team) %>
+    <% actions.add_with_auth can: :manage, on: TeamRole.new(team_id: team.id), title: 'Manage Users', path: team_team_roles_path(team) %>
     <%
       actions.add_with_auth(can: :destroy, on: team,
                             title: 'Delete',
