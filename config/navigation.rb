@@ -44,6 +44,12 @@ SimpleNavigation::Configuration.run do |navigation|
           highlights_on: %r(/users)
       end
 
+      if current_user.can?(:manage, Setting)
+        primary.item :config, 'Settings', url_helpers.edit_settings_path,
+          icon: :config,
+          highlights_on: %r(/settings)
+      end
+
       if current_user.can?(:read, ClusterType)
         html_options = {}
         if !current_ability.enough_credits_to_create_cluster?

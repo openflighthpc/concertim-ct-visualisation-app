@@ -80,4 +80,10 @@ RSpec.configure do |config|
     # selenium when we need javascript.
     driven_by :selenium_chrome_headless
   end
+
+  config.before(:each, type: :system) do
+    # There is an implicit assumption that a Setting record exists.  The
+    # factory creates a suitable one by default.
+    create(:setting)
+  end
 end

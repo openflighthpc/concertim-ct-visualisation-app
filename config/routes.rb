@@ -46,6 +46,8 @@ Rails.application.routes.draw do
     end
   end
 
+  resource :settings, only: [:edit, :update]
+
   resources :key_pairs, only: [:index, :new, :create] do
     collection do
       get '/success', to: 'key_pairs#success'
