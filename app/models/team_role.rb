@@ -1,4 +1,6 @@
 class TeamRole < ApplicationRecord
+  include Searchable
+  default_search_scope :role
 
   ############################
   #
