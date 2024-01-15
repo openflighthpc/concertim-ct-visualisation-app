@@ -55,8 +55,10 @@ Rails.application.routes.draw do
   resource :settings, only: [:edit, :update]
 
   resources :teams do
-    resources :team_roles
+    resources :team_roles, only: [:index, :new, :create]
   end
+
+  resources :team_roles, only: [:show, :edit, :update, :destroy]
 
   resources :key_pairs, only: [:index, :new, :create] do
     collection do
