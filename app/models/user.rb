@@ -7,6 +7,7 @@ class User < ApplicationRecord
   default_search_scope :login, :name, :cloud_user_id, :project_id, :billing_acct_id
 
   encrypts :foreign_password
+  encrypts :pending_foreign_password
 
   ####################################
   #
@@ -100,12 +101,20 @@ class User < ApplicationRecord
     @password = new_password
     if @password.present?
       self.encrypted_password = password_digest(@password)
-      # Currently, we only want this set once.  This restriction will be
-      # removed when the openstack user handler supports updating the
-      # openstack user's password, at which point concertim will need to
-      # inform user handler to do so.
-      if self.foreign_password.blank?
+      # After a user has signed up to Concertim, the UserSignupJob will run
+      # causing the middleware to create the cloud account and afterwards
+      # causing the user's cloud_user_id to be set.  Once the cloud account has
+      # been created, any updates to it are performed via the UserUpdateJob.
+      # The UserSignupJob expects the password to be found in
+      # `foreign_password` and the UserUpdateJob expects it to be in
+      # `pending_foreign_password`.
+      #
+      # Perhaps, we should have them both look at `pending_foreign_password`
+      # instead.
+      if self.cloud_user_id.blank?
         self.foreign_password = @password
+      else
+        self.pending_foreign_password = @password
       end
     end
   end
