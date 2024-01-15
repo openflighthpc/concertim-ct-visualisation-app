@@ -4,7 +4,6 @@ class TeamsController < ApplicationController
 
   def index
     @teams = resource_table_collection(@teams)
-    render
   end
 
   def create
@@ -46,15 +45,6 @@ class TeamsController < ApplicationController
       flash[:alert] = "Unable to schedule team for deletion"
       redirect_to teams_path
     end
-  end
-
-  # A placeholder action for developing the resource table used on the
-  # teams/index page.  This should be removed once we have real actions to go
-  # in the actions dropdown.
-  def placeholder
-    team = Team.find(params[:id])
-    flash[:info] = "placeholder action: found user: #{team.name}"
-    redirect_back_or_to root_path
   end
 
   private
