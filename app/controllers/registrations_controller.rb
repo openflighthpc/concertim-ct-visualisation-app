@@ -17,22 +17,8 @@ class RegistrationsController < Devise::RegistrationsController
 
   protected
 
-  # We only want to require a password check when changing the password.
   def update_resource(resource, params)
-    resource_updated =
-      if params.key?(:password)
-        resource.update_with_password(params)
-      else
-        resource.update(params)
-      end
-
-    changes = {password: resource.pending_foreign_password_previously_changed?, email: resource.email_previously_changed?}
-    config = CloudServiceConfig.first
-    if resource_updated && changes.values.any?
-      UserUpdateJob.perform_later(@user, changes, config)
-    end
-
-    resource_updated
+    UserServices::Update.call(resource, params, current_user)
   end
 
   def account_update_params

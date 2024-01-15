@@ -11,7 +11,7 @@ class UsersController < ApplicationController
   end
 
   def update
-    if @user.update(user_params)
+    if UserServices::Update.call(@user, user_params, current_user)
       flash[:info] = "Successfully updated user"
       redirect_to users_path
     else
@@ -32,7 +32,7 @@ class UsersController < ApplicationController
 
   private
 
-  PERMITTED_PARAMS = %w[name cloud_user_id project_id billing_acct_id]
+  PERMITTED_PARAMS = %w[name cloud_user_id project_id billing_acct_id password password_confirmation]
   def user_params
     params.fetch(:user).permit(*PERMITTED_PARAMS)
   end
