@@ -1,6 +1,7 @@
 class TeamRolesController < ApplicationController
   include ControllerConcerns::ResourceTable
-  before_action :set_team
+  before_action :set_team, except: [:edit, :update, :destroy]
+  load_and_authorize_resource :team_role, only: [:edit, :update, :destroy]
 
   def index
     @team_roles = @team.team_roles.accessible_by(current_ability, :read)
@@ -50,6 +51,18 @@ class TeamRolesController < ApplicationController
       flash[:alert] = result.error_message
       set_possible_users
       render action: :new
+    end
+  end
+
+  def update
+    result = UpdateTeamRoleJob.perform_now(@team_role, params[:role], @cloud_service_config)
+
+    if result.success?
+      flash[:info] = "Successfully updated team role"
+      redirect_to team_team_roles_path(@team_role.team, @team_role)
+    else
+      flash[:alert] = "Unable to update team role"
+      render action: :edit
     end
   end
 
