@@ -9,6 +9,12 @@ class User < ApplicationRecord
   encrypts :foreign_password
   encrypts :pending_foreign_password
 
+  ############################
+  #
+  # Class Methods
+  #
+  ############################
+
   def self.perform_search(term, search_scope = default_searchable_columns, include_teams = true)
     matches = super(term, search_scope)
     return matches unless include_teams
