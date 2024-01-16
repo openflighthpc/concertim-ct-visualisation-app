@@ -1,9 +1,9 @@
 class TeamRolesController < ApplicationController
   include ControllerConcerns::ResourceTable
-  load_and_authorize_resource :team_role, except: [:create, :new]
   before_action :set_team
 
   def index
+    @team_roles = @team.team_roles.accessible_by(current_ability, :read)
     @team_roles = resource_table_collection(@team_roles)
   end
 
