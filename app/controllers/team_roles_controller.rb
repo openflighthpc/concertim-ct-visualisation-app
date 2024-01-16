@@ -15,9 +15,16 @@ class TeamRolesController < ApplicationController
   end
 
   def create
-    @cloud_service_config = CloudServiceConfig.first
     @team_role = @team.team_roles.new(team_role_params)
     authorize! :create, @team_role
+
+    @cloud_service_config = CloudServiceConfig.first
+    if @cloud_service_config.nil?
+      flash.now.alert = "Unable to create team role: cloud environment config not set."
+      set_possible_users
+      render action: :new
+      return
+    end
 
     unless @team_role.user&.cloud_user_id
       flash.now[:alert] = "Unable to add user to team: user does not yet have a cloud ID. " \
@@ -55,7 +62,15 @@ class TeamRolesController < ApplicationController
   end
 
   def update
-    result = UpdateTeamRoleJob.perform_now(@team_role, params[:role], @cloud_service_config)
+    @cloud_service_config = CloudServiceConfig.first
+    if @cloud_service_config.nil?
+      flash.now.alert = "Unable to update team role: cloud environment config not set."
+      set_possible_users
+      render action: :new
+      return
+    end
+
+    result = UpdateTeamRoleJob.perform_now(@team_role, team_role_params[:role], @cloud_service_config)
 
     if result.success?
       flash[:info] = "Successfully updated team role"
