@@ -62,7 +62,6 @@ class Ability
     can [:read, :update], User, id: @user.id
     can :read, Team, id: @user.team_ids
     can :manage, TeamRole, team_id: @user.team_roles.where(role: "admin").pluck(:team_id)
-    can :read, TeamRole, team_id: @user.team_ids
 
     # Invoice is an ActiveModel::Model, but not an ActiveRecord::Base.  Setting
     # abilities like this might not work too well.  Or perhaps its fine.
