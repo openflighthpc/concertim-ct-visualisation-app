@@ -48,7 +48,7 @@ gem "redis", "~> 4.0"
 # Authorization and Authentication
 #
 ###################################
-gem "devise", "~> 4.9.2"
+gem "devise", "~> 4.9.3"
 gem "devise-jwt", ">= 0.10.0"
 gem "cancancan", "~> 3.5.0"
 gem "sqlite3"
