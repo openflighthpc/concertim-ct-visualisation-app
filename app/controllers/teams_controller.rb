@@ -19,7 +19,7 @@ class TeamsController < ApplicationController
 
     if @team.save
       # CreateTeamJob.perform_later(@team, @cloud_service_config)
-      flash[:success] = "Team created. Project id and billing account id will be added automatically."
+      flash[:success] = "Team created. Project id and billing account id should be added automatically."
       redirect_to teams_path
     else
       flash.now[:alert] = "Unable to create team"
