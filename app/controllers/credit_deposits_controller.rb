@@ -24,7 +24,7 @@ class CreditDepositsController < ApplicationController
         flash[:success] = "Credit deposit submitted for #{@user.name}. It may take a few minutes for the user's new balance to be reflected."
         redirect_to users_path
       else
-        flash[:alert] = "Unable to submit credit deposit: #{result.error_message}"
+        flash.now[:alert] = "Unable to submit credit deposit: #{result.error_message}"
         render :new
       end
     end

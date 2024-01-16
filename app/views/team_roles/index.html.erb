@@ -4,24 +4,25 @@
   <%= link_to "+ New user role", new_team_team_role_path, class: "button" %>
 <% end %>
 
+<div id="team-roles-table">
+  <%= render_resource_table_for @team_roles, searchable: true do |t| %>
+    <% t.on_empty_collection do %>
+      <% capture do %>
+        No team roles have been found.
+      <% end %>
+    <% end %>
 
-<%= render_resource_table_for @team_roles, searchable: true do |t| %>
-  <% t.on_empty_collection do %>
-    <% capture do %>
-      No team roles have been found.
+    <% t.attribute_column :user_id, sortable: true %>
+    <% t.attribute_column :role, sortable: true %>
+    <% t.actions_column do |actions, team_role| %>
+      <% actions.add_with_auth can: :edit, on: team_role, title: 'Edit', path: edit_team_role_path(team_role) %>
+      <%
+        actions.add_with_auth(can: :destroy, on: team_role,
+                              title: 'Delete',
+                              path: team_role_path(team_role),
+                              method: 'delete'
+                              )
+      %>
     <% end %>
   <% end %>
-
-  <% t.attribute_column :user_id, sortable: true %>
-  <% t.attribute_column :role, sortable: true %>
-  <% t.actions_column do |actions, team_role| %>
-    <% actions.add_with_auth can: :edit, on: team_role, title: 'Edit', path: edit_team_role_path(team_role) %>
-    <%
-      actions.add_with_auth(can: :destroy, on: team_role,
-                            title: 'Delete',
-                            path: team_role_path(team_role),
-                            method: 'delete'
-                            )
-    %>
-  <% end %>
-<% end %>
+</div>
