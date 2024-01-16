@@ -4,6 +4,20 @@ class TeamRole < ApplicationRecord
 
   ############################
   #
+  # Class Methods
+  #
+  ############################
+
+  def self.perform_search(term, search_scope = default_searchable_columns)
+    matches = super
+    matching_users = User.perform_search(term, [:name], false)
+    return matches if matching_users.empty?
+
+    matches.or(TeamRole.where(user_id: matching_users.pluck(:id)))
+  end
+
+  ############################
+  #
   # Constants
   #
   ############################
@@ -40,6 +54,16 @@ class TeamRole < ApplicationRecord
   ######################################
 
   after_commit :broadcast_change
+
+  ############################
+  #
+  # Public Instance Methods
+  #
+  ############################
+
+  def user_name
+    self.user.name
+  end
 
   ############################
   #

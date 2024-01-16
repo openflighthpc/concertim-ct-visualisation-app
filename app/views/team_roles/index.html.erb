@@ -13,6 +13,7 @@
     <% end %>
 
     <% t.attribute_column :user_id, sortable: true %>
+    <% t.attribute_column :user_name %>
     <% t.attribute_column :role, sortable: true %>
     <% t.actions_column do |actions, team_role| %>
       <% actions.add_with_auth can: :edit, on: team_role, title: 'Edit', path: edit_team_role_path(team_role) %>
