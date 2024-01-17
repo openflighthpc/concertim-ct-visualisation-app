@@ -4,6 +4,7 @@ class TeamRolesController < ApplicationController
   load_and_authorize_resource :team_role, only: [:edit, :update, :destroy]
 
   def index
+    authorize! :manage, @team.team_roles.new
     @team_roles = @team.team_roles.accessible_by(current_ability, :read)
     @team_roles = resource_table_collection(@team_roles)
   end
@@ -55,9 +56,30 @@ class TeamRolesController < ApplicationController
       flash[:success] = "User added to team"
       redirect_to team_team_roles_path(@team)
     else
-      flash[:alert] = result.error_message
+      flash.now[:alert] = result.error_message
       set_possible_users
       render action: :new
+    end
+  end
+
+  def destroy
+    @cloud_service_config = CloudServiceConfig.first
+    if @cloud_service_config.nil?
+      flash.now.alert = "Unable to remove team role: cloud environment config not set."
+      redirect_to edit_team_role_path(@team_role)
+      return
+    end
+
+    @team = @team_role.team
+    result = DeleteTeamRoleJob.perform_now(@team_role, @cloud_service_config)
+
+    if result.success?
+      flash[:success] = "User removed from team"
+      redirect_to @team_role.user == current_user ? teams_path : team_team_roles_path(@team)
+    else
+      flash[:alert] = result.error_message
+      set_possible_users
+      redirect_to edit_team_role_path(@team_role)
     end
   end
 
