@@ -78,8 +78,7 @@ class TeamRolesController < ApplicationController
       redirect_to @team_role.user == current_user ? teams_path : team_team_roles_path(@team)
     else
       flash[:alert] = result.error_message
-      set_possible_users
-      redirect_to edit_team_role_path(@team_role)
+      redirect_to team_team_roles_path(@team)
     end
   end
 
@@ -87,8 +86,13 @@ class TeamRolesController < ApplicationController
     @cloud_service_config = CloudServiceConfig.first
     if @cloud_service_config.nil?
       flash.now.alert = "Unable to update team role: cloud environment config not set."
-      set_possible_users
-      render action: :new
+      render action: :edit
+      return
+    end
+
+    unless team_role_params[:role] != @team_role.role
+      flash.now[:warning] = "Role not updated - you have not changed any values"
+      render action: :edit
       return
     end
 
