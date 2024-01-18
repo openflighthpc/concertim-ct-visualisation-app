@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe DeleteKeyPairJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
   let(:cloud_service_config) { create(:cloud_service_config) }
-  let(:user) { create(:user, :with_openstack_details) }
+  let(:user) { create(:user, :with_openstack_account) }
   let(:path) { "#{cloud_service_config.user_handler_base_url}/key_pairs" }
   subject { DeleteKeyPairJob::Runner.new(key_pair_name: "my_lovely_key_pair", cloud_service_config: cloud_service_config, user: user) }
 
