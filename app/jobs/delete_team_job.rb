@@ -1,6 +1,5 @@
 require 'faraday'
 
-# TODO: try to share logic with similar user deletion job
 class DeleteTeamJob < ApplicationJob
   include GoodJob::ActiveJobExtensions::Concurrency
 
