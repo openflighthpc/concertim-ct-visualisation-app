@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ruby:3.3-bookworm
 
 ARG BUILD_DATE
 ARG BUILD_VERSION
@@ -12,8 +12,6 @@ LABEL org.opencontainers.image.title="Alces Concertim Visualisation App"
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update \
       && apt-get install --yes --no-install-recommends \
-		  ruby3.0 \
-		  ruby3.0-dev \
 		  autoconf \
 		  bison \
 		  build-essential \
@@ -21,7 +19,7 @@ RUN apt-get update \
 		  libyaml-dev \
 		  tzdata \
                   ed \
-                  postgresql-client-14 \
+                  postgresql-client-15 \
       && apt-get clean \
       && rm -Rf /usr/share/doc && rm -Rf /usr/share/man \
       && rm -rf /var/lib/apt/lists/*

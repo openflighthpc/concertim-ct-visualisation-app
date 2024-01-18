@@ -3,8 +3,8 @@ require 'faraday'
 class UserSignupJob < ApplicationJob
   queue_as :default
 
-  retry_on ::Faraday::Error, wait: :exponentially_longer, attempts: 10
-  retry_on ::ActiveModel::ValidationError, wait: :exponentially_longer, attempts: 10
+  retry_on ::Faraday::Error, wait: :polynomially_longer, attempts: 10
+  retry_on ::ActiveModel::ValidationError, wait: :polynomially_longer, attempts: 10
 
   def perform(user, cloud_service_config, **options)
     if user.deleted_at
