@@ -81,3 +81,17 @@ jobs:
       - name: Run JavaScript tests
         run:
           yarn run jest --all
+
+  check-dockerfile:
+    name: Check Dockerfile builds
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    strategy:
+      fail-fast: true
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Run docker build
+        run: docker build .
