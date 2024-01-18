@@ -3,14 +3,14 @@ require 'rails_helper'
 RSpec.describe HwRack, type: :model do
   subject { rack }
   let!(:template) { create(:template, :rack_template) }
-  let(:rack) { create(:rack, user: user, template: template) }
-  let!(:user) { create(:user) }
+  let(:rack) { create(:rack, team: team, template: template) }
+  let!(:team) { create(:team) }
 
   describe 'validations' do
     it "is valid with valid attributes" do
       rack = described_class.new(
         template: template,
-        user: user,
+        team: team,
         status: 'IN_PROGRESS',
         cost: 99.99,
         order_id: 42,
@@ -48,25 +48,25 @@ RSpec.describe HwRack, type: :model do
       expect(subject).to have_error(:template, :blank)
     end
 
-    it "is not valid without a user" do
-      subject.user = nil
-      expect(subject).to have_error(:user, :blank)
+    it "is not valid without a team" do
+      subject.team = nil
+      expect(subject).to have_error(:team, :blank)
     end
 
     it "must have a unique name" do
-      new_rack = build(:rack, user: user, template: template, name: subject.name)
+      new_rack = build(:rack, team: team, template: template, name: subject.name)
       expect(new_rack).to have_error(:name, :taken)
     end
 
-    it "can duplicate names for racks belonging to other users" do
-      new_user = create(:user)
-      new_rack = build(:rack, user: new_user, template: template, name: subject.name)
+    it "can duplicate names for racks belonging to other teams" do
+      new_team = create(:team)
+      new_rack = build(:rack, team: new_team, template: template, name: subject.name)
       expect(new_rack).not_to have_error(:name, :taken)
     end
 
     it "must be higher than highest node" do
       # Changing the height of a rack is only allowed if the new height is
-      # sufficiently large to accomodate all of the nodes it contains.
+      # sufficiently large to accommodate all of the nodes it contains.
       skip "implement this when we have device factories et al"
     end
 
@@ -92,7 +92,7 @@ RSpec.describe HwRack, type: :model do
       end
 
       it "must have a unique order id" do
-        new_rack = build(:rack, user: user, template: template, order_id: subject.order_id)
+        new_rack = build(:rack, team: team, template: template, order_id: subject.order_id)
         expect(new_rack).to have_error(:order_id, :taken)
       end
     end
@@ -103,59 +103,62 @@ RSpec.describe HwRack, type: :model do
 
     context "when there are no other racks" do
       it "defaults height to 42" do
-        rack = HwRack.new(u_height: nil, user: user)
+        rack = HwRack.new(u_height: nil, team: team)
         expect(rack.u_height).to eq 42
       end
 
       it "defaults name to Rack-1" do
-        rack = HwRack.new(user: user)
+        rack = HwRack.new(team: team)
         expect(rack.name).to eq "Rack-1"
       end
     end
 
-    context "when there are other racks for other users" do
-      let(:other_user) { create(:user) }
+    context "when there are other racks for other teams" do
+      let(:other_team) { create(:team) }
 
       let!(:existing_rack) {
-        create(:rack, u_height: 24, name: 'MyRack-2', template: template, user: other_user)
+        create(:rack, u_height: 24, name: 'MyRack-2', template: template, team: other_team)
       }
 
       it "defaults height to 42" do
-        rack = HwRack.new(u_height: nil, user: user)
+        rack = HwRack.new(u_height: nil, team: team)
         expect(rack.u_height).to eq 42
       end
 
       it "defaults name to Rack-1" do
-        rack = HwRack.new(user: user)
+        rack = HwRack.new(team: team)
         expect(rack.name).to eq "Rack-1"
       end
     end
 
-    context "when there are other racks for this user" do
+    context "when there are other racks for this team" do
       let!(:existing_rack) {
-        create(:rack, u_height: 24, name: 'MyRack-2', template: template, user: user)
+        create(:rack, u_height: 24, name: 'MyRack-2', template: template, team: team)
       }
 
       it "defaults height to existing racks height" do
-        rack = HwRack.new(u_height: nil, user: user)
+        rack = HwRack.new(u_height: nil, team: team)
         expect(rack.u_height).to eq 24
       end
 
       it "defaults name to increment of existing racks name" do
-        rack = HwRack.new(user: user)
+        rack = HwRack.new(team: team)
         expect(rack.name).to eq 'MyRack-3'
       end
     end
   end
 
   describe "broadcast changes" do
+    let!(:user) { create(:user) }
+    let!(:team_role) { create(:team_role, user: user, team: team) }
+
     shared_examples 'rack details' do
       it 'broadcasts rack details' do
         expect { subject }.to have_broadcasted_to(user).from_channel(InteractiveRackViewChannel).with { |data|
           expect(data["action"]).to eq action
           rack_data = data["rack"]
           expect(rack_data.present?).to be true
-          expect(rack_data["owner"]["id"]).to eq rack.user.id.to_s
+          expect(rack_data["owner"]["id"]).to eq rack.team.id.to_s
           expect(rack_data["template"]["name"]).to eq rack.template.name
           expect(rack_data["id"]).to eq rack.id.to_s
           expect(rack_data["name"]).to eq rack.name
@@ -173,7 +176,7 @@ RSpec.describe HwRack, type: :model do
 
     context 'updated' do
       let(:action) { "modified" }
-      let!(:rack) { create(:rack, user: user, template: template) }
+      let!(:rack) { create(:rack, team: team, template: template) }
       subject do
         rack.name = "new_name"
         rack.save!
@@ -183,7 +186,7 @@ RSpec.describe HwRack, type: :model do
     end
 
     context 'deleted' do
-      let!(:rack) { create(:rack, user: user, template: template) }
+      let!(:rack) { create(:rack, team: team, template: template) }
       subject { rack.destroy! }
 
       it 'broadcasts deleted rack' do

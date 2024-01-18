@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "invoices index page table", type: :system do
   let(:user_password) { 'user-password' }
-  let!(:user) { create(:user, :with_openstack_details, password: user_password) }
+  let!(:user) { create(:user, :with_openstack_account, password: user_password) }
   let(:items_per_page) { 20 }
 
   before(:each) do
