@@ -104,7 +104,7 @@ gem "good_job", "~> 3.21"
 # Communication with our other apps
 #
 ###################################
-gem "faraday", "~> 2.7"
+gem "faraday", "~> 2.9"
 gem "faraday-follow_redirects"
 
 
