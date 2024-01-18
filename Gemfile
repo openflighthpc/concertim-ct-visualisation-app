@@ -10,7 +10,7 @@ ruby "3.0.2"
 #
 ###################################
 
-gem "rails", "~> 7.1.2"
+gem "rails", "~> 7.1.3"
 gem "puma", "~> 6.4"
 gem "jbuilder"
 gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
