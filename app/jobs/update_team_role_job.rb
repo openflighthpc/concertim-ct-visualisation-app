@@ -84,7 +84,8 @@ class UpdateTeamRoleJob < ApplicationJob
 
     def team_role_details
       {
-        role: @new_role,
+        current_role: @team_role.role,
+        new_role: @new_role,
         project_id: @team_role.team.project_id,
         user_id: @team_role.user.cloud_user_id
       }
