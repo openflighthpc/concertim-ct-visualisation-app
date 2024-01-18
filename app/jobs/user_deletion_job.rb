@@ -1,5 +1,6 @@
 require 'faraday'
 
+# This can be simplified now there's just cloud user to delete
 class UserDeletionJob < ApplicationJob
   include GoodJob::ActiveJobExtensions::Concurrency
 
