@@ -145,12 +145,12 @@ GEM
     erubi (1.12.0)
     et-orbi (1.2.7)
       tzinfo
-    factory_bot (6.4.2)
+    factory_bot (6.4.5)
       activesupport (>= 5.0.0)
-    factory_bot_rails (6.4.2)
+    factory_bot_rails (6.4.3)
       factory_bot (~> 6.4)
       railties (>= 5.0.0)
-    faker (3.2.2)
+    faker (3.2.3)
       i18n (>= 1.8.11, < 2)
     faraday (2.9.0)
       faraday-net_http (>= 2.0, < 3.2)
@@ -358,7 +358,7 @@ DEPENDENCIES
   debug
   devise (~> 4.9.3)
   devise-jwt (>= 0.10.0)
-  factory_bot_rails (~> 6.4.2)
+  factory_bot_rails (~> 6.4.3)
   faker
   faraday (~> 2.9)
   faraday-follow_redirects
