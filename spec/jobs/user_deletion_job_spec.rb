@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe UserDeletionJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
-  let!(:user) { create(:user, :with_openstack_details) }
+  let!(:user) { create(:user, :with_openstack_account) }
   let(:cloud_service_config) { create(:cloud_service_config) }
   let(:delete_user_path) { "/delete_user" }
   let(:expected_url) {
