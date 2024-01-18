@@ -7,6 +7,6 @@ FactoryBot.define do
     status { 'IN_PROGRESS' }
     order_id { Faker::Alphanumeric.alphanumeric(number: 10) }
 
-    association :user
+    association :team
   end
 end

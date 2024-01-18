@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe CreateCreditDepositJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
   let(:cloud_service_config) { create(:cloud_service_config) }
-  let(:user) { create(:user, :with_openstack_details) }
+  let(:user) { create(:user, :with_openstack_account) }
   let(:path) { "#{cloud_service_config.user_handler_base_url}/add_credits" }
   let(:credit_deposit) { build(:credit_deposit, user: user) }
   subject { CreateCreditDepositJob::Runner.new(credit_deposit: credit_deposit, cloud_service_config: cloud_service_config, user: user) }

@@ -43,7 +43,7 @@ RSpec.describe "admin user editing other users", type: :system do
     end
 
     context "when user has cloud and biling IDs" do
-      let(:user) { create(:user, :with_openstack_details) }
+      let(:user) { create(:user, :with_openstack_account) }
 
       it "contains expected fields" do
         visit edit_user_path(user)

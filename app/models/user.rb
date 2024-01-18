@@ -56,6 +56,12 @@ class User < ApplicationRecord
   validates :email,
     presence: true
 
+  validates :cloud_user_id,
+            uniqueness: true,
+            length: { maximum: 255 },
+            allow_nil: true,
+            allow_blank: true
+
   ####################################
   #
   # Delegation
