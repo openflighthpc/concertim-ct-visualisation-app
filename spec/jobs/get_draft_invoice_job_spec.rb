@@ -4,7 +4,7 @@ RSpec.describe GetDraftInvoiceJob, type: :job do
 
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
   let(:cloud_service_config) { create(:cloud_service_config) }
-  let(:user) { create(:user, :with_openstack_details) }
+  let(:user) { create(:user, :with_openstack_account) }
 
   subject(:job_runner) {
     described_class::Runner.new(user: user, cloud_service_config: cloud_service_config, test_stubs: stubs)
