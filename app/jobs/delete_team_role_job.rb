@@ -67,7 +67,7 @@ class DeleteTeamRoleJob < ApplicationJob
     end
 
     def path
-      "/team_roles"
+      "/delete_team_role"
     end
 
     def body
@@ -92,6 +92,10 @@ class DeleteTeamRoleJob < ApplicationJob
         project_id: @team_role.team.project_id,
         user_id: @team_role.user.cloud_user_id
       }
+    end
+
+    def error_description
+      "Unable to submit delete team role request"
     end
   end
 end
