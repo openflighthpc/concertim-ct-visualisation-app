@@ -10,7 +10,7 @@ ruby "3.0.2"
 #
 ###################################
 
-gem "rails", "~> 7.0.8"
+gem "rails", "~> 7.1.2"
 gem "puma", "~> 6.4"
 gem "jbuilder"
 gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
@@ -48,7 +48,7 @@ gem "redis", "~> 4.0"
 # Authorization and Authentication
 #
 ###################################
-gem "devise", "~> 4.9.2"
+gem "devise", "~> 4.9.3"
 gem "devise-jwt", ">= 0.10.0"
 gem "cancancan", "~> 3.5.0"
 gem "sqlite3"
@@ -96,7 +96,7 @@ gem "simple_form", "~> 5.3"
 ###################################
 
 gem "crack", "~> 0.4.5"
-gem "good_job", "~> 3.19"
+gem "good_job", "~> 3.21"
 
 
 ###################################
@@ -130,10 +130,10 @@ end
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
-  gem "rspec-rails", "~> 6.0.3"
+  gem "rspec-rails", "~> 6.1.0"
   # Included in development to have generators use factory bot instead of
   # fixutres.
-  gem "factory_bot_rails", "~> 6.2.0"
+  gem "factory_bot_rails", "~> 6.4.2"
 end
 
 
