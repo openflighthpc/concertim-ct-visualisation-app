@@ -4,9 +4,8 @@ RSpec.describe "Api::V1::NodesControllers", type: :request do
   let(:headers) { {} }
   let(:urls) { Rails.application.routes.url_helpers }
   let!(:rack_template) { create(:template, :rack_template) }
-  let!(:rack) { create(:rack, user: rack_owner, template: rack_template) }
+  let!(:rack) { create(:rack, template: rack_template) }
   let(:device_template) { create(:template, :device_template) }
-  let(:rack_owner) { create(:user) }
 
   describe "POST :create" do
     let(:url_under_test) { urls.api_v1_nodes_path }

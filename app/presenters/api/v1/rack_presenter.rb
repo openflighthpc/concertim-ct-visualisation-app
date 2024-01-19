@@ -18,8 +18,8 @@ module Api::V1
       @chassis ||= o.chassis.map { |c| Api::V1::ChassisPresenter.new(c) }
     end
 
-    def user
-      @user ||= Api::V1::UserPresenter.new(o.user)
+    def team
+      @user ||= Api::V1::TeamPresenter.new(o.team)
     end
   end
 end
