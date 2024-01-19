@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Api::V1::MetricsController", type: :request do
   let!(:rack_template) { create(:template, :rack_template) }
-  let!(:rack) { create(:rack, user: rack_owner, template: rack_template) }
+  let!(:rack) { create(:rack, template: rack_template) }
   let(:chassis) { create(:chassis, template: device_template, location: location) }
   let(:location) { create(:location, rack: rack) }
   let(:device_template) { create(:template, :device_template) }
@@ -21,7 +21,6 @@ RSpec.describe "Api::V1::MetricsController", type: :request do
 
     context "when logged in as admin" do
       include_context "Logged in as admin"
-      let(:user) { authenticated_user }
 
       context "when upstream responds unsuccessfully" do
         before(:each) do
