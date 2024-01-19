@@ -4,7 +4,7 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
   let(:headers) { {} }
   let(:urls) { Rails.application.routes.url_helpers }
   let!(:rack_template) { create(:template, :rack_template) }
-  let!(:rack) { create(:rack, user: rack_owner, template: rack_template) }
+  let!(:rack) { create(:rack, template: rack_template) }
   let(:device_template) { create(:template, :device_template) }
 
   shared_examples "single device response examples" do
@@ -29,13 +29,11 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
     let(:full_template_details) { false }
 
     context "when not logged in" do
-      let(:rack_owner) { create(:user) }
       include_examples "unauthorised JSON response"
     end
 
     context "when logged in as admin" do
       include_context "Logged in as admin"
-      let(:rack_owner) { create(:user) }
 
       context "when there are no racks" do
         let(:parsed_body) { JSON.parse(response.body) }
@@ -102,27 +100,25 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
     let(:full_template_details) { true }
 
     context "when not logged in" do
-      let(:rack_owner) { create(:user) }
       include_examples "unauthorised JSON response"
     end
 
-    context "when logged in as device owner" do
+    context "when logged in as member of rack team" do
       include_context "Logged in as non-admin"
       include_examples "successful JSON response" do
-        let(:rack_owner) { authenticated_user }
+        let!(:team_role) { create(:team_role, user: authenticated_user, team: rack.team) }
       end
     end
 
     context "when logged in as another user" do
       include_context "Logged in as non-admin"
       include_examples "forbidden JSON response" do
-        let(:rack_owner) { create(:user) }
+        let!(:team_role) { create(:team_role, user: authenticated_user) }
       end
     end
 
     context "when logged in as admin" do
       include_context "Logged in as admin"
-      let(:rack_owner) { create(:user) }
       include_examples "successful JSON response"
 
       let(:parsed_body) { JSON.parse(response.body) }
@@ -348,25 +344,23 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
 
     context "when not logged in" do
       include_examples "unauthorised JSON response"
-      let(:rack_owner) { create(:user) }
     end
 
-    context "when logged in as device owner" do
+    context "when logged in as device's rack team member" do
       include_context "Logged in as non-admin"
-      let(:rack_owner) { authenticated_user }
+      let!(:team_role) { create(:team_role, team: device.rack.team, user: authenticated_user) }
       include_examples "authorized user updating device"
     end
 
     context "when logged in as another user" do
       include_context "Logged in as non-admin"
       include_examples "forbidden JSON response" do
-        let(:rack_owner) { create(:user) }
+        let!(:team_role) { create(:team_role, user: authenticated_user) }
       end
     end
 
     context "when logged in as admin" do
       include_context "Logged in as admin"
-      let(:rack_owner) { create(:user) }
       include_examples "authorized user updating device"
     end
   end
