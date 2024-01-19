@@ -21,13 +21,14 @@ FactoryBot.define do
     root { true }
   end
 
-  # trait :with_empty_rack do
-  #   after(:create) do |user, context|
-  #     rack_template = Template.default_rack_template
-  #     if rack_template.nil?
-  #       rack_template = create(:template, :rack_template)
-  #     end
-  #     create(:rack, user: user, template: rack_template)
-  #   end
-  # end
+  trait :member_of_empty_rack do
+    after(:create) do |user, context|
+      rack_template = Template.default_rack_template
+      if rack_template.nil?
+        rack_template = create(:template, :rack_template)
+      end
+      rack = create(:rack, template: rack_template)
+      create(:team_role, team: rack.team, user: user)
+    end
+  end
 end
