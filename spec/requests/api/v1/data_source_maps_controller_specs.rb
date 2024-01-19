@@ -4,7 +4,7 @@ RSpec.describe "Api::V1::DataSourceMapsController", type: :request do
   let(:headers) { {} }
   let(:urls) { Rails.application.routes.url_helpers }
   let!(:rack_template) { create(:template, :rack_template) }
-  let!(:rack) { create(:rack, user: create(:user), template: rack_template) }
+  let!(:rack) { create(:rack, template: rack_template) }
   let(:device_template) { create(:template, :device_template) }
 
   describe "GET :index" do
