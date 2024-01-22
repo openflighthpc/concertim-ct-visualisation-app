@@ -61,7 +61,7 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :devices, only: [] do
+  resources :devices, only: [:show] do
     resources :metrics, only: [:index]
   end
 

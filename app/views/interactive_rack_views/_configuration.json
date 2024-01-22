@@ -440,6 +440,10 @@
             "url"     : "internal::focusOn,devices,[[device_id]]"
           },
           {
+            "caption" : "View",
+            "url"     : "/devices/[[device_id]]"
+          },
+          {
             "caption" : "View detailed metrics",
             "url"     : "internal::viewDetailedMetrics,devices,[[device_id]]"
           },

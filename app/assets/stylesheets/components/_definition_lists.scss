@@ -10,7 +10,7 @@ dl {
 }
 
 
-div.dl_group {
+div.dl_list {
 
   font-size: 1em;
 
@@ -34,11 +34,7 @@ div.dl_group {
   dl dt, dl dd {
     float: left;
   }
-  dl dd + dt, dl dd + dd {
+  dd.dl_sublist, dl dd + dt, dl dd + dd {
     clear: left;
   }
 }
-
-// p.notes {
-//   max-width: 400px;
-// }

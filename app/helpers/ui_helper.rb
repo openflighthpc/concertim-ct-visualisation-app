@@ -37,4 +37,9 @@ module UiHelper
       cell(:actions).(:show, title, block, opts.merge(is_dropdown: true))
     end
   end
+
+  # definition_list renders a <DL> definition list.
+  def definition_list(title, opts = {}, &block)
+    cell(:definition_list).(:show, title, block, opts)
+  end
 end

@@ -1,0 +1,44 @@
+<% set_title "Device: #{@device.name}" -%>
+
+<%=
+  definition_list "Details" do |dl|
+    dl.item "Name:", @device.name
+    dl.item "Description:", @device.description
+    dl.item "Height:", @device.u_height
+    dl.item "Location:", @device.location
+    dl.item "Status:", @device.status
+    dl.item "Cost this billing period:", @device.currency_cost
+
+    if @device.has_login_details?
+      dl.sublist "Access details:" do |sl|
+        sl.item "Login user:", @device.login_user
+        sl.item "Public IPs:", @device.public_ips
+        sl.item "Private IPs:", @device.private_ips
+        sl.item "SSH Key:", @device.ssh_key
+      end
+    end
+
+    if @device.has_volume_details?
+      dl.sublist "Volume details:" do |sl|
+        @device.volume_details.each do |key, val|
+          sl.item key, val
+        end
+      end
+    end
+
+    dl.sublist "Template:" do |sl|
+      sl.item "Name:", @device.template_name
+      sl.item "Description:", @device.template_description
+    end
+
+    dl.sublist "Resources:" do |sl|
+      sl.item "VCPUs:", @device.vcpus
+      sl.item "RAM (GB)", @device.ram
+      sl.item "Disk (GB)", @device.disk
+    end
+
+    if @device.has_metadata?
+      dl.recurse_items "Metadata", @device.metadata
+    end
+  end
+%>
