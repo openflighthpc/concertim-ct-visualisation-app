@@ -1,0 +1,7 @@
+<ul class="tabs">
+  <% @tabs.each do |tab| %>
+    <%= content_tag(:li, class: tab.html_classes) do %>
+      <%= link_to tab.title, tab.path, data: { tab: tab.id } %>
+    <% end %>
+  <% end %>
+</ul>
