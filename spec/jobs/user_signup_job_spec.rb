@@ -10,7 +10,7 @@ RSpec.describe UserSignupJob, type: :job do
   }
 
   describe "url" do
-    let(:user_service_path) { "/create_user_project" }
+    let(:user_service_path) { "/create_user" }
 
     subject { super().send(:url) }
 
@@ -34,40 +34,6 @@ RSpec.describe UserSignupJob, type: :job do
       expect(subject["email"]).to eq user.email
     end
 
-    context "when the user has a project id" do
-      let(:user) { create(:user, project_id: Faker::Internet.uuid) }
-
-      it "contains the user's project id" do
-        expect(user.project_id).not_to be_nil
-        expect(subject["project_id"]).to eq user.project_id
-      end
-    end
-
-    context "when the user does not have a project id" do
-      it "does not contain the user's project id" do
-        expect(user.project_id).to be_nil
-        expect(subject).not_to have_key "project_id"
-        expect(subject).not_to have_key :project_id
-      end
-    end
-
-    context "when the user has a cloud user id" do
-      let(:user) { create(:user, cloud_user_id: Faker::Internet.uuid) }
-
-      it "contains the user's cloud user id" do
-        expect(user.cloud_user_id).not_to be_nil
-        expect(subject["cloud_user_id"]).to eq user.cloud_user_id
-      end
-    end
-
-    context "when the user does not have a cloud user id" do
-      it "does not contain the user's cloud user id" do
-        expect(user.cloud_user_id).to be_nil
-        expect(subject).not_to have_key "cloud_user_id"
-        expect(subject).not_to have_key :cloud_user_id
-      end
-    end
-
     it "contains the correct cloud environment config" do
       expect(subject[:cloud_env]).to eq({
         "auth_url" => cloud_service_config.internal_auth_url,
@@ -79,7 +45,7 @@ RSpec.describe UserSignupJob, type: :job do
   end
 
   describe "updating the user's details from the response" do
-    let(:user_service_path) { "/create_user_project" }
+    let(:user_service_path) { "/create_user" }
     context "when response does not contain expected fields" do
       let(:response_body) { {} }
 
@@ -94,20 +60,11 @@ RSpec.describe UserSignupJob, type: :job do
       it "does not update the cloud_user_id" do
         expect { subject.call rescue nil }.not_to change(user, :cloud_user_id).from(nil)
       end
-
-      it "does not update the project_id" do
-        expect { subject.call rescue nil }.not_to change(user, :project_id).from(nil)
-      end
     end
 
     context "when response contains expected fields" do
       let(:cloud_user_id) { SecureRandom.uuid }
-      let(:project_id) { SecureRandom.uuid }
-      let(:billing_acct_id) { SecureRandom.uuid }
-      let(:response_body) {
-        {user_id: cloud_user_id, project_id: project_id, billing_account_id: billing_acct_id}
-          .stringify_keys
-      }
+      let(:response_body) { { "user_id" => cloud_user_id } }
 
       before(:each) do
         stubs.post(user_service_path) { |env| [ 201, {}, response_body ] }
@@ -116,8 +73,6 @@ RSpec.describe UserSignupJob, type: :job do
       it "updates the user's cloud_user_id, project_id and billing_acct_id" do
         expect { subject.call }
           .to  change(user, :cloud_user_id).from(nil).to(cloud_user_id)
-          .and change(user, :project_id).from(nil).to(project_id)
-          .and change(user, :billing_acct_id).from(nil).to(billing_acct_id)
       end
     end
   end

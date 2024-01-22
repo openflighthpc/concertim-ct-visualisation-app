@@ -2,6 +2,7 @@ require "rails_helper"
 
 RSpec.describe InteractiveRackViewChannel, type: :channel do
   let(:user) { create(:user) }
+  let(:team) { create(:team) }
   let(:active_user) { user }
   let(:env) { instance_double('env') }
   let(:warden) { instance_double('warden', user: user) }
@@ -29,7 +30,8 @@ RSpec.describe InteractiveRackViewChannel, type: :channel do
   end
 
   context 'with rack' do
-    let!(:rack) { create(:rack, user: user, template: template) }
+    let!(:rack) { create(:rack, team: team, template: template) }
+    let!(:team_role) { create(:team_role, team: team, user: user) }
     let(:device_template) { create(:template, :device_template) }
     let!(:device) { create(:device, chassis: chassis) }
     let(:chassis) { create(:chassis, location: location, template: device_template) }
@@ -46,9 +48,9 @@ RSpec.describe InteractiveRackViewChannel, type: :channel do
     end
 
     context 'with multiple racks' do
-      let!(:another_rack) { create(:rack, user: user, template: template) }
-      let!(:different_user) { create(:user) }
-      let!(:different_user_rack) { create(:rack, user: different_user, template: template) }
+      let!(:another_rack) { create(:rack, team: team, template: template) }
+      let!(:different_team) { create(:team) }
+      let!(:different_user_rack) { create(:rack, team: different_team, template: template) }
 
       it 'includes all racks for user' do
         subscribe
@@ -87,7 +89,7 @@ RSpec.describe InteractiveRackViewChannel, type: :channel do
         expect(rack_data["name"]).to eq r.name
         expect(rack_data["uHeight"]).to eq r.u_height.to_s
         expect(rack_data["buildStatus"]).to eq r.status
-        expect(rack_data["owner"]["id"]).to eq r.user.id.to_s
+        expect(rack_data["owner"]["id"]).to eq r.team.id.to_s
         expect(rack_data["template"]["id"]).to eq r.template.id.to_s
         if r.devices.exists?
           expect(rack_data["Chassis"]["Slots"]["Machine"]["id"]).to eq r.devices.last.id.to_s
