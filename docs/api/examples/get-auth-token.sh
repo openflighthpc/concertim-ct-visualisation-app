@@ -45,7 +45,7 @@ curl -s -k \
 )
 
 if [ "${HTTP_STATUS}" == "200" ] || [ "${HTTP_STATUS}" == "201" ] ; then
-    cat "$HEADERS_FILE" | grep '^Authorization: ' | cut -d ' ' -f 3 | tr -d '\r\n'
+    cat "$HEADERS_FILE" | grep -i '^Authorization: ' | cut -d ' ' -f 3 | tr -d '\r\n'
 else
     echo "Login failed" >&2
     cat "$BODY_FILE" >&2
