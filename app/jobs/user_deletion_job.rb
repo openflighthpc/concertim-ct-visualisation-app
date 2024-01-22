@@ -5,7 +5,7 @@ class UserDeletionJob < ApplicationJob
 
   queue_as :default
   RETRY_ATTEMPTS = 10
-  retry_on ::Faraday::Error, wait: :exponentially_longer, attempts: RETRY_ATTEMPTS
+  retry_on ::Faraday::Error, wait: :polynomially_longer, attempts: RETRY_ATTEMPTS
 
   # Allow only a single job for a given user and cloud platform.  Otherwise the
   # admin hammering the delete button will cause concertim to hammer the

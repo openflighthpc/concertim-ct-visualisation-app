@@ -3,7 +3,7 @@ require 'faraday'
 class UserUpdateJob < ApplicationJob
   queue_as :default
   RETRY_ATTEMPTS = 10
-  retry_on ::Faraday::Error, wait: :exponentially_longer, attempts: RETRY_ATTEMPTS
+  retry_on ::Faraday::Error, wait: :polynomially_longer, attempts: RETRY_ATTEMPTS
 
   def perform(user, changes, cloud_service_config, **options)
     # If the user doesn't have any cloud or billing IDs there is no need to involve the middleware.
