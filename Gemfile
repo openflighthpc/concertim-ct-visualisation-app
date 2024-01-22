@@ -82,7 +82,7 @@ gem "simple-navigation", "~> 4.4"
 gem "cells-rails", "~> 0.1.5"
 gem "cells-erb", "~> 0.1.0"
 gem "rabl", "~> 0.16.1"
-gem "pagy", "~> 6.2"
+gem "pagy", "~> 6.4"
 gem "simple_form", "~> 5.3"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
