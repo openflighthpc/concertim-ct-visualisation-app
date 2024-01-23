@@ -47,7 +47,7 @@ RSpec.describe "Api::V1::UsersControllers", type: :request do
           expect(result['email']).to eq other_user.email
         end
 
-        it "includes the expected racks" do
+        it "includes the expected users" do
           expected_ids = [authenticated_user.id, other_user.id].sort
 
           get url_under_test, headers: headers, as: :json
