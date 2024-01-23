@@ -93,6 +93,7 @@ Rails.application.routes.draw do
           resources :metrics, :constraints => { :id => /.*/ }, only: [:show]
         end
         resources :data_source_maps, path: 'data-source-maps', only: [:index]
+        resources :teams, only: [:index, :create, :update, :destroy]
 
         # For use by the interactive rack view
         namespace :irv do
