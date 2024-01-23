@@ -51,7 +51,7 @@ class TabbarCell < Cell::ViewModel
     end
 
     def active?
-      @context[:controller].request.fullpath.split(/\?/)[0] == @path
+      URI(@context[:controller].request.fullpath).path == @path
     end
   end
 end
