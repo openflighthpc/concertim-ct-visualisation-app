@@ -5,7 +5,14 @@
 #   definition_list "Details" do |dl|
 #     # Render simple scalar items.
 #     dl.item "Name:", device.name
-#     dl.item "Description:", device.description
+#
+#     # The content can be passed as the second argument or as a block.
+#     dl.item "Description:" do
+#       capture do
+#         concat device.description
+#         concat content_tag(:em, '!!!')
+#       end
+#     end
 #
 #     # Render a sub-definintion list.  This will create a item "Access details"
 #     # under which there will be a nested definition list containing the items
@@ -47,16 +54,31 @@ class DefinitionListCell < Cell::ViewModel
   end
 
   class ItemBuilder
+    def initialize
+      @items = []
+    end
+
     # Add a single scalar item.
-    def item(title, content, opts = {}, html_opts = {})
-      @items ||= []
+    def item(title, content_or_options_with_block=nil, opts=nil, html_opts=nil, &block)
+      if block_given?
+        html_opts = opts || {}
+        if content_or_options_with_block.is_a?(Hash)
+          opts = content_or_options_with_block
+        else
+          opts = {}
+        end
+        content = block.call
+      else
+        content = content_or_options_with_block
+        opts = opts || {}
+        html_opts = html_opts || {}
+      end
       @items << Item.new(title, content, opts, html_opts)
     end
 
     # Start a sub definition list.  Items can be added to it identically to the
     # main definition list.
     def sublist(title, opts = {}, &block)
-      @items ||= []
       builder = ItemBuilder.new
       block.call(builder)
       subitems = builder.items
