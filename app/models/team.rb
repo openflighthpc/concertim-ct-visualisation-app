@@ -58,11 +58,6 @@ class Team < ApplicationRecord
             allow_nil: true,
             allow_blank: true
 
-  # TODO
-  # need to move credits here too (and remove from users)
-  # need to update user api to no longer have these fields
-  # need to add api endpoints for teams
-
   validates :cost,
             numericality: { greater_than_or_equal_to: 0 },
             allow_blank: true
