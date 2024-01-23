@@ -14,20 +14,20 @@ BASE_URL="https://${CONCERTIM_HOST}/api/v1"
 # generated LOGIN and PASSWORD environment variables must be set.
 AUTH_TOKEN=${AUTH_TOKEN:-$("${SCRIPT_DIR}"/get-auth-token.sh)}
 
-USER_ID=${1}
-USER_COST=${2}
+TEAM_ID=${1}
+TEAM_COST=${2}
 BILLING_PERIOD_START=${3}
 BILLING_PERIOD_END=${4}
 CREDITS=${5}
 
 BODY=$(jq --null-input \
-    --arg cost "${USER_COST}" \
+    --arg cost "${TEAM_COST}" \
     --arg billing_period_start "${BILLING_PERIOD_START}" \
     --arg billing_period_end "${BILLING_PERIOD_END}" \
     --arg credits "${CREDITS}" \
     '
       {
-        "user": {
+        "team": {
           "cost": $cost, "billing_period_start": $billing_period_start, "billing_period_end": $billing_period_end,
           "credits": $credits
         }
@@ -44,14 +44,14 @@ curl -s -k \
     -H 'Content-Type: application/json' \
     -H 'Accept: application/json' \
     -H "Authorization: Bearer ${AUTH_TOKEN}" \
-    -X PATCH "${BASE_URL}/users/${USER_ID}" \
+    -X PATCH "${BASE_URL}/teams/${TEAM_ID}" \
     -d "${BODY}"
 )
 
 if [ "${HTTP_STATUS}" == "200" ] ; then
     cat "$BODY_FILE"
 else
-    echo "User update failed" >&2
+    echo "Team update failed" >&2
     cat "$BODY_FILE" >&2
     exit 1
 fi
