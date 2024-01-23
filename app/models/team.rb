@@ -41,6 +41,7 @@ class Team < ApplicationRecord
   validates :name,
             presence: true,
             uniqueness: true,
+            length: { maximum: 56 },
             format: {
               with: /\A[a-zA-Z0-9\-_\s]*\z/,
               message: "can contain only alphanumeric characters, spaces, hyphens and underscores."
@@ -63,7 +64,7 @@ class Team < ApplicationRecord
             allow_blank: true
   validates :credits,
             numericality: { greater_than_or_equal_to: 0 },
-            allow_blank: true
+            presence: true
   validates :billing_period_end, comparison: { greater_than: :billing_period_start },
             unless: -> { billing_period_start.blank? || billing_period_end.blank? }
   validate :billing_period_start_today_or_ealier,
