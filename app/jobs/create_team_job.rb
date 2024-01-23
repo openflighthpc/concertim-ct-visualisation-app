@@ -9,6 +9,10 @@ class CreateTeamJob < ApplicationJob
   retry_on ::ActiveModel::ValidationError, wait: :exponentially_longer, attempts: 10
 
   def perform(team, cloud_service_config, **options)
+    if team.deleted_at
+      logger.info("Skipping job; team was deleted at #{team.deleted_at.inspect}")
+      return
+    end
     runner = Runner.new(
       team: team,
       cloud_service_config: cloud_service_config,
