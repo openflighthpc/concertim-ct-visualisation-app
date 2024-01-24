@@ -2422,7 +2422,9 @@ class IRVController {
   // callback invoked on receiving extra hover hint info from the server
   // @param  hint_info an object containing hover hint information as returned by the server
   hintInfoReceived(hint_info) {
-    return this.rackSpace.hint.appendData(hint_info);
+    if (hint_info != null) {
+      this.rackSpace.hint.appendData(hint_info);
+    }
   }
 
 
