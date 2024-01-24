@@ -37,4 +37,24 @@ module UiHelper
       cell(:actions).(:show, title, block, opts.merge(is_dropdown: true))
     end
   end
+
+  # definition_list renders a <DL> definition list.
+  def definition_list(title, opts = {}, &block)
+    cell(:definition_list).(:show, title, block, opts)
+  end
+
+  # render_tabbar renders a tabbar.  Use render_tab_content to wrap the
+  # content for the active tab.
+  def render_tabbar(&block)
+    cell(:tabbar).(:show, block)
+  end
+
+  # render_tab_content renders the given block with suitable layout for
+  # use as a tabbar's active content area.  Use render_tabbar to render the
+  # tabbar.
+  def render_tab_content(&block)
+    content_tag :div, class: [:box, :tabContent] do
+      yield
+    end
+  end
 end

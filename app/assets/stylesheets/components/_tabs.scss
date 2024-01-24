@@ -1,0 +1,45 @@
+ul.tabs {
+    z-index: 1;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    position: relative;
+}
+
+ul.tabs li:first-child {
+    border-left: 1px solid $light-grey;
+}
+
+ul.tabs li.active {
+    background-color: $lightest-grey;
+    border-bottom: none;
+    margin-bottom: -1px;
+    a {
+        background-color: transparent;
+        padding-bottom: 6px;
+    }
+}
+
+ul.tabs li {
+    display: inline-block;
+    font-weight: bold;
+    text-align: center;
+    border: 1px solid $light-grey;
+    border-bottom: none;
+    border-radius: 5px 5px 0 0;
+    background-color: $lighter-grey; 
+    a {
+        font-size: 1.2em;
+        padding: 5px 14px 5px 10px;
+        background-color: unset;
+        display: inline-block;
+    }
+}
+
+div.tabContent {
+    background-color: $lightest-grey;
+    border: solid 1px $light-grey;
+    padding-left: 1em;
+    padding-right: 1em;
+    padding-top: 1em;
+}

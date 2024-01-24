@@ -2035,8 +2035,6 @@ class RackSpace {
     switch (params[0]) {
       case 'focusOn':
         return this.focusOn(params[1], params[2]);
-      case 'viewDetailedMetrics':
-        return this.showDetailedMetrics(params[2]);
       case 'statusChangeRequest':
         if (params[1] !== 'destroy' || confirm(`Are you sure you want to destroy ${params[4]}? This cannot be undone.`)) {
           return this.requestStatusChange(params[1], params[2], params[3], params[4]);
@@ -2149,12 +2147,6 @@ class RackSpace {
     }
     newFlash.getElementsByClassName('flash-content')[0].innerHTML = content;
     document.getElementById('flash-messages').append(newFlash);
-  }
-
-  showDetailedMetrics(deviceId) {
-    const targetPath = Util.substitutePhrase(ContextMenu.DETAILED_METRICS_PATH, `device_id`, deviceId);
-    const completeUrl = window.location.origin + targetPath;
-    window.open(completeUrl, '_blank');
   }
 
   // creates a selection containing a specific device and (recursively) all of its children and zooms the view on to that device

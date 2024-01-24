@@ -6,39 +6,21 @@
   <%= render 'actions' %>
 <% end %>
 
-<div class="dl_group">
-  <h4>Cloud environment configuration</h4>
-  <dl>
-
-    <dt>Internal Auth URL</dt>
-    <dd>
-      <span><%= @cloud_service_config.internal_auth_url %></span>
-    </dd>
-
-    <dt>User handler URL</dt>
-    <dd>
-      <span><%= @cloud_service_config.user_handler_base_url %></span>
-    </dd>
-
-    <dt>Cluster builder URL</dt>
-    <dd>
-      <span><%= @cloud_service_config.cluster_builder_base_url %></span>
-    </dd>
-
-    <dt>Admin User ID</dt>
-    <dd>
-      <span><%= @cloud_service_config.admin_user_id %></span>
-    </dd>
-
-    <dt>Admin Password</dt>
-    <dd>
-      <code>XXXXXXX</code>
-      <button class="button small secondary copyToClipboard" data-text="<%= @cloud_service_config.admin_foreign_password %>">Copy</button>
-    </dd>
-
-    <dt>Admin project ID</dt>
-    <dd>
-      <span><%= @cloud_service_config.admin_project_id %></span>
-    </dd>
-  </dl>
-</div>
+<%=
+  definition_list "Cloud environment configuration" do |dl|
+    dl.item "Internal Auth URL", @cloud_service_config.internal_auth_url
+    dl.item "User handler URL", @cloud_service_config.user_handler_base_url
+    dl.item "Cluster builder URL", @cloud_service_config.cluster_builder_base_url
+    dl.item "Admin User ID", @cloud_service_config.admin_user_id
+    dl.item "Admin Password" do
+      capture do
+        concat content_tag(:code, 'XXXXXXX', style: 'margin-right: 5px')
+        concat content_tag(:button, 'Copy',
+                           class: %w(button small secondary copyToClipboard),
+                           data: {text: @cloud_service_config.admin_foreign_password}
+                          )
+      end
+    end
+    dl.item "Admin project ID", @cloud_service_config.admin_project_id
+  end
+%>

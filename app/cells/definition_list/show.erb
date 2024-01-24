@@ -1,0 +1,9 @@
+<div class="dl_list">
+  <h4><%= @title %></h4>
+  <dl>
+    <% @items.each do |item| %>
+      <%= render_item(item) %>
+    <% end %>
+  </dl>
+</div>
+<div class="clearFloats"></div>

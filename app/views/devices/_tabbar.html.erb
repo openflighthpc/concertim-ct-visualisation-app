@@ -1,0 +1,6 @@
+<%=
+  render_tabbar do |tabs|
+    tabs.add 'Overview', device_path(@device)
+    tabs.add 'Metrics', device_metrics_path(@device)
+  end
+%>

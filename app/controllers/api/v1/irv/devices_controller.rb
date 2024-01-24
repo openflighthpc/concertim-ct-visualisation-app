@@ -6,9 +6,9 @@ class Api::V1::Irv::DevicesController < Api::V1::Irv::BaseController
   def tooltip
     @device = Device.find_by_id(params[:id])
     authorize! :read, @device
-
     error_for('Device') if @device.nil?
-    @device = Api::V1::DevicePresenter.new(@device)
+    # Currently, we don't have any extended tooltip data for devices.
+    render json: nil, status: :no_content
   end
 
   # 

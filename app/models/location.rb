@@ -128,7 +128,7 @@ class Location < ApplicationRecord
 
     # Otherwise the chassis occupies the U if it is full depth, or we don't
     # care about the facing, or it matches the given facing.
-    if self.u_depth == self.rack.u_depth
+    if full_depth?
       true
     elsif facing.nil?
       true
@@ -151,6 +151,11 @@ class Location < ApplicationRecord
     end
   end
 
+
+  def full_depth?
+    return nil unless in_rack?
+    u_depth == rack.u_depth
+  end
 
   #############################
   #
