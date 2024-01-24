@@ -3,7 +3,7 @@
 # Usage:
 #
 #   definition_list "Details" do |dl|
-#     # Render simple scalar items.
+#     # Render a single item.
 #     dl.item "Name:", device.name
 #
 #     # The content can be passed as the second argument or as a block.
@@ -58,7 +58,7 @@ class DefinitionListCell < Cell::ViewModel
       @items = []
     end
 
-    # Add a single scalar item.
+    # Add a single item.
     def item(title, content_or_options_with_block=nil, opts=nil, html_opts=nil, &block)
       if block_given?
         html_opts = opts || {}
@@ -85,8 +85,9 @@ class DefinitionListCell < Cell::ViewModel
       @items << Sublist.new(title, subitems, opts)
     end
 
-    # Recurse down the given data adding sub lists and scalar items as
-    # appropriate.
+    # Recurse down the given data structure.  Each encountered array or hash
+    # will be recursively rendered as a new sublist.  Other items will be
+    # rendered as single value using the `.to_s` method.
     def recurse_items(title, data)
       if data.is_a?(Hash)
         sublist(title) do |subbuilder|
