@@ -38,7 +38,7 @@ class CreateTeamRoleJob < ApplicationJob
     end
 
     def call
-      response = super
+      response = connection.post(path, body)
 
       unless response.success?
         return Result.new(false, "#{error_description}: #{response.reason_phrase || "Unknown error"}")
@@ -61,7 +61,11 @@ class CreateTeamRoleJob < ApplicationJob
     private
 
     def url
-      "#{@cloud_service_config.user_handler_base_url}/create_team_role"
+      @cloud_service_config.user_handler_base_url
+    end
+
+    def path
+      "/create_team_role"
     end
 
     def body
