@@ -5,9 +5,9 @@ RSpec.describe UpdateTeamRoleJob, type: :job do
   let!(:team_role) { create(:team_role, role: "member") }
   let(:new_role) { "admin" }
   let(:cloud_service_config) { create(:cloud_service_config) }
-  let(:update_team_roles_path) { "/update_team_role" }
+  let(:update_users_path) { "/update_team_role" }
   let(:expected_url) {
-    "#{cloud_service_config.user_handler_base_url}#{update_team_roles_path}"
+    "#{cloud_service_config.user_handler_base_url}#{update_users_path}"
   }
 
   subject { UpdateTeamRoleJob::Runner.new(cloud_service_config: cloud_service_config, team_role: team_role, new_role: new_role) }
@@ -32,7 +32,7 @@ RSpec.describe UpdateTeamRoleJob, type: :job do
                                         })
     end
 
-    it "contains the team role's project and billing ids" do
+    it "contains the user's cloud env and billing ids" do
       expect(subject[:team_role]).to be_a Hash
       expect(subject[:team_role][:user_id]).to eq team_role.user.cloud_user_id
       expect(subject[:team_role][:project_id]).to eq team_role.team.project_id
