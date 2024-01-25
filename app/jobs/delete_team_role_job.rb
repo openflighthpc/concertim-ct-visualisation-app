@@ -33,7 +33,11 @@ class DeleteTeamRoleJob < ApplicationJob
   class Runner < HttpRequests::Faraday::JobRunner
     def initialize(team_role:, **kwargs)
       @team_role = team_role
-      super(**kwargs)
+      super(**kwargs.reverse_merge(test_stubs: test_stubs))
+    end
+
+    def test_stubs
+      nil
     end
 
     def call
