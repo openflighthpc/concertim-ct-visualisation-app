@@ -632,7 +632,7 @@
       "tooltip":
       {
         "caption"     : "[[name]] : [[metric]]((<br>&nbsp;total : [[total]]))((<br>&nbsp;max : [[max]]))((<br>&nbsp;average : [[mean]]))((<br>&nbsp;min : [[min]]))",
-        "colourField" : "colour"
+        "colourField" : null
       }
     },
 
