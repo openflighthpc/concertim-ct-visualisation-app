@@ -1,4 +1,4 @@
-<% set_title "Teams" -%>
+<% set_title "#{"Your " unless current_user.root? }Teams" -%>
 
 <% if current_user.can?(:create, Team) %>
   <%= link_to "+ New Team", new_team_path, class: "button" %>

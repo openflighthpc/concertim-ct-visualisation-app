@@ -17,11 +17,13 @@
     <% t.attribute_column :role, sortable: true %>
     <% t.actions_column do |actions, team_role| %>
       <% actions.add_with_auth can: :edit, on: team_role, title: 'Edit role', path: edit_team_role_path(team_role) %>
+      <% presenter = presenter_for(team_role) %>
       <%
         actions.add_with_auth(can: :destroy, on: team_role,
                               title: 'Delete',
                               path: team_role_path(team_role),
-                              method: 'delete'
+                              method: 'delete',
+                              data: presenter.requires_confirmation?(current_user) ? {confirm: presenter.delete_confirmation(current_user)} : {},
                               )
       %>
     <% end %>
