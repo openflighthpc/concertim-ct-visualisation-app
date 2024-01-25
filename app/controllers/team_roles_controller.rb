@@ -85,7 +85,7 @@ class TeamRolesController < ApplicationController
   def update
     @cloud_service_config = CloudServiceConfig.first
     if @cloud_service_config.nil?
-      flash.now.alert = "Unable to update team role: cloud environment config not set."
+      flash.now[:alert] = "Unable to update team role: cloud environment config not set."
       render action: :edit
       return
     end
