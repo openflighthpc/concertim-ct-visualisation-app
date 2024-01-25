@@ -1185,7 +1185,7 @@ class RackSpace {
   // @param  x   mouse x coordinate relative to the LBC
   // @param  y   mouse y coordinate relative to the LBC
   startDragChart(x, y) {
-    return this.chart.startDrag(x, y);
+    this.chart.startDrag(x, y);
   }
 
 
@@ -1193,7 +1193,7 @@ class RackSpace {
   // @param  x   mouse x coordinate relative to the LBC
   // @param  y   mouse y coordinate relative to the LBC
   dragChart(x, y) {
-    return this.chart.drag(x, y);
+    this.chart.drag(x, y);
   }
 
 
@@ -1201,7 +1201,7 @@ class RackSpace {
   // @param  x   mouse x coordinate relative to the LBC
   // @param  y   mouse y coordinate relative to the LBC
   stopDragChart(x, y) {
-    return this.chart.stopDrag(x, y);
+    this.chart.stopDrag(x, y);
   }
 
 

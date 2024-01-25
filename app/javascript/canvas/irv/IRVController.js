@@ -2047,10 +2047,10 @@ class IRVController {
     if (!this.dragging) {
       this.dragging = Math.sqrt(Math.pow(coords.x - this.downCoords.x, 2) + Math.pow(coords.y - this.downCoords.y, 2)) > IRVController.DRAG_ACTIVATION_DIST;
       if (this.dragging) {
-        return this.rackSpace.startDragChart(this.downCoords.x, this.downCoords.y);
+        this.rackSpace.startDragChart(this.downCoords.x, this.downCoords.y);
       }
     } else {
-      return this.rackSpace.dragChart(coords.x, coords.y);
+      this.rackSpace.dragChart(coords.x, coords.y);
     }
   }
 
