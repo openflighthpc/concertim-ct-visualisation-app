@@ -1181,29 +1181,6 @@ class RackSpace {
     }
   }
 
-  // public method, commences drag operation on LBC
-  // @param  x   mouse x coordinate relative to the LBC
-  // @param  y   mouse y coordinate relative to the LBC
-  startDragChart(x, y) {
-    this.chart.startDrag(x, y);
-  }
-
-
-  // public method, updates drag operation on LBC
-  // @param  x   mouse x coordinate relative to the LBC
-  // @param  y   mouse y coordinate relative to the LBC
-  dragChart(x, y) {
-    this.chart.drag(x, y);
-  }
-
-
-  // public method, stops drag operation on LBC
-  // @param  x   mouse x coordinate relative to the LBC
-  // @param  y   mouse y coordinate relative to the LBC
-  stopDragChart(x, y) {
-    this.chart.stopDrag(x, y);
-  }
-
 
   // public method, commences the dragging of a selection box or device
   // @param  x   the x coordinate of the mouse relative to the rack canvas layer

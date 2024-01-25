@@ -155,9 +155,6 @@ class IRVController {
     this.evMouseOutThumb = this.evMouseOutThumb.bind(this);
     this.evZoomComplete = this.evZoomComplete.bind(this);
     this.evFlipComplete = this.evFlipComplete.bind(this);
-    this.evMouseDownChart = this.evMouseDownChart.bind(this);
-    this.evMouseUpChart = this.evMouseUpChart.bind(this);
-    this.evDragChart = this.evDragChart.bind(this);
     this.showHoverHint = this.showHoverHint.bind(this);
     this.showThumbHint = this.showThumbHint.bind(this);
     this.applyFilter = this.applyFilter.bind(this);
@@ -2009,45 +2006,6 @@ class IRVController {
   }
 
 
-  // LBC mouse down event handler, initialises drag event handling
-  // @param  ev  the event object which invoked execution
-  evMouseDownChart(ev) {
-    const coords      = Util.resolveMouseCoords(this.chartEl, ev);
-    this.downCoords = coords;
-    return Events.addEventListener(this.chartEl, 'mousemove', this.evDragChart);
-  }
-
-
-  // LBC mouse up event handler, clears drag event handling and actions any selection box which has been created
-  // @param  ev  the event object which invoked execution
-  evMouseUpChart(ev) {
-    this.upCoords = Util.resolveMouseCoords(this.chartEl, ev);
-    Events.removeEventListener(this.chartEl, 'mousemove', this.evDragChart);
-
-    if (this.dragging) {
-      const coords = Util.resolveMouseCoords(this.chartEl, ev);
-      this.rackSpace.stopDragChart(coords.x, coords.y);
-      return this.dragging = false;
-    }
-  }
-
-
-  // LBC drag event handler, invoked on mouse move with the left button depressed. Actions dragging only if mouse has moved beyond a
-  // threshold distance from the originating click coordinates
-  // @param  ev  the event object which invoked execution
-  evDragChart(ev) {
-    const coords = Util.resolveMouseCoords(this.chartEl, ev);
-    if (!this.dragging) {
-      this.dragging = Math.sqrt(Math.pow(coords.x - this.downCoords.x, 2) + Math.pow(coords.y - this.downCoords.y, 2)) > IRVController.DRAG_ACTIVATION_DIST;
-      if (this.dragging) {
-        this.rackSpace.startDragChart(this.downCoords.x, this.downCoords.y);
-      }
-    } else {
-      this.rackSpace.dragChart(coords.x, coords.y);
-    }
-  }
-
-
   // called from a timeout, displays rack view hover hint
   showHoverHint() {
     let left;
@@ -2072,10 +2030,6 @@ class IRVController {
   // disables mouse events to prevent user interaction during zoom/flip animations. This is probably redundant now following implementation
   // of the update message
   disableMouse() {
-    if (this.model.showChart()) { Events.removeEventListener(this.chartEl, 'mousedown', this.evMouseDownChart); }
-    if (this.model.showChart()) { Events.removeEventListener(this.chartEl, 'mouseup', this.evMouseUpChart); }
-    if (this.model.showChart()) { Events.removeEventListener(this.chartEl, 'mousemove', this.evMouseMoveChart); }
-
     Events.removeEventListener(this.rackEl, 'mousedown', this.evMouseDownRack);
     Events.removeEventListener(this.rackEl, 'mouseup', this.evMouseUpRack);
     Events.removeEventListener(this.rackEl, 'mousemove', this.evMouseMoveRack);
@@ -2095,10 +2049,6 @@ class IRVController {
   // enables  mouse events on completion of zoom/flip animations. This is probably redundant now following implementation of the update
   // message
   enableMouse() {
-    if (this.model.showChart()) { Events.addEventListener(this.chartEl, 'mousedown', this.evMouseDownChart); }
-    if (this.model.showChart()) { Events.addEventListener(this.chartEl, 'mouseup', this.evMouseUpChart); }
-    if (this.model.showChart()) { Events.addEventListener(this.chartEl, 'mousemove', this.evMouseMoveChart); }
-
     Events.addEventListener(this.rackEl, 'mousedown', this.evMouseDownRack);
     Events.addEventListener(this.rackEl, 'mouseup', this.evMouseUpRack);
     Events.addEventListener(this.rackEl, 'mousemove', this.evMouseMoveRack);
@@ -2302,16 +2252,6 @@ class IRVController {
       return this.filterBar.dragSlider(this.slider, coords.x, coords.y);
     }
   }
-    //else
-    //  if @dragging
-    //    @filterBar.dragBar(ev.pageX, ev.pageY)
-    //  else
-    //    # commence dragging only if the user has moved the mouse a certain distance
-    //    @dragging = Math.sqrt(Math.pow(coords.x - @downCoords.x, 2) + Math.pow(coords.y - @downCoords.y, 2)) > IRVController.DRAG_ACTIVATION_DIST
-    //    if @dragging
-    //      @filterBar.startDrag()
-    //      Events.addEventListener(document.window, 'mouseup', @evFilterStopDrag)
-
 
   // filter bar drag complete handler, invoked on mouse up during dragging. It'll take you longer to read this comment than it will the
   // code below... see? wasn't that a waste of time?
