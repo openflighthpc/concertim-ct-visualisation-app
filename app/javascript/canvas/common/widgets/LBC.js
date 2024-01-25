@@ -34,6 +34,7 @@ class LBC {
     this.SELECT_BOX_ALPHA         = 0.8;
 
     this.BAR_CHART_MIN_DATUM_WIDTH  = 2;
+    this.BAR_CHART_MAX_DATUM_WIDTH  = 200;
 
     this.FILL_SINGLE_SERIES_LINE_CHARTS  = true;
 
@@ -223,7 +224,8 @@ class LBC {
         xValue     : 'name',
         yValues    : set.series != null ? set.series : [ 'numMetric' ],
         colours    : set.colours != null ? set.colours : [ 'colour' ],
-        colourMask : mask
+        colourMask : mask,
+        maxDatumWidth : LBC.BAR_CHART_MAX_DATUM_WIDTH,
       };
 
       this.multiSeries               = chart_config.yValues.length > 1;

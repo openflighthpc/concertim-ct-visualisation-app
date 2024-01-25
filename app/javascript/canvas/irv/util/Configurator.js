@@ -223,6 +223,7 @@ class Configurator {
     LBC.SELECT_BOX_ALPHA               = lbc_config.selectBox.alpha;
     LBC.MODEL_DEPENDENCIES             = lbc_config.modelDependencies;
     LBC.BAR_CHART_MIN_DATUM_WIDTH      = lbc_config.barChartMinDatumWidth;
+    LBC.BAR_CHART_MAX_DATUM_WIDTH      = lbc_config.barChartMaxDatumWidth;
     LBC.FILL_SINGLE_SERIES_LINE_CHARTS = lbc_config.fillSingleSeriesLineCharts;
     LBC.LINE_POINTER_COLOUR            = lbc_config.linePointerColour;
     LBC.LINE_POINTER_WIDTH             = lbc_config.linePointerWidth;

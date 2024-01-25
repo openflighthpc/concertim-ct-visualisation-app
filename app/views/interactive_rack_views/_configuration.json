@@ -642,6 +642,7 @@
       "pointerOffsetX"             : -4,
       "pointerOffsetY"             : 10,
       "barChartMinDatumWidth"      : 2,
+      "barChartMaxDatumWidth"      : 200,
       "fillSingleSeriesLineCharts" : true,
       "linePointerColour"          : "#0",
       "linePointerWidth"           : 1,
