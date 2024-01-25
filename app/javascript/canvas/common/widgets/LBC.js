@@ -41,7 +41,7 @@ class LBC {
     static SELECT_BOX_ALPHA         = 0.8;
 
     static BAR_CHART_MIN_DATUM_WIDTH  = 2;
-    static BAR_CHART_MAX_DATUM_WIDTH  = 200;
+    static BAR_CHART_MAX_DATUM_WIDTH  = 75;
 
     static FILL_SINGLE_SERIES_LINE_CHARTS  = true;
 
