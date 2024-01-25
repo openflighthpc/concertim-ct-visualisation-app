@@ -361,8 +361,6 @@
 
     "drag": 
     {
-      "fadeFill"  : "#000000",
-      "fadeAlpha" : 0.7,
       "snapRange" : 30
     },
 

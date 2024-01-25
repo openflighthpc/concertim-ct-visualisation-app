@@ -50,8 +50,6 @@ class RackSpace {
     this.U_LBL_SCALE_CUTOFF        = .20;
     this.NAME_LBL_SCALE_CUTOFF     = .01;
 
-    this.DRAG_FADE_FILL   = '#0';
-    this.DRAG_FADE_ALPHA  = .3;
     this.DRAG_SNAP_RANGE  = 10;
     this.DRAG_ITEM_ALPHA  = .5;
 
@@ -103,8 +101,6 @@ class RackSpace {
     this.evZoomComplete = this.evZoomComplete.bind(this);
     this.showHint = this.showHint.bind(this);
     this.evContextClick = this.evContextClick.bind(this);
-    this.dragDeviceFromMenu = this.dragDeviceFromMenu.bind(this);
-    this.stopDraggingDeviceFromMenu = this.stopDraggingDeviceFromMenu.bind(this);
     this.evRedrawComplete = this.evRedrawComplete.bind(this);
     this.switchView = this.switchView.bind(this);
     this.setMetricLevel = this.setMetricLevel.bind(this);
@@ -1232,14 +1228,7 @@ class RackSpace {
         });
       }
 
-      return this.selection.showDrag();
-
-    } else {
-      this.selection = null;
-      // drag a selection box
-      this.fx        = this.createGfxLayer(this.rackEl, Util.getStyleNumeric(this.rackGfx.cvs, 'left'), Util.getStyleNumeric(this.rackGfx.cvs, 'top'), this.rackGfx.width, this.rackGfx.height, this.scale);
-      this.boxAnchor = { x, y };
-      return this.box       = this.fx.addRect({ x, y, stroke: RackSpace.SELECT_BOX_STROKE, strokeWidth: RackSpace.SELECT_BOX_STROKE_WIDTH / this.scale, alpha: RackSpace.SELECT_BOX_ALPHA, width: 1, height: 1 });
+      this.selection.showDrag();
     }
   }
 
@@ -1285,40 +1274,12 @@ class RackSpace {
         this.fx.setAttributes(this.dragImg, { alpha: 1 });
         this.fx.setAttributes(this.dragImg, { x: (this.dragImgOffset.x + nearest.left + ((nearest.right - nearest.left) / 2)) - (this.fx.getAttribute(this.dragImg, 'width') / 2), y: nearest.top });
         this.rectangleNearest = this.fx.addRect({ x: this.fx.getAttribute(this.dragImg, 'x'), y: this.fx.getAttribute(this.dragImg, 'y'), width: this.fx.getAttribute(this.dragImg, 'width'), height: this.fx.getAttribute(this.dragImg, 'height'), stroke: '#ff00ff', strokeWidth:RackSpace.MOVING_DEVICE_STROKE_WIDTH});
-        return this.nearest = nearest;
+        this.nearest = nearest;
       } else {
         this.fx.setAttributes(this.dragImg, { alpha: RackSpace.DRAG_ITEM_ALPHA });
-        return this.fx.setAttributes(this.dragImg, { x: x + this.dragImgOffset.x, y: y + this.dragImgOffset.y });
+        this.fx.setAttributes(this.dragImg, { x: x + this.dragImgOffset.x, y: y + this.dragImgOffset.y });
       }
-    } else if (this.box) {
-      return this.dragBox(x, y);
     }
-  }
-
-
-  // draws a selection box defined by supplied x/y coordinates and @boxAnchor
-  // @param  x   the x coordinate of the mouse relative to the rack canvas layer and scale adjusted
-  // @param  y   the y coordinate of the mouse relative to the rack canvas layer and scale adjusted
-  dragBox(x, y) {
-    const attrs = {};
-
-    if (x > this.boxAnchor.x) {
-      attrs.x     = this.boxAnchor.x;
-      attrs.width = x - this.boxAnchor.x;
-    } else {
-      attrs.x     = x;
-      attrs.width = this.boxAnchor.x - x;
-    }
-
-    if (y > this.boxAnchor.y) {
-      attrs.y      = this.boxAnchor.y;
-      attrs.height = y - this.boxAnchor.y;
-    } else {
-      attrs.y      = y;
-      attrs.height = this.boxAnchor.y - y;
-    }
-
-    return this.fx.setAttributes(this.box, attrs);
   }
 
 
@@ -1375,12 +1336,7 @@ class RackSpace {
       }
 
       this.nearest = null;
-      return this.moving_a_blade = null;
-
-    // otherwise when dragging a selection box...
-    } else if (this.box != null) {
-      this.selectDevicesInsideDraggingBox(x,y);
-      return this.box = null;
+      this.moving_a_blade = null;
     }
   }
 
@@ -1396,40 +1352,6 @@ class RackSpace {
   // Function to validate if the device being dragged is dropped in an area that belongs to itself or in a blade that is inside itself.
   movingMyself(device_dragged, device_at_dropping) {
     return (device_dragged.id === device_at_dropping.id) || (device_dragged.id === __guard__(device_at_dropping.parent(), x => x.id));
-  }
-
-  selectDevicesInsideDraggingBox(x,y) {
-    this.fx.destroy();
-
-    x /= this.scale;
-    y /= this.scale;
-
-    const box = {};
-    if (x > this.boxAnchor.x) {
-      box.x     = this.boxAnchor.x;
-      box.width = x - this.boxAnchor.x;
-    } else {
-      box.x     = x;
-      box.width = this.boxAnchor.x - x;
-    }
-
-    if (y > this.boxAnchor.y) {
-      box.y      = this.boxAnchor.y;
-      box.height = y - this.boxAnchor.y;
-    } else {
-      box.y      = y;
-      box.height = this.boxAnchor.y - y;
-    }
-
-    box.left   = box.x;
-    box.right  = box.x + box.width;
-    box.top    = box.y;
-    box.bottom = box.y + box.height;
-
-    const selection = this.selectWithin(box, true);
-    this.model.activeSelection(selection != null);
-    this.model.selectedDevices(selection);
-    return this.clearAllRacksAsFocused();
   }
 
   moveDeviceFromHoldingArea() {
@@ -2015,42 +1937,6 @@ class RackSpace {
       case 'reSelectAll':
         CrossAppSettings.clear('irv');
         return window.location = "/racks";
-      case 'startDraggingDevice':
-        return this.startDraggingDevice();
-    }
-  }
-
-  startDraggingDevice() {
-    this.dragDeviceFromMenu();
-    Events.addEventListener(this.rackEl, 'mousemove', this.dragDeviceFromMenu);
-    return Events.addEventListener(this.rackEl, 'mouseup', this.stopDraggingDeviceFromMenu);
-  }
-
-  dragDeviceFromMenu(ev) {
-    if (!this.dragging) {
-      this.dragging = true;
-      if (this.dragging) {
-        this.clickAssigned = true;
-        this.startDrag(this.device_to_drag_coords.x, this.device_to_drag_coords.y);
-        return this.fx.setAttributes(this.dragImg, { x: this.device_to_drag_coords.x + this.contextMenu.coords.x + this.dragImgOffset.x, y: this.device_to_drag_coords.y + this.contextMenu.coords.y + this.dragImgOffset.y });
-      }
-    } else {
-      const coords = Util.resolveMouseCoords(this.coordReferenceEl, ev);
-      return this.drag(coords.x, coords.y);
-    }
-  }
-
-  stopDraggingDeviceFromMenu(ev) {
-    this.upCoords = Util.resolveMouseCoords(this.coordReferenceEl, ev);
-    //clearTimeout(@clickTmr)
-    Events.removeEventListener(this.rackEl, 'mousemove', this.dragDeviceFromMenu);
-  
-    // decide if this is a single or double-click
-    if (this.dragging) {
-      const coords = Util.resolveMouseCoords(this.coordReferenceEl, ev);
-      this.stopDrag(coords.x, coords.y);
-      this.clickAssigned = true;
-      this.dragging      = false;
     }
   }
 

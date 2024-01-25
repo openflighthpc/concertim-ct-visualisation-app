@@ -128,8 +128,6 @@ class Configurator {
     RackSpace.FPS                            = rackspace_config.fps;
     RackSpace.ADDITIONAL_ROW_TOLERANCE       = rackspace_config.additionalRowTolerance;
     RackSpace.ZOOM_DURATION                  = rackspace_config.zoomDuration;
-    RackSpace.DRAG_FADE_FILL                 = rackspace_config.drag.fadeFill;
-    RackSpace.DRAG_FADE_ALPHA                = rackspace_config.drag.fadeAlpha;
     RackSpace.DRAG_SNAP_RANGE                = rackspace_config.drag.snapRange;
     RackSpace.INFO_FADE_DURATION             = rackspace_config.infoFadeDuration;
     RackSpace.FLIP_DURATION                  = rackspace_config.flipDuration;

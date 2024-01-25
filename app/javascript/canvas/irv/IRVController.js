@@ -1780,23 +1780,19 @@ class IRVController {
     let coords      = Util.resolveMouseCoords(this.rackSpace.coordReferenceEl, ev);
     const rack_coords = Util.resolveMouseCoords(this.rackEl, ev);
 
-    // ensure mouse down hasn't originated from the scrollbar region
-    if (true) { // rack_coords.x - @rackEl.scrollLeft < @rackElDims.width - @scrollAdjust and rack_coords.y - @rackEl.scrollTop < @rackElDims.height - @scrollAdjust
-      if (ev.which === 1) {
-        this.downCoords = {x:coords.x,y:coords.y};
+    if (ev.which === 1) {
+      this.downCoords = {x:coords.x,y:coords.y};
 
-        // get device at the present coordinates 
-        coords.x /= this.rackSpace.scale;
-        coords.y /= this.rackSpace.scale;
-        const device = this.rackSpace.getDeviceAt(coords.x, coords.y);
+      // get device at the present coordinates 
+      coords.x /= this.rackSpace.scale;
+      coords.y /= this.rackSpace.scale;
+      const device = this.rackSpace.getDeviceAt(coords.x, coords.y);
 
-        return Events.addEventListener(this.rackEl, 'mousemove', this.evDrag);
-      } else if (ev.which === 2) {
-        coords = Util.resolveMouseCoords(this.rackSpace.coordReferenceEl, ev);
-        return this.rackSpace.middleClick(coords.x, coords.y);
-      }
-    } else {
-      return this.downCoords = null;
+      return Events.addEventListener(this.rackEl, 'mousemove', this.evDrag);
+    } else if (ev.which === 2) {
+      // XXX Do we have middleClick support?  What is it?
+      coords = Util.resolveMouseCoords(this.rackSpace.coordReferenceEl, ev);
+      return this.rackSpace.middleClick(coords.x, coords.y);
     }
   }
 
