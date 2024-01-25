@@ -36,7 +36,11 @@ class UpdateTeamRoleJob < ApplicationJob
     def initialize(team_role:, new_role:, **kwargs)
       @team_role = team_role
       @new_role = new_role
-      super(**kwargs)
+      super(**kwargs.reverse_merge(test_stubs: test_stubs))
+    end
+
+    def test_stubs
+      nil
     end
 
     def call
