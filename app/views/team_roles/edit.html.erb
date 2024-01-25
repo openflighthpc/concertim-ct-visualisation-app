@@ -5,5 +5,7 @@
 <%= simple_form_for [@team, @team_role], html: {class: 'no_border'} do |f| %>
   <%= f.input :user_id, collection: [@team_role.user], label_method: :name, value_method: :id, disabled: true %>
   <%= f.input :role, collection: TeamRole::VALID_ROLES, include_blank: false %>
-  <%= f.button :submit %>
+  <% presenter = presenter_for(@team_role) %>
+  <%= f.button :submit, data: presenter.requires_confirmation?(current_user) ? { confirm:  presenter.edit_confirmation(current_user) } : {}
+  %>
 <% end %>
