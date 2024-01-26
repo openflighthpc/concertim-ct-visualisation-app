@@ -632,7 +632,7 @@
       "tooltip":
       {
         "caption"     : "[[name]] : [[metric]]((<br>&nbsp;total : [[total]]))((<br>&nbsp;max : [[max]]))((<br>&nbsp;average : [[mean]]))((<br>&nbsp;min : [[min]]))",
-        "colourField" : "colour"
+        "colourField" : null
       }
     },
 
@@ -642,6 +642,7 @@
       "pointerOffsetX"             : -4,
       "pointerOffsetY"             : 10,
       "barChartMinDatumWidth"      : 2,
+      "barChartMaxDatumWidth"      : 75,
       "fillSingleSeriesLineCharts" : true,
       "linePointerColour"          : "#0",
       "linePointerWidth"           : 1,

@@ -150,7 +150,11 @@ class SimpleChart {
   
     if (config.sortOn != null) { Util.sortByProperty(data, config.sortOn, config.sortAscending); }
 
-    const datum_width   = (this.cvs.width - SimpleChart.MARGIN_LEFT - SimpleChart.MARGIN_RIGHT) / data.length;
+    let datum_width   = (this.cvs.width - SimpleChart.MARGIN_LEFT - SimpleChart.MARGIN_RIGHT) / data.length;
+    const max_datum_width = config.maxDatumWidth;
+    if (max_datum_width != null && datum_width > max_datum_width) {
+       datum_width = max_datum_width;
+    }
     const multi_series  = config.yValues.length > 1;
     const y_axis        = this.getYAxis(data, config);
     const x_value_key   = config.xValue;
