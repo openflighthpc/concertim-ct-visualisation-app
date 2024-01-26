@@ -11,7 +11,7 @@ import SimpleChart from 'canvas/common/widgets/SimpleChart';
 //
 // This class concerns itself with
 //
-// * retreiving the data to render from the view model based on the current
+// * retrieving the data to render from the view model based on the current
 //   view model state.  E.g., which metric has been selected, is the chart
 //   being displayed, which filters are in effect.
 // * updating the data being rendered as the view model state changes.  E.g.,
