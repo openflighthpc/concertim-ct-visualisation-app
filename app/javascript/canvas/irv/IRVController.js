@@ -176,7 +176,6 @@ class IRVController {
     this.evResetMetricPoller = this.evResetMetricPoller.bind(this);
     this.setMetricPoll = this.setMetricPoll.bind(this);
     this.setMetricPollInput = this.setMetricPollInput.bind(this);
-    this.evDropFilterBar = this.evDropFilterBar.bind(this);
     this.evSwitchStat = this.evSwitchStat.bind(this);
     this.evSwitchGraphOrder = this.evSwitchGraphOrder.bind(this);
     this.config_file = '/irv/configuration';
@@ -576,7 +575,6 @@ class IRVController {
     if ($('print_link') != null) { Events.addEventListener($('print_link'), 'click', this.printScreen); }
     if ($('export_link') != null) { Events.addEventListener($('export_link'), 'click', this.exportData); }
 
-    if (this.filterBarEl != null) { Events.addEventListener(this.filterBarEl, 'filterBarSetAnchor', this.evDropFilterBar); }
     Events.addEventListener(this.rackEl, 'rackSpaceZoomComplete', this.evZoomComplete);
     Events.addEventListener(this.rackEl, 'rackSpaceFlipComplete', this.evFlipComplete);
     Events.addEventListener(this.rackEl, 'rackSpaceReset', this.evReset);
@@ -2321,13 +2319,6 @@ class IRVController {
   // @param  poll_rate the new poll rate value
   setMetricPollInput(poll_rate) {
     return this.metricPollInput.value = poll_rate / 1000;
-  }
-
-
-  // filter bar drop event handler, called on mouse up having first dragged the filter bar
-  // @param  ev  the event object which invoked execution
-  evDropFilterBar(ev) {
-    return this.updateLayout();
   }
 
 

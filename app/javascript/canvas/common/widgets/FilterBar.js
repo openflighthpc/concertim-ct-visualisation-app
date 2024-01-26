@@ -42,10 +42,6 @@ class FilterBar {
     this.FONT_SIZE  = 14;
     this.FONT_FILL  = '#000000';
 
-    this.DRAG_BOX_STROKE        = '#ff00ff';
-    this.DRAG_BOX_STROKE_WIDTH  = 20;
-    this.DRAG_BOX_ALPHA         = .5;
-
     this.LABEL_MIN_SEPARATION  = 15;
   
     this.MODEL_DEPENDENCIES = {
@@ -59,8 +55,6 @@ class FilterBar {
 
     // run-time assigned statics
     this.DRAG_TAB_SHAPE_V  = null;
-    this.NORMAL_COLOURS    = null;
-    this.REVERSE_COLOURS   = null;
 
     // constants
     this.ALIGN_TOP     = 0;
@@ -592,63 +586,12 @@ class FilterBar {
   }
 
 
-  startDrag() {
-    const parent_x      = Util.getStyleNumeric(this.parentEl, 'left');
-    const parent_y      = Util.getStyleNumeric(this.parentEl, 'top');
-    const parent_width  = Util.getStyleNumeric(this.parentEl, 'width');
-    const parent_height = Util.getStyleNumeric(this.parentEl, 'height');
-    const mid_x         = parent_x + (parent_width / 2);
-    const mid_y         = parent_y + (parent_height / 2);
-
-    this.anchorPoints = [];
-    this.anchorPoints.push({ align: FilterBar.ALIGN_LEFT, x: parent_x, y: mid_y });
-    this.anchorPoints.push({ align: FilterBar.ALIGN_RIGHT, x: parent_x + parent_width, y: mid_y });
-    this.anchorPoints.push({ align: FilterBar.ALIGN_TOP, x: mid_x, y: parent_y });
-    this.anchorPoints.push({ align: FilterBar.ALIGN_BOTTOM, x: mid_x, y: parent_y + parent_height });
-
-    this.dragBox = this.gfx.addRect({ stroke: FilterBar.DRAG_BOX_STROKE, strokeWidth: FilterBar.DRAG_BOX_STROKE_WIDTH, alpha: FilterBar.DRAG_BOX_ALPHA, x: 0, y: 0, width: this.width, height: this.height });
-    return this.gfx.redraw();
-  }
-
-
   stopDrag() {
-    if (this.dragBox != null) {
-      this.gfx.remove(this.dragBox);
-      this.gfx.redraw();
-      this.dragBox = null;
-      return Events.dispatchEvent(this.containerEl, 'filterBarSetAnchor');
-    } else {
-      clearTimeout(this.syncDelay);
-      this.updateFilter();
-      return this.allowDrag = true;
-    }
+    clearTimeout(this.syncDelay);
+    this.updateFilter();
+    return this.allowDrag = true;
   }
 
-
-  dragBar(x, y) {
-    let anchor;
-    let dist = [];
-    for (anchor of Array.from(this.anchorPoints)) { dist.push({ anchor, dist: Math.sqrt(Math.pow(anchor.x - x, 2) + Math.pow(anchor.y - y, 2)) }); }
-    dist    = Util.sortByProperty(dist, 'dist', true);
-    const nearest = dist[0];
-    if (nearest.anchor.align !== this.alignment) {
-      this.alignment     = nearest.anchor.align;
-      //old_horizontal = @horizontal
-      this.horizontal    = (this.alignment === FilterBar.ALIGN_BOTTOM) || (this.alignment === FilterBar.ALIGN_TOP);
-      //if @horizontal isnt old_horizontal
-      //  @gfx.remove(@assets.labelA)
-      //  @gfx.remove(@assets.labelB)
-      //
-      //  if @horizontal
-      //    @assets.labelA = @gfx.addText({ font: FilterBar.FONT_SIZE + 'px ' + FilterBar.FONT, fill: FilterBar.FONT_FILL, x: FilterBar.THICKNESS - FilterBar.PADDING + FilterBar.FONT_SIZE, y: FilterBar.THICKNESS - FilterBar.PADDING + FilterBar.FONT_SIZE, align: 'center' })
-      //    @assets.labelB = @gfx.addText({ font: FilterBar.FONT_SIZE + 'px ' + FilterBar.FONT, fill: FilterBar.FONT_FILL, x: FilterBar.THICKNESS - FilterBar.PADDING + FilterBar.FONT_SIZE, y: FilterBar.THICKNESS - FilterBar.PADDING + FilterBar.FONT_SIZE, align: 'center' })
-      //  else
-      //    @assets.labelA = @gfx.addImg({ img: @rotateLabel(' '), x: FilterBar.THICKNESS - FilterBar.PADDING - FilterBar.FONT_SIZE, y: FilterBar.THICKNESS - FilterBar.PADDING + FilterBar.FONT_SIZE})
-      //    @assets.labelB = @gfx.addImg({ img: @rotateLabel(' '), x: FilterBar.THICKNESS - FilterBar.PADDING - FilterBar.FONT_SIZE, y: FilterBar.THICKNESS - FilterBar.PADDING + FilterBar.FONT_SIZE })
-
-      return this.updateLayout(true);
-    }
-  }
 
   hide() {
     Util.setStyle(this.inputMin, 'visibility', 'hidden');

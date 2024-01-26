@@ -273,7 +273,6 @@ class Configurator {
     FilterBar.THICKNESS                = filter_bar_config.thickness;
     FilterBar.LENGTH                   = filter_bar_config.length;
     FilterBar.PADDING                  = filter_bar_config.padding;
-    FilterBar.MODEL_UPDATE_DELAY       = filter_bar_config.slider.updateDelay;
     FilterBar.DRAG_TAB_FILL            = filter_bar_config.slider.fill;
     FilterBar.DRAG_TAB_SHAPE           = filter_bar_config.slider.shape;
     FilterBar.DRAG_TAB_STROKE          = filter_bar_config.slider.stroke;
@@ -288,9 +287,6 @@ class Configurator {
     FilterBar.FONT                     = filter_bar_config.font;
     FilterBar.FONT_SIZE                = filter_bar_config.fontSize;
     FilterBar.FONT_FILL                = filter_bar_config.fontFill;
-    FilterBar.DRAG_BOX_STROKE          = filter_bar_config.dragBox.stroke;
-    FilterBar.DRAG_BOX_STROKE_WIDTH    = filter_bar_config.dragBox.strokeWidth;
-    FilterBar.DRAG_BOX_ALPHA           = filter_bar_config.dragBox.alpha;
     FilterBar.MODEL_DEPENDENCIES       = filter_bar_config.modelDependencies;
     FilterBar.LABEL_MIN_SEPARATION     = filter_bar_config.labelMinSeparation;
 
