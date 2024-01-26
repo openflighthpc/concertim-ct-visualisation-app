@@ -14,6 +14,7 @@ import Parser from 'canvas/irv/util/Parser';
 import Util from 'canvas/common/util/Util';
 import AssetManager from 'canvas/irv/util/AssetManager';
 import RackSpace from 'canvas/irv/view/RackSpace';
+import RackSpaceDragHandler from 'canvas/irv/view/RackSpaceDragHandler';
 import RackSpaceObject from 'canvas/irv/view/RackSpaceObject';
 import RackObject from 'canvas/irv/view/RackObject';
 import NameLabel from 'canvas/irv/view/NameLabel';
@@ -128,7 +129,6 @@ class Configurator {
     RackSpace.FPS                            = rackspace_config.fps;
     RackSpace.ADDITIONAL_ROW_TOLERANCE       = rackspace_config.additionalRowTolerance;
     RackSpace.ZOOM_DURATION                  = rackspace_config.zoomDuration;
-    RackSpace.DRAG_SNAP_RANGE                = rackspace_config.drag.snapRange;
     RackSpace.INFO_FADE_DURATION             = rackspace_config.infoFadeDuration;
     RackSpace.FLIP_DURATION                  = rackspace_config.flipDuration;
     RackSpace.FLIP_DELAY                     = rackspace_config.flipDelay;
@@ -145,6 +145,8 @@ class Configurator {
     RackSpace.CHART_SELECTION_COUNT_CAPTION  = rackspace_config.selectionCount.caption;
     RackSpace.CHART_SELECTION_COUNT_OFFSET_X = rackspace_config.selectionCount.offsetX;
     RackSpace.CHART_SELECTION_COUNT_OFFSET_Y = rackspace_config.selectionCount.offsetY;
+
+    RackSpaceDragHandler.SNAP_RANGE = rackspace_config.drag.snapRange;
 
     const rack_object_config           = config.RACKSPACE.RACKOBJECT;
     RackObject.BLANK_FILL        = rack_object_config.blankFill;

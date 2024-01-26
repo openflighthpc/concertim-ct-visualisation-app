@@ -24,16 +24,15 @@ import Rack from 'canvas/irv/view/Rack';
 import Chassis from 'canvas/irv/view/Chassis';
 import Machine from 'canvas/irv/view/Machine';
 import Chart from 'canvas/irv/view/IRVChart';
-import MessageHint from 'canvas/irv/view/MessageHint';
 import RackSpaceHinter from 'canvas/irv/view/RackSpaceHinter';
 import ContextMenu from 'canvas/irv/view/ContextMenu';
 import ViewModel from 'canvas/irv/ViewModel';
 import Link from 'canvas/irv/view/Link';
 import ImageLink from 'canvas/irv/view/ImageLink';
 import HoldingArea from 'canvas/irv/view/HoldingArea';
-import DragPolicy from 'canvas/irv/util/DragPolicy';
 import Profiler from 'Profiler';
 import NameLabel from 'canvas/irv/view/NameLabel';
+import RackSpaceDragHandler from 'canvas/irv/view/RackSpaceDragHandler';
 
 class RackSpace {
   static initClass() {
@@ -50,17 +49,12 @@ class RackSpace {
     this.U_LBL_SCALE_CUTOFF        = .20;
     this.NAME_LBL_SCALE_CUTOFF     = .01;
 
-    this.DRAG_SNAP_RANGE  = 10;
-    this.DRAG_ITEM_ALPHA  = .5;
-
     this.METRIC_FADE_FILL   = '#000000';
     this.METRIC_FADE_ALPHA  = .7;
 
     this.SELECT_BOX_STROKE        = '#000000';
     this.SELECT_BOX_ALPHA         = 1;
     this.SELECT_BOX_STROKE_WIDTH  = 1;
-
-    this.MOVING_DEVICE_STROKE_WIDTH  = 5;
 
     this.CHART_SELECTION_COUNT_FILL      = '#ffffff';
     this.CHART_SELECTION_COUNT_FONT      = '14px Karla';
@@ -112,7 +106,7 @@ class RackSpace {
     this.zooming     = false;
     this.flipping    = false;
     this.highlighted = [];
-    this.dragging    = false;
+    this.dragHandler = new RackSpaceDragHandler(rackEl, this, model);
 
     this.currentFace  = this.model.face();
     this.face = this.currentFace;
@@ -173,7 +167,6 @@ class RackSpace {
     if (this.model.showChart()) { this.chart       = new Chart(this.chartEl, this.model); }
     this.hint        = new RackSpaceHinter($('tooltip').parentElement, this.model);
     this.contextMenu = new ContextMenu(this.rackEl, this.model, this.evContextClick);
-    this.messageHint = new MessageHint();
 
     this.model.face.subscribe(this.switchFace);
     this.model.viewMode.subscribe(this.switchView);
@@ -248,6 +241,7 @@ class RackSpace {
 
     return gfx;
   }
+
   holdingAreaConfig() {
     const rack_sizes = {topheight:50,topwidth:500,bottomheight:50,rackmaxu:42};
     return { 
@@ -1177,270 +1171,16 @@ class RackSpace {
     }
   }
 
-
-  // public method, commences the dragging of a selection box or device
-  // @param  x   the x coordinate of the mouse relative to the rack canvas layer
-  // @param  y   the y coordinate of the mouse relative to the rack canvas layer
   startDrag(x, y) {
-    x /= this.scale;
-    y /= this.scale;
-    this.selection = this.getDeviceAt(x, y);
-
-    // if over a device commence dragging of device
-    if ((this.selection != null) && this.canIMoveThisItem()) {
-      let chassis_id, selection_height, the_image;
-      Util.setStyle(this.rackEl, 'cursor', 'move');
-      // drag a device/chassis
-      const x_off_set = Util.getStyleNumeric(this.coordReferenceEl,'left') / this.scale;
-      const y_off_set = Util.getStyleNumeric(this.coordReferenceEl,'top') / this.scale;
-      let drag_layer_width = this.rackGfx.width;
-      if (this.model.showHoldingArea()) { drag_layer_width += this.holdingAreaGfx.width; }
-      this.fx = this.createGfxLayer(this.rackEl, 0, 0, x_off_set + drag_layer_width, this.rackGfx.height, this.scale);
-
-      // the cassis is the one storing the image for the device
-      if (this.selection instanceof Machine) {
-        chassis_id = this.selection.parent().id;
-        if (this.selection.parent().complex === true) {
-          this.moving_a_blade = true;
-          the_image = this.selection.img;
-          selection_height = 1;
-        } else {
-          the_image = this.selection.parent().img;
-          selection_height = this.selection.parent().uHeight;
-        }
-      } else { //if @selection instanceof Chassis
-        chassis_id = this.selection.id;
-        the_image = this.selection.img;
-        selection_height = this.selection.uHeight;
-      }
-
-      this.dragImgOffset = { x: x_off_set, y: y_off_set };
-      this.dragImg       = this.fx.addImg({ img: the_image, x: x + this.dragImgOffset.x, y: y + this.dragImgOffset.y, alpha: RackSpace.DRAG_ITEM_ALPHA });
-
-      if (this.selection instanceof Chassis || this.selection instanceof Machine) {
-        const targetRacks = DragPolicy.filter(this.selection, this.racks);
-        targetRacks.forEach((rack) => {
-          if (this.moving_a_blade) {
-            rack.showFreeSpacesForBlade(this.selection.template.images.front,chassis_id);
-          } else if (rack instanceof Rack) {
-            rack.showFreeSpacesForChassis(selection_height,chassis_id,this.selection.depth());
-          }
-        });
-      }
-
-      this.selection.showDrag();
-    }
+    this.dragHandler.startDrag(x, y);
   }
 
-  canIMoveThisItem() {
-    return this.draggableItem() && this.doIHavePermissionToMoveOrDrag() && (this.selection.face === 'front');
-  }
-
-  draggableItem() {
-    if (this.selection instanceof Chassis || this.selection instanceof Machine) {
-      if (this.selection instanceof Chassis && (this.selection.template.rackable === 1)) {
-        return true;
-      } else if (this.selection instanceof Machine && (this.selection.parent().template.rackable === 1)) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
-  }
-
-  doIHavePermissionToMoveOrDrag() {
-    return ((this.selection instanceof Chassis || this.selection instanceof Machine) && this.model.RBAC.can_i_move_devices());
-  }
-
-  // public method, updates dragging of a selection box or device
-  // @param  x   the x coordinate of the mouse relative to the rack canvas layer
-  // @param  y   the y coordinate of the mouse relative to the rack canvas layer
   drag(x, y) {
-    x /= this.scale;
-    y /= this.scale;
-
-    if (this.selection != null) {
-      const slots = [];
-      for (var rack of Array.from(this.racks)) {
-        slots.push(rack.getNearestSpace(x, y));
-      }
-      Util.sortByProperty(slots, 'dist', true);
-      const nearest = slots[0];
-
-      if (this.rectangleNearest != null) { this.fx.remove(this.rectangleNearest); }
-      if ((nearest != null) && (((nearest.dist * this.scale) <= Math.pow(RackSpace.DRAG_SNAP_RANGE / this.scale, 2)) || ((x > nearest.left) && (x < nearest.right) && (y > nearest.top) && (y < nearest.bottom)))) {
-        this.fx.setAttributes(this.dragImg, { alpha: 1 });
-        this.fx.setAttributes(this.dragImg, { x: (this.dragImgOffset.x + nearest.left + ((nearest.right - nearest.left) / 2)) - (this.fx.getAttribute(this.dragImg, 'width') / 2), y: nearest.top });
-        this.rectangleNearest = this.fx.addRect({ x: this.fx.getAttribute(this.dragImg, 'x'), y: this.fx.getAttribute(this.dragImg, 'y'), width: this.fx.getAttribute(this.dragImg, 'width'), height: this.fx.getAttribute(this.dragImg, 'height'), stroke: '#ff00ff', strokeWidth:RackSpace.MOVING_DEVICE_STROKE_WIDTH});
-        this.nearest = nearest;
-      } else {
-        this.fx.setAttributes(this.dragImg, { alpha: RackSpace.DRAG_ITEM_ALPHA });
-        this.fx.setAttributes(this.dragImg, { x: x + this.dragImgOffset.x, y: y + this.dragImgOffset.y });
-      }
-    }
+    this.dragHandler.drag(x, y);
   }
 
-
-  // removes selection box canvas layer and actions drag operation by either updating the model selected devices when dragging a box or
-  // moving a device when dragging a device
-  // @param  x   the x coordinate of the mouse relative to the rack canvas layer
-  // @param  y   the y coordinate of the mouse relative to the rack canvas layer
   stopDrag(x, y) {
-    // if dragging a device
-    if (this.selection != null) {
-      Util.setStyle(this.rackEl, 'cursor', 'auto');
-      this.rackGfx.redraw();
-      for (var rack of Array.from(this.racks)) {
-        rack.hideSpaces();
-      }
-      this.fx.destroy();
-      this.selection.hideDrag();
-      this.deviceToConect = null;
-      // TODO move the device to the target rack, update model, create worksheet job etc. etc.
-
-      x /= this.scale;
-      y /= this.scale;
-
-      if ((this.model.showingFullIrv() || this.model.showingRacks()) && this.model.showHoldingArea() && this.holdingArea.overInternalArea(x,y)) {
-        if (this.selection instanceof Chassis || (this.selection instanceof Machine && (this.selection.parent().complex === false))) {
-          this.moveDeviceToHoldingArea();
-        }
-      } else if (this.nearest != null) {
-        const x_coord = this.nearest.left+((this.nearest.right-this.nearest.left)/2);
-        const y_coord = (this.nearest.bottom-(RackObject.U_PX_HEIGHT/2));
-        if (this.moving_a_blade) {
-          this.deviceToConect = this.getDeviceAt(x_coord,y_coord);
-        } else {
-          this.deviceToConect = this.getRackAt(x_coord,y_coord);
-        }
-      }
-
-      if (this.deviceToConect != null) {
-        if (this.nearest != null) {
-          if (this.moving_a_blade && this.deviceToConect instanceof Chassis) {
-            this.moveBladeBeingDragged();
-          } else if (this.deviceToConect instanceof Rack) {
-            if (this.selection.placedInHoldingArea()) {
-              this.moveDeviceFromHoldingArea();
-            } else {
-              if (this.validLocationToMove(x,y)) {
-                this.moveDeviceBeingDragged();
-              } else {
-                this.messageHint.show([["Cannot move device "+this.selection.name+" to position.", 0]]);
-              }
-            }
-          }
-        }
-      }
-
-      this.nearest = null;
-      this.moving_a_blade = null;
-    }
-  }
-
-  validLocationToMove(x,y) {
-    const device_at_dropping = this.getDeviceAt(x,y);
-    if ((device_at_dropping != null) && (device_at_dropping instanceof Rack || this.movingMyself(this.selection,device_at_dropping) || (device_at_dropping.facing !== this.nearest.face))) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  // Function to validate if the device being dragged is dropped in an area that belongs to itself or in a blade that is inside itself.
-  movingMyself(device_dragged, device_at_dropping) {
-    return (device_dragged.id === device_at_dropping.id) || (device_dragged.id === __guard__(device_at_dropping.parent(), x => x.id));
-  }
-
-  moveDeviceFromHoldingArea() {
-    if (this.selection instanceof Machine || this.selection instanceof Chassis) {
-      const chassisToBeUpdated = this.selection instanceof Chassis ? this.selection : this.selection.parent();
-      chassisToBeUpdated.hide();
-      const oneChassisObject = this.holdingArea.remove(chassisToBeUpdated.id);
-      this.addChildToRack(this.nearest.rack_id, chassisToBeUpdated);
-      const next_rack = this.model.deviceLookup()['racks'][this.nearest.rack_id];
-      chassisToBeUpdated.parent(next_rack.instances[0]);
-      next_rack.chassis.push(oneChassisObject);
-      this.model.deviceLookup()['racks'][next_rack.id] = next_rack;
-
-      this.updateChassisPositionInARack(this.nearest.rack_id, chassisToBeUpdated.id, this.nearest.u, this.nearest.face, chassisToBeUpdated.face);
-      return chassisToBeUpdated.moveToOrFromHoldingArea("RackChassis",this.nearest.rack_id,(this.nearest.u+1),this.nearest.face);
-    }
-  }
-
-  moveDeviceToHoldingArea() {
-    if (this.selection instanceof Machine || this.selection instanceof Chassis) {
-      const chassisToBeUpdated = this.selection instanceof Chassis ? this.selection : this.selection.parent();
-      if (!(chassisToBeUpdated.parent() instanceof HoldingArea)) {
-        chassisToBeUpdated.hide();
-        chassisToBeUpdated.parent(this.holdingArea);
-        this.holdingArea.add(chassisToBeUpdated);
-        return chassisToBeUpdated.moveToOrFromHoldingArea("NonRackChassis",null,0,'f');
-      }
-    }
-  }
-
-  moveDeviceBeingDragged() {
-    if (this.selection instanceof Machine || this.selection instanceof Chassis) {
-      const chassisToBeUpdated = this.selection instanceof Chassis ? this.selection : this.selection.parent();
-      const previous_rack = null;
-      const moving_to_different_rack = chassisToBeUpdated.parent().id !== this.nearest.rack_id;
-      this.addChildToRack(this.nearest.rack_id, chassisToBeUpdated);
-      chassisToBeUpdated.parent(this.model.deviceLookup()['racks'][this.nearest.rack_id].instances[0]);
-      this.updateChassisPositionInARack(this.nearest.rack_id, chassisToBeUpdated.id, this.nearest.u, this.nearest.face, chassisToBeUpdated.face);
-      return chassisToBeUpdated.updatePosition();
-    }
-  }
-
-  moveBladeBeingDragged() {
-    if (this.selection instanceof Machine) {
-      this.selection.hideMetric();
-      const bladeToBeUpdated = this.selection;
-      let previous_chassis = null;
-      const moving_to_different_chassis = bladeToBeUpdated.parent().id !== this.nearest.chassis_id;
-      if (moving_to_different_chassis) {
-        previous_chassis = this.model.deviceLookup()['chassis'][bladeToBeUpdated.parent().id];
-        const previous_chassis_rack_id = previous_chassis.instances[0].parent().id;
-        for (let index = 0; index < previous_chassis.Slots.length; index++) {
-          var oneSlot = previous_chassis.Slots[index];
-          if ((oneSlot.Machine != null) && (oneSlot.Machine.id === bladeToBeUpdated.id)) {
-            this.removeBladeFromChassisFromRack(previous_chassis_rack_id, previous_chassis.id, bladeToBeUpdated.id);
-            this.addBladeToChassisInRack(this.nearest.rack_id, this.nearest.chassis_id, bladeToBeUpdated);
-            var next_chassis = this.model.deviceLookup()['chassis'][this.nearest.chassis_id];
-            bladeToBeUpdated.parent(next_chassis.instances[0]);
-            previous_chassis.Slots[index].Machine = null;
-            for (var slotIndex = 0; slotIndex < next_chassis.Slots.length; slotIndex++) {
-              var oneNewSlot = next_chassis.Slots[slotIndex];
-              if ((parseInt(oneNewSlot.row) === this.nearest.row) && (parseInt(oneNewSlot.col) === this.nearest.col)) {
-                next_chassis.Slots[slotIndex].Machine = oneSlot.Machine;
-              }
-            }
-            this.model.deviceLookup()['chassis'][previous_chassis.id] = previous_chassis;
-            this.model.deviceLookup()['chassis'][next_chassis.id] = next_chassis;
-            break;
-          }
-        }
-      }
-
-      bladeToBeUpdated.slot_id = this.nearest.slot_id;
-      return bladeToBeUpdated.updateSlot();
-    }
-  }
-
-  updateChassisPositionInARack(rack_id, chassis_id, new_u, new_face, dragged_image_face) {
-    return (() => {
-      const result = [];
-      for (var oneRack of Array.from(this.racks)) {
-        if (oneRack.id === rack_id) {
-          result.push(oneRack.updateChassisPosition(chassis_id, new_u, new_face));
-        } else {
-          result.push(undefined);
-        }
-      }
-      return result;
-    })();
+    this.dragHandler.stopDrag(x, y);
   }
 
   // public method, zooms the view to 'view all'
@@ -1454,53 +1194,6 @@ class RackSpace {
     const centre_x = this.coordReferenceEl.width / 2;
     const centre_y = this.coordReferenceEl.height / 2;
     return this.quickZoom(centre_x, centre_y, this.zoomPresets[this.zoomIdx]);
-  }
-
-  addChildToRack(rack_id, child) {
-    return (() => {
-      const result = [];
-      for (let index = 0; index < this.racks.length; index++) {
-        var oneRack = this.racks[index];
-        if (oneRack.id === rack_id) {
-          result.push(this.racks[index].children.push(child));
-        } else {
-          result.push(undefined);
-        }
-      }
-      return result;
-    })();
-  }
-
-  removeBladeFromChassisFromRack(rack_id, chassis_id, blade_id) {
-    return (() => {
-      const result = [];
-      for (let index = 0; index < this.racks.length; index++) {
-        var oneRack = this.racks[index];
-        if (oneRack.id === rack_id) {
-          this.racks[index].removeBladeFromChassis(chassis_id, blade_id);
-          break;
-        } else {
-          result.push(undefined);
-        }
-      }
-      return result;
-    })();
-  }
-
-  addBladeToChassisInRack(rack_id, chassis_id, blade) {
-    return (() => {
-      const result = [];
-      for (let index = 0; index < this.racks.length; index++) {
-        var oneRack = this.racks[index];
-        if (oneRack.id === rack_id) {
-          this.racks[index].addBladeToChassis(chassis_id, blade);
-          break;
-        } else {
-          result.push(undefined);
-        }
-      }
-      return result;
-    })();
   }
 
   // zoom to next zoom preset value; travelling either forward or backwards through the array of zoom presets
@@ -1813,18 +1506,6 @@ class RackSpace {
     Util.setStyle(this.rackInfoGfx.cvs, 'top', centre_y);
     Util.setStyle(this.infoGfx.cvs, 'top', centre_y);
     Util.setStyle(this.alertGfx.cvs, 'top', centre_y);
-  }
-
-  getRackAt(x, y) {
-
-    if (this.model.showingRacks()) {
-      for (var rack of Array.from(this.racks)) {
-        // only query the rack if the coordinates lie within it's boundaries
-        if ((x > rack.x) && (x < (rack.x + rack.width)) && (y > rack.y) && (y < (rack.y + rack.height))) {
-          return rack;
-        }
-      }
-    }
   }
 
   // public method, finds a devices at the given coordinates, this facilitates highlighting on mouse hover
