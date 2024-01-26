@@ -879,7 +879,7 @@ class IRVController {
 
     this.rackSpace.clearAllRacksAsFocused();
     this.rackSpace.setMetricLevel(this.currentMetricLevel);
-    return this.filterBar.resetFilters();
+    this.filterBar.resetFilters();
   }
 
   // zoom in button click event handler, zooms to next zoom preset
@@ -2243,7 +2243,7 @@ class IRVController {
     const coords = Util.resolveMouseCoords(this.filterBarEl, ev);
 
     if (this.slider != null) {
-      return this.filterBar.dragSlider(this.slider, coords.x, coords.y);
+      this.filterBar.dragSlider(this.slider, coords.x, coords.y);
     }
   }
 
