@@ -489,9 +489,7 @@
       {
         "devices": "/api/v1/irv/devices/[[device_id]]/request_status_change?task=[[action]]",
         "racks": "/api/v1/irv/racks/[[rack_id]]/request_status_change?task=[[action]]"
-      },
-
-      "detailedMetricsPath": "/devices/[[device_id]]/metrics"
+      }
     },
 
     "HINT":

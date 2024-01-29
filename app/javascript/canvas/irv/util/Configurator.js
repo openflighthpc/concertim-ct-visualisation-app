@@ -271,7 +271,6 @@ class Configurator {
     ContextMenu.URL_INTERNAL_PREFIX = context_menu_config.urlInternalPrefix;
     ContextMenu.ASPECT_MAP          = context_menu_config.aspectMap;
     ContextMenu.ACTION_PATHS        = context_menu_config.actionPaths;
-    ContextMenu.DETAILED_METRICS_PATH = context_menu_config.detailedMetricsPath;
 
     const filter_bar_config                  = config.FILTERBAR;
     FilterBar.THICKNESS                = filter_bar_config.thickness;
