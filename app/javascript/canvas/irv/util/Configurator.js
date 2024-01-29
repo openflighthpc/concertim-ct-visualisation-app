@@ -25,7 +25,7 @@ import Highlight from 'canvas/irv/view/Highlight';
 import Metric from 'canvas/irv/view/Metric';
 import Primitives from 'canvas/common/gfx/Primitives';
 import LBC from 'canvas/common/widgets/LBC';
-import RackHint from 'canvas/irv/view/RackHint';
+import RackSpaceHinter from 'canvas/irv/view/RackSpaceHinter';
 import ThumbHint from 'canvas/irv/view/ThumbHint';
 import ContextMenu from 'canvas/irv/view/ContextMenu';
 import ThumbNav from 'canvas/common/widgets/ThumbNav';
@@ -255,9 +255,9 @@ class Configurator {
     SimpleChart.MOUSE_MOVE_THROTTLE_DELAY = simple_chart_config.mouseMoveThrottleDelay;
 
     const rack_hint_config         = config.RACKSPACE.HINT.RACKHINT;
-    RackHint.RACK_TEXT       = rack_hint_config.rackText;
-    RackHint.CHASSIS_TEXT    = rack_hint_config.chassisText;
-    RackHint.DEVICE_TEXT     = rack_hint_config.deviceText;
+    RackSpaceHinter.RACK_TEXT       = rack_hint_config.rackText;
+    RackSpaceHinter.CHASSIS_TEXT    = rack_hint_config.chassisText;
+    RackSpaceHinter.DEVICE_TEXT     = rack_hint_config.deviceText;
 
     const thumb_hint_config = config.RACKSPACE.HINT.THUMBHINT;
     ThumbHint.CAPTION = thumb_hint_config.caption;

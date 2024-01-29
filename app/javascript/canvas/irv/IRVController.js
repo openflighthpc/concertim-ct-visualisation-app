@@ -19,7 +19,6 @@ import Events from 'canvas/common/util/Events';
 import Util from 'canvas/common/util/Util';
 import AssetManager from 'canvas/irv/util/AssetManager';
 import Hint from 'canvas/irv/view/Hint';
-import ThumbHint from 'canvas/irv/view/ThumbHint';
 import RackSpace from 'canvas/irv/view/RackSpace';
 import LiveUpdates from 'canvas/irv/view/LiveUpdates';
 import FunctionQueue from 'canvas/irv/view/FunctionQueue';
@@ -159,7 +158,7 @@ class IRVController {
     this.evMouseDownChart = this.evMouseDownChart.bind(this);
     this.evMouseUpChart = this.evMouseUpChart.bind(this);
     this.evDragChart = this.evDragChart.bind(this);
-    this.showRackHint = this.showRackHint.bind(this);
+    this.showHoverHint = this.showHoverHint.bind(this);
     this.showThumbHint = this.showThumbHint.bind(this);
     this.applyFilter = this.applyFilter.bind(this);
     this.evScrollRacks = this.evScrollRacks.bind(this);
@@ -1948,7 +1947,7 @@ class IRVController {
     // exit if moving over scrollbar area
     //return if div_coords.x > @rackElDims.width - @scrollAdjust or div_coords.y > @rackElDims.height - @scrollAdjust
 
-    this.hintTmr = setTimeout(this.showRackHint, IRVController.RACK_HINT_HOVER_DELAY);
+    this.hintTmr = setTimeout(this.showHoverHint, IRVController.RACK_HINT_HOVER_DELAY);
     this.ev      = event;
 
     this.rackSpace.hideHint();
@@ -2050,7 +2049,7 @@ class IRVController {
 
 
   // called from a timeout, displays rack view hover hint
-  showRackHint() {
+  showHoverHint() {
     let left;
     if (this.dragging) { return; }
     const coords = Util.resolveMouseCoords(this.rackSpace.coordReferenceEl, this.ev);
@@ -2068,7 +2067,7 @@ class IRVController {
 
     const device = this.rackSpace.getDeviceAt(coords.x, coords.y);
     coords = Util.resolveMouseCoords((left = $('tooltip').parentElement) != null ? left : $('tooltip').parentNode, this.ev);
-    return this.thumb.showHint(device, coords.x, coords.y);
+    this.thumb.showHint(device, coords.x, coords.y);
   }
 
 

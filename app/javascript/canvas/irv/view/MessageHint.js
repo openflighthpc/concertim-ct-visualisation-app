@@ -5,9 +5,6 @@
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
 
-import Util from 'canvas/common/util/Util';
-import Hint from 'canvas/irv/view/Hint';
-
 class MessageHint {
 
   constructor() {

@@ -1,17 +1,12 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS206: Consider reworking classes to avoid initClass
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-
 import Util from 'canvas/common/util/Util';
 
+// Hint manages a hint or tooltip DOM element.  When the IRV wants to display a
+// hint or tooltip the same DOM element is used.  The assumption is that only a
+// single tooltip should ever be shown.
+//
+// This class manages showing the given message at the given coordinates and
+// hiding the message.
 class Hint {
-  static initClass() {
-    this.PADDING  = 25;
-  }
-
   constructor(containerEl, model) {
     this.containerEl = containerEl;
     this.model = model;
@@ -19,35 +14,20 @@ class Hint {
     this.visible = false;
   }
 
-  // In this IRV general Hint, we have this 2 methods that calls the same function 'showContent'
-  // to deal with the PieCountdown (shared between DCPV and IRV) using the showMessage function, to show its simple tooltip message, 
-  // and the irv/RackHint or the dcpv/Hint using the show function to show the devices/racks complex tooltips contents.
-  // A main Hint class shared between DCPV and IRV should be considered.
-
+  // showMessage displays the given content at the given coordinates. 
   showMessage(content, x, y) {
-    return this.showContent(content, x, y);
-  }
-
-  show(content, x, y) {
-    return this.showContent(content, x, y);
-  }
-
-  showContent(content, x, y) {
     this.visible          = true;
     this.hintEl.innerHTML = content;
 
     // adjust when near to edges of the screen
-    const container_dims = Util.getElementDimensions(this.containerEl);
-    const hint_dims      = Util.getElementDimensions(this.hintEl);
-
-    x = (x + hint_dims.width) > container_dims.width ? x - hint_dims.width : x;
-    y = (y + hint_dims.height) > container_dims.height ? y - hint_dims.height : y;
-    this.x = x;
-    this.y = y;
+    const containerDims = Util.getElementDimensions(this.containerEl);
+    const hintDims      = Util.getElementDimensions(this.hintEl);
+    x = (x + hintDims.width) > containerDims.width ? x - hintDims.width : x;
+    y = (y + hintDims.height) > containerDims.height ? y - hintDims.height : y;
 
     Util.setStyle(this.hintEl, 'left', x + 'px');
     Util.setStyle(this.hintEl, 'top', y + 'px');
-    return Util.setStyle(this.hintEl, 'visibility', 'visible');
+    Util.setStyle(this.hintEl, 'visibility', 'visible');
   }
 
 
@@ -55,21 +35,9 @@ class Hint {
     if (this.visible) {
       Util.setStyle(this.hintEl, 'visibility', 'hidden');
       this.hintEl.innerHTML = ' ';
-      return this.visible = false;
+      this.visible = false;
     }
   }
-
-  refreshPosition() {
-    const container_dims = Util.getElementDimensions(this.containerEl);
-    const hint_dims      = Util.getElementDimensions(this.hintEl);
-  
-    this.x = (this.x + hint_dims.width) > container_dims.width ? this.x - ((this.x + hint_dims.width)-container_dims.width) - Hint.PADDING : this.x;
-    this.y = (this.y + hint_dims.height) > container_dims.height ? this.y - ((this.y + hint_dims.height)-container_dims.height) - Hint.PADDING : this.y;
-  
-    Util.setStyle(this.hintEl, 'left', this.x + 'px');
-    Util.setStyle(this.hintEl, 'top', this.y + 'px');
-    return Util.setStyle(this.hintEl, 'visibility', 'visible');
-  }
 };
-Hint.initClass();
+
 export default Hint;
