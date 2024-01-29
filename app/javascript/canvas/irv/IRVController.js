@@ -31,7 +31,6 @@ import Parser from 'canvas/irv/util/Parser';
 import PresetManager from 'canvas/common/util/PresetManager';
 import Profiler from 'Profiler';
 import ComboBox from 'util/ComboBox';
-import Tooltip from 'canvas/irv/view/Tooltip';
 import PieCountdown from 'canvas/common/widgets/PieCountdown';
 import RBAC from 'canvas/common/util/RBAC';
 import Dialog from 'util/Dialog';
@@ -670,8 +669,6 @@ class IRVController {
 
       this.connectMetricCombos();
     }
-
-    this.tooltip = new Tooltip();
 
     if ((this.options != null) && (this.options.applyfilter === "true")) { this.applyCrossAppSettings(); }
 
