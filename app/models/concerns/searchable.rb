@@ -64,7 +64,7 @@ module Searchable
       sanitized_term = "%#{sanitize_sql_like(term)}%"
 
       search_scope.reduce(none) do |accum, column|
-        accum.or(where("#{quote_column_name.(column)} ILIKE :term", term: sanitized_term))
+        accum.or(where("#{quoted_table_name}.#{quote_column_name.(column)} ILIKE :term", term: sanitized_term))
       end
     end
   end
