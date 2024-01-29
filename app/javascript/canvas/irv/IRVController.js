@@ -176,14 +176,12 @@ class IRVController {
     this.evMouseMoveFilter = this.evMouseMoveFilter.bind(this);
     this.evFilterStopDrag = this.evFilterStopDrag.bind(this);
     this.switchPreset = this.switchPreset.bind(this);
-    this.evGetHintInfo = this.evGetHintInfo.bind(this);
     this.evEditMetricPoll = this.evEditMetricPoll.bind(this);
     this.evSetMetricPoll = this.evSetMetricPoll.bind(this);
     this.evResetMetricPoller = this.evResetMetricPoller.bind(this);
     this.setMetricPoll = this.setMetricPoll.bind(this);
     this.setMetricPollInput = this.setMetricPollInput.bind(this);
     this.evDropFilterBar = this.evDropFilterBar.bind(this);
-    this.hintInfoReceived = this.hintInfoReceived.bind(this);
     this.evSwitchStat = this.evSwitchStat.bind(this);
     this.evSwitchGraphOrder = this.evSwitchGraphOrder.bind(this);
     this.config_file = '/irv/configuration';
@@ -599,7 +597,6 @@ class IRVController {
     if (this.filterBarEl != null) { Events.addEventListener(this.filterBarEl, 'mousedown', this.evMouseDownFilter); }
     if (this.filterBarEl != null) { Events.addEventListener(this.filterBarEl, 'mouseup', this.evMouseUpFilter); }
     if (this.filterBarEl != null) { Events.addEventListener(this.filterBarEl, 'mouseout', this.evMouseOutFilter); }
-    Events.addEventListener(window, 'getHintInfo', this.evGetHintInfo);
     if (this.metricPollInput != null) { Events.addEventListener(this.metricPollInput, 'keyup', this.evEditMetricPoll); }
     if (this.metricPollInput != null) { Events.addEventListener(this.metricPollInput, 'blur', this.evSetMetricPoll); }
 
@@ -2060,8 +2057,8 @@ class IRVController {
     let left;
     if (this.dragging) { return; }
     const coords = Util.resolveMouseCoords(this.rackSpace.coordReferenceEl, this.ev);
-    const pos    = ((left = $('tooltip').parentElement) != null ? left : $('tooltip').parentNode).getPosition();//@rackEl.getPosition()
-    return this.rackSpace.showHint({ x: this.ev.clientX - pos.x, y: this.ev.clientY - pos.y }, coords);
+    const pos    = $('tooltip').parentElement.getPosition();
+    this.rackSpace.showHint({ x: this.ev.clientX - pos.x, y: this.ev.clientY - pos.y }, coords);
   }
 
 
@@ -2334,21 +2331,6 @@ class IRVController {
     return this.presets.switchPreset();
   }
 
-  // context menu get hint info event handler, this requests from the server additional info on a device to show in the rack view
-  // hover hint
-  // @param  ev  the event object which invoked execution
-  evGetHintInfo(ev) {
-    let url = this.resources.path + this.resources.hintData.replace(/\[\[device_id\]\]/g, this.rackSpace.hint.device.id) + '?' + (new Date()).getTime();
-    url = url.replace(/\[\[componentClassName\]\]/g, this.rackSpace.hint.device.componentClassName);
-
-    return new Request.JSON({
-      url,
-      headers    : { 'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content') },
-      onComplete : this.hintInfoReceived
-    }).get();
-  }
-
-
   // metric poll input change event handler, validates new value and actions change on a timeout
   // @param  ev  the event object which invoked execution
   evEditMetricPoll(ev) {
@@ -2416,15 +2398,6 @@ class IRVController {
   // @param  ev  the event object which invoked execution
   evDropFilterBar(ev) {
     return this.updateLayout();
-  }
-
-
-  // callback invoked on receiving extra hover hint info from the server
-  // @param  hint_info an object containing hover hint information as returned by the server
-  hintInfoReceived(hint_info) {
-    if (hint_info != null) {
-      this.rackSpace.hint.appendData(hint_info);
-    }
   }
 
 

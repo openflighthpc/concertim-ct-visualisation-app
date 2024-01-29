@@ -258,7 +258,6 @@ class Configurator {
     RackHint.RACK_TEXT       = rack_hint_config.rackText;
     RackHint.CHASSIS_TEXT    = rack_hint_config.chassisText;
     RackHint.DEVICE_TEXT     = rack_hint_config.deviceText;
-    RackHint.MORE_INFO_DELAY = rack_hint_config.moreInfoDelay;
 
     const thumb_hint_config = config.RACKSPACE.HINT.THUMBHINT;
     ThumbHint.CAPTION = thumb_hint_config.caption;

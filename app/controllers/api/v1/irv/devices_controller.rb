@@ -1,16 +1,5 @@
 class Api::V1::Irv::DevicesController < Api::V1::Irv::BaseController
 
-  #
-  # GET /-/api/v1/irv/devices/:id/tooltip/
-  #
-  def tooltip
-    @device = Device.find_by_id(params[:id])
-    authorize! :read, @device
-    error_for('Device') if @device.nil?
-    # Currently, we don't have any extended tooltip data for devices.
-    render json: nil, status: :no_content
-  end
-
   # 
   # POST /-/api/v1/irv/devices/1/update_slot/
   # 

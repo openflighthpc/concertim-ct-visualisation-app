@@ -175,7 +175,7 @@ class RackSpace {
     if (this.model.showingRacks()) { this.centreRacks(); }
 
     if (this.model.showChart()) { this.chart       = new Chart(this.chartEl, this.model); }
-    this.hint        = new RackHint((left = $('tooltip').parentElement) != null ? left : $('tooltip').parentNode, this.model);
+    this.hint        = new RackHint($('tooltip').parentElement, this.model);
     this.contextMenu = new ContextMenu(this.rackEl, this.model, this.evContextClick);
     this.messageHint = new MessageHint();
 
@@ -1972,13 +1972,13 @@ class RackSpace {
     // ignore blades if viewing chassis level metrics
     if (device.pluggable && (this.metricLevel === 'chassis')) { device = device.parent(); }
     if (device instanceof ImageLink || device instanceof Link) { device = device.parent(); }
-    return this.hint.show(device, abs_coords.x, abs_coords.y);
+    this.hint.show(device, abs_coords.x, abs_coords.y);
   }
 
 
   // hides the hover hint
   hideHint() {
-    return this.hint.hide();
+    this.hint.hide();
   }
 
 

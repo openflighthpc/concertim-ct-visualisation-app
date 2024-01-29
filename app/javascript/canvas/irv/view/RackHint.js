@@ -11,7 +11,6 @@ import Hint from 'canvas/irv/view/Hint';
 import  Rack from 'canvas/irv/view/Rack';
 import  Chassis from 'canvas/irv/view/Chassis';
 import  Machine from 'canvas/irv/view/Machine';
-import  Events from 'canvas/common/util/Events';
 import  Util from 'canvas/common/util/Util';
 
 class RackHint extends Hint {
@@ -22,14 +21,6 @@ class RackHint extends Hint {
     this.CHASSIS_TEXT     = '<span style="font-weight: 700">Chassis: [[name]]</span><br><ul style="list-style-type: none;"><li>[[parent_name]]<li>[[metric_name]]<li>[[metric_value]]<li>[[u_height]]<li>[[num_rows]]<li>[[slots_per_row]]<li>[[u_position]]<li>[[slots_avaliable]]</ul>';
     this.DEVICE_TEXT      = '<span style="font-weight: 700">Device: [[name]]</span><br><ul style="list-style-type: none;"><li>';
     this.NO_METRIC        = 'No metric data available';
-    this.MORE_INFO_DELAY  = 1000;
-  }
-
-
-  constructor(container_el, model) {
-    super(container_el, model);
-    this.getMore = this.getMore.bind(this);
-    this.appendData = this.appendData.bind(this);
   }
 
 
@@ -121,43 +112,7 @@ class RackHint extends Hint {
     }
 
     this.device  = device;
-    this.moreTmr = setTimeout(this.getMore, RackHint.MORE_INFO_DELAY);
-    return super.show(caption, x, y);
-  }
-
-
-  hide() {
-    super.hide();
-    return clearTimeout(this.moreTmr);
-  }
-
-
-  getMore() {
-    return Events.dispatchEvent(this.hintEl, 'getHintInfo');
-  }
-
-
-  appendData(data) {
-    if (this.visible) {
-      const append = this.buildAppend(data, 0);
-      this.hintEl.innerHTML += append;
-      return this.refreshPosition();
-    }
-  }
-
-  buildAppend(data, indent) {
-    let append = '';
-    for (const [key, value] of Object.entries(data)) {
-      if (value == null || value === "") {
-        continue;
-      } else if (typeof value === "object" && !Array.isArray(value)) {
-        append += `<strong>${key}:</strong><br>`;
-        append += this.buildAppend(value, indent+1);
-      } else {
-        append += `<span style="padding-left: ${indent * 10}px">${key}: ${value}</span><br>`;
-      }
-    }
-    return append;
+    super.show(caption, x, y);
   }
 };
 RackHint.initClass();

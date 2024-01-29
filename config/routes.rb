@@ -91,7 +91,6 @@ Rails.application.routes.draw do
         namespace :irv do
           resources :racks, only: [:index] do
             member do
-              get :tooltip
               post :request_status_change
             end
             collection do 
@@ -105,13 +104,11 @@ Rails.application.routes.draw do
           end
           resources :chassis do
             member do
-              get :tooltip
               post :update_position
             end
           end
           resources :devices, only: [] do
             member do
-              get :tooltip
               post :update_slot
               post :request_status_change
             end

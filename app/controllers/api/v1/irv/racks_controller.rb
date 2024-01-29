@@ -20,14 +20,6 @@ class Api::V1::Irv::RacksController < Api::V1::Irv::BaseController
     @deleted = rack_ids - filtered_racks.pluck(:id)
   end
 
-  def tooltip
-    @rack = HwRack.find_by_id(params[:id])
-    authorize! :read, HwRack
-
-    error_for('Rack') if @rack.nil?
-    @rack = Api::V1::RackPresenter.new(@rack)
-  end
-
   def request_status_change
     @rack = HwRack.find(params[:id])
     authorize! :update, @rack
