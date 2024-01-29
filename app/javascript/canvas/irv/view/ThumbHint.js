@@ -15,7 +15,7 @@ class ThumbHint {
 
     show(device, x, y) {
         // find the containing rack
-        while (device.parent != null) { device = device.parent; }
+        while (device.parent() != null) { device = device.parent(); }
 
         let caption = Util.substitutePhrase(ThumbHint.CAPTION, 'device_name', device.name);
         caption = Util.cleanUpSubstitutions(caption);

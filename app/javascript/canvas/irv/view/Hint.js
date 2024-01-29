@@ -23,8 +23,20 @@ class Hint {
     const containerDims = Util.getElementDimensions(this.containerEl);
     const hintDims      = Util.getElementDimensions(this.hintEl);
     x = (x + hintDims.width) > containerDims.width ? x - hintDims.width : x;
+    x = x < 0 ? 0 : x;
     y = (y + hintDims.height) > containerDims.height ? y - hintDims.height : y;
+    y = y < 0 ? 0 : y;
+    let position = 'absolute';
 
+    const containerIsAncestor = Util.isAncestor(this.hintEl, this.containerEl);
+    if (!containerIsAncestor) {
+      const containerPos = this.containerEl.getCoordinates();
+      x = x + containerPos.left;
+      y = y + containerPos.top;
+      position = 'fixed';
+    }
+
+    Util.setStyle(this.hintEl, 'position', position);
     Util.setStyle(this.hintEl, 'left', x + 'px');
     Util.setStyle(this.hintEl, 'top', y + 'px');
     Util.setStyle(this.hintEl, 'visibility', 'visible');
