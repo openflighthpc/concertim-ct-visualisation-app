@@ -1,0 +1,6 @@
+<%=
+  render_tabbar do |tabs|
+    tabs.add 'Overview', rack_path(@rack)
+    tabs.add 'Devices', devices_rack_path(@rack)
+  end
+%>

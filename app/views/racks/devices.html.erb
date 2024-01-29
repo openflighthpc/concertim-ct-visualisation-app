@@ -1,0 +1,23 @@
+<% set_title "Rack: #{@rack.name}" -%>
+<%= render partial: 'racks/tabbar' %>
+
+<%=
+  render_tab_content do
+    render_resource_table_for @devices, searchable: true do |t|
+      t.on_empty_collection do
+        capture do
+          'No devices have been found.'
+        end
+      end
+
+      t.attribute_column :id, sortable: true
+      t.attribute_column :name, sortable: true
+      t.attribute_column :status, sortable: true
+      t.attribute_column :cost, sortable: true
+
+      t.actions_column do |actions, device|
+        actions.add title: 'View details', path: device_path(device)
+      end
+    end
+  end
+%>

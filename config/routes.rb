@@ -24,6 +24,11 @@ Rails.application.routes.draw do
   end
 
   resource :interactive_rack_views, only: :show, path: '/racks'
+  resources :racks, only: [:show] do
+    member do
+      get :devices
+    end
+  end
 
   scope '/cloud-env' do
     resource :cloud_service_config, path: '/config' do
