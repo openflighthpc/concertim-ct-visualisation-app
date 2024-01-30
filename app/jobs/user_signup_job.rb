@@ -21,7 +21,6 @@ class UserSignupJob < ApplicationJob
   end
 
   class Result
-    # this is probably overkill now we only expect/need cloud user id
     include HttpRequests::ResultSyncer
 
     property :cloud_user_id, from: :user_id, context: :cloud
