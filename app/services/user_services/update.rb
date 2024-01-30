@@ -10,7 +10,7 @@ module UserServices
     end
 
     def call(params)
-      updated = @actor.root? ? admin_update(params) : self_update(params)
+      updated = update(params)
       config = CloudServiceConfig.first
       changes = {password: @user.pending_foreign_password_previously_changed?, email: @user.email_previously_changed?}
       if updated && changes.values.any? && config.present?
@@ -20,6 +20,16 @@ module UserServices
     end
 
     private
+
+    def update(params)
+      if @actor == @user
+        self_update(params)
+      elsif @actor.root?
+        admin_update(params)
+      else
+        self_update(params)
+      end
+    end
 
     def admin_update(params)
       # An admin is performing the update, they get to update the user
