@@ -1,8 +1,7 @@
 <% set_title 'Account details' -%>
 
 <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { class: :no_border }) do |f| %>
-  <%# render_form_errors_for resource %>
-  <%= devise_error_messages! %>
+  <%= render "devise/shared/error_messages", resource: resource %>
 
   <div class="formItem">
     <%= f.label :name, "Name", :class => 'required_field' %>
