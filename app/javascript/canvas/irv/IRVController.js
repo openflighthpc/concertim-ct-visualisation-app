@@ -19,7 +19,6 @@ import Events from 'canvas/common/util/Events';
 import Util from 'canvas/common/util/Util';
 import AssetManager from 'canvas/irv/util/AssetManager';
 import Hint from 'canvas/irv/view/Hint';
-import ThumbHint from 'canvas/irv/view/ThumbHint';
 import RackSpace from 'canvas/irv/view/RackSpace';
 import LiveUpdates from 'canvas/irv/view/LiveUpdates';
 import FunctionQueue from 'canvas/irv/view/FunctionQueue';
@@ -31,7 +30,6 @@ import Parser from 'canvas/irv/util/Parser';
 import PresetManager from 'canvas/common/util/PresetManager';
 import Profiler from 'Profiler';
 import ComboBox from 'util/ComboBox';
-import Tooltip from 'canvas/irv/view/Tooltip';
 import PieCountdown from 'canvas/common/widgets/PieCountdown';
 import RBAC from 'canvas/common/util/RBAC';
 import Dialog from 'util/Dialog';
@@ -160,7 +158,7 @@ class IRVController {
     this.evMouseDownChart = this.evMouseDownChart.bind(this);
     this.evMouseUpChart = this.evMouseUpChart.bind(this);
     this.evDragChart = this.evDragChart.bind(this);
-    this.showRackHint = this.showRackHint.bind(this);
+    this.showHoverHint = this.showHoverHint.bind(this);
     this.showThumbHint = this.showThumbHint.bind(this);
     this.applyFilter = this.applyFilter.bind(this);
     this.evScrollRacks = this.evScrollRacks.bind(this);
@@ -176,14 +174,12 @@ class IRVController {
     this.evMouseMoveFilter = this.evMouseMoveFilter.bind(this);
     this.evFilterStopDrag = this.evFilterStopDrag.bind(this);
     this.switchPreset = this.switchPreset.bind(this);
-    this.evGetHintInfo = this.evGetHintInfo.bind(this);
     this.evEditMetricPoll = this.evEditMetricPoll.bind(this);
     this.evSetMetricPoll = this.evSetMetricPoll.bind(this);
     this.evResetMetricPoller = this.evResetMetricPoller.bind(this);
     this.setMetricPoll = this.setMetricPoll.bind(this);
     this.setMetricPollInput = this.setMetricPollInput.bind(this);
     this.evDropFilterBar = this.evDropFilterBar.bind(this);
-    this.hintInfoReceived = this.hintInfoReceived.bind(this);
     this.evSwitchStat = this.evSwitchStat.bind(this);
     this.evSwitchGraphOrder = this.evSwitchGraphOrder.bind(this);
     this.config_file = '/irv/configuration';
@@ -599,7 +595,6 @@ class IRVController {
     if (this.filterBarEl != null) { Events.addEventListener(this.filterBarEl, 'mousedown', this.evMouseDownFilter); }
     if (this.filterBarEl != null) { Events.addEventListener(this.filterBarEl, 'mouseup', this.evMouseUpFilter); }
     if (this.filterBarEl != null) { Events.addEventListener(this.filterBarEl, 'mouseout', this.evMouseOutFilter); }
-    Events.addEventListener(window, 'getHintInfo', this.evGetHintInfo);
     if (this.metricPollInput != null) { Events.addEventListener(this.metricPollInput, 'keyup', this.evEditMetricPoll); }
     if (this.metricPollInput != null) { Events.addEventListener(this.metricPollInput, 'blur', this.evSetMetricPoll); }
 
@@ -673,8 +668,6 @@ class IRVController {
 
       this.connectMetricCombos();
     }
-
-    this.tooltip = new Tooltip();
 
     if ((this.options != null) && (this.options.applyfilter === "true")) { this.applyCrossAppSettings(); }
 
@@ -1954,7 +1947,7 @@ class IRVController {
     // exit if moving over scrollbar area
     //return if div_coords.x > @rackElDims.width - @scrollAdjust or div_coords.y > @rackElDims.height - @scrollAdjust
 
-    this.hintTmr = setTimeout(this.showRackHint, IRVController.RACK_HINT_HOVER_DELAY);
+    this.hintTmr = setTimeout(this.showHoverHint, IRVController.RACK_HINT_HOVER_DELAY);
     this.ev      = event;
 
     this.rackSpace.hideHint();
@@ -2056,25 +2049,23 @@ class IRVController {
 
 
   // called from a timeout, displays rack view hover hint
-  showRackHint() {
+  showHoverHint() {
     let left;
     if (this.dragging) { return; }
     const coords = Util.resolveMouseCoords(this.rackSpace.coordReferenceEl, this.ev);
-    const pos    = ((left = $('tooltip').parentElement) != null ? left : $('tooltip').parentNode).getPosition();//@rackEl.getPosition()
-    return this.rackSpace.showHint({ x: this.ev.clientX - pos.x, y: this.ev.clientY - pos.y }, coords);
+    const pos    = $('tooltip').parentElement.getPosition();
+    this.rackSpace.showHint({ x: this.ev.clientX - pos.x, y: this.ev.clientY - pos.y }, coords);
   }
 
 
   // called from a timeout, translates thumb nav mouse coordinates into rack view coordinates and displays thumb navigation hover hint
   showThumbHint() {
-    let left;
-    let coords    = Util.resolveMouseCoords(this.thumbEl, this.ev);
-    coords.x /= this.thumb.scale * this.rackSpace.scale;
-    coords.y /= this.thumb.scale * this.rackSpace.scale;
-
-    const device = this.rackSpace.getDeviceAt(coords.x, coords.y);
-    coords = Util.resolveMouseCoords((left = $('tooltip').parentElement) != null ? left : $('tooltip').parentNode, this.ev);
-    return this.thumb.showHint(device, coords.x, coords.y);
+    const thumbCoords = Util.resolveMouseCoords(this.thumbEl, this.ev);
+    const rackSpaceCoords = {...thumbCoords};
+    rackSpaceCoords.x /= this.thumb.scale * this.rackSpace.scale;
+    rackSpaceCoords.y /= this.thumb.scale * this.rackSpace.scale;
+    const device = this.rackSpace.getDeviceAt(rackSpaceCoords.x, rackSpaceCoords.y);
+    this.thumb.showHint(device, thumbCoords.x, thumbCoords.y);
   }
 
 
@@ -2334,21 +2325,6 @@ class IRVController {
     return this.presets.switchPreset();
   }
 
-  // context menu get hint info event handler, this requests from the server additional info on a device to show in the rack view
-  // hover hint
-  // @param  ev  the event object which invoked execution
-  evGetHintInfo(ev) {
-    let url = this.resources.path + this.resources.hintData.replace(/\[\[device_id\]\]/g, this.rackSpace.hint.device.id) + '?' + (new Date()).getTime();
-    url = url.replace(/\[\[componentClassName\]\]/g, this.rackSpace.hint.device.componentClassName);
-
-    return new Request.JSON({
-      url,
-      headers    : { 'X-CSRF-Token': $$('meta[name="csrf-token"]')[0].getAttribute('content') },
-      onComplete : this.hintInfoReceived
-    }).get();
-  }
-
-
   // metric poll input change event handler, validates new value and actions change on a timeout
   // @param  ev  the event object which invoked execution
   evEditMetricPoll(ev) {
@@ -2416,15 +2392,6 @@ class IRVController {
   // @param  ev  the event object which invoked execution
   evDropFilterBar(ev) {
     return this.updateLayout();
-  }
-
-
-  // callback invoked on receiving extra hover hint info from the server
-  // @param  hint_info an object containing hover hint information as returned by the server
-  hintInfoReceived(hint_info) {
-    if (hint_info != null) {
-      this.rackSpace.hint.appendData(hint_info);
-    }
   }
 
 

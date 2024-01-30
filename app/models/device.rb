@@ -2,6 +2,8 @@ class Device < ApplicationRecord
 
   include LiveUpdate::Device
 
+  include Searchable
+  default_search_scope :name, :status
 
   #############################
   #

@@ -1,0 +1,29 @@
+<% set_title "Rack: #{@rack.name}" -%>
+<%= render partial: 'racks/tabbar' %>
+
+<%=
+  render_tab_content do
+    definition_list "Details" do |dl|
+      dl.item "Name:", @rack.name
+      dl.item "Height:", @rack.u_height
+      dl.item "Status:", @rack.status
+      dl.item "Cloud ID", @rack.openstack_id
+      dl.item "Billing Order ID", @rack.order_id
+
+      dl.item "Cost this billing period:", presenter_for(@rack, RackPresenter).currency_cost
+
+      dl.sublist "Owner" do |sl|
+        sl.item "Name", @rack.user.name
+        sl.item "Username", @rack.user.login
+      end
+
+      dl.item "Network details", @rack.network_details
+
+      dl.sublist "Creation Output" do |sl|
+        sl.item "Result", @rack.creation_output
+      end
+
+      dl.recurse_items "Metadata", @rack.metadata
+    end
+  end
+%>

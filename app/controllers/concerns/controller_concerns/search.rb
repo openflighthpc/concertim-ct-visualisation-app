@@ -12,7 +12,7 @@ module ControllerConcerns
     end
 
     def search_term
-      params[:search]    
+      params[:search]&.strip
     end
   end
 end

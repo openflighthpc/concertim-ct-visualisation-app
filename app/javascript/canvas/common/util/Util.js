@@ -143,6 +143,26 @@ const Util = {
     return list.sort(caseEval);
   },
 
+  // getParentElements returns an array of all parent elements of element.
+  getParentElements(element) {
+    const parents = [];
+    while (element.parentElement) {
+      parents.push(element.parentElement);
+      element = element.parentElement;
+    }
+    return parents;
+  },
+
+  // isAncestor returns true if ancestor is an ancestor of offspring.
+  isAncestor(offspring, ancestor) {
+    while (offspring.parentElement) {
+      if (offspring.parentElement === ancestor) {
+        return true;
+      }
+      offspring = offspring.parentElement;
+    }
+    return false;
+  },
 
   // Hide the given element.
   hideElement(element) {

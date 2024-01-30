@@ -24,11 +24,11 @@ module ControllerConcerns
     # Prepare the collection for use in a resource table.
     #
     # This will sort, search and paginate the collection.
-    def resource_table_collection(collection, human_sorting: false, search_scope: nil)
+    def resource_table_collection(collection, human_sorting: false, search_scope: nil, model: nil)
       return [] if collection.nil?
 
       if collection.respond_to?(:reorder)
-        exp = sort_expression(sort_column, sort_direction, human_sorting)
+        exp = sort_expression(sort_column, sort_direction, human_sorting, model)
         collection = collection.reorder(Arel.sql(exp))
       end
 

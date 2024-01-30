@@ -27,7 +27,6 @@ class ThumbNav {
 
   constructor(containerEl, maxWidth, maxHeight, model) {
     // assign a zero frame rate, we'll force the renderer to redraw on demand
-    let left;
     this.setDataCentreImage = this.setDataCentreImage.bind(this);
     this.setRackImage = this.setRackImage.bind(this);
     this.setImg = this.setImg.bind(this);
@@ -46,7 +45,7 @@ class ThumbNav {
     Util.setStyle(this.breachGfx.cvs, 'left', '0px');
     Util.setStyle(this.breachGfx.cvs, 'top', '0px');
 
-    this.hint = new ThumbHint((left = $('tooltip').parentElement) != null ? left : $('tooltip').parentNode, this.model);
+    this.hint = new ThumbHint(containerEl, this.model);
 
     this.area = {
       left   : 0,

@@ -24,6 +24,11 @@ Rails.application.routes.draw do
   end
 
   resource :interactive_rack_views, only: :show, path: '/racks'
+  resources :racks, only: [:show] do
+    member do
+      get :devices
+    end
+  end
 
   scope '/cloud-env' do
     resource :cloud_service_config, path: '/config' do
@@ -86,7 +91,6 @@ Rails.application.routes.draw do
         namespace :irv do
           resources :racks, only: [:index] do
             member do
-              get :tooltip
               post :request_status_change
             end
             collection do 
@@ -100,13 +104,11 @@ Rails.application.routes.draw do
           end
           resources :chassis do
             member do
-              get :tooltip
               post :update_position
             end
           end
           resources :devices, only: [] do
             member do
-              get :tooltip
               post :update_slot
               post :request_status_change
             end

@@ -25,7 +25,7 @@ import Chassis from 'canvas/irv/view/Chassis';
 import Machine from 'canvas/irv/view/Machine';
 import Chart from 'canvas/irv/view/IRVChart';
 import MessageHint from 'canvas/irv/view/MessageHint';
-import RackHint from 'canvas/irv/view/RackHint';
+import RackSpaceHinter from 'canvas/irv/view/RackSpaceHinter';
 import ContextMenu from 'canvas/irv/view/ContextMenu';
 import ViewModel from 'canvas/irv/ViewModel';
 import Link from 'canvas/irv/view/Link';
@@ -175,7 +175,7 @@ class RackSpace {
     if (this.model.showingRacks()) { this.centreRacks(); }
 
     if (this.model.showChart()) { this.chart       = new Chart(this.chartEl, this.model); }
-    this.hint        = new RackHint((left = $('tooltip').parentElement) != null ? left : $('tooltip').parentNode, this.model);
+    this.hint        = new RackSpaceHinter($('tooltip').parentElement, this.model);
     this.contextMenu = new ContextMenu(this.rackEl, this.model, this.evContextClick);
     this.messageHint = new MessageHint();
 
@@ -1956,29 +1956,21 @@ class RackSpace {
 
 
   // public method, displays a hover hint for a device
-  // @param  abs_coords  an object with x/y properties of the absolute coordinates. This is necessary to position the hint
-  // @param  rel_coords  an object with x/y properties of the relative coordinates. This is necessary to find the device
-  showHint(abs_coords, rel_coords) {
+  // @param  absCoords  an object with x/y properties of the absolute coordinates. This is necessary to position the hint
+  // @param  relCoords  an object with x/y properties of the relative coordinates. This is necessary to find the device
+  showHint(absCoords, relCoords) {
     if (this.contextMenu.visible) { return; }
-
-    rel_coords.x /= this.scale;
-    rel_coords.y /= this.scale;
-
-    let device = this.getDeviceAt(rel_coords.x, rel_coords.y);
-  
-    // no device? Nothing to do
+    relCoords.x /= this.scale;
+    relCoords.y /= this.scale;
+    const device = this.getDeviceAt(relCoords.x, relCoords.y);
     if (device == null) { return; }
-
-    // ignore blades if viewing chassis level metrics
-    if (device.pluggable && (this.metricLevel === 'chassis')) { device = device.parent(); }
-    if (device instanceof ImageLink || device instanceof Link) { device = device.parent(); }
-    return this.hint.show(device, abs_coords.x, abs_coords.y);
+    this.hint.show(device, absCoords.x, absCoords.y);
   }
 
 
   // hides the hover hint
   hideHint() {
-    return this.hint.hide();
+    this.hint.hide();
   }
 
 
