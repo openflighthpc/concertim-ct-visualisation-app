@@ -175,7 +175,7 @@ class RackSpaceHinter {
     // hint text
     show(device, x, y) {
         // ignore blades if viewing chassis level metrics
-        if (device.pluggable && (this.metricLevel === 'chassis')) { device = device.parent(); }
+        if (device.pluggable && (this.model.metricLevel() === 'chassis')) { device = device.parent(); }
         if (device instanceof ImageLink || device instanceof Link) { device = device.parent(); }
 
         const captionBuilder = this.captionBuilder(device); 
