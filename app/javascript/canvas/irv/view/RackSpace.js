@@ -175,7 +175,7 @@ class RackSpace {
     if (this.model.showingRacks()) { this.centreRacks(); }
 
     if (this.model.showChart()) { this.chart       = new Chart(this.chartEl, this.model); }
-    this.hint        = new RackSpaceHinter($('tooltip').parentElement, this.model, this);
+    this.hint        = new RackSpaceHinter($('tooltip').parentElement, this.model);
     this.contextMenu = new ContextMenu(this.rackEl, this.model, this.evContextClick);
     this.messageHint = new MessageHint();
 
@@ -1960,7 +1960,11 @@ class RackSpace {
   // @param  relCoords  an object with x/y properties of the relative coordinates. This is necessary to find the device
   showHint(absCoords, relCoords) {
     if (this.contextMenu.visible) { return; }
-    this.hint.show(absCoords, relCoords);
+    relCoords.x /= this.scale;
+    relCoords.y /= this.scale;
+    const device = this.getDeviceAt(relCoords.x, relCoords.y);
+    if (device == null) { return; }
+    this.hint.show(device, absCoords.x, absCoords.y);
   }
 
 

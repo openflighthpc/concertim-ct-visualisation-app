@@ -164,25 +164,16 @@ class RackSpaceHinter {
     static CHASSIS_TEXT = '<span>Chassis: [[name]]</span>';
     static DEVICE_TEXT = '<span>Device: [[name]]</span>';
 
-    constructor(containerEl, model, rackSpace) {
+    constructor(containerEl, model) {
         this.hint = new Hint(containerEl, model);
         this.model = model;
-        this.rackSpace = rackSpace;
     }
 
 
-    // show displays a hint for the device under the cursor if any. This grabs
-    // all relevant values from the device and substitutes them in to the hint
-    // text
-    //
-    // @param  absCoords  an object with x/y properties of the absolute coordinates. This is necessary to position the hint
-    // @param  relCoords  an object with x/y properties of the relative coordinates. This is necessary to find the device
-    show(absCoords, relCoords) {
-        relCoords.x /= this.rackSpace.scale;
-        relCoords.y /= this.rackSpace.scale;
-
-        let device = this.rackSpace.getDeviceAt(relCoords.x, relCoords.y);
-        if (device == null) { return; }
+    // show displays a hint for the given device at the given coordinates. This
+    // grabs all relevant values from the device and substitutes them in to the
+    // hint text
+    show(device, x, y) {
         // ignore blades if viewing chassis level metrics
         if (device.pluggable && (this.metricLevel === 'chassis')) { device = device.parent(); }
         if (device instanceof ImageLink || device instanceof Link) { device = device.parent(); }
@@ -190,7 +181,7 @@ class RackSpaceHinter {
         const captionBuilder = this.captionBuilder(device); 
         const caption = captionBuilder.build(this.formattedMetric(device), this.metricTemplate());
 
-        this.hint.showMessage(caption, absCoords.x, absCoords.y);
+        this.hint.showMessage(caption, x, y);
     }
 
     hide() {
