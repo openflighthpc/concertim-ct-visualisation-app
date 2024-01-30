@@ -2060,11 +2060,12 @@ class IRVController {
 
   // called from a timeout, translates thumb nav mouse coordinates into rack view coordinates and displays thumb navigation hover hint
   showThumbHint() {
-    let coords = Util.resolveMouseCoords(this.thumbEl, this.ev);
-    coords.x /= this.thumb.scale * this.rackSpace.scale;
-    coords.y /= this.thumb.scale * this.rackSpace.scale;
-    const device = this.rackSpace.getDeviceAt(coords.x, coords.y);
-    this.thumb.showHint(device, coords.x, coords.y);
+    const thumbCoords = Util.resolveMouseCoords(this.thumbEl, this.ev);
+    const rackSpaceCoords = {...thumbCoords};
+    rackSpaceCoords.x /= this.thumb.scale * this.rackSpace.scale;
+    rackSpaceCoords.y /= this.thumb.scale * this.rackSpace.scale;
+    const device = this.rackSpace.getDeviceAt(rackSpaceCoords.x, rackSpaceCoords.y);
+    this.thumb.showHint(device, thumbCoords.x, thumbCoords.y);
   }
 
 
