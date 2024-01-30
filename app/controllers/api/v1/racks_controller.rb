@@ -14,9 +14,8 @@ class Api::V1::RacksController < Api::V1::ApplicationController
 
   def create
     @rack = HwRack.new(rack_params)
-    @rack.save
 
-    if @rack.persisted?
+    if @rack.save
       @rack = Api::V1::RackPresenter.new(@rack)
       render action: :show
     else
