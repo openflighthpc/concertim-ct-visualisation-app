@@ -2,7 +2,7 @@ module Irv
   module HwRackServices
     class Show < Irv::HwRackServices::Index
 
-      def self.call(rack_id=nil, slow=false)
+      def self.call(rack_id, slow=false)
         new(rack_id, slow).call
       end
 

@@ -52,7 +52,6 @@ class InteractiveRackView
         else
           nil
         end
-      # This is a temporary hacky solution, as only applicable for show subclass, which should have its own logic
       if user
         permitted_ids = HwRack.accessible_by(user.ability).pluck('id')
         if requested_ids.nil?

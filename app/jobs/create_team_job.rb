@@ -1,7 +1,5 @@
 require 'faraday'
 
-# Openstack service will need to create a project and assign the admin, and create a billing account.
-# In other words, same as existing user sign up job, but without creating a user.
 class CreateTeamJob < ApplicationJob
   queue_as :default
 
