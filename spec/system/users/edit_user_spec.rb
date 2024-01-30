@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "users edit page", type: :system do
+RSpec.describe "admin user editing other users", type: :system do
   let(:admin_password) { 'admin-password' }
   let!(:admin) { create(:user, :admin, password: admin_password) }
 
