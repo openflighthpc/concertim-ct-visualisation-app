@@ -19,7 +19,6 @@ import SimpleChart from 'canvas/common/widgets/SimpleChart';
 // * updating the title of the chart as the data changes.
 // * showing tooltips on mouse over.
 // * highlighting the chart data for the currently highlighted device.
-// * allowing further filtering of the devices via drag and drop.
 class LBC {
     // statics overwritten by config
     static TITLE_CAPTION  = 'something about cats';
@@ -459,113 +458,6 @@ class LBC {
         }
 
         return { activeSelection, selection, count };
-    }
-
-    selectWithinBox(box) {
-        const selected = this.getSelection(box);
-        this.modelRefs.activeSelection(selected.activeSelection);
-        this.modelRefs.selectedDevices(selected.selection);
-    }
-
-    startDrag(x, y) {
-        // overlay a canvas where the selection box will be drawn
-        this.fx = new SimpleRenderer(this.containerEl, this.cvs.width, this.cvs.height, 1, LBC.FPS);
-        Util.setStyle(this.fx.cvs, 'position', 'absolute');
-        Util.setStyle(this.fx.cvs, 'left', 0);
-        Util.setStyle(this.fx.cvs, 'top', 0);
-        this.boxAnchor = { x, y };
-
-        // create box shape
-        this.box = this.fx.addRect({
-            x,
-            y,
-            stroke      : LBC.SELECT_BOX_STROKE,
-            strokeWidth : LBC.SELECT_BOX_STROKE_WIDTH,
-            alpha       : LBC.SELECT_BOX_ALPHA,
-            width       : 1,
-            height      : 1});
-
-        // create label
-        this.selCount = this.fx.addText({
-            x       : x + LBC.SELECT_COUNT_OFFSET_X,
-            y       : y + LBC.SELECT_COUNT_OFFSET_Y,
-            fill    : LBC.SELECT_COUNT_FILL,
-            bgFill  : LBC.SELECT_COUNT_BG_FILL,
-            bgAlpha : LBC.SELECT_COUNT_BG_ALPHA,
-            font    : LBC.SELECT_COUNT_FONT,
-            padding : LBC.SELECT_COUNT_PADDING,
-            caption : ''});
-    }
-
-    drag(x, y) {
-        this.dragBox(x, y);
-        const box = {
-            x      : this.fx.getAttribute(this.box, 'x'),
-            y      : this.fx.getAttribute(this.box, 'y'),
-            width  : this.fx.getAttribute(this.box, 'width'),
-            height : this.fx.getAttribute(this.box, 'height')
-        };
-
-        box.left   = box.x;
-        box.top    = box.y;
-        box.right  = box.left + box.width;
-        box.bottom = box.top + box.height;
-
-        // update selection count
-        this.fx.setAttributes(this.selCount, {
-            caption : LBC.SELECT_COUNT_CAPTION.replace(/\[\[selection_count\]\]/g, this.getSelection(box).count),
-            x       : box.x + LBC.SELECT_COUNT_OFFSET_X,
-            y       : box.y + LBC.SELECT_COUNT_OFFSET_Y
-        });
-    }
-
-    stopDrag(x, y) {
-        this.fx.destroy();
-
-        const box = {};
-        if (x > this.boxAnchor.x) {
-            box.x     = this.boxAnchor.x;
-            box.width = x - this.boxAnchor.x;
-        } else {
-            box.x     = x;
-            box.width = this.boxAnchor.x - x;
-        }
-
-        if (y > this.boxAnchor.y) {
-            box.y      = this.boxAnchor.y;
-            box.height = y - this.boxAnchor.y;
-        } else {
-            box.y      = y;
-            box.height = this.boxAnchor.y - y;
-        }
-
-        box.left   = box.x;
-        box.right  = box.x + box.width;
-        box.top    = box.y;
-        box.bottom = box.y + box.height;
-        this.selectWithinBox(box);
-    }
-
-    dragBox(x, y) {
-        const attrs = {};
-
-        if (x > this.boxAnchor.x) {
-            attrs.x     = this.boxAnchor.x;
-            attrs.width = x - this.boxAnchor.x;
-        } else {
-            attrs.x     = x;
-            attrs.width = this.boxAnchor.x - x;
-        }
-
-        if (y > this.boxAnchor.y) {
-            attrs.y      = this.boxAnchor.y;
-            attrs.height = y - this.boxAnchor.y;
-        } else {
-            attrs.y      = y;
-            attrs.height = this.boxAnchor.y - y;
-        }
-
-        this.fx.setAttributes(this.box, attrs);
     }
 
     // makePositionLookup populates this.posLookup object which is used for

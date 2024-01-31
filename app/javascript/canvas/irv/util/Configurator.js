@@ -14,6 +14,7 @@ import Parser from 'canvas/irv/util/Parser';
 import Util from 'canvas/common/util/Util';
 import AssetManager from 'canvas/irv/util/AssetManager';
 import RackSpace from 'canvas/irv/view/RackSpace';
+import RackSpaceDragHandler from 'canvas/irv/view/RackSpaceDragHandler';
 import RackSpaceObject from 'canvas/irv/view/RackSpaceObject';
 import RackObject from 'canvas/irv/view/RackObject';
 import NameLabel from 'canvas/irv/view/NameLabel';
@@ -128,9 +129,6 @@ class Configurator {
     RackSpace.FPS                            = rackspace_config.fps;
     RackSpace.ADDITIONAL_ROW_TOLERANCE       = rackspace_config.additionalRowTolerance;
     RackSpace.ZOOM_DURATION                  = rackspace_config.zoomDuration;
-    RackSpace.DRAG_FADE_FILL                 = rackspace_config.drag.fadeFill;
-    RackSpace.DRAG_FADE_ALPHA                = rackspace_config.drag.fadeAlpha;
-    RackSpace.DRAG_SNAP_RANGE                = rackspace_config.drag.snapRange;
     RackSpace.INFO_FADE_DURATION             = rackspace_config.infoFadeDuration;
     RackSpace.FLIP_DURATION                  = rackspace_config.flipDuration;
     RackSpace.FLIP_DELAY                     = rackspace_config.flipDelay;
@@ -147,6 +145,8 @@ class Configurator {
     RackSpace.CHART_SELECTION_COUNT_CAPTION  = rackspace_config.selectionCount.caption;
     RackSpace.CHART_SELECTION_COUNT_OFFSET_X = rackspace_config.selectionCount.offsetX;
     RackSpace.CHART_SELECTION_COUNT_OFFSET_Y = rackspace_config.selectionCount.offsetY;
+
+    RackSpaceDragHandler.SNAP_RANGE = rackspace_config.drag.snapRange;
 
     const rack_object_config           = config.RACKSPACE.RACKOBJECT;
     RackObject.BLANK_FILL        = rack_object_config.blankFill;
@@ -275,7 +275,6 @@ class Configurator {
     FilterBar.THICKNESS                = filter_bar_config.thickness;
     FilterBar.LENGTH                   = filter_bar_config.length;
     FilterBar.PADDING                  = filter_bar_config.padding;
-    FilterBar.MODEL_UPDATE_DELAY       = filter_bar_config.slider.updateDelay;
     FilterBar.DRAG_TAB_FILL            = filter_bar_config.slider.fill;
     FilterBar.DRAG_TAB_SHAPE           = filter_bar_config.slider.shape;
     FilterBar.DRAG_TAB_STROKE          = filter_bar_config.slider.stroke;
@@ -290,9 +289,6 @@ class Configurator {
     FilterBar.FONT                     = filter_bar_config.font;
     FilterBar.FONT_SIZE                = filter_bar_config.fontSize;
     FilterBar.FONT_FILL                = filter_bar_config.fontFill;
-    FilterBar.DRAG_BOX_STROKE          = filter_bar_config.dragBox.stroke;
-    FilterBar.DRAG_BOX_STROKE_WIDTH    = filter_bar_config.dragBox.strokeWidth;
-    FilterBar.DRAG_BOX_ALPHA           = filter_bar_config.dragBox.alpha;
     FilterBar.MODEL_DEPENDENCIES       = filter_bar_config.modelDependencies;
     FilterBar.LABEL_MIN_SEPARATION     = filter_bar_config.labelMinSeparation;
 

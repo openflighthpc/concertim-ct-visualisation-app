@@ -155,9 +155,6 @@ class IRVController {
     this.evMouseOutThumb = this.evMouseOutThumb.bind(this);
     this.evZoomComplete = this.evZoomComplete.bind(this);
     this.evFlipComplete = this.evFlipComplete.bind(this);
-    this.evMouseDownChart = this.evMouseDownChart.bind(this);
-    this.evMouseUpChart = this.evMouseUpChart.bind(this);
-    this.evDragChart = this.evDragChart.bind(this);
     this.showHoverHint = this.showHoverHint.bind(this);
     this.showThumbHint = this.showThumbHint.bind(this);
     this.applyFilter = this.applyFilter.bind(this);
@@ -179,7 +176,6 @@ class IRVController {
     this.evResetMetricPoller = this.evResetMetricPoller.bind(this);
     this.setMetricPoll = this.setMetricPoll.bind(this);
     this.setMetricPollInput = this.setMetricPollInput.bind(this);
-    this.evDropFilterBar = this.evDropFilterBar.bind(this);
     this.evSwitchStat = this.evSwitchStat.bind(this);
     this.evSwitchGraphOrder = this.evSwitchGraphOrder.bind(this);
     this.config_file = '/irv/configuration';
@@ -579,7 +575,6 @@ class IRVController {
     if ($('print_link') != null) { Events.addEventListener($('print_link'), 'click', this.printScreen); }
     if ($('export_link') != null) { Events.addEventListener($('export_link'), 'click', this.exportData); }
 
-    if (this.filterBarEl != null) { Events.addEventListener(this.filterBarEl, 'filterBarSetAnchor', this.evDropFilterBar); }
     Events.addEventListener(this.rackEl, 'rackSpaceZoomComplete', this.evZoomComplete);
     Events.addEventListener(this.rackEl, 'rackSpaceFlipComplete', this.evFlipComplete);
     Events.addEventListener(this.rackEl, 'rackSpaceReset', this.evReset);
@@ -884,7 +879,7 @@ class IRVController {
 
     this.rackSpace.clearAllRacksAsFocused();
     this.rackSpace.setMetricLevel(this.currentMetricLevel);
-    return this.filterBar.resetFilters();
+    this.filterBar.resetFilters();
   }
 
   // zoom in button click event handler, zooms to next zoom preset
@@ -1783,23 +1778,19 @@ class IRVController {
     let coords      = Util.resolveMouseCoords(this.rackSpace.coordReferenceEl, ev);
     const rack_coords = Util.resolveMouseCoords(this.rackEl, ev);
 
-    // ensure mouse down hasn't originated from the scrollbar region
-    if (true) { // rack_coords.x - @rackEl.scrollLeft < @rackElDims.width - @scrollAdjust and rack_coords.y - @rackEl.scrollTop < @rackElDims.height - @scrollAdjust
-      if (ev.which === 1) {
-        this.downCoords = {x:coords.x,y:coords.y};
+    if (ev.which === 1) {
+      this.downCoords = {x:coords.x,y:coords.y};
 
-        // get device at the present coordinates 
-        coords.x /= this.rackSpace.scale;
-        coords.y /= this.rackSpace.scale;
-        const device = this.rackSpace.getDeviceAt(coords.x, coords.y);
+      // get device at the present coordinates 
+      coords.x /= this.rackSpace.scale;
+      coords.y /= this.rackSpace.scale;
+      const device = this.rackSpace.getDeviceAt(coords.x, coords.y);
 
-        return Events.addEventListener(this.rackEl, 'mousemove', this.evDrag);
-      } else if (ev.which === 2) {
-        coords = Util.resolveMouseCoords(this.rackSpace.coordReferenceEl, ev);
-        return this.rackSpace.middleClick(coords.x, coords.y);
-      }
-    } else {
-      return this.downCoords = null;
+      return Events.addEventListener(this.rackEl, 'mousemove', this.evDrag);
+    } else if (ev.which === 2) {
+      // XXX Do we have middleClick support?  What is it?
+      coords = Util.resolveMouseCoords(this.rackSpace.coordReferenceEl, ev);
+      return this.rackSpace.middleClick(coords.x, coords.y);
     }
   }
 
@@ -2009,45 +2000,6 @@ class IRVController {
   }
 
 
-  // LBC mouse down event handler, initialises drag event handling
-  // @param  ev  the event object which invoked execution
-  evMouseDownChart(ev) {
-    const coords      = Util.resolveMouseCoords(this.chartEl, ev);
-    this.downCoords = coords;
-    return Events.addEventListener(this.chartEl, 'mousemove', this.evDragChart);
-  }
-
-
-  // LBC mouse up event handler, clears drag event handling and actions any selection box which has been created
-  // @param  ev  the event object which invoked execution
-  evMouseUpChart(ev) {
-    this.upCoords = Util.resolveMouseCoords(this.chartEl, ev);
-    Events.removeEventListener(this.chartEl, 'mousemove', this.evDragChart);
-
-    if (this.dragging) {
-      const coords = Util.resolveMouseCoords(this.chartEl, ev);
-      this.rackSpace.stopDragChart(coords.x, coords.y);
-      return this.dragging = false;
-    }
-  }
-
-
-  // LBC drag event handler, invoked on mouse move with the left button depressed. Actions dragging only if mouse has moved beyond a
-  // threshold distance from the originating click coordinates
-  // @param  ev  the event object which invoked execution
-  evDragChart(ev) {
-    const coords = Util.resolveMouseCoords(this.chartEl, ev);
-    if (!this.dragging) {
-      this.dragging = Math.sqrt(Math.pow(coords.x - this.downCoords.x, 2) + Math.pow(coords.y - this.downCoords.y, 2)) > IRVController.DRAG_ACTIVATION_DIST;
-      if (this.dragging) {
-        this.rackSpace.startDragChart(this.downCoords.x, this.downCoords.y);
-      }
-    } else {
-      this.rackSpace.dragChart(coords.x, coords.y);
-    }
-  }
-
-
   // called from a timeout, displays rack view hover hint
   showHoverHint() {
     let left;
@@ -2072,10 +2024,6 @@ class IRVController {
   // disables mouse events to prevent user interaction during zoom/flip animations. This is probably redundant now following implementation
   // of the update message
   disableMouse() {
-    if (this.model.showChart()) { Events.removeEventListener(this.chartEl, 'mousedown', this.evMouseDownChart); }
-    if (this.model.showChart()) { Events.removeEventListener(this.chartEl, 'mouseup', this.evMouseUpChart); }
-    if (this.model.showChart()) { Events.removeEventListener(this.chartEl, 'mousemove', this.evMouseMoveChart); }
-
     Events.removeEventListener(this.rackEl, 'mousedown', this.evMouseDownRack);
     Events.removeEventListener(this.rackEl, 'mouseup', this.evMouseUpRack);
     Events.removeEventListener(this.rackEl, 'mousemove', this.evMouseMoveRack);
@@ -2095,10 +2043,6 @@ class IRVController {
   // enables  mouse events on completion of zoom/flip animations. This is probably redundant now following implementation of the update
   // message
   enableMouse() {
-    if (this.model.showChart()) { Events.addEventListener(this.chartEl, 'mousedown', this.evMouseDownChart); }
-    if (this.model.showChart()) { Events.addEventListener(this.chartEl, 'mouseup', this.evMouseUpChart); }
-    if (this.model.showChart()) { Events.addEventListener(this.chartEl, 'mousemove', this.evMouseMoveChart); }
-
     Events.addEventListener(this.rackEl, 'mousedown', this.evMouseDownRack);
     Events.addEventListener(this.rackEl, 'mouseup', this.evMouseUpRack);
     Events.addEventListener(this.rackEl, 'mousemove', this.evMouseMoveRack);
@@ -2299,19 +2243,9 @@ class IRVController {
     const coords = Util.resolveMouseCoords(this.filterBarEl, ev);
 
     if (this.slider != null) {
-      return this.filterBar.dragSlider(this.slider, coords.x, coords.y);
+      this.filterBar.dragSlider(this.slider, coords.x, coords.y);
     }
   }
-    //else
-    //  if @dragging
-    //    @filterBar.dragBar(ev.pageX, ev.pageY)
-    //  else
-    //    # commence dragging only if the user has moved the mouse a certain distance
-    //    @dragging = Math.sqrt(Math.pow(coords.x - @downCoords.x, 2) + Math.pow(coords.y - @downCoords.y, 2)) > IRVController.DRAG_ACTIVATION_DIST
-    //    if @dragging
-    //      @filterBar.startDrag()
-    //      Events.addEventListener(document.window, 'mouseup', @evFilterStopDrag)
-
 
   // filter bar drag complete handler, invoked on mouse up during dragging. It'll take you longer to read this comment than it will the
   // code below... see? wasn't that a waste of time?
@@ -2385,13 +2319,6 @@ class IRVController {
   // @param  poll_rate the new poll rate value
   setMetricPollInput(poll_rate) {
     return this.metricPollInput.value = poll_rate / 1000;
-  }
-
-
-  // filter bar drop event handler, called on mouse up having first dragged the filter bar
-  // @param  ev  the event object which invoked execution
-  evDropFilterBar(ev) {
-    return this.updateLayout();
   }
 
 

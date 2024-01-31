@@ -285,8 +285,7 @@
       "fill"          : "#999999",
       "stroke"        : "#444444",
       "strokeWidth"   : 1,
-      "disabledAlpha" : 0.2,
-      "updateDelay"   : 1000
+      "disabledAlpha" : 0.2
     },
 
     "cutoffLine":
@@ -301,13 +300,6 @@
       "width"       : 40,
       "spacing"     : 20,
       "updateDelay" : 2000
-    },
-
-    "dragBox":
-    {
-      "stroke"      : "#99ccff",
-      "strokeWidth" : 10,
-      "alpha"       : 1
     },
 
     "modelDependencies":
@@ -361,8 +353,6 @@
 
     "drag": 
     {
-      "fadeFill"  : "#000000",
-      "fadeAlpha" : 0.7,
       "snapRange" : 30
     },
 
