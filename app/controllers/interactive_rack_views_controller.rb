@@ -1,5 +1,4 @@
 class InteractiveRackViewsController < ApplicationController
-
   def show
     authorize! :read, InteractiveRackView
     @show = "full_irv"

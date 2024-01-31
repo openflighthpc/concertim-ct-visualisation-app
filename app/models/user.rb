@@ -124,16 +124,4 @@ class User < ApplicationRecord
     update(deleted_at: Time.current)
     allowlisted_jwts.destroy_all
   end
-
-  ####################################
-  #
-  # Private Instance Methods
-  #
-  ####################################
-
-  private
-
-  def strip_project_id
-    self.project_id = nil if self.project_id.blank?
-  end
 end
