@@ -14,7 +14,6 @@ class CreateTeamRoleJob < ApplicationJob
   end
 
   class Result
-    attr_reader :status_code
 
     def initialize(success, error_message)
       @success = !!success

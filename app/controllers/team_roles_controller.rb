@@ -12,7 +12,6 @@ class TeamRolesController < ApplicationController
   def new
     @team_role = TeamRole.new(team_id: @team.id)
     authorize! :create, @team_role
-    set_possible_users
   end
 
   def create
@@ -22,7 +21,6 @@ class TeamRolesController < ApplicationController
     @cloud_service_config = CloudServiceConfig.first
     if @cloud_service_config.nil?
       flash.now.alert = "Unable to create team role: cloud environment config not set."
-      set_possible_users
       render action: :new
       return
     end
@@ -30,22 +28,19 @@ class TeamRolesController < ApplicationController
     unless @team_role.user&.cloud_user_id
       flash.now[:alert] = "Unable to add user to team: user does not yet have a cloud ID. " \
                       "This will be added automatically shortly."
-      set_possible_users
       render action: :new
       return
     end
 
     unless @team_role.team&.project_id
-      flash.now[:alert] = "Unable to add user to team: project does not yet have a project id. " \
+      flash.now[:alert] = "Unable to add user to team: team does not yet have a project id. " \
                       "This will be added automatically shortly."
-      set_possible_users
       render action: :new
       return
     end
 
     unless @team_role.valid?
       flash.now[:alert] = "Unable to add user to team."
-      set_possible_users
       render action: :new
       return
     end
@@ -57,7 +52,6 @@ class TeamRolesController < ApplicationController
       redirect_to team_team_roles_path(@team)
     else
       flash.now[:alert] = result.error_message
-      set_possible_users
       render action: :new
     end
   end
@@ -116,11 +110,5 @@ class TeamRolesController < ApplicationController
 
   def set_team
     @team = Team.find(params[:team_id])
-  end
-
-  def set_possible_users
-    existing_users = @team.users
-    admins = User.where(root: true)
-    @possible_users = User.where.not(id: existing_users + admins)
   end
 end
