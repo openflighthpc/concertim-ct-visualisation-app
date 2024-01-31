@@ -21,6 +21,14 @@ class Team < ApplicationRecord
 
   ####################################
   #
+  # Hooks
+  #
+  ####################################
+
+  before_validation :strip_project_id
+
+  ####################################
+  #
   # Associations
   #
   ####################################
@@ -96,6 +104,10 @@ class Team < ApplicationRecord
   ####################################
 
   private
+
+  def strip_project_id
+    self.project_id = nil if self.project_id.blank?
+  end
 
   def complete_billing_period
     unless !!billing_period_start == !!billing_period_end
