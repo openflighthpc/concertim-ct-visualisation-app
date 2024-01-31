@@ -195,7 +195,6 @@ RSpec.describe "users index page table", type: :system do
     end
 
     it "respects both sort order and pagination" do
-      #visit users_path
       visit users_path(direction: :asc, sort: :name)
       table = find('.resource_table')
 
