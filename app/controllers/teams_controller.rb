@@ -40,11 +40,10 @@ class TeamsController < ApplicationController
   def destroy
     if TeamServices::Delete.call(@team)
       flash[:info] = "Scheduled team for deletion"
-      redirect_to teams_path
     else
       flash[:alert] = "Unable to schedule team for deletion"
-      redirect_to teams_path
     end
+    redirect_to teams_path
   end
 
   private
