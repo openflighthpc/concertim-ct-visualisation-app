@@ -36,6 +36,10 @@ class TeamPresenter < Presenter
     form_hint(:billing_acct_id)
   end
 
+  def possible_new_users
+    @possible_users ||= User.where.not(id: o.user_ids).where.not(root: true)
+  end
+
   private
 
   def form_hint(attribute)

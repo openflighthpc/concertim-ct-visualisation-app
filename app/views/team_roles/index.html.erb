@@ -1,7 +1,7 @@
 <% set_title "Manage users for team #{@team.name}" -%>
 
 <% if current_user.can?(:create, TeamRole.new(team_id: @team.id)) %>
-  <%= link_to "+ New user role", new_team_team_role_path, class: "button" %>
+  <%= link_to "+ Add user to team", new_team_team_role_path, class: "button" %>
 <% end %>
 
 <div id="team-roles-table">
