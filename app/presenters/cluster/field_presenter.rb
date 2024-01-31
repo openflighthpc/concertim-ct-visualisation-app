@@ -35,8 +35,8 @@ class Cluster
     end
 
     def constraint_text
-      if constraints.any?
-        content = constraint_names.map {|name| constraints[name][:description] }.join(". ")
+      unless constraints.empty?
+        content = constraints.map(&:description).join(". ")
         h.tag.div(content, class: 'constraint-text')
       end
     end
@@ -65,13 +65,13 @@ class Cluster
     def min_max
       return {} unless type == "number"
 
-      get_constraint_details("range")
+      constraints[:range]&.definition || {}
     end
 
     def required_length
       return {} unless %w[string json comma_delimited_list].include?(type)
 
-      required = get_constraint_details("length")
+      required = constraints[:length]&.definition || {}
       required.keys.each do |key|
         required["#{key}length".to_sym] = required.delete(key)
       end
@@ -82,10 +82,12 @@ class Cluster
     def allowed_pattern
       return {} unless type == "string"
 
-      pattern = get_constraint_details("allowed_pattern")
-      return {} if pattern.empty?
-
-      { pattern: pattern }
+      pattern = constraints[:allowed_pattern]
+      if pattern.nil?
+        {}
+      else
+        { pattern: pattern.definition }
+      end
     end
 
     # possible future improvement: have JS for creating text boxes for each array/ hash option instead of
