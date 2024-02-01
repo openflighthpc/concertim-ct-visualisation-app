@@ -82,6 +82,7 @@ class SyncAllClusterTypesJob < ApplicationJob
         type.name = type_details["title"]
         type.description = type_details["description"]
         type.fields = ordered_fields(type_details["parameters"])
+        type.field_groups = type_details["parameter_groups"]
         type.version = type_details["last_modified"]
         unless type.save
           errors << "Unable to #{type.persisted? ? "update" : "create"} type '#{type.descriptive_name}': #{type.errors.full_messages.join("; ")}"

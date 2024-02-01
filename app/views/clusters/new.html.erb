@@ -10,17 +10,45 @@
   <%= cell('cluster_form_errors').(:show, @cluster) %>
   <%= cell('cluster_form_name').(:show, @cluster, f) %>
 
-  <h4>Cluster Parameters</h4>
-  <% @cluster.fields.each do |field| %>
-    <% field = Cluster::FieldPresenter.new(field, self) %>
-    <%= f.fields_for :cluster_params, field do |cluster_param| %>
-      <div class="formItem">
-        <%= field.form_label(cluster_param) %>
-        <%= field.error_message(cluster_param) %>
-        <%= field.form_input(cluster_param) %>
-        <%= field.constraint_text %>
+  <% unless @cluster.field_groups.ungrouped_fields.empty? %>
+    <div class="cluster-field-group">
+      <h4 class="cluster-field-group-label">Cluster Parameters</h4>
+      <div class="cluster-field-group-fields">
+        <% @cluster.field_groups.ungrouped_fields.each do |field| %>
+          <% field = Cluster::FieldPresenter.new(field, self) %>
+          <%= f.fields_for :cluster_params, field do |cluster_param| %>
+            <div class="formItem">
+              <%= field.form_label(cluster_param) %>
+              <%= field.error_message(cluster_param) %>
+              <%= field.form_input(cluster_param) %>
+              <%= field.constraint_text %>
+            </div>
+          <% end %>
+        <% end %>
       </div>
-    <% end %>
+    </div>
+  <% end %>
+
+  <% @cluster.field_groups.each do |field_group| %>
+    <div class="cluster-field-group">
+      <h4 class="cluster-field-group-label"><%= field_group.label %></h4>
+      <% unless field_group.description.blank? %>
+        <div class="cluster-field-group-description"><%= field_group.description %></div>
+      <% end %>
+      <div class="cluster-field-group-fields">
+        <% field_group.fields.each do |field| %>
+          <% field = Cluster::FieldPresenter.new(field, self) %>
+          <%= f.fields_for :cluster_params, field do |cluster_param| %>
+            <div class="formItem">
+              <%= field.form_label(cluster_param) %>
+              <%= field.error_message(cluster_param) %>
+              <%= field.form_input(cluster_param) %>
+              <%= field.constraint_text %>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
   <% end %>
 
   <%= f.submit 'Create' %>

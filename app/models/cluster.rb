@@ -10,6 +10,7 @@ class Cluster
   attr_accessor :cluster_type
   attr_accessor :name
   attr_accessor :fields
+  attr_accessor :field_groups
 
   ####################################
   #
@@ -37,7 +38,8 @@ class Cluster
   def initialize(cluster_type:, name: nil, cluster_params: nil)
     @cluster_type = cluster_type
     @name = name
-    @fields = cluster_type.fields.map { |id, details| Cluster::Field.new(id, details) }.sort_by(&:order)
+    @field_groups = Cluster::FieldGroups.new(self, cluster_type.field_groups, cluster_type.fields)
+    @fields = @field_groups.fields
     fields.each { |field| field.value = cluster_params[field.id] } if cluster_params
   end
 

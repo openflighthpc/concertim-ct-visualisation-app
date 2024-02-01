@@ -2,7 +2,7 @@ class Cluster::Field
   include ActiveModel::Validations
 
   # Format and options are driven by content defined in
-  # https://docs.openstack.org/heat/latest/template_guide/hot_spec.html#parameter-groups-section
+  # https://docs.openstack.org/heat/latest/template_guide/hot_spec.html#parameters-section
 
   ####################################
   #
