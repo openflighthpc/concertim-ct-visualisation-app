@@ -31,10 +31,10 @@ class Cluster::Field
             presence: true,
             inclusion: { in: %w(string number comma_delimited_list json boolean) }
 
-  validates :id, :label, :value, :order,
+  validates :id, :label, :order,
             presence: true
 
-  validate :valid_number?, if: -> { value && type == "number" }
+  validate :valid_number?, if: -> { type == "number" }
   validate :valid_json?, if: -> { value && type == "json" }
   validate :valid_boolean?, if: -> { value && type == "boolean" }
   validate :validate_modulo_constraint, if: -> { should_validate_constraint?(:modulo) }
@@ -42,6 +42,7 @@ class Cluster::Field
   validate :validate_length_constraint, if: -> { should_validate_constraint?(:length) }
   validate :validate_pattern,           if: -> { should_validate_constraint?(:allowed_pattern) }
   validate :validate_allowed_value,     if: -> { should_validate_constraint?(:allowed_values) }
+  validate :validate_required,          if: -> { should_validate_constraint?('concertim.required') }
 
   ############################
   #
@@ -100,13 +101,17 @@ class Cluster::Field
   end
 
   def valid_number?
-    unless type == "number" && ([Float, Integer].include?(value.class) || /^-?\d*\.?\d+$/.match?(value))
+    return unless type == "number"
+    return if value.blank?
+
+    unless [Float, Integer].include?(value.class) || /^-?\d*\.?\d+$/.match?(value)
       errors.add(:value, "must be a valid number")
     end
   end
 
   def valid_json?
     return unless type == "json"
+    return if value.blank?
 
     begin
       JSON.parse(value)
@@ -116,7 +121,10 @@ class Cluster::Field
   end
 
   def valid_boolean?
-    unless type == "boolean" && ["f", "false", false, "0", 0, "off", "t", "true", true, "1", 1, "on"].include?(value)
+    return unless type == "boolean"
+    return if value.blank?
+
+    unless ["f", "false", false, "0", 0, "off", "t", "true", true, "1", 1, "on"].include?(value)
       errors.add(:value, "must be a valid boolean")
     end
   end
@@ -129,6 +137,7 @@ class Cluster::Field
 
   def validate_modulo_constraint
     return unless type == "number"
+    return if value.blank?
 
     constraint = constraints["modulo"]
     number = value.to_f
@@ -142,6 +151,7 @@ class Cluster::Field
 
   def validate_range_constraint
     return unless type == "number"
+    return if value.blank?
 
     constraint = constraints["range"]
     number = value.to_f
@@ -160,6 +170,7 @@ class Cluster::Field
 
   def validate_length_constraint
     return unless %w(string comma_delimited_list json).include?(type)
+    return if value.blank?
 
     constraint = constraints["length"]
     length = value.length
@@ -178,6 +189,7 @@ class Cluster::Field
 
   def validate_pattern
     return unless type == "string"
+    return if value.blank?
 
     constraint = constraints["allowed_pattern"]
     pattern = constraint.definition
@@ -192,10 +204,17 @@ class Cluster::Field
     constraint = constraints["allowed_values"]
     allowed_values = constraint.definition
     return if allowed_values.empty?
+    return if value.blank?
 
     unless allowed_values.include?(value) || (type == "number" && allowed_values.include?(value.to_f))
       error_message = constraint.description || "must be chosen from one of the drop down options"
       errors.add(:value, error_message)
+    end
+  end
+
+  def validate_required
+    if value.blank?
+      errors.add(:value, :blank)
     end
   end
 end
