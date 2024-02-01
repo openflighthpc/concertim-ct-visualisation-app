@@ -18,7 +18,7 @@ class Cluster
     def form_label(form)
       classes = %w(required_field)
       classes << 'label_with_errors' unless o.errors.empty?
-      form.label id.to_sym, label, class: classes.join(' '), title: form_description
+      form.label id.to_sym, label, class: classes.join(' '), title: label_tooltip
     end
 
     def error_message(form)
@@ -55,11 +55,15 @@ class Cluster
       options
     end
 
-    def form_description
-      details = description
+    def label_tooltip
+      details = ""
       details << "\nThis field cannot be changed once set." if immutable
       details << "\nThis field will be hidden from users." if hidden
       details
+    end
+
+    def form_description
+      h.tag.div(description, class: 'cluster-field-description')
     end
 
     def min_max
