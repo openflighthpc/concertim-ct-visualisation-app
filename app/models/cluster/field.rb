@@ -38,11 +38,7 @@ class Cluster::Field
   validate :valid_json?, if: -> { value && type == "json" }
   validate :valid_boolean?, if: -> { value && type == "boolean" }
   validate :validate_constraint_formats
-  validate :validate_modulo_constraint, if: -> { should_validate_constraint?(:modulo) }
-  validate :validate_range_constraint,  if: -> { should_validate_constraint?(:range) }
-  validate :validate_length_constraint, if: -> { should_validate_constraint?(:length) }
-  validate :validate_pattern,           if: -> { should_validate_constraint?(:allowed_pattern) }
-  validate :validate_allowed_value,     if: -> { should_validate_constraint?(:allowed_values) }
+  validate :validate_constraints
 
   ############################
   #
@@ -131,82 +127,20 @@ class Cluster::Field
     end
   end
 
-  def should_validate_constraint?(constraint_type)
-    # Only validate against a constraint if we have a value and the constraint
-    # is defined for this field and its definition is valid.
-    value && @constraints.has_constraint?(constraint_type) && @constraints[constraint_type].valid?
-  end
-
-
-  def validate_modulo_constraint
-    return unless type == "number"
-
-    constraint = constraints["modulo"]
-    number = value.to_f
-    offset = constraint.definition["offset"]
-    step = constraint.definition["step"]
-    unless (offset && number == offset) || (offset ? number - offset : number) % step == 0
-      error_message = constraint.description || "must match step of #{step}#{" and offset of #{offset}" if offset}"
-      errors.add(:value, error_message)
-    end
-  end
-
-  def validate_range_constraint
-    return unless type == "number"
-
-    constraint = constraints["range"]
-    number = value.to_f
-    min = constraint.definition["min"]
-    max = constraint.definition["max"]
-    unless (!min || number >= min) && (!max || number <= max)
-      error_message = constraint.description
-      if error_message.blank?
-        error_message = "must be "
-        error_message << "at least #{min}" if min
-        error_message << "#{ " and " if min}at most #{max}" if max
+  def validate_constraints
+    if value
+      @constraints.each do |constraint|
+        unless constraint.valid?
+          Rails.logger.info("Skipping constraint #{constraint.id}: invalid definition: #{constraint.errors.details}")
+          next
+        end
+        validator = constraint.validator
+        if validator.nil?
+          Rails.logger.info("Skipping constraint #{constraint.id}: no validator defined")
+          next
+        end
+        validator.validate(self)
       end
-      errors.add(:value, error_message)
-    end
-  end
-
-  def validate_length_constraint
-    return unless %w(string comma_delimited_list json).include?(type)
-
-    constraint = constraints["length"]
-    length = value.length
-    min = constraint.definition["min"]
-    max = constraint.definition["max"]
-    unless (!min || length >= min) && (!max || length <= max)
-      error_message = constraint.description
-      if error_message.blank?
-        error_message = "must be "
-        error_message << "at least #{min} characters" if min
-        error_message << "#{ " and " if min}at most #{max} characters" if max
-      end
-      errors.add(:value, error_message)
-    end
-  end
-
-  def validate_pattern
-    return unless type == "string"
-
-    constraint = constraints["allowed_pattern"]
-    pattern = constraint.definition
-    reg = Regexp.new(pattern)
-    unless reg.match?(value) && !reg.match(value).to_s.blank?
-      error_message = constraint.description || "must match pattern #{pattern}"
-      errors.add(:value, error_message)
-    end
-  end
-
-  def validate_allowed_value
-    constraint = constraints["allowed_values"]
-    allowed_values = constraint.definition
-    return if allowed_values.empty?
-
-    unless allowed_values.include?(value) || (type == "number" && allowed_values.include?(value.to_f))
-      error_message = constraint.description || "must be chosen from one of the drop down options"
-      errors.add(:value, error_message)
     end
   end
 end
