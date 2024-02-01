@@ -14,11 +14,11 @@ class Cluster::FieldConstraints
     @constraints.map(&block)
   end
 
-  def has_constraint?(type)
-    !!self[type]
+  def has_constraint?(id)
+    !!self[id]
   end
 
-  def [](type)
-    @constraints.find { |c| c.type == type.to_s }
+  def [](id)
+    @constraints.find { |c| c.id == id.to_s }
   end
 end

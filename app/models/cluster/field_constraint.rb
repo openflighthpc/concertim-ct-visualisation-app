@@ -26,15 +26,22 @@
 # Currently, the supported constraints and their definitions are as documented
 # at
 # https://docs.openstack.org/heat/latest/template_guide/hot_spec.html#parameter-constraints.
-# There is no current support for custom constraints.
+#
+# Whilst custom constraints are supported, zero custom constraints are
+# currently implemented.
 class Cluster::FieldConstraint
   include ActiveModel::Model
   include ActiveModel::Attributes
 
+  # The ID of the constraint.  For standard constraints this will be the same
+  # as its type, e.g., `length`, or `allowed_pattern`.  For custom constraints
+  # this will the same as its definition, e.g., `glance.image` or `net_cidr`.
+  attribute :id, :string
   attribute :description, :string
   attribute :type, :string
   attribute :definition
 
+  validates :id, presence: true
   validates :type, presence: true
   validates :definition, presence: true
 
@@ -51,7 +58,12 @@ class Cluster::FieldConstraint
     if type
       definition = kwargs.delete(type)
     end
-    super(kwargs.merge(type: type, definition: definition))
+    id = type
+    if type == "custom_constraint"
+      id = definition
+    end
+
+    super(kwargs.merge(id: id, type: type, definition: definition))
   end
 
   def name
