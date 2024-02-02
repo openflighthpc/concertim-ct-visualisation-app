@@ -31,8 +31,8 @@ class Device < ApplicationRecord
   belongs_to :chassis, foreign_key: :base_chassis_id
   has_one :rack, through: :chassis, source: :rack
   has_one :location, through: :chassis, source: :location
-
   has_one :template, through: :chassis, source: :template
+  has_one :team, through: :rack
 
   belongs_to :details, polymorphic: :true, dependent: :destroy
 
@@ -109,6 +109,9 @@ class Device < ApplicationRecord
     metadata['openstack_instance_id']
   end
 
+  def team
+    self.rack.team
+  end
 
   ############################
   #
