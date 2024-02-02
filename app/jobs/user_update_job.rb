@@ -6,10 +6,9 @@ class UserUpdateJob < ApplicationJob
   retry_on ::Faraday::Error, wait: :polynomially_longer, attempts: RETRY_ATTEMPTS
 
   def perform(user, changes, cloud_service_config, **options)
-    # If the user doesn't have any cloud or billing IDs there is no need to involve the middleware.
-    if user.cloud_user_id.nil? && user.billing_acct_id.nil?
-      return
-    end
+    # If the user doesn't have a cloud ID there is no need to involve the middleware.
+    return if user.cloud_user_id.nil?
+
     runner = Runner.new(
       user: user,
       changes: changes,
@@ -58,7 +57,6 @@ class UserUpdateJob < ApplicationJob
           project_id: @cloud_service_config.admin_project_id,
         },
         user_info: {
-          billing_acct_id: @user.billing_acct_id,
           cloud_user_id: @user.cloud_user_id,
           new_data: {}.tap do |h|
             h[:email] = @user.email if @changes[:email]
