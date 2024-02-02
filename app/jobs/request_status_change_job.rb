@@ -38,6 +38,7 @@ class RequestStatusChangeJob < ApplicationJob
     def initialize(target:, type:, action:, user:, **kwargs)
       @target = target
       @type = type
+      @rack = @target.is_a?(HwRack) ? @target : @target.rack
       @action = action
       @user = user
       super(**kwargs)
@@ -73,7 +74,7 @@ class RequestStatusChangeJob < ApplicationJob
             auth_url: @cloud_service_config.internal_auth_url,
             user_id: (@user.root? ? @cloud_service_config.admin_user_id : @user.cloud_user_id),
             password: @user.root? ? @cloud_service_config.admin_foreign_password : @user.foreign_password,
-            project_id: @user.root? ? @cloud_service_config.admin_project_id : @user.project_id
+            project_id: @user.root? ? @cloud_service_config.admin_project_id : @rack.team.project_id
           },
         action: @action
       }
