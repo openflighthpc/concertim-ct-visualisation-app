@@ -17,8 +17,7 @@ class UserPresenter < Presenter
   end
 
   def delete_confirmation_message
-    "Are you sure you want to delete user #{o.name} (#{o.login})?" \
-      " This will delete all of their racks and devices."
+    "Are you sure you want to delete user #{o.name} (#{o.login})?"
   end
 
   def team_role_list
