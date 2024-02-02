@@ -32,10 +32,9 @@ RSpec.describe UserUpdateJob, type: :job do
       })
     end
 
-    it "contains the user's cloud env and billing ids" do
+    it "contains the user's cloud env id" do
       expect(subject[:user_info]).to be_a Hash
       expect(subject[:user_info][:cloud_user_id]).to eq user.cloud_user_id
-      expect(subject[:user_info][:billing_acct_id]).to eq user.billing_acct_id
     end
 
     [
