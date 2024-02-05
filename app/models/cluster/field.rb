@@ -62,7 +62,7 @@ class Cluster::Field
   end
 
   def constraints=(constraints)
-    @constraints = Cluster::FieldConstraints.new(self, constraints.map { |c| Cluster::FieldConstraint.new(**c) })
+    @constraints = Cluster::FieldConstraints.new(constraints.map { |c| Cluster::FieldConstraint.new(**c) })
   end
 
   def allowed_values?

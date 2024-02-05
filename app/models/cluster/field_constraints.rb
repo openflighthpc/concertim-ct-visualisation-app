@@ -1,8 +1,7 @@
 # Cluster::FieldConstraints models a collection of constraints for a single
 # cluster type parameter (aka Cluster::Field).
 class Cluster::FieldConstraints
-  def initialize(field, constraints)
-    @field = field
+  def initialize(constraints)
     @constraints = constraints
   end
 
