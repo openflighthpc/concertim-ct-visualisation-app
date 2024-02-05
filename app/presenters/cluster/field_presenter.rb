@@ -16,8 +16,7 @@ class Cluster
     end
 
     def form_label(form)
-      classes = []
-      classes << 'required_field' if o.constraints.has_constraint?('concertim.required')
+      classes = %w(required_field)
       classes << 'label_with_errors' unless o.errors.empty?
       form.label id.to_sym, label, class: classes.join(' '), title: form_description
     end
@@ -44,7 +43,7 @@ class Cluster
 
     def form_options
       options = {
-        required: o.constraints.has_constraint?('concertim.required'),
+        required: form_field_type != 'check_box',
         class: 'new-cluster-field',
         name: "cluster[cluster_params][#{id}]",
         id: "cluster_cluster_params_#{id}"
