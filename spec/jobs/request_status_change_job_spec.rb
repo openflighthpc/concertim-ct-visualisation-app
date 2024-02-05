@@ -3,13 +3,13 @@ require 'rails_helper'
 RSpec.describe RequestStatusChangeJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
   let(:cloud_service_config) { create(:cloud_service_config, admin_project_id: Faker::Alphanumeric.alphanumeric(number: 10), admin_user_id: Faker::Alphanumeric.alphanumeric(number: 10)) }
-  let(:customer_user) { create(:user, project_id: Faker::Alphanumeric.alphanumeric(number: 10), cloud_user_id: Faker::Alphanumeric.alphanumeric(number: 10)) }
+  let(:customer_user) { create(:user, :with_openstack_account) }
   let(:admin) { create(:user, :admin) }
   let(:user) { customer_user }
   let(:device) { create(:device, chassis: chassis, status: "ACTIVE") }
   let(:chassis) { create(:chassis, location: location, template: device_template) }
   let(:location) { create(:location, rack: rack) }
-  let(:rack) { create(:rack, user: user, template: rack_template, status: "ACTIVE") }
+  let(:rack) { create(:rack, template: rack_template, status: "ACTIVE") }
   let(:device_template) { create(:template, :device_template) }
   let(:rack_template) { create(:template, :rack_template) }
   let(:action) { "destroy" }
@@ -67,7 +67,7 @@ RSpec.describe RequestStatusChangeJob, type: :job do
                                             "auth_url" => cloud_service_config.internal_auth_url,
                                             "user_id" => user.cloud_user_id,
                                             "password" => user.foreign_password,
-                                            "project_id" => user.project_id
+                                            "project_id" => rack.team.project_id
                                           })
       end
     end
