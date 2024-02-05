@@ -14,6 +14,10 @@ class Cluster::FieldConstraints
     @constraints.map(&block)
   end
 
+  def each(&block)
+    @constraints.each(&block)
+  end
+
   def has_constraint?(id)
     !!self[id]
   end

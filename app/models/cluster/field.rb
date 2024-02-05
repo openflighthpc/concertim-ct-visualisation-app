@@ -37,6 +37,7 @@ class Cluster::Field
   validate :valid_number?, if: -> { value && type == "number" }
   validate :valid_json?, if: -> { value && type == "json" }
   validate :valid_boolean?, if: -> { value && type == "boolean" }
+  validate :validate_constraint_formats
   validate :validate_modulo_constraint, if: -> { should_validate_constraint?(:modulo) }
   validate :validate_range_constraint,  if: -> { should_validate_constraint?(:range) }
   validate :validate_length_constraint, if: -> { should_validate_constraint?(:length) }
@@ -121,11 +122,21 @@ class Cluster::Field
     end
   end
 
+  def validate_constraint_formats
+    constraints.each do |constraint|
+      next if constraint.valid?
+      constraint.errors.full_messages_for(constraint.id).each do |error_message|
+        errors.add(:constraint, error_message)
+      end
+    end
+  end
+
   def should_validate_constraint?(constraint_type)
     # Only validate against a constraint if we have a value and the constraint
     # is defined for this field and its definition is valid.
     value && @constraints.has_constraint?(constraint_type) && @constraints[constraint_type].valid?
   end
+
 
   def validate_modulo_constraint
     return unless type == "number"

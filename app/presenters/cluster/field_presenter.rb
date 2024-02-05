@@ -23,7 +23,11 @@ class Cluster
 
     def error_message(form)
       return nil if o.errors.empty?
-      h.tag.span(o.errors.messages_for(:value).to_sentence, class: 'error-message')
+      if o.errors.include?(:constraint)
+        h.tag.span(o.errors.full_messages.to_sentence, class: 'error-message')
+      else
+        h.tag.span(o.errors.messages_for(:value).to_sentence, class: 'error-message')
+      end
     end
 
     def form_input(form)
