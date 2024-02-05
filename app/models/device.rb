@@ -109,10 +109,6 @@ class Device < ApplicationRecord
     metadata['openstack_instance_id']
   end
 
-  def team
-    self.rack.team
-  end
-
   ############################
   #
   # Private Instance Methods
