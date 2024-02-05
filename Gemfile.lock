@@ -107,7 +107,8 @@ GEM
       cells (>= 4.1.6, < 5.0.0)
     concurrent-ruby (1.2.3)
     connection_pool (2.4.1)
-    crack (0.4.5)
+    crack (0.4.6)
+      bigdecimal
       rexml
     crass (1.0.6)
     dartsass-rails (0.4.1)
@@ -351,7 +352,7 @@ DEPENDENCIES
   capybara
   cells-erb (~> 0.1.0)
   cells-rails (~> 0.1.5)
-  crack (~> 0.4.5)
+  crack (~> 0.4.6)
   dartsass-rails (= 0.4.1)
   debug
   devise (~> 4.9.3)
