@@ -95,7 +95,6 @@ class Cluster::Field
     {
       hidden: false,
       immutable: false,
-      constraints: {},
     }
   end
 

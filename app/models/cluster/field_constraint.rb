@@ -79,7 +79,7 @@ class Cluster::FieldConstraint
   ############################
 
   def validate_definition_format
-    self.send("validate_#{type}_definition") if self.respond_to?("validate_#{type}_definition", true)
+    self.send("validate_#{type}_format") if self.respond_to?("validate_#{type}_format", true)
   end
 
   def validate_modulo_format
