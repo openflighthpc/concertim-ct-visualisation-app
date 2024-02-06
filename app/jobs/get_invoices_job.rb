@@ -73,11 +73,9 @@ class GetInvoicesJob < ApplicationJob
 
     def body
       {
-        invoices: {
-          billing_account_id: @user.billing_acct_id,
-          offset: @offset,
-          limit: @limit,
-        },
+         billing_acct_id: @user.billing_acct_id,
+         offset: @offset,
+         limit: @limit,
       }
     end
   end

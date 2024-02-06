@@ -56,7 +56,7 @@ class UserDeletionJob < ApplicationJob
 
     def url
       url = URI(@cloud_service_config.user_handler_base_url)
-      url.path = "/delete_user"
+      url.path = "/user"
       url.to_s
     end
 

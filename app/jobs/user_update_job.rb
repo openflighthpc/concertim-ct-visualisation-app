@@ -33,7 +33,7 @@ class UserUpdateJob < ApplicationJob
     end
 
     def call
-      response = super
+      response = connection.patch("", body)
       if response.success?
         @user.foreign_password = @user.pending_foreign_password
         @user.pending_foreign_password = nil
@@ -45,7 +45,7 @@ class UserUpdateJob < ApplicationJob
 
     def url
       url = URI(@cloud_service_config.user_handler_base_url)
-      url.path = "/change_user_details"
+      url.path = "/user"
       url.to_s
     end
 

@@ -5,7 +5,7 @@ RSpec.describe UserUpdateJob, type: :job do
   let!(:user) { create(:user, :with_openstack_details) }
   let(:changes) { {} }
   let(:cloud_service_config) { create(:cloud_service_config) }
-  let(:update_users_path) { "/change_user_details" }
+  let(:update_users_path) { "/user" }
   let(:expected_url) {
     "#{cloud_service_config.user_handler_base_url}#{update_users_path}"
   }
@@ -91,7 +91,7 @@ RSpec.describe UserUpdateJob, type: :job do
 
       context "when the request is successful" do
         before(:each) do
-          stubs.post(expected_url) { |env| [ 204, {}, "No Content"] }
+          stubs.patch(expected_url) { |env| [ 204, {}, "No Content"] }
           allow_any_instance_of(described_class::Runner).to receive(:test_stubs).and_return(stubs)
         end
 
@@ -106,7 +106,7 @@ RSpec.describe UserUpdateJob, type: :job do
 
       context "when the request is unsuccessful" do
         before(:each) do
-          stubs.post(expected_url) { |env| [ 500, {}, {"error" => "Some error message"}] }
+          stubs.patch(expected_url) { |env| [ 500, {}, {"error" => "Some error message"}] }
           allow_any_instance_of(described_class::Runner).to receive(:test_stubs).and_return(stubs)
         end
 

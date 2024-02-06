@@ -70,10 +70,8 @@ class GetInvoiceJob < ApplicationJob
 
     def body
       {
-        invoice: {
-          billing_account_id: @user.billing_acct_id,
-          invoice_id: @invoice_id,
-        },
+        billing_acct_id: @user.billing_acct_id,
+        invoice_id: @invoice_id,
       }
     end
   end

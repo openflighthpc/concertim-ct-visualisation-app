@@ -4,7 +4,7 @@ RSpec.describe UserDeletionJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
   let!(:user) { create(:user, :with_openstack_details) }
   let(:cloud_service_config) { create(:cloud_service_config) }
-  let(:delete_user_path) { "/delete_user" }
+  let(:delete_user_path) { "/user" }
   let(:expected_url) {
     "#{cloud_service_config.user_handler_base_url}#{delete_user_path}"
   }

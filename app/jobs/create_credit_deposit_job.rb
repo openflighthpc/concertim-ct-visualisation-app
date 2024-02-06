@@ -56,15 +56,13 @@ class CreateCreditDepositJob < ApplicationJob
     end
 
     def path
-      "/add_credits"
+      "/credits"
     end
 
     def body
       {
-        credits: {
-          billing_account_id: @credit_deposit.billing_acct_id,
-          credits_to_add: @credit_deposit.amount
-        }
+        billing_acct_id: @credit_deposit.billing_acct_id,
+        amount: @credit_deposit.amount
       }
     end
   end
