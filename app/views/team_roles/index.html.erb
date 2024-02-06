@@ -20,7 +20,7 @@
       <% presenter = presenter_for(team_role) %>
       <%
         actions.add_with_auth(can: :destroy, on: team_role,
-                              title: 'Delete',
+                              title: 'Remove from team',
                               path: team_role_path(team_role),
                               method: 'delete',
                               data: presenter.requires_confirmation?(current_user) ? {confirm: presenter.delete_confirmation(current_user)} : {},
