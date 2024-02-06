@@ -18,7 +18,7 @@
       <% end %>
       <div class="cluster-field-group-fields">
         <% field_group.fields.each do |field| %>
-          <% field = Cluster::FieldPresenter.new(field, self) %>
+          <% field = Cluster::FieldPresenter.new(field, self, @cloud_assets) %>
           <%= f.fields_for :cluster_params, field do |cluster_param| %>
             <div class="formItem">
               <%= field.form_label(cluster_param) %>

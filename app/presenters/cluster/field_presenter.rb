@@ -5,14 +5,37 @@ class Cluster
     MAPPED_FIELD_TYPES = {
       "string" => "text_field", "number" => "number_field", "comma_delimited_list" => "text_area",
       "json" => "text_area", "boolean" => "check_box"
-    }
+    }.freeze
+
+    # Map a custom constraint name to the name of the cloud asset we want to
+    # use to populate the select tag with.
+    #
+    # E.g., if a field has a constraint of `glance.image` it will be rendered
+    # as a select tag containing the cloud asset `images` as option tags.
+    #
+    # If a field has a constraint of `allowed_values` that takes precedence.
+    CONSTRAINTS_TO_ASSETS = {
+      "glance.image" => "images",
+      "neutron.network" => "networks",
+      "nova.flavor" => "flavors",
+      "nova.keypair" => "keypairs",
+    }.freeze
+
+    def initialize(object, view_context, cloud_assets)
+      super(object, view_context)
+      @cloud_assets = cloud_assets
+    end
 
     def form_field_type
-      allowed_values? ? 'select' : "#{MAPPED_FIELD_TYPES[type]}"
+      select_box? ? 'select' : "#{MAPPED_FIELD_TYPES[type]}"
     end
 
     def select_box?
-      form_field_type == 'select'
+      return true if allowed_values?
+
+      CONSTRAINTS_TO_ASSETS.any? do |constraint, cloud_asset|
+        constraints.has_constraint?(constraint) && @cloud_assets.key?(cloud_asset)
+      end
     end
 
     def form_label(form)
@@ -32,7 +55,16 @@ class Cluster
 
     def form_input(form)
       if select_box?
-        form.send(form_field_type, :value, allowed_values, {prompt: true}, form_options)
+        values =
+          if allowed_values?
+            allowed_values
+          else
+            _, cloud_asset = CONSTRAINTS_TO_ASSETS.detect do |constraint, cloud_asset|
+              constraints.has_constraint?(constraint)
+            end
+            @cloud_assets[cloud_asset].map { |a| [a["name"], a["name"]] }
+          end
+        form.send(form_field_type, :value, values, {prompt: true}, form_options)
       else
         form.send(form_field_type, :value, form_options)
        end

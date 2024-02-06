@@ -16,6 +16,7 @@ class ClustersController < ApplicationController
       redirect_to cluster_types_path(use_cache: false)
       return
     end
+    set_cloud_assets
     @cluster = Cluster.new(cluster_type: @cluster_type)
   end
 
@@ -41,6 +42,7 @@ class ClustersController < ApplicationController
     end
 
     if !@cluster.valid?
+      set_cloud_assets
       render action: :new
       return
     end
@@ -54,9 +56,11 @@ class ClustersController < ApplicationController
       if result.non_field_error?
         flash.now.alert = "Unable to launch cluster: #{result.error_message}"
       end
+      set_cloud_assets
       render action: :new
     else
       flash.now.alert = "Unable to send cluster configuration: #{result.error_message}. Please contact an admin"
+      set_cloud_assets
       render action: :new
     end
   end
@@ -65,5 +69,15 @@ class ClustersController < ApplicationController
 
   def permitted_params
     params.require(:cluster).permit(:name, cluster_params: @cluster_type.fields.keys)
+  end
+
+  def set_cloud_assets
+    result = GetCloudAssetsJob.perform_now(@cloud_service_config, current_user)
+    if result.success?
+      @cloud_assets = result.assets
+    else
+      @cloud_assets = {}
+      Rails.logger.info("Unable to retrieve cloud assets. Rendering degraded cluster form")
+    end
   end
 end
