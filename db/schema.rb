@@ -251,9 +251,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_19_161225) do
     t.decimal "credits", default: "0.0", null: false
     t.date "billing_period_start"
     t.date "billing_period_end"
+    t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.datetime "deleted_at"
     t.index ["billing_acct_id"], name: "index_teams_on_billing_acct_id", unique: true, where: "(NOT NULL::boolean)"
     t.index ["deleted_at"], name: "teams_deleted_at_not_null", where: "(deleted_at IS NOT NULL)"
     t.index ["deleted_at"], name: "teams_deleted_at_null", where: "(deleted_at IS NULL)"
