@@ -8,11 +8,18 @@ class CreateTeams < ActiveRecord::Migration[7.0]
       t.decimal :credits, default: 0.00, null: false
       t.date :billing_period_start
       t.date :billing_period_end
+      t.datetime :deleted_at
 
       t.timestamps
     end
 
     add_index  :teams, :billing_acct_id, unique: true, where: "NOT NULL"
     add_index :teams, :project_id, unique: true, where: "NOT NULL"
+    add_index :teams, :deleted_at,
+              where: 'deleted_at IS NOT NULL',
+              name: 'teams_deleted_at_not_null'
+    add_index :teams, :deleted_at,
+              where: 'deleted_at IS NULL',
+              name: 'teams_deleted_at_null'
   end
 end
