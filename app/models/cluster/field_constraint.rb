@@ -40,6 +40,8 @@ class Cluster::FieldConstraint
     modulo: 'ModuloConstraintValidator',
     allowed_pattern: 'AllowedPatternConstraintValidator',
     allowed_values: 'AllowedValuesConstraintValidator',
+    ip_addr: 'IPAddrConstraintValidator',
+    net_cidr: 'CidrConstraintValidator',
   }.freeze
 
   # The ID of the constraint.  For standard constraints this will be the same
@@ -242,6 +244,38 @@ class Cluster::FieldConstraint
         error_message = @description || "must be chosen from one of the drop down options"
         field.errors.add(:value, error_message)
       end
+    end
+  end
+
+  class IPAddrConstraintValidator
+    def initialize(description:, definition:)
+      @description = description
+    end
+
+    def validate(field)
+      error_message = @description || "is not a valid IP address"
+      addr = IPAddr.new(field.value)
+      if addr.to_range.count != 1
+        field.errors.add(:value, error_message)
+      end
+    rescue IPAddr::InvalidAddressError
+      field.errors.add(:value, error_message)
+    end
+  end
+
+  class CidrConstraintValidator
+    def initialize(description:, definition:)
+      @description = description
+    end
+
+    def validate(field)
+      error_message = @description || "is not a valid CIDR"
+      net = IPAddr.new(field.value)
+      if net.to_range.count == 1
+        field.errors.add(:value, error_message)
+      end
+    rescue IPAddr::InvalidAddressError
+      field.errors.add(:value, error_message)
     end
   end
 end
