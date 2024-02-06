@@ -1,16 +1,30 @@
 require 'faraday'
 
-class UserSignupJob < ApplicationJob
+class CreateUserProjectJob < ApplicationJob
+  include GoodJob::ActiveJobExtensions::Concurrency
   queue_as :default
 
   retry_on ::Faraday::Error, wait: :polynomially_longer, attempts: 10
   retry_on ::ActiveModel::ValidationError, wait: :polynomially_longer, attempts: 10
+
+  # Allow only a single job for a given user
+  good_job_control_concurrency_with(
+    perform_limit: 1,
+    enqueue_limit: 1,
+    key: ->{ [self.class.name, arguments[0].to_gid.to_s, arguments[1].to_gid.to_s].join('--') },
+    )
 
   def perform(user, cloud_service_config, **options)
     if user.deleted_at
       logger.info("Skipping job; user was deleted at #{user.deleted_at.inspect}")
       return
     end
+
+    if user.project_id
+      logger.info("Skipping job; user already has a project")
+      return
+    end
+
     runner = Runner.new(
       user: user,
       cloud_service_config: cloud_service_config,
@@ -23,11 +37,8 @@ class UserSignupJob < ApplicationJob
   class Result
     include HttpRequests::ResultSyncer
 
-    property :cloud_user_id, from: :cloud_id, context: :cloud
-    validates :cloud_user_id, presence: true, on: :cloud
-
-    property :billing_acct_id, context: :billing
-    validates :billing_acct_id, presence: true, on: :billing
+    property :project_id, context: :project
+    validates :project_id, presence: true, on: :project
   end
 
   class Runner < HttpRequests::Faraday::JobRunner
@@ -39,15 +50,8 @@ class UserSignupJob < ApplicationJob
     def call
       response = super
       result = Result.from(response.body)
-      result.validate!(:cloud)
-      result.sync(@user, :cloud)
-
-      if @user.cloud_user_id_changed? && !@user.project_id
-        CreateUserProjectJob.perform_later(@user, @cloud_service_config)
-      end
-
-      result.validate!(:billing)
-      result.sync(@user, :billing)
+      result.validate!(:project)
+      result.sync(@user, :project)
     rescue ::ActiveModel::ValidationError
       @logger.warn("Failed to sync response to user: #{$!.message}")
       raise
@@ -56,7 +60,7 @@ class UserSignupJob < ApplicationJob
     private
 
     def url
-      "#{@cloud_service_config.user_handler_base_url}/user"
+      "#{@cloud_service_config.user_handler_base_url}/project"
     end
 
     def body
@@ -67,13 +71,8 @@ class UserSignupJob < ApplicationJob
           password: @cloud_service_config.admin_foreign_password,
           project_id: @cloud_service_config.admin_project_id,
         },
-        username: @user.login,
-        password: @user.foreign_password,
-        email: @user.email
-      }.tap do |h|
-          h[:cloud_id] = @user.cloud_user_id unless @user.cloud_user_id.blank?
-          h[:billing_acct_id] = @user.billing_acct_id unless @user.billing_acct_id.blank?
-        end
+        primary_user_cloud_id: @user.cloud_user_id
+      }
     end
   end
 end
