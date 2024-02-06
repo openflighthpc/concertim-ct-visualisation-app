@@ -2,7 +2,7 @@ class Cluster::Field
   include ActiveModel::Validations
 
   # Format and options are driven by content defined in
-  # https://docs.openstack.org/heat/latest/template_guide/hot_spec.html#parameter-groups-section
+  # https://docs.openstack.org/heat/latest/template_guide/hot_spec.html#parameters-section
 
   ####################################
   #
@@ -38,11 +38,11 @@ class Cluster::Field
   validate :valid_json?, if: -> { value && type == "json" }
   validate :valid_boolean?, if: -> { value && type == "boolean" }
   validate :validate_constraint_formats
-  validate :validate_modulo, if: -> { value && constraints["modulo"] && errors[:modulo].blank? }
-  validate :validate_range, if: -> { value && constraints["range"] && errors[:range].blank? }
-  validate :validate_length, if: -> { value && constraints["length"] && errors[:length].blank? }
-  validate :validate_pattern, if: -> { value && constraints["allowed_pattern"] && errors[:allowed_pattern].blank? }
-  validate :validate_allowed_value, if: -> { value && constraints["allowed_values"] && errors[:allowed_values].blank? }
+  validate :validate_modulo_constraint, if: -> { should_validate_constraint?(:modulo) }
+  validate :validate_range_constraint,  if: -> { should_validate_constraint?(:range) }
+  validate :validate_length_constraint, if: -> { should_validate_constraint?(:length) }
+  validate :validate_pattern,           if: -> { should_validate_constraint?(:allowed_pattern) }
+  validate :validate_allowed_value,     if: -> { should_validate_constraint?(:allowed_values) }
 
   ############################
   #
@@ -61,43 +61,27 @@ class Cluster::Field
     self.value = default
   end
 
-  # Puts into a more usable format. This could be done at cluster type creation instead of here.
-  def constraints=(values)
-    @constraints = {}
-    values.each do |constraint|
-      constraint_name = constraint.keys.find {|key| key != "description" }
-      @constraints[constraint_name] = {
-        details: constraint[constraint_name],
-        description: constraint["description"]
-      }
-    end
-  end
-
-  def constraint_names
-    @constraint_names ||= constraints.keys
+  def constraints=(constraints)
+    @constraints = Cluster::FieldConstraints.new(constraints.map { |c| Cluster::FieldConstraint.new(**c) })
   end
 
   def allowed_values?
-    allowed_values.any?
+    constraints.has_constraint?(:allowed_values)
   end
 
   def allowed_values
-    @_allowed_values ||= get_constraint_details("allowed_values")
+    constraints[:allowed_values]&.definition
   end
 
   def step
     return {} unless type == "number"
 
-    details = get_constraint_details("modulo")
-    return {} if details.empty?
+    modulo_constraint = constraints[:modulo]
+    return {} if modulo_constraint.nil?
 
+    details = modulo_constraint.definition
     details[:min] = details["offset"] if details["offset"]
     details
-  end
-
-  def get_constraint_details(name)
-    target_hash = constraints[name]
-    target_hash ? target_hash[:details] : {}
   end
 
   private
@@ -112,7 +96,7 @@ class Cluster::Field
     {
       hidden: false,
       immutable: false,
-      constraints: {},
+      constraints: [],
     }
   end
 
@@ -138,28 +122,44 @@ class Cluster::Field
     end
   end
 
-  def validate_modulo
+  def validate_constraint_formats
+    constraints.each do |constraint|
+      next if constraint.valid?
+      constraint.errors.full_messages_for(constraint.id).each do |error_message|
+        errors.add(:constraint, error_message)
+      end
+    end
+  end
+
+  def should_validate_constraint?(constraint_type)
+    # Only validate against a constraint if we have a value and the constraint
+    # is defined for this field and its definition is valid.
+    value && @constraints.has_constraint?(constraint_type) && @constraints[constraint_type].valid?
+  end
+
+
+  def validate_modulo_constraint
     return unless type == "number"
 
     constraint = constraints["modulo"]
     number = value.to_f
-    offset = constraint[:details]["offset"]
-    step = constraint[:details]["step"]
+    offset = constraint.definition["offset"]
+    step = constraint.definition["step"]
     unless (offset && number == offset) || (offset ? number - offset : number) % step == 0
-      error_message = constraint[:description] || "must match step of #{step}#{" and offset of #{offset}" if offset}"
+      error_message = constraint.description || "must match step of #{step}#{" and offset of #{offset}" if offset}"
       errors.add(:value, error_message)
     end
   end
 
-  def validate_range
+  def validate_range_constraint
     return unless type == "number"
 
     constraint = constraints["range"]
     number = value.to_f
-    min = constraint[:details]["min"]
-    max = constraint[:details]["max"]
+    min = constraint.definition["min"]
+    max = constraint.definition["max"]
     unless (!min || number >= min) && (!max || number <= max)
-      error_message = constraint[:description]
+      error_message = constraint.description
       if error_message.blank?
         error_message = "must be "
         error_message << "at least #{min}" if min
@@ -169,15 +169,15 @@ class Cluster::Field
     end
   end
 
-  def validate_length
+  def validate_length_constraint
     return unless %w(string comma_delimited_list json).include?(type)
 
     constraint = constraints["length"]
     length = value.length
-    min = constraint[:details]["min"]
-    max = constraint[:details]["max"]
+    min = constraint.definition["min"]
+    max = constraint.definition["max"]
     unless (!min || length >= min) && (!max || length <= max)
-      error_message = constraint[:description]
+      error_message = constraint.description
       if error_message.blank?
         error_message = "must be "
         error_message << "at least #{min} characters" if min
@@ -191,79 +191,22 @@ class Cluster::Field
     return unless type == "string"
 
     constraint = constraints["allowed_pattern"]
-    pattern = constraint[:details]
+    pattern = constraint.definition
     reg = Regexp.new(pattern)
     unless reg.match?(value) && !reg.match(value).to_s.blank?
-      error_message = constraint[:description] || "must match pattern #{pattern}"
+      error_message = constraint.description || "must match pattern #{pattern}"
       errors.add(:value, error_message)
     end
   end
 
   def validate_allowed_value
-    unless !allowed_values? || allowed_values.include?(value) || (type == "number" && allowed_values.include?(value.to_f))
-      error_message = constraints["allowed_values"][:description] || "must be chosen from one of the drop down options"
+    constraint = constraints["allowed_values"]
+    allowed_values = constraint.definition
+    return if allowed_values.empty?
+
+    unless allowed_values.include?(value) || (type == "number" && allowed_values.include?(value.to_f))
+      error_message = constraint.description || "must be chosen from one of the drop down options"
       errors.add(:value, error_message)
-    end
-  end
-
-  def validate_constraint_formats
-    constraint_names.each do |constraint_name|
-      self.send("validate_#{constraint_name}_constraint") if self.respond_to?("validate_#{constraint_name}_constraint", true)
-    end
-  end
-
-  def validate_modulo_constraint
-    constraint = constraints["modulo"]
-    step = constraint[:details]["step"]
-    if step.nil?
-      errors.add(:modulo, 'constraint must contain step details')
-    elsif ![Integer, Float].include?(step.class)
-      errors.add(:modulo, 'constraint step must be a valid number')
-    end
-    offset = constraint[:details]["offset"]
-    if offset && ![Integer, Float].include?(offset.class)
-      errors.add(:modulo, 'constraint offset must be empty or a valid number')
-    end
-  end
-
-  def validate_range_constraint
-    constraint = constraints["range"]
-    blank = true
-    constraint[:details].each do |key, value|
-      unless [Integer, Float].include?(value.class)
-        errors.add(:range, "constraint #{key} must be a valid number")
-      end
-      blank = false unless value.nil?
-    end
-    errors.add(:range, "constraint must have a max and/or min") if blank
-  end
-
-  def validate_length_constraint
-    constraint = constraints["length"]
-    blank = true
-    constraint[:details].each do |key, value|
-      unless [Integer, Float].include?(value.class)
-        errors.add(:length, "constraint #{key} must be a valid number")
-      end
-      blank = false unless value.nil?
-    end
-    errors.add(:length, "constraint must have a max and/or min") if blank
-  end
-
-  def validate_allowed_pattern_constraint
-    begin
-      Regexp.new(constraints["allowed_pattern"][:details])
-    rescue
-      errors.add(:allowed_pattern, 'must be valid regex')
-    end
-  end
-
-  def validate_allowed_values_constraint
-    constraint = constraints["allowed_values"][:details]
-    if !constraint.is_a?(Array)
-      errors.add(:allowed_values, 'must be an array of values')
-    elsif constraint.blank?
-      errors.add(:allowed_values, 'must not be blank')
     end
   end
 end

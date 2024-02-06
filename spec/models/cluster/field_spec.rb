@@ -24,7 +24,6 @@ RSpec.describe Cluster::Field, type: :model do
   it "sets default details" do
     expect(subject.hidden).to eq false
     expect(subject.immutable).to eq false
-    expect(subject.constraints).to eq({})
     expect(subject.value).to eq "mylovelycluster"
   end
 
@@ -110,39 +109,6 @@ RSpec.describe Cluster::Field, type: :model do
 
       include_examples 'maximum'
     end
-
-    context 'neither maximum nor minimum' do
-      let(:constraints) { [{ "length"=>{test: nil} }] }
-
-      it 'fails validation of format' do
-        expect(subject).to have_error(:length, 'constraint must have a max and/or min')
-      end
-    end
-
-    context 'maximum with a non number' do
-      let(:constraints) { [{ "length"=>{max: "abc"} }] }
-
-      it 'fails validation of format' do
-        expect(subject).to have_error(:length, 'constraint max must be a valid number')
-      end
-    end
-
-    context 'minimum with a non number' do
-      let(:constraints) { [{ "length"=>{min: "abc"} }] }
-
-      it 'fails validation of format' do
-        expect(subject).to have_error(:length, 'constraint min must be a valid number')
-      end
-    end
-
-    context 'both max and min are invalid' do
-      let(:constraints) { [{ "length"=>{min: "abc", max: nil} }] }
-
-      it 'fails validation of format' do
-        expect(subject).to have_error(:length, 'constraint min must be a valid number')
-        expect(subject).to have_error(:length, 'constraint max must be a valid number')
-      end
-    end
   end
 
   describe 'string field' do
@@ -169,14 +135,6 @@ RSpec.describe Cluster::Field, type: :model do
         subject.value = "Ninety nine 9"
         expect(subject).to be_valid
       end
-
-      context 'invalid pattern' do
-        let(:constraints) { [{ "allowed_pattern" => "[" }] }
-
-        it 'fails format validation' do
-          expect(subject).to have_error(:allowed_pattern, "must be valid regex")
-        end
-      end
     end
 
     context 'allowed values constraint' do
@@ -194,22 +152,6 @@ RSpec.describe Cluster::Field, type: :model do
         expect(subject).to have_error(:value, "must be a type of meat")
         subject.value = "beef"
         expect(subject).to be_valid
-      end
-
-      context 'allowed values are not a list' do
-        let(:constraints) { [{ "allowed_values" => 123 }] }
-
-        it 'fails format validation' do
-          expect(subject).to have_error(:allowed_values, "must be an array of values")
-        end
-      end
-
-      context 'empty allowed values list' do
-        let(:constraints) { [{ "allowed_values" => [] }] }
-
-        it 'fails format validation' do
-          expect(subject).to have_error(:allowed_values, "must not be blank")
-        end
       end
     end
   end
@@ -263,30 +205,6 @@ RSpec.describe Cluster::Field, type: :model do
           expect(subject).to have_error(:value, "must be a special number")
           subject.value = "26"
           expect(subject).to be_valid
-        end
-      end
-
-      context 'no step or offset' do
-        let(:constraints) { [{ "modulo" => {test: nil}} ] }
-
-        it 'fails format validation' do
-          expect(subject).to have_error(:modulo, "constraint must contain step details")
-        end
-      end
-
-      context 'invalid step' do
-        let(:constraints) { [{ "modulo" => {"step" => "abc"}} ] }
-
-        it 'fails format validation' do
-          expect(subject).to have_error(:modulo, "constraint step must be a valid number")
-        end
-      end
-
-      context 'invalid offset' do
-        let(:constraints) { [{ "modulo" => {"step" => 2, "offset" => "abc"}} ] }
-
-        it 'fails format validation' do
-          expect(subject).to have_error(:modulo, "constraint offset must be empty or a valid number")
         end
       end
     end

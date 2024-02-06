@@ -47,6 +47,7 @@ RSpec.describe SyncAllClusterTypesJob, type: :job do
               type: "string"
             },
           },
+          parameter_groups: {},
           title: "Fault-Tolerant Web Hosting"
         }
       end
@@ -94,6 +95,7 @@ RSpec.describe SyncAllClusterTypesJob, type: :job do
               type: "string"
             },
           },
+          parameter_groups: {},
           title: "My testing cluster type"
         }
       end

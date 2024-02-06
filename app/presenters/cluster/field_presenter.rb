@@ -18,12 +18,16 @@ class Cluster
     def form_label(form)
       classes = %w(required_field)
       classes << 'label_with_errors' unless o.errors.empty?
-      form.label id.to_sym, label, class: classes.join(' '), title: form_description
+      form.label id.to_sym, label, class: classes.join(' '), title: label_tooltip
     end
 
     def error_message(form)
       return nil if o.errors.empty?
-      h.tag.span(o.errors.messages_for(:value).to_sentence, class: 'error-message')
+      if o.errors.include?(:constraint)
+        h.tag.span(o.errors.full_messages.to_sentence, class: 'error-message')
+      else
+        h.tag.span(o.errors.messages_for(:value).to_sentence, class: 'error-message')
+      end
     end
 
     def form_input(form)
@@ -35,8 +39,8 @@ class Cluster
     end
 
     def constraint_text
-      if constraints.any?
-        content = constraint_names.map {|name| constraints[name][:description] }.join(". ")
+      unless constraints.empty?
+        content = constraints.map(&:description).join(". ")
         h.tag.div(content, class: 'constraint-text')
       end
     end
@@ -55,23 +59,27 @@ class Cluster
       options
     end
 
-    def form_description
-      details = description
+    def label_tooltip
+      details = ""
       details << "\nThis field cannot be changed once set." if immutable
       details << "\nThis field will be hidden from users." if hidden
       details
     end
 
+    def form_description
+      h.tag.div(description, class: 'cluster-field-description')
+    end
+
     def min_max
       return {} unless type == "number"
 
-      get_constraint_details("range")
+      constraints[:range]&.definition || {}
     end
 
     def required_length
       return {} unless %w[string json comma_delimited_list].include?(type)
 
-      required = get_constraint_details("length")
+      required = constraints[:length]&.definition || {}
       required.keys.each do |key|
         required["#{key}length".to_sym] = required.delete(key)
       end
@@ -82,10 +90,12 @@ class Cluster
     def allowed_pattern
       return {} unless type == "string"
 
-      pattern = get_constraint_details("allowed_pattern")
-      return {} if pattern.empty?
-
-      { pattern: pattern }
+      pattern = constraints[:allowed_pattern]
+      if pattern.nil?
+        {}
+      else
+        { pattern: pattern.definition }
+      end
     end
 
     # possible future improvement: have JS for creating text boxes for each array/ hash option instead of

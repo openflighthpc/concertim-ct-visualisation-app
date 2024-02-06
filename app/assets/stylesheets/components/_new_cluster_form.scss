@@ -7,7 +7,7 @@
     margin-bottom: 0;
   }
 
-  .constraint-text {
+  .constraint-text, .cluster-field-description {
     max-width: 20rem;
     color: grey;
     font-size: 90%;
@@ -15,5 +15,17 @@
 
   .error-message {
     max-width: 20rem;
+  }
+
+  .cluster-field-group {
+	  margin-bottom: 2rem;
+  }
+  .cluster-field-group-label { }
+  .cluster-field-group-description {
+    max-width: 30rem;
+    color: grey;
+  }
+  .cluster-field-group-fields {
+	  margin-left: 1rem;
   }
 }
