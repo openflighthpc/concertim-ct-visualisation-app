@@ -1,6 +1,8 @@
 class Team < ApplicationRecord
   include Searchable
   default_search_scope :name
+  normalizes :project_id, with: -> project_id { project_id.strip }
+  normalizes :name, with: -> name { name.strip }
 
   ############################
   #
@@ -18,14 +20,6 @@ class Team < ApplicationRecord
     matching_team_roles = TeamRole.where(user_id: matching_users)
     matches.or(Team.where(id: matching_team_roles.pluck(:team_id)))
   end
-
-  ####################################
-  #
-  # Hooks
-  #
-  ####################################
-
-  before_validation :strip_project_id
 
   ####################################
   #
@@ -104,10 +98,6 @@ class Team < ApplicationRecord
   ####################################
 
   private
-
-  def strip_project_id
-    self.project_id = nil if self.project_id.blank?
-  end
 
   def complete_billing_period
     unless !!billing_period_start == !!billing_period_end
