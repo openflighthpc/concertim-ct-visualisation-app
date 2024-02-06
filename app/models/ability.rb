@@ -7,7 +7,7 @@ class Ability
   end
 
   def enough_credits_to_create_cluster?
-    @user.teams.where("credits >= ? AND credits > 0", Rails.application.config.cluster_credit_requirement).exists?
+    @user.teams.where("credits >= ?", Rails.application.config.cluster_credit_requirement).exists?
   end
 
   private
