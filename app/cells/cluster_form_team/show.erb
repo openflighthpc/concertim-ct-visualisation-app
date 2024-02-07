@@ -1,0 +1,12 @@
+<div class="formItem">
+  <%= f.label attribute, label_text, class: label_classes %>
+  <% if has_errors? %>
+    <span class="error-message">
+      <%= label_text %> <%= error_message %>
+    </span>
+  <% end %>
+  <%= f.collection_select attribute, all_teams, :id, :name, {disabled: excluded_teams.pluck(:id)}, required: true %>
+  <div class="constraint-text">
+    <%= constraint_text %>
+  </div>
+</div>

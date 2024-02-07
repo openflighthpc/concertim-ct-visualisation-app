@@ -21,12 +21,14 @@ class ClustersController < ApplicationController
   end
 
   def create
-    authorize! :create, Cluster
     @cloud_service_config = CloudServiceConfig.first
     @cluster_type = ClusterType.find_by_foreign_id!(params[:cluster_type_foreign_id])
+    @team = Team.find(permitted_params[:team_id])
     @cluster = Cluster.new(
-      cluster_type: @cluster_type, name: permitted_params[:name], cluster_params: permitted_params[:cluster_params]
+      cluster_type: @cluster_type, team: @team, name: permitted_params[:name], cluster_params: permitted_params[:cluster_params]
     )
+
+    authorize! :create, @cluster
 
     if @cloud_service_config.nil?
       flash.now.alert = "Unable to send cluster configuration: cloud environment config not set. Please contact an admin"
@@ -34,8 +36,8 @@ class ClustersController < ApplicationController
       return
     end
 
-    unless current_user.project_id
-      flash.now.alert = "Unable to send cluster configuration: you do not yet have a project id. " \
+    unless @team.project_id
+      flash.now.alert = "Unable to send cluster configuration: selected team does not yet have a project id. " \
                         "This will be added automatically shortly."
       render action: :new
       return
@@ -68,7 +70,7 @@ class ClustersController < ApplicationController
   private
 
   def permitted_params
-    params.require(:cluster).permit(:name, cluster_params: @cluster_type.fields.keys)
+    params.require(:cluster).permit(:name, :team_id, cluster_params: @cluster_type.fields.keys)
   end
 
   def set_cloud_assets

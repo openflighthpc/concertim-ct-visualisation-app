@@ -3,6 +3,7 @@ class Team < ApplicationRecord
   default_search_scope :name
   normalizes :project_id, with: -> project_id { project_id.strip }
   normalizes :name, with: -> name { name.strip }
+  scope :meets_cluster_credit_requirement, -> { where("credits > ?", Rails.application.config.cluster_credit_requirement) }
 
   ############################
   #

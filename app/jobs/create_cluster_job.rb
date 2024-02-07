@@ -73,7 +73,7 @@ class CreateClusterJob < ApplicationJob
       {
         cloud_env: cloud_env_details,
         cluster: cluster_details,
-        billing_account_id: @user.billing_acct_id,
+        billing_account_id: @cluster.team.billing_acct_id,
         middleware_url: @cloud_service_config.user_handler_base_url,
       }
     end
@@ -91,7 +91,7 @@ class CreateClusterJob < ApplicationJob
         auth_url: @cloud_service_config.internal_auth_url,
         user_id: @user.cloud_user_id,
         password: @user.foreign_password,
-        project_id: @user.project_id
+        project_id: @cluster.team.project_id
       }
     end
 

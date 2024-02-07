@@ -8,6 +8,7 @@
 
 <%= form_for(@cluster, url: cluster_type_clusters_path(@cluster_type)) do |f| %>
   <%= cell('cluster_form_errors').(:show, @cluster) %>
+  <%= cell('cluster_form_team').(:show, @cluster, f, current_user) %>
   <%= cell('cluster_form_name').(:show, @cluster, f) %>
 
   <% @cluster.field_groups.each do |field_group| %>
