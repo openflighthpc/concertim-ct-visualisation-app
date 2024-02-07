@@ -40,7 +40,7 @@ class GetCloudAssetsJob < ApplicationJob
     end
 
     def call
-      response = connection.post(path, body)
+      response = connection.get(path, params)
       unless response.success?
         return Result.new(false, {}, "#{error_description}: #{response.reason_phrase || "Unknown error"}")
       end
@@ -56,20 +56,14 @@ class GetCloudAssetsJob < ApplicationJob
     end
 
     def path
-      "/resources/"
+      "/cloud_assets/"
     end
 
     def error_description
       "Unable to retrieve cluster builder assets"
     end
 
-    def body
-      {
-        cloud_env: cloud_env_details,
-      }
-    end
-
-    def cloud_env_details
+    def params
       {
         auth_url: @cloud_service_config.internal_auth_url,
         user_id: @user.cloud_user_id,
