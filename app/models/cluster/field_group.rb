@@ -47,4 +47,8 @@ class Cluster::FieldGroup
     end
     sorted_fields
   end
+
+  def empty?
+    fields.empty?
+  end
 end

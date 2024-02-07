@@ -72,7 +72,7 @@ class Cluster
 
     def constraint_text
       unless constraints.empty?
-        content = constraints.map(&:description).join(". ")
+        content = constraints.map(&:description).compact.join(". ")
         h.tag.div(content, class: 'constraint-text')
       end
     end
