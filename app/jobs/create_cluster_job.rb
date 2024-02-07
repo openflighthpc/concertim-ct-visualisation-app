@@ -48,7 +48,7 @@ class CreateClusterJob < ApplicationJob
       response = connection.post(path, body)
       Result.new(response.success?, response.reason_phrase || "Unknown error", response.status)
 
-    rescue Faraday::BadRequestError
+    rescue Faraday::BadRequestError, Faraday::ClientError
       errors = HttpRequests::Jsonapi::Errors.parse($!.response_body)
       non_field_error = merge_errors_to_fields(errors)
       error_message = errors.full_details.to_sentence
@@ -56,7 +56,7 @@ class CreateClusterJob < ApplicationJob
 
     rescue Faraday::Error
       status_code = $!.response[:status] rescue 0
-      Result.new(false, $!.message, status_code)
+      Result.new(false, $!.message, status_code, true)
     end
 
     private
