@@ -11,6 +11,7 @@
   <%= cell('cluster_form_name').(:show, @cluster, f) %>
 
   <% @cluster.field_groups.each do |field_group| %>
+    <% next if field_group.empty? %>
     <div class="cluster-field-group">
       <h4 class="cluster-field-group-label"><%= field_group.label %></h4>
       <% unless field_group.description.blank? %>
@@ -18,7 +19,7 @@
       <% end %>
       <div class="cluster-field-group-fields">
         <% field_group.fields.each do |field| %>
-          <% field = Cluster::FieldPresenter.new(field, self) %>
+          <% field = Cluster::FieldPresenter.new(field, self, @cloud_assets) %>
           <%= f.fields_for :cluster_params, field do |cluster_param| %>
             <div class="formItem">
               <%= field.form_label(cluster_param) %>

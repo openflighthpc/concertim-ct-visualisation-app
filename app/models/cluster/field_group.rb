@@ -38,8 +38,17 @@ class Cluster::FieldGroup
   def fields
     sorted_fields = []
     @parameters.each do |p|
-      sorted_fields << @fields[p]
+      f = @fields[p]
+      if f.nil?
+        Rails.logger.debug("Unable to find field #{p} in field group #{label}: assuming it is hardcoded and skipping it")
+      else
+        sorted_fields << f
+      end
     end
     sorted_fields
+  end
+
+  def empty?
+    fields.empty?
   end
 end

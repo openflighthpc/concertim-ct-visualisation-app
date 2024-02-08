@@ -33,6 +33,17 @@ class Cluster::FieldConstraint
   include ActiveModel::Model
   include ActiveModel::Attributes
 
+  # Map from constraint id to valiator.
+  VALIDATORS = {
+    length: 'LengthConstraintValidator',
+    range: 'RangeConstraintValidator',
+    modulo: 'ModuloConstraintValidator',
+    allowed_pattern: 'AllowedPatternConstraintValidator',
+    allowed_values: 'AllowedValuesConstraintValidator',
+    ip_addr: 'IPAddrConstraintValidator',
+    net_cidr: 'CidrConstraintValidator',
+  }.freeze
+
   # The ID of the constraint.  For standard constraints this will be the same
   # as its type, e.g., `length`, or `allowed_pattern`.  For custom constraints
   # this will the same as its definition, e.g., `glance.image` or `net_cidr`.
@@ -68,6 +79,15 @@ class Cluster::FieldConstraint
 
   def name
     type
+  end
+
+  # Return an ActiveModel::Validator that can be used to validate against this
+  # constraint.
+  def validator
+    v = VALIDATORS[id.to_sym]
+    return nil if v.nil?
+    klass = self.class.const_get(v)
+    klass.new(description: description, definition: definition)
   end
 
   private
@@ -135,6 +155,127 @@ class Cluster::FieldConstraint
       errors.add(:allowed_values, 'must be an array of values')
     elsif definition.blank?
       errors.add(:allowed_values, 'must not be blank')
+    end
+  end
+
+  class LengthConstraintValidator
+    def initialize(description:, definition:)
+      @description = description
+      @min = definition["min"]
+      @max = definition["max"]
+    end
+
+    def validate(field)
+      length = field.value.length
+      unless (!@min || length >= @min) && (!@max || length <= @max)
+        error_message = @description
+        if error_message.blank?
+          error_message = "must be "
+          error_message << "at least #{@min} characters" if @min
+          error_message << "#{ " and " if @min}at most #{@max} characters" if @max
+        end
+        field.errors.add(:value, error_message)
+      end
+    end
+  end
+
+  class RangeConstraintValidator
+    def initialize(description:, definition:)
+      @description = description
+      @min = definition["min"]
+      @max = definition["max"]
+    end
+
+    def validate(field)
+      number = field.value.to_f
+      unless (!@min || number >= @min) && (!@max || number <= @max)
+        error_message = @description
+        if error_message.blank?
+          error_message = "must be "
+          error_message << "at least #{@min}" if @min
+          error_message << "#{ " and " if @min}at most #{@max}" if @max
+        end
+        field.errors.add(:value, error_message)
+      end
+    end
+  end
+
+  class AllowedPatternConstraintValidator
+    def initialize(description:, definition:)
+      @description = description
+      @pattern = definition
+    end
+
+    def validate(field)
+      regexp = Regexp.new(@pattern)
+      unless regexp.match?(field.value) && !regexp.match(field.value).to_s.blank?
+        error_message = @description || "must match pattern #{@pattern}"
+        field.errors.add(:value, error_message)
+      end
+    end
+  end
+
+  class ModuloConstraintValidator
+    def initialize(description:, definition:)
+      @description = description
+      @offset = definition["offset"]
+      @step = definition["step"]
+    end
+
+    def validate(field)
+      number = field.value.to_f
+      unless (@offset && number == @offset) || (@offset ? number - @offset : number) % @step == 0
+        error_message = @description || "must match step of #{@step}#{" and offset of #{@offset}" if @offset}"
+        field.errors.add(:value, error_message)
+      end
+    end
+  end
+
+  class AllowedValuesConstraintValidator
+    def initialize(description:, definition:)
+      @description = description
+      @allowed_values = definition
+    end
+
+    def validate(field)
+      return if @allowed_values.empty?
+
+      unless @allowed_values.include?(field.value) || (field.type == "number" && @allowed_values.include?(field.value.to_f))
+        error_message = @description || "must be chosen from one of the drop down options"
+        field.errors.add(:value, error_message)
+      end
+    end
+  end
+
+  class IPAddrConstraintValidator
+    def initialize(description:, definition:)
+      @description = description
+    end
+
+    def validate(field)
+      error_message = @description || "is not a valid IP address"
+      addr = IPAddr.new(field.value)
+      if addr.to_range.count != 1
+        field.errors.add(:value, error_message)
+      end
+    rescue IPAddr::InvalidAddressError
+      field.errors.add(:value, error_message)
+    end
+  end
+
+  class CidrConstraintValidator
+    def initialize(description:, definition:)
+      @description = description
+    end
+
+    def validate(field)
+      error_message = @description || "is not a valid CIDR"
+      net = IPAddr.new(field.value)
+      if net.to_range.count == 1
+        field.errors.add(:value, error_message)
+      end
+    rescue IPAddr::InvalidAddressError
+      field.errors.add(:value, error_message)
     end
   end
 end
