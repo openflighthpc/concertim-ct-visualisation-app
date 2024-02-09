@@ -5,10 +5,11 @@ require 'faraday'
 class GetCloudAssetsJob < ApplicationJob
   queue_as :default
 
-  def perform(cloud_service_config, user, **options)
+  def perform(cloud_service_config, user, team, **options)
     runner = Runner.new(
       cloud_service_config: cloud_service_config,
       user: user,
+      team: team,
       logger: logger,
       **options
     )
@@ -34,8 +35,9 @@ class GetCloudAssetsJob < ApplicationJob
   end
 
   class Runner < HttpRequests::Faraday::JobRunner
-    def initialize(user:, **kwargs)
+    def initialize(user:, team:, **kwargs)
       @user = user
+      @team = team
       super(**kwargs)
     end
 
@@ -68,7 +70,7 @@ class GetCloudAssetsJob < ApplicationJob
         auth_url: @cloud_service_config.internal_auth_url,
         user_id: @user.cloud_user_id,
         password: @user.foreign_password,
-        project_id: @user.project_id
+        project_id: @team.project_id
       }
     end
   end

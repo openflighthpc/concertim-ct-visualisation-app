@@ -46,6 +46,7 @@ class CreateClusterJob < ApplicationJob
 
     def call
       response = connection.post(path, body)
+      Rails.logger.info(response)
       Result.new(response.success?, response.reason_phrase || "Unknown error", response.status)
 
     rescue Faraday::BadRequestError
@@ -91,7 +92,7 @@ class CreateClusterJob < ApplicationJob
         auth_url: @cloud_service_config.internal_auth_url,
         user_id: @user.cloud_user_id,
         password: @user.foreign_password,
-        project_id: @user.project_id
+        project_id: @cluster.team.project_id
       }
     end
 

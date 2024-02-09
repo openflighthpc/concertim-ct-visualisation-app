@@ -7,7 +7,7 @@ class Ability
   end
 
   def enough_credits_to_create_cluster?
-    @user.teams.where("credits >= ?", Rails.application.config.cluster_credit_requirement).exists?
+    @user.teams.meets_cluster_credit_requirement.exists?
   end
 
   private
@@ -53,7 +53,8 @@ class Ability
     can :manage, RackviewPreset, user: @user
 
     can :read, ClusterType
-    can :create, Cluster if enough_credits_to_create_cluster?
+    can :new, Cluster if enough_credits_to_create_cluster?
+    can :create, Cluster, team_id: @user.teams.meets_cluster_credit_requirement.pluck(:id)
 
     can :read, KeyPair, user: @user
     can :create, KeyPair, user: @user
