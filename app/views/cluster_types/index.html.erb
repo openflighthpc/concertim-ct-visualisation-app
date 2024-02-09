@@ -1,4 +1,4 @@
-<% set_title "Select cluster type" %>
+<% set_title "Select cluster type #{ "for team #{@team.name}" if @team}" %>
 <% content_for(:side_content) do %>
   <%= render 'actions' %>
 <% end %>
@@ -15,9 +15,9 @@
 <% elsif @cluster_types.empty? %>
   <p>There are no cluster types available at present.</p>
 <% else %>
-  <div style="display: flex; justify-content: space-evenly;">
+  <div class="cluster-types">
     <% @cluster_types.each do |cluster_type| %>
-      <%= render partial: 'card', object: cluster_type %>
+      <%= render partial: 'card', object: cluster_type, locals: { team: @team } %>
     <% end %>
   </div>
 <% end %>

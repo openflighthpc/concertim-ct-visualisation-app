@@ -8,5 +8,6 @@ class ClusterTypesController < ApplicationController
       result = SyncAllClusterTypesJob.perform_now(@cloud_service_config, use_cache)
       flash.now.alert = result.error_message unless result.success?
     end
+    @team = Team.find(params[:team_id]) if params[:team_id]
   end
 end
