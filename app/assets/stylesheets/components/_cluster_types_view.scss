@@ -1,9 +1,10 @@
 .cluster-type-card {
-  width: 19rem;
+  width: 22rem;
   border: darkgray 1px solid;
   padding: 0.5em;
   margin-left: 0.5rem;
   margin-right: 0.5rem;
+  margin-bottom: 1rem;
 
   .card-divider {
     border-bottom: darkgray 1px solid;
@@ -14,4 +15,9 @@
     cursor: not-allowed;
     font-weight: bold;
   }
+}
+
+.cluster-types {
+  display: flex;
+  flex-wrap: wrap;
 }

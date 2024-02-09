@@ -8,16 +8,31 @@
     <p><%= cluster_type.description %></p>
   </div>
   <div class="card-section">
-    <% if current_user.can?(:create, Cluster) %>
-      <%= link_to "Select", team_cluster_type_clusters_path(cluster_type) %>
+    <% if team %>
+      <% cluster = Cluster.new(cluster_type: cluster_type, team: team) %>
+      <% if current_user.can?(:create, cluster) %>
+        <%= link_to "Select", new_cluster_type_cluster_path(cluster_type, team_id: team.id) %>
+      <% else %>
+        <% title =  if Team.meets_cluster_credit_requirement.where(id: team.id).exists?
+                      "You do not have permission to create clusters"
+                    else
+                      "Insufficient credits. Your chosen team must have at least #{Rails.application.config.cluster_credit_requirement} credits to create a cluster"
+                    end
+        %>
+        <span title="<%= title %>" class="disabled-cluster-link">Select</span>
+      <% end %>
     <% else %>
-      <% title =  if current_ability.enough_credits_to_create_cluster?
-                    "You do not have permission to create clusters"
-                  else
-                    "Insufficient credits. You must belong to a team with at least #{Rails.application.config.cluster_credit_requirement} credits to create a cluster"
-                  end
-      %>
-      <span title="<%= title %>" class="disabled-cluster-link">Select</span>
+      <% if current_user.can?(:create, Cluster) %>
+        <%= link_to "Select", team_cluster_type_clusters_path(cluster_type) %>
+      <% else %>
+        <% title =  if current_ability.enough_credits_to_create_cluster?
+                      "You do not have permission to create clusters"
+                    else
+                      "Insufficient credits. You must belong to a team with at least #{Rails.application.config.cluster_credit_requirement} credits to create a cluster"
+                    end
+        %>
+        <span title="<%= title %>" class="disabled-cluster-link">Select</span>
+      <% end %>
     <% end %>
   </div>
 </div>
