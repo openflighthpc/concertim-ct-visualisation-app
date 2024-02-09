@@ -1,0 +1,20 @@
+<% set_title 'Create cluster - choose team' -%>
+<% content_for(:side_content) do %>
+  <%= render 'actions' %>
+<% end %>
+
+<p>Choose team for cluster <strong><%= @cluster_type.name %></strong></p>
+<p><%= @cluster_type.description %></p>
+
+<%= form_with(url: new_cluster_type_cluster_path(@cluster_type), method: :get, class: "new_cluster") do |form| %>
+  <div class="formItem">
+    <div class="field">
+      <%= form.label :team_id, "Team", class: "required_field" %>
+      <%= form.collection_select :team_id, @all_teams, :id, :name, {disabled: @unavailable_teams.pluck(:id)}, required: true %>
+    </div>
+    <div class="constraint-text">
+      Must have at least <%= Rails.application.config.cluster_credit_requirement %> credits
+    </div>
+  </div>
+  <button>Submit</button>
+<% end %>
