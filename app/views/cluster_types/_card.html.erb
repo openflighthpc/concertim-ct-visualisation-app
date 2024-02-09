@@ -1,17 +1,30 @@
 <% cluster_type = card %>
-
-<% if current_user.can?(:create, Cluster) %>
-  <%= link_to(new_cluster_type_cluster_path(cluster_type), class: "cluster-type-card") do %>
-    <%= render partial: 'card_content', object: cluster_type %>
+<% disabled = true %>
+<% if team %>
+  <% cluster = Cluster.new(cluster_type: cluster_type, team: team) %>
+  <% if current_user.can?(:create, cluster) %>
+    <% disabled = false %>
+    <%  title = "" %>
+  <% else %>
+    <% title =  if Team.meets_cluster_credit_requirement.where(id: team.id).exists?
+                  "You do not have permission to create clusters"
+                else
+                  "Insufficient credits. Your chosen team must have at least #{Rails.application.config.cluster_credit_requirement} credits to create a cluster"
+                end
+    %>
   <% end %>
 <% else %>
-  <% title =  if current_ability.enough_credits_to_create_cluster?
-                "You do not have permission to create clusters"
-              else
-                "Insufficient credits. You must have at least #{Rails.application.config.cluster_credit_requirement} credits to create a cluster"
-              end
+  <% title = if !current_user.can?(:create, Cluster)
+               "You do not have permission to create this cluster"
+             elsif !available_teams
+               "Unable to create a cluster - you must belong to a team with at least #{Rails.application.config.cluster_credit_requirement} credits to create a cluster"
+             else
+               "Please select a team"
+             end
   %>
-  <span title="<%= title %>" class="cluster-type-card cluster-type-card--disabled">
-    <%= render partial: 'card_content', object: cluster_type %>
-  </span>
+<% end %>
+<%= link_to( disabled ? "#" : new_cluster_type_cluster_path(cluster_type, team_id: team&.id),
+             { class: "cluster-type-card #{"disabled-cluster-type-card" if disabled }", title: title,
+               data: { base_target_url: new_cluster_type_cluster_path(cluster_type) } }) do %>
+  <%= render partial: 'card_content', object: cluster_type %>
 <% end %>

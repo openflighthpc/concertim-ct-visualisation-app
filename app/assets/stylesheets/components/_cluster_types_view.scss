@@ -7,16 +7,12 @@
     padding: 1.25rem 2.5rem;
 }
 
-
 .cluster-type-card {
     border: solid #3b5168 1px;
     border-radius: 2px;
     padding: 1.5rem;
     font-weight: 400;
     transition: background 125ms;
-}
-
-.cluster-type-card {
     display: grid;
     grid-template-rows: [row1-start] auto [row1-end row2-start] auto [row2-end row3-start] auto [row3-end];
     grid-template-columns: 1fr 1fr;

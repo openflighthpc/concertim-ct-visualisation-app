@@ -21,7 +21,7 @@
 <% else %>
   <div class="cluster-types-card-deck">
     <% @cluster_types.each do |cluster_type| %>
-      <%= render partial: 'card', object: cluster_type %>
+      <%= render partial: 'card', object: cluster_type, locals: { team: @team } %>
     <% end %>
   </div>
 <% end %>
