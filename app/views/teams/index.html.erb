@@ -37,6 +37,7 @@
     <% actions.add_with_auth can: :manage, on: TeamRole.new(team_id: team.id), title: 'Manage Users', path: team_team_roles_path(team) %>
     <% actions.add_with_auth can: :read, on: Invoice.new(account: team), title: 'View Invoices', path: team_invoices_path(team) %>
     <% actions.add_with_auth can: :create, on: CreditDeposit.new(team: team), title: 'Add Credits', path: new_team_credit_deposit_path(team) %>
+    <% actions.add_with_auth can: :create, on: Cluster.new(team: team, cluster_type: ClusterType.new), title: 'Create Cluster', path: cluster_types_path(team_id: team.id)  %>
     <%
       actions.add_with_auth(can: :destroy, on: team,
                             title: 'Delete',
