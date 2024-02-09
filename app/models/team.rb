@@ -1,6 +1,7 @@
 class Team < ApplicationRecord
   include Searchable
   default_search_scope :name
+  scope :meets_cluster_credit_requirement, -> { where("credits >= ?", Rails.application.config.cluster_credit_requirement) }
   normalizes :project_id, with: -> project_id { project_id.strip }
   normalizes :name, with: -> name { name.strip }
 

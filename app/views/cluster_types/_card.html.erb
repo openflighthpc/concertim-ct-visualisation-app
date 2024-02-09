@@ -9,7 +9,7 @@
   </div>
   <div class="card-section">
     <% if current_user.can?(:create, Cluster) %>
-      <%= link_to "Select", new_cluster_type_cluster_path(cluster_type) %>
+      <%= link_to "Select", team_cluster_type_clusters_path(cluster_type) %>
     <% else %>
       <% title =  if current_ability.enough_credits_to_create_cluster?
                     "You do not have permission to create clusters"
