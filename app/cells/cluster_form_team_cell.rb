@@ -1,11 +1,8 @@
-class ClusterFormTeamCell < Cell::ViewModel
+class ClusterFormTeamCell < ClusterFormInputCell
   def show(cluster, form, user)
-    @record = cluster
-    @form = form
     @user = user
-    @errors = @record.errors
     @attribute = :team_id
-    render
+    super(cluster, form)
   end
 
   private
@@ -28,29 +25,5 @@ class ClusterFormTeamCell < Cell::ViewModel
 
   def constraint_text
     "Must have at least #{Rails.application.config.cluster_credit_requirement} credits"
-  end
-
-  def f
-    @form
-  end
-
-  def attribute
-    @attribute
-  end
-
-  def has_errors?
-    @errors.include?(@attribute)
-  end
-
-  def label_classes
-    "required_field".tap do |classes|
-      classes << " label_with_errors" if has_errors?
-    end
-  end
-
-  def
-
-  def error_message
-    @errors.messages_for(@attribute).to_sentence
   end
 end
