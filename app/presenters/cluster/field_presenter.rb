@@ -19,6 +19,9 @@ class Cluster
       "neutron.network" => "networks",
       "nova.flavor" => "flavors",
       "nova.keypair" => "keypairs",
+      "sahara.plugin" => "sahara.plugins",
+      "sahara.image" => "sahara.images",
+      "sahara.cluster_template" => "sahara.cluster_templates",
     }.freeze
 
     def initialize(object, view_context, cloud_assets)
@@ -62,7 +65,7 @@ class Cluster
             _, cloud_asset = CONSTRAINTS_TO_ASSETS.detect do |constraint, cloud_asset|
               constraints.has_constraint?(constraint)
             end
-            @cloud_assets[cloud_asset].map { |a| [a["name"], a["name"]] }
+            @cloud_assets[cloud_asset].map { |a| [a["name"], a["id"]] }
           end
         form.send(form_field_type, :value, values, {prompt: true}, form_options)
       else
