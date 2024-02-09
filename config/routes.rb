@@ -38,7 +38,11 @@ Rails.application.routes.draw do
       end
     end
     resources :cluster_types, path: 'cluster-types', only: [:index], param: :foreign_id do
-      resources :clusters, only: [:new, :create]
+      resources :clusters, only: [:new, :create] do
+        collection do
+          get '/team', to: 'clusters#choose_team'
+        end
+      end
     end
   end
 

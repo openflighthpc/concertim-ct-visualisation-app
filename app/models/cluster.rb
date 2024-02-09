@@ -12,6 +12,7 @@ class Cluster
   ####################################
 
   attr_accessor :cluster_type
+  attr_accessor :team
   attr_accessor :name
   attr_accessor :fields
   attr_accessor :field_groups
@@ -24,7 +25,12 @@ class Cluster
   ####################################
 
   validates :cluster_type,
-    presence: true
+            presence: true
+
+  validates :team,
+            presence: true
+
+  validate :team_has_enough_credits?
 
   validates :name,
             presence: true,
@@ -40,8 +46,9 @@ class Cluster
   #
   ####################################
 
-  def initialize(cluster_type:, name: nil, cluster_params: nil, selections: {})
+  def initialize(cluster_type:, team: nil, name: nil, cluster_params: nil, selections: {})
     @cluster_type = cluster_type
+    @team = team
     @name = name
     @selections = selections
     @field_groups = Cluster::FieldGroups.new(self, cluster_type.field_groups, cluster_type.fields)
@@ -51,6 +58,10 @@ class Cluster
 
   def type_id
     @cluster_type.foreign_id
+  end
+
+  def team_id
+    @team&.id
   end
 
   def field_values
@@ -85,6 +96,12 @@ class Cluster
       unless field.valid?
         errors.add(field.label, field.errors.messages_for(:value).join("; "))
       end
+    end
+  end
+
+  def team_has_enough_credits?
+    if team_id && Team.meets_cluster_credit_requirement.where(id: team_id).empty?
+      errors.add(:team, "Has insufficient credits to launch a cluster")
     end
   end
 end
