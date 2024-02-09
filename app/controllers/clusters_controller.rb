@@ -30,7 +30,7 @@ class ClustersController < ApplicationController
       return
     end
     set_cloud_assets
-    @cluster = Cluster.new(cluster_type: @cluster_type)
+    @cluster = Cluster.new(cluster_type: @cluster_type, team: @team)
   end
 
   def create
