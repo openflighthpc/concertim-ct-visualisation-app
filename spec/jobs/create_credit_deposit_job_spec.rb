@@ -3,10 +3,10 @@ require 'rails_helper'
 RSpec.describe CreateCreditDepositJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
   let(:cloud_service_config) { create(:cloud_service_config) }
-  let(:user) { create(:user, :with_openstack_account) }
+  let(:team) { create(:team, :with_openstack_details) }
   let(:path) { "#{cloud_service_config.user_handler_base_url}/add_credits" }
-  let(:credit_deposit) { build(:credit_deposit, user: user) }
-  subject { CreateCreditDepositJob::Runner.new(credit_deposit: credit_deposit, cloud_service_config: cloud_service_config, user: user) }
+  let(:credit_deposit) { build(:credit_deposit, team: team) }
+  subject { CreateCreditDepositJob::Runner.new(credit_deposit: credit_deposit, cloud_service_config: cloud_service_config) }
 
   describe "url" do
     before(:each) do
@@ -32,7 +32,7 @@ RSpec.describe CreateCreditDepositJob, type: :job do
       end
 
       it "returns a successful result" do
-        result = described_class.perform_now(credit_deposit, cloud_service_config, user, test_stubs: stubs)
+        result = described_class.perform_now(credit_deposit, cloud_service_config, test_stubs: stubs)
         expect(result).to be_success
       end
     end
@@ -43,12 +43,12 @@ RSpec.describe CreateCreditDepositJob, type: :job do
       end
 
       it "returns an unsuccessful result" do
-        result = described_class.perform_now(credit_deposit, cloud_service_config, user, test_stubs: stubs)
+        result = described_class.perform_now(credit_deposit, cloud_service_config, test_stubs: stubs)
         expect(result).not_to be_success
       end
 
       it "returns a sensible error_message" do
-        result = described_class.perform_now(credit_deposit, cloud_service_config, user, test_stubs: stubs)
+        result = described_class.perform_now(credit_deposit, cloud_service_config, test_stubs: stubs)
         expect(result.error_message).to eq "the server responded with status 404"
       end
     end
@@ -60,12 +60,12 @@ RSpec.describe CreateCreditDepositJob, type: :job do
       let(:timeout) { 0.1 }
 
       it "returns an unsuccessful result" do
-        result = described_class.perform_now(credit_deposit, cloud_service_config, user, test_stubs: stubs, timeout: timeout)
+        result = described_class.perform_now(credit_deposit, cloud_service_config, test_stubs: stubs, timeout: timeout)
         expect(result).not_to be_success
       end
 
       it "returns a sensible error_message" do
-        result = described_class.perform_now(credit_deposit, cloud_service_config, user, test_stubs: stubs, timeout: timeout)
+        result = described_class.perform_now(credit_deposit, cloud_service_config, test_stubs: stubs, timeout: timeout)
         expect(result.error_message).to eq "execution expired"
       end
     end
