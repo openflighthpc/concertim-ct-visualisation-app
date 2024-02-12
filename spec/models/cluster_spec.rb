@@ -22,4 +22,14 @@ RSpec.describe Cluster, type: :model do
     cluster_params["clustername"] = nil
     expect(subject).to have_error("Cluster name", "can't be blank")
   end
+
+  it "is not valid without a team" do
+    subject.team = nil
+    expect(subject).to have_error(:team, :blank)
+  end
+
+  it "is not valid if team has insufficient credits" do
+    subject.team.update(credits: 0)
+    expect(subject).to have_error(:team, "Has insufficient credits to launch a cluster")
+  end
 end
