@@ -87,13 +87,13 @@ RSpec.describe CreateClusterJob, type: :job do
                                           "auth_url" => cloud_service_config.internal_auth_url,
                                           "user_id" => user.cloud_user_id,
                                           "password" => user.foreign_password,
-                                          "project_id" => user.project_id
+                                          "project_id" => cluster.team.project_id
                                         })
     end
 
-    it "contains the users billing account id" do
-      expect(user.billing_acct_id).not_to be_nil
-      expect(subject[:billing_account_id]).to eq user.billing_acct_id
+    it "contains the cluster's team's billing account id" do
+      expect(cluster.team.billing_acct_id).not_to be_nil
+      expect(subject[:billing_account_id]).to eq cluster.team.billing_acct_id
     end
 
     it "contains the middleware url" do
