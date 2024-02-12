@@ -21,4 +21,9 @@ RSpec.describe CreditDeposit, type: :model do
     subject.amount = 0
     expect(subject).to have_error(:amount, :greater_than)
   end
+
+  it "is not valid without a team" do
+    subject.team = nil
+    expect(subject).to have_error(:team, :blank)
+  end
 end
