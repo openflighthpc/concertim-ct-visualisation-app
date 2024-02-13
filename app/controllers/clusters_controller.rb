@@ -1,16 +1,4 @@
 class ClustersController < ApplicationController
-  def choose_team
-    authorize! :create, Cluster
-    @cluster_type = ClusterType.find_by_foreign_id!(params[:cluster_type_foreign_id])
-    @valid_teams = current_user.teams.meets_cluster_credit_requirement
-    unless @valid_teams.exists?
-      flash[:alert] = "You must belong to a team with at least #{Rails.application.config.cluster_credit_requirement} credits"
-      redirect_to cluster_types_path
-    end
-    @unavailable_teams =  current_user.teams.where.not(id: @valid_teams.pluck(:id))
-    @all_teams = current_user.teams
-  end
-
   def new
     authorize! :create, Cluster
     @cloud_service_config = CloudServiceConfig.first
