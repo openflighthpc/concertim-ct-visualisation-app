@@ -8,10 +8,10 @@ class ClusterTypesController < ApplicationController
       result = SyncAllClusterTypesJob.perform_now(@cloud_service_config, use_cache)
       flash.now.alert = result.error_message unless result.success?
     end
-<<<<<<< HEAD
     @cluster_types = @cluster_types.reorder(:order, :id)
-=======
+    @valid_teams = current_user.teams.meets_cluster_credit_requirement
+    @unavailable_teams =  current_user.teams.where.not(id: @valid_teams.pluck(:id))
+    @all_teams = current_user.teams
     @team = Team.find(params[:team_id]) if params[:team_id]
->>>>>>> added create cluster action from teams index page
   end
 end
