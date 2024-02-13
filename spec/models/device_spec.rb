@@ -18,6 +18,7 @@ RSpec.describe Device, type: :model do
         status: 'IN_PROGRESS',
         cost: 99.99
       )
+      device.details = Device::ComputeDetails.new
       expect(device).to be_valid
     end
 
@@ -76,6 +77,11 @@ RSpec.describe Device, type: :model do
     it "is not valid with a negative cost" do
       subject.cost = -99
       expect(subject).to have_error(:cost, :greater_than_or_equal_to)
+    end
+
+    it "is not valid without a details model" do
+      subject.details = nil
+      expect(subject).to have_error(:details, :blank)
     end
   end
 

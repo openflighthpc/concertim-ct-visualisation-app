@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_02_01_122256) do
+ActiveRecord::Schema[7.1].define(version: 2024_02_13_153255) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -68,6 +68,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_01_122256) do
     t.index ["device_id"], name: "index_data_source_maps_on_device_id"
   end
 
+  create_table "device_compute_details", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "public_ips"
+    t.string "private_ips"
+    t.string "ssh_key"
+    t.string "login_user"
+    t.jsonb "volume_details", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "devices", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name", limit: 255, null: false
     t.string "description", limit: 255
@@ -76,14 +86,11 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_01_122256) do
     t.jsonb "metadata", default: {}, null: false
     t.string "status", null: false
     t.decimal "cost", default: "0.0", null: false
-    t.string "public_ips"
-    t.string "private_ips"
-    t.string "ssh_key"
-    t.string "login_user"
-    t.jsonb "volume_details", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "base_chassis_id", null: false
+    t.string "details_type"
+    t.uuid "details_id"
     t.index ["base_chassis_id"], name: "index_devices_on_base_chassis_id"
   end
 

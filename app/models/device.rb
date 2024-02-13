@@ -34,6 +34,8 @@ class Device < ApplicationRecord
 
   has_one :template, through: :chassis, source: :template
 
+  belongs_to :details, polymorphic: :true
+
 
   ###########################
   #
@@ -54,6 +56,7 @@ class Device < ApplicationRecord
   validates :cost,
             numericality: { greater_than_or_equal_to: 0 },
             allow_blank: true
+  validates :details, presence: :true
   validate :name_validator
   validate :device_limit, if: :new_record?
   validate :metadata_format
