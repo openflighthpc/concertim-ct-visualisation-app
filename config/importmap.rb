@@ -7,6 +7,7 @@ pin "IRV", to: "IRV.js"
 pin "key_pairs/new", to: "key_pairs/new.js"
 pin "metrics/index", to: "metrics/index.js"
 pin "clusters/new", to: "clusters/new.js"
+pin "cluster_types/index", to: "cluster_types/index.js"
 
 # Utility Javascripts.
 pin "Profiler", to: "canvas/irv/NullProfiler.js"

@@ -8,10 +8,12 @@
     <p><%= cluster_type.description %></p>
   </div>
   <div class="card-section">
+    <% disabled = true %>
     <% if team %>
       <% cluster = Cluster.new(cluster_type: cluster_type, team: team) %>
       <% if current_user.can?(:create, cluster) %>
-        <%= link_to "Select", new_cluster_type_cluster_path(cluster_type, team_id: team.id) %>
+        <% disabled = false %>
+        <%  title = "" %>
       <% else %>
         <% title =  if Team.meets_cluster_credit_requirement.where(id: team.id).exists?
                       "You do not have permission to create clusters"
@@ -19,20 +21,19 @@
                       "Insufficient credits. Your chosen team must have at least #{Rails.application.config.cluster_credit_requirement} credits to create a cluster"
                     end
         %>
-        <span title="<%= title %>" class="disabled-cluster-link">Select</span>
       <% end %>
     <% else %>
-      <% if current_user.can?(:create, Cluster) %>
-        <%= link_to "Select", team_cluster_type_clusters_path(cluster_type) %>
-      <% else %>
-        <% title =  if current_ability.enough_credits_to_create_cluster?
-                      "You do not have permission to create clusters"
-                    else
-                      "Insufficient credits. You must belong to a team with at least #{Rails.application.config.cluster_credit_requirement} credits to create a cluster"
-                    end
-        %>
-        <span title="<%= title %>" class="disabled-cluster-link">Select</span>
-      <% end %>
+      <% title = if !current_user.can?(:create, Cluster)
+           "You do not have permission to create this cluster"
+         elsif !available_teams
+           "Unable to create a cluster - you must belong to a team with at least #{Rails.application.config.cluster_credit_requirement} credits to create a cluster"
+         else
+           "Please select a team"
+         end
+      %>
     <% end %>
+    <%= link_to "Select", disabled ? "#" : new_cluster_type_cluster_path(cluster_type, team_id: team&.id),
+                { class: "cluster-type-link #{"disabled-cluster-link" if disabled}", title: title,
+                 data: { base_target_url: new_cluster_type_cluster_path(cluster_type) } } %>
   </div>
 </div>

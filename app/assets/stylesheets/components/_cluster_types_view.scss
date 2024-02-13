@@ -17,6 +17,17 @@
   }
 }
 
+.choose-team {
+  max-width: 25rem;
+  margin-bottom: 2rem;
+  margin-left: 0.8rem;
+  margin-top: 1rem;
+
+  select {
+    margin-bottom: 0;
+  }
+}
+
 .cluster-types {
   display: flex;
   flex-wrap: wrap;
