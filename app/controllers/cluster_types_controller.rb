@@ -10,7 +10,7 @@ class ClusterTypesController < ApplicationController
     end
     @valid_teams = current_user.teams.meets_cluster_credit_requirement
     @unavailable_teams =  current_user.teams.where.not(id: @valid_teams.pluck(:id))
-    @all_teams = current_user.teams
+    @all_teams = current_user.teams.reorder(:name)
     @team = Team.find(params[:team_id]) if params[:team_id]
   end
 end
