@@ -12,7 +12,7 @@
 #
 module DeviceServices
   class Update
-    def self.call(device, device_params, location_params, user)
+    def self.call(device, device_params, location_params, details_params, user)
       chassis = device.chassis
       location = device.location
       device.update(device_params)
@@ -20,6 +20,23 @@ module DeviceServices
       if location && !location_params.blank?
         DeviceServices::Move.call(location, location_params, user)
         location.save
+      end
+
+      if details_params[:type] == device.details_type
+        device.details.update(details_params.except(:type))
+      else
+        begin
+          details_type = details_params[:type]
+          details = details_type.constantize.new(details_params.except(:type))
+          details.save
+          device.details = details
+          device.save
+        rescue NameError
+          # If details.type is not something we recognise, `.constantize` will
+          # throw a NameError - by setting device.details to nil we will trigger
+          # validation there since the device has become invalid
+          device.details = nil
+        end
       end
 
       return [device, chassis, location]

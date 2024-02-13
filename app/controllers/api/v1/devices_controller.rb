@@ -13,10 +13,11 @@ class Api::V1::DevicesController < Api::V1::ApplicationController
   end
 
   def update
-    @device, chassis, location = DeviceServices::Update.call(
+    @device, chassis, location, details = DeviceServices::Update.call(
       @device,
       device_params.to_h,
       location_params.to_h,
+      details_params.to_h,
       current_user
     )
 
@@ -44,7 +45,7 @@ class Api::V1::DevicesController < Api::V1::ApplicationController
   private
 
   def device_params
-    permitted_params.except(:location)
+    permitted_params.except(:location, :details)
   end
 
   def location_params
@@ -53,9 +54,13 @@ class Api::V1::DevicesController < Api::V1::ApplicationController
     end
   end
 
+  def details_params
+    permitted_params.fetch(:details, {})
+  end
+
   PERMITTED_PARAMS = [
-    "name", "description", "status", "cost", "public_ips", "private_ips", "ssh_key", "login_user", "location" => %w[rack_id start_u facing]
-  ] << {metadata: {}, volume_details: {}}
+    "name", "description", "status", "cost", "location" => %w[rack_id start_u facing]
+  ] << {metadata: {}, details: {}}
   def permitted_params
     params.require(:device).permit(*PERMITTED_PARAMS)
   end
