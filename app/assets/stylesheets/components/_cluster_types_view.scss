@@ -99,3 +99,14 @@
     max-width: 28em;
   }
 }
+
+.choose-team {
+  max-width: 25rem;
+  margin-bottom: 2rem;
+  margin-left: 0.8rem;
+  margin-top: 1rem;
+
+  select {
+    margin-bottom: 0;
+  }
+}
