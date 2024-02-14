@@ -56,6 +56,11 @@ Rails.application.routes.draw do
 
   resources :teams do
     resources :team_roles, only: [:index, :new, :create]
+    resources :invoices, only: [:index, :show] do
+      collection do
+        get 'draft'
+      end
+    end
   end
 
   resources :team_roles, only: [:edit, :update, :destroy]
@@ -64,12 +69,6 @@ Rails.application.routes.draw do
     collection do
       get '/success', to: 'key_pairs#success'
       delete '/:name', to: 'key_pairs#destroy', as: :delete
-    end
-  end
-
-  resources :invoices, only: [:index, :show] do
-    collection do
-      get 'draft'
     end
   end
 

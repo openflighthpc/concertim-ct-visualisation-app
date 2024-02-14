@@ -8,13 +8,9 @@ SimpleNavigation::Configuration.run do |navigation|
       primary.item :youraccount, "#{current_user.name}", '#',
         align: :right,
         icon: :youraccount,
-        highlights_on: %r(/accounts|/key_pairs|/invoices) do |acc|
+        highlights_on: %r(/accounts|/key_pairs/) do |acc|
           acc.item :acc_details, 'Account details', url_helpers.edit_user_registration_path, :icon => :details, :link => {:class => 'details'}
           unless current_user.root?
-            acc.item :view_invoices, "View invoices", url_helpers.invoices_path,
-              icon: :reports,
-              link_html: {title: "View invoices"}
-
             acc.item :acc_details, 'Manage key-pairs', url_helpers.key_pairs_path,
                      :icon => :key, :link => {:class => 'details'}
           end
