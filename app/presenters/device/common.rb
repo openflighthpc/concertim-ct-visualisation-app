@@ -1,12 +1,12 @@
 #
-# DevicePresenter::Common
+# Device::Common
 #
 # Methods common to all device-based presenters
 #
 # NOTE: If this file starts becoming large / a bag of methods, split 
 # it out into seperate files within this folder, grouped into domain categories.
 # 
-class DevicePresenter
+class Device
   module Common
 
     #
