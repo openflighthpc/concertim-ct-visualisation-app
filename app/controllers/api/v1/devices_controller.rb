@@ -13,7 +13,7 @@ class Api::V1::DevicesController < Api::V1::ApplicationController
   end
 
   def update
-    @device, chassis, location, details = DeviceServices::Update.call(
+    @device, chassis, location = DeviceServices::Update.call(
       @device,
       device_params.to_h,
       location_params.to_h,
