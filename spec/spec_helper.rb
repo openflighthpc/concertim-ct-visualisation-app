@@ -90,3 +90,7 @@ RSpec.configure do |config|
   # as the one that triggered the failure.
   Kernel.srand config.seed
 end
+
+# We can't use `.and.not_to change`, but this definition allows us to
+# use `.and not_change` instead for the same effect:
+RSpec::Matchers.define_negated_matcher :not_change, :change

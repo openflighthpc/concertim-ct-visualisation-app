@@ -171,6 +171,17 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
           }
         }
       }
+      let(:valid_partial_attributes) {
+        {
+          device: {
+            name: device.name + "-updated",
+            cost: 1138,
+            details: {
+              ssh_key: 'shibboleth'
+            }
+          }
+        }
+      }
 
       context "with valid parameters" do
         def send_request
@@ -209,6 +220,32 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
           expect(parsed_details["ssh_key"]).to eq valid_attributes[:device][:details][:ssh_key]
           expect(parsed_details["login_user"]).to eq valid_attributes[:device][:details][:login_user]
           expect(parsed_details["volume_details"]["id"]).to eq valid_attributes[:device][:details][:volume_details][:id]
+        end
+      end
+
+      context "with valid partial parameters" do
+        def send_request
+          patch url_under_test,
+            params: valid_partial_attributes,
+            headers: headers,
+            as: :json
+        end
+
+        it "updates the specified parameters" do
+          expect { send_request }.to change { device.reload.name }
+            .and change { device.cost }
+            .and change { device.details.ssh_key }
+        end
+
+        it "does not update parameters that were unspecified" do
+          expect { send_request }.to not_change { device.status }
+            .and not_change { device.metadata }
+            .and not_change { device.template }
+            .and not_change { device.details_type }
+            .and not_change { device.details.public_ips }
+            .and not_change { device.details.private_ips }
+            .and not_change { device.details.login_user }
+            .and not_change { device.details.volume_details }
         end
       end
 

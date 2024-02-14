@@ -55,7 +55,7 @@ class Api::V1::DevicesController < Api::V1::ApplicationController
   end
 
   def details_params
-    permitted_params.fetch(:details, {})
+    permitted_params.fetch(:details, nil)
   end
 
   PERMITTED_PARAMS = [
