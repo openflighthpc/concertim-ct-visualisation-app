@@ -65,7 +65,7 @@ class Ability
 
     # Invoice is an ActiveModel::Model, but not an ActiveRecord::Base.  Setting
     # abilities like this might not work too well.  Or perhaps its fine.
-    can :read, Invoice, account: @user
+    can :read, Invoice, account: @user.team_roles.where(role: "admin").map(&:team)
   end
 
   # Despite specifying what a user can/can't do, you will eventually come
