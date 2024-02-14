@@ -18,10 +18,13 @@
 }
 
 .choose-team {
-  max-width: 25rem;
   margin-bottom: 2rem;
-  margin-left: 0.8rem;
+  margin-left: 0.7rem;
   margin-top: 1rem;
+
+  .formItem {
+    max-width: 22rem;
+  }
 
   select {
     margin-bottom: 0;
