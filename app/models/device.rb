@@ -34,7 +34,7 @@ class Device < ApplicationRecord
 
   has_one :template, through: :chassis, source: :template
 
-  belongs_to :details, polymorphic: :true
+  belongs_to :details, polymorphic: :true, dependent: :destroy
 
 
   ###########################
