@@ -61,6 +61,7 @@ class Device < ApplicationRecord
   validate :device_limit, if: :new_record?
   validate :metadata_format
   validate :valid_details_type
+  validates_associated :details
 
   #############################
   #
