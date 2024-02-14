@@ -1,4 +1,4 @@
-<% set_title(@invoice.draft? ? "Draft Invoice" : "Invoice ##{@invoice.invoice_number}") -%>
+<% set_title("#{@invoice.draft? ? "Draft Invoice" : "Invoice ##{@invoice.invoice_number}"} for team #{@team.name}") -%>
 
 <div class="invoice">
   <div class="invoice-header">
