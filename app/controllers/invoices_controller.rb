@@ -22,26 +22,26 @@ class InvoicesController < ApplicationController
   end
 
   def show
-    result = GetInvoiceJob.perform_now(@cloud_service_config, current_user, params[:id])
+    result = GetInvoiceJob.perform_now(@cloud_service_config, @team, params[:id])
     if result.success?
       @invoice = result.invoice
       authorize! :show, @invoice
       render
     else
       flash[:alert] = "Unable to fetch invoice: #{result.error_message}"
-      redirect_to invoices_path
+      redirect_to team_invoices_path(@team)
     end
   end
 
   def draft
-    result = GetDraftInvoiceJob.perform_now(@cloud_service_config, current_user)
+    result = GetDraftInvoiceJob.perform_now(@cloud_service_config, @team)
     if result.success?
       @invoice = result.invoice
       authorize! :show, @invoice
       render action: :show
     else
       flash[:alert] = "Unable to fetch draft invoice: #{result.error_message}"
-      redirect_to invoices_path
+      redirect_to team_invoices_path(@team)
     end
   end
 
