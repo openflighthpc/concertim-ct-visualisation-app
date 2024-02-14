@@ -20,24 +20,29 @@
   <p>There are no cluster types available at present.</p>
 <% else %>
   <div class="new_cluster choose-team">
-    <div class="formItem">
-      <div class="field">
-        <%= label_tag :team_id, "Team", class: "required_field" %>
-        <select id="choose_cluster_team" name="team_id" required <% "disabled" unless current_user.can?(:create, Cluster) %>>
-          <option value="" disabled selected>Select Team</option>
-          <% @all_teams.each do |team| %>
-            <% disabled = @unavailable_teams.include?(team) ? 'disabled' : '' %>
-            <option value="<%= team.id %>" <%= 'selected' if @team && @team.id == team.id %> <%= disabled %>>
-              <%= team.name %>
-            </option>
-          <% end %>
-        </select>
-
+    <% if @valid_teams.exists? %>
+      <div class="formItem">
+        <div class="field">
+          <%= label_tag :team_id, "Team", class: "required_field" %>
+          <select id="choose_cluster_team" name="team_id" required <% "disabled" unless current_user.can?(:create, Cluster) %>>
+            <option value="" disabled selected>Select Team</option>
+            <% @all_teams.each do |team| %>
+              <% disabled = @unavailable_teams.include?(team) ? 'disabled' : '' %>
+              <option value="<%= team.id %>" <%= 'selected' if @team && @team.id == team.id %> <%= disabled %>>
+                <%= team.name %>
+              </option>
+            <% end %>
+          </select>
+        </div>
+        <div class="constraint-text">
+          Must have at least <%= Rails.application.config.cluster_credit_requirement %> credits
+        </div>
       </div>
-      <div class="constraint-text">
-        Must have at least <%= Rails.application.config.cluster_credit_requirement %> credits
-      </div>
-    </div>
+    <% else %>
+      <p>
+        You must belong to a team with at least <%= Rails.application.config.cluster_credit_requirement %> credits to create a cluster.
+      </p>
+    <% end %>
   </div>
 
   <div class="cluster-types">
