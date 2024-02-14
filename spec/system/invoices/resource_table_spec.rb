@@ -3,6 +3,8 @@ require 'rails_helper'
 RSpec.describe "invoices index page table", type: :system do
   let(:user_password) { 'user-password' }
   let!(:user) { create(:user, :with_openstack_account, password: user_password) }
+  let!(:team) { create(:team, :with_openstack_details) }
+  let!(:team_role) { create(:team_role, user: user, team: team, role: "admin") }
   let(:items_per_page) { 20 }
 
   before(:each) do
@@ -24,14 +26,14 @@ RSpec.describe "invoices index page table", type: :system do
       "total_invoices" => total_invoices,
       "invoices" => invoices.map do |invoice|
         attrs = invoice.attributes.except("account")
-        attrs["account_id"] = user.billing_acct_id
+        attrs["account_id"] = team.billing_acct_id
         attrs
       end,
     }
   }
 
   # The API does the pagination for us, we emulate that here.
-  let(:invoices) { build_list(:invoice, [total_invoices, items_per_page].min, account: user) }
+  let(:invoices) { build_list(:invoice, [total_invoices, items_per_page].min, account: team) }
 
   describe "pagination" do
     context "when there are 20 or fewer invoices" do
@@ -39,8 +41,8 @@ RSpec.describe "invoices index page table", type: :system do
       let(:total_invoices) { 10 }
 
       it "lists all invoices" do
-        visit invoices_path
-        expect(current_path).to eq(invoices_path)
+        visit team_invoices_path(team)
+        expect(current_path).to eq(team_invoices_path(team))
 
         table = find('.resource_table')
         invoices.each do |invoice|
@@ -54,8 +56,8 @@ RSpec.describe "invoices index page table", type: :system do
       let(:total_invoices) { 30 }
 
       it "lists the first 20 invoices" do
-        visit invoices_path
-        expect(current_path).to eq(invoices_path)
+        visit team_invoices_path(team)
+        expect(current_path).to eq(team_invoices_path(team))
 
         table = find('.resource_table')
         invoices.each do |invoice|
@@ -65,8 +67,8 @@ RSpec.describe "invoices index page table", type: :system do
       end
 
       it "displays enabled pagination controls" do
-        visit invoices_path
-        expect(current_path).to eq(invoices_path)
+        visit team_invoices_path(team)
+        expect(current_path).to eq(team_invoices_path(team))
 
         controls = find('.pagination_controls')
         expect(controls).to have_content "Displaying items 1-20 of 30"
@@ -83,8 +85,8 @@ RSpec.describe "invoices index page table", type: :system do
   describe "invoice table rows" do
     let(:total_invoices) { 10 }
     it "displays correct amount for invoice" do
-      visit invoices_path
-      expect(current_path).to eq(invoices_path)
+      visit team_invoices_path(team)
+      expect(current_path).to eq(team_invoices_path(team))
 
       table = find('.resource_table')
       invoices.each do |invoice|
@@ -95,13 +97,13 @@ RSpec.describe "invoices index page table", type: :system do
     end
 
     it "displays a link to view the invoice" do
-      visit invoices_path
-      expect(current_path).to eq(invoices_path)
+      visit team_invoices_path(team)
+      expect(current_path).to eq(team_invoices_path(team))
 
       table = find('.resource_table')
       invoices.each do |invoice|
         tr = table.find("tr[data-test='invoice-#{invoice.invoice_id}']")
-        expect(tr).to have_link("View invoice", href: invoice_path(invoice))
+        expect(tr).to have_link("View invoice", href: team_invoice_path(team, invoice))
       end
     end
   end

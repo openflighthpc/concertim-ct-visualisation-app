@@ -12,7 +12,7 @@ FactoryBot.define do
     refund_adj { 0 }
     status { 'COMMITTED' }
 
-    association :account, factory: :user
+    association :account, :with_openstack_details, factory: :team
     items { [] }
 
     initialize_with { new(attributes) }

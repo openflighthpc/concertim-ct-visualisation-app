@@ -8,7 +8,7 @@ class InvoicesController < ApplicationController
   before_action :ensure_billing_account_configured
 
   def index
-    authorize! :index, Invoice
+    authorize! :read, Invoice.new(account: @team)
     @pagy = Pagy::DelayedCount.new(pagy_get_vars_without_count)
     result = GetInvoicesJob.perform_now(@cloud_service_config, @team, offset: @pagy.offset, limit: @pagy.items)
     if result.success?
