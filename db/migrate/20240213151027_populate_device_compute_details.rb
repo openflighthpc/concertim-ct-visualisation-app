@@ -4,7 +4,11 @@ class PopulateDeviceComputeDetails < ActiveRecord::Migration[7.1]
     belongs_to :details, polymorphic: true
   end
 
-  class ::Device::ComputeDetails < ApplicationRecord
+  class ::Device::Details < ApplicationRecord
+    self.abstract_class = true
+  end
+
+  class ::Device::ComputeDetails < ::Device::Details
   end
 
   def up
