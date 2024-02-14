@@ -60,6 +60,7 @@ class Device < ApplicationRecord
   validate :name_validator
   validate :device_limit, if: :new_record?
   validate :metadata_format
+  validate :valid_details_type
 
   #############################
   #
@@ -153,5 +154,15 @@ class Device < ApplicationRecord
 
   def metadata_format
     self.errors.add(:metadata, "Must be an object") unless metadata.is_a?(Hash)
+  end
+
+  def valid_details_type
+    return unless details_type.present?
+    begin
+      dt = details_type.constantize
+      self.errors.add(:details_type, "Must be a valid subtype of Device::Details") unless dt < Device::Details
+    rescue NameError
+      self.errors.add(:details_type, "Must be a valid and recognised type")
+    end
   end
 end

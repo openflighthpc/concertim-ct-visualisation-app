@@ -1,2 +1,2 @@
-class Device::ComputeDetails < ApplicationRecord
+class Device::ComputeDetails < Device::Details
 end

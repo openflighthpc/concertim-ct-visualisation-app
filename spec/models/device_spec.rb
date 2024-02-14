@@ -83,6 +83,11 @@ RSpec.describe Device, type: :model do
       subject.details = nil
       expect(subject).to have_error(:details, :blank)
     end
+
+    it "is not valid with a details model that is an invalid class" do
+      subject.details = location
+      expect(subject).to have_error(:details_type, "Must be a valid subtype of Device::Details")
+    end
   end
 
   describe "broadcast changes" do
