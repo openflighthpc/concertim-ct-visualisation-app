@@ -44,6 +44,9 @@ BODY=$(jq --null-input \
         "metadata": {
           "openstack_instance_id": "8f4e9068-5a39-4717-8a83-6b95e01031eb",
           "status": ["build", "scheduling", ""]
+        },
+        "details": {
+            "type": "Device::ComputeDetails"
         }
     }
 }
