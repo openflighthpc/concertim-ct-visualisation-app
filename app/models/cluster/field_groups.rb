@@ -5,6 +5,11 @@ class Cluster::FieldGroups
     @groups = groups.map do |group_definition|
       Cluster::FieldGroup.new(**group_definition.symbolize_keys)
     end
+    @groups.each do |group|
+      next if cluster.selections.nil?
+      next unless group.optional?
+      group.selected = cluster.selections[group.selection_form_name]
+    end
     @fields = fields.map do |id, details|
       Cluster::Field.new(id, details)
     end
@@ -32,5 +37,9 @@ class Cluster::FieldGroups
 
   def each(&block)
     @groups.each(&block)
+  end
+
+  def optional_selection_form_names
+    @groups.select(&:optional?).map(&:selection_form_name)
   end
 end

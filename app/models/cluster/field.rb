@@ -19,6 +19,7 @@ class Cluster::Field
   attr_accessor :hidden
   attr_accessor :immutable
   attr_accessor :value
+  attr_accessor :group
   attr_reader :constraints
 
   ############################
@@ -31,8 +32,11 @@ class Cluster::Field
             presence: true,
             inclusion: { in: %w(string number comma_delimited_list json boolean) }
 
-  validates :id, :label, :value, :order,
+  validates :id, :label, :order,
             presence: true
+  validates :value,
+    presence: true,
+    if: -> { group.nil? || group.selected? }
 
   validate :valid_number?, if: -> { value && type == "number" }
   validate :valid_json?, if: -> { value && type == "json" }

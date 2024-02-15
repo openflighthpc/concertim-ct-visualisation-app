@@ -82,7 +82,8 @@ class CreateClusterJob < ApplicationJob
       {
         cluster_type_id: @cluster.type_id,
         name: @cluster.name,
-        parameters: @cluster.field_values
+        parameters: @cluster.field_values,
+        selections: @cluster.selections,
       }
     end
 

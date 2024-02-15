@@ -25,7 +25,10 @@ class ClustersController < ApplicationController
     @cloud_service_config = CloudServiceConfig.first
     @cluster_type = ClusterType.find_by_foreign_id!(params[:cluster_type_foreign_id])
     @cluster = Cluster.new(
-      cluster_type: @cluster_type, name: permitted_params[:name], cluster_params: permitted_params[:cluster_params]
+      cluster_type: @cluster_type,
+      name: permitted_params[:name],
+      cluster_params: permitted_params[:cluster_params],
+      selections: permitted_params[:selections].transform_values { |v| ActiveModel::Type::Boolean.new.cast(v) }.to_h,
     )
 
     if @cloud_service_config.nil?
@@ -68,7 +71,10 @@ class ClustersController < ApplicationController
   private
 
   def permitted_params
-    params.require(:cluster).permit(:name, cluster_params: @cluster_type.fields.keys)
+    valid_selections = @cluster_type.field_groups
+      .select { |group| group["optional"].present? }
+      .map { |group| group["optional"]["name"] }
+    params.require(:cluster).permit(:name, cluster_params: @cluster_type.fields.keys, selections: valid_selections)
   end
 
   def set_cloud_assets
