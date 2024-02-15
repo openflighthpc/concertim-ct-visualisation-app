@@ -268,6 +268,28 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
           expect(response).to have_http_status :unprocessable_entity
         end
       end
+
+      context "when trying to change the type of a device's details" do
+        let(:params) {
+          {
+            device: {
+              details: {
+                type: 'Location'
+              }
+            }
+          }
+        }
+        def send_request
+          patch url_under_test,
+            params: params,
+            headers: headers,
+            as: :json
+        end
+        it "renders an unprocessable entity response" do
+          send_request
+          expect(response).to have_http_status :unprocessable_entity
+        end
+      end
     end
 
     context "when not logged in" do

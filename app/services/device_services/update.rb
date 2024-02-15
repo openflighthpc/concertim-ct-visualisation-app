@@ -26,19 +26,11 @@ module DeviceServices
         if !details_params[:type] || details_params[:type] == device.details_type
           device.details.update(details_params.except(:type))
         else
-          # Do we even want to support changing the type of a device's details?
-          begin
-            details_type = details_params[:type]
-            details = details_type.constantize.new(details_params.except(:type))
-            details.save
-            device.details = details
-            device.save
-          rescue NameError
-            # If details.type is not something we recognise, `.constantize` will
-            # throw a NameError - by setting device.details to nil we will trigger
-            # validation there since the device has become invalid
-            device.details = nil
-          end
+          # It's forbidden to change device details type after creation
+          # We set details to nil here so that validation on Device can return a
+          # sensible error message (cannot be changed...), and we don't need to
+          # worry about handling an invalid type being specified here.
+          device.details = nil
         end
       end
 
