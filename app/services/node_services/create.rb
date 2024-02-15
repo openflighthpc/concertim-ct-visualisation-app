@@ -72,10 +72,7 @@ module NodeServices
       details_class = @details_params[:type]
       details = details_class.constantize.new(@details_params.except(:type))
 
-      device = Device.new(@device_params)
-      device.details = details
-      device.chassis = @chassis
-      device.save!
+      device = @chassis.create_device!(@device_params.merge(details: details))
 
       Rails.logger.debug("Built object graph") {
         {chassis: @chassis, location: location, device: device}
