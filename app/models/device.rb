@@ -61,6 +61,7 @@ class Device < ApplicationRecord
   validate :device_limit, if: :new_record?
   validate :metadata_format
   validate :valid_details_type
+  validate :details_type_not_changed
   validates_associated :details
 
   #############################
@@ -164,6 +165,12 @@ class Device < ApplicationRecord
       self.errors.add(:details_type, "Must be a valid subtype of Device::Details") unless dt < Device::Details
     rescue NameError
       self.errors.add(:details_type, "Must be a valid and recognised type")
+    end
+  end
+
+  def details_type_not_changed
+    if details_type_changed? && self.persisted?
+      self.errors.add(:details_type, "Cannot be changed once a device has been created")
     end
   end
 end

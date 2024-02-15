@@ -87,6 +87,9 @@ RSpec.describe Device, type: :model do
     it "is not valid with a details model that is an invalid class" do
       subject.details = location
       expect(subject).to have_error(:details_type, "Must be a valid subtype of Device::Details")
+      # This is a secondary error, but until we add a second Device::Details
+      # subclass, this test is the only way we can assert it's returned:
+      expect(subject).to have_error(:details_type, "Cannot be changed once a device has been created")
     end
   end
 
