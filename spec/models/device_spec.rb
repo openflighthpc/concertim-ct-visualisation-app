@@ -18,6 +18,7 @@ RSpec.describe Device, type: :model do
         status: 'IN_PROGRESS',
         cost: 99.99
       )
+      device.details = Device::ComputeDetails.new
       expect(device).to be_valid
     end
 
@@ -76,6 +77,19 @@ RSpec.describe Device, type: :model do
     it "is not valid with a negative cost" do
       subject.cost = -99
       expect(subject).to have_error(:cost, :greater_than_or_equal_to)
+    end
+
+    it "is not valid without a details model" do
+      subject.details = nil
+      expect(subject).to have_error(:details, :blank)
+    end
+
+    it "is not valid with a details model that is an invalid class" do
+      subject.details = location
+      expect(subject).to have_error(:details_type, "Must be a valid subtype of Device::Details")
+      # This is a secondary error, but until we add a second Device::Details
+      # subclass, this test is the only way we can assert it's returned:
+      expect(subject).to have_error(:details_type, "Cannot be changed once a device has been created")
     end
   end
 

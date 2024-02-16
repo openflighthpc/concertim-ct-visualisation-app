@@ -28,17 +28,18 @@ module NodeServices
     class FailedObjectNotFound < RuntimeError; end
     class UnsupportedError < RuntimeError; end
 
-    def self.call(template, location_params, device_params, user)
-      new(template, location_params, device_params, user).call
+    def self.call(template, location_params, device_params, details_params, user)
+      new(template, location_params, device_params, details_params, user).call
     end
 
     # +template+ is the Template instance that is being persisted.
     # +params+ are the params that have been gathered from the user, e.g.,
     # location and name.
-    def initialize(template, location_params, device_params, user)
+    def initialize(template, location_params, device_params, details_params, user)
       @template = template
       @location_params = location_params
       @device_params = device_params
+      @details_params = details_params
       @user = user
     end
 
@@ -67,7 +68,12 @@ module NodeServices
     def create_object_graph
       location = Location.create!(location_params)
       @chassis = location.create_chassis!(chassis_params)
-      device = @chassis.create_device!(@device_params)
+
+      details_class = @details_params[:type]
+      details = details_class.constantize.new(@details_params.except(:type))
+
+      device = @chassis.create_device!(@device_params.merge(details: details))
+
       Rails.logger.debug("Built object graph") {
         {chassis: @chassis, location: location, device: device}
       }

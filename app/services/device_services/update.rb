@@ -12,7 +12,7 @@
 #
 module DeviceServices
   class Update
-    def self.call(device, device_params, location_params, user)
+    def self.call(device, device_params, location_params, details_params, user)
       chassis = device.chassis
       location = device.location
       device.update(device_params)
@@ -20,6 +20,18 @@ module DeviceServices
       if location && !location_params.blank?
         DeviceServices::Move.call(location, location_params, user)
         location.save
+      end
+
+      if details_params
+        if !details_params[:type] || details_params[:type] == device.details_type
+          device.details.update(details_params.except(:type))
+        else
+          # It's forbidden to change device details type after creation
+          # We set details to nil here so that validation on Device can return a
+          # sensible error message (cannot be changed...), and we don't need to
+          # worry about handling an invalid type being specified here.
+          device.details = nil
+        end
       end
 
       return [device, chassis, location]

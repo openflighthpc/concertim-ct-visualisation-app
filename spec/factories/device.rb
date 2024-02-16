@@ -5,5 +5,6 @@ FactoryBot.define do
     status { 'IN_PROGRESS' }
 
     association :chassis
+    association :details, factory: :device_compute_details
   end
 end

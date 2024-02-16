@@ -4,11 +4,10 @@
 # Generic Device Presenter
 #
 class DevicePresenter < Presenter
-  include DevicePresenter::Common
+  include Device::Common
   include Costed
 
   delegate :name, :description, :status, :metadata,
-    :public_ips, :private_ips, :volume_details,
     :attributes,
     to: :o
 
@@ -17,6 +16,8 @@ class DevicePresenter < Presenter
 
   delegate :vcpus, :ram, :disk,
     to: :template
+
+  delegate :is_compute_device?, to: :details
 
   # location returns the location of the device.  For devices in simple
   # chassis, the chassis's location is returned. Devices in complex chassis,
@@ -51,20 +52,24 @@ class DevicePresenter < Presenter
     "#{o.chassis.u_height}U"
   end
 
+  def details
+    h.presenter_for(o.details)
+  end
+
   def has_login_details?
-    public_ips || private_ips || o.ssh_key || o.login_user
+    is_compute_device? && (details.public_ips || details.private_ips || details.ssh_key || details.login_user)
   end
 
   def login_user
-    o.login_user.presence || h.content_tag(:em, 'Unknown')
+    o.details.login_user.presence || h.content_tag(:em, 'Unknown')
   end
 
   def ssh_key
-    o.ssh_key.presence || h.content_tag(:em, 'Unknown')
+    o.details.ssh_key.presence || h.content_tag(:em, 'Unknown')
   end
 
   def has_volume_details?
-    !volume_details.empty?
+    is_compute_device? && !o.details.volume_details.empty?
   end
 
   def has_metadata?
