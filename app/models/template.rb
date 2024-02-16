@@ -102,6 +102,10 @@ class Template < ApplicationRecord
             numericality: { only_integer: true, greater_than: 0 },
             allow_nil: true
 
+  validates :tag,
+            uniqueness: true,
+            if: :tag
+
   ####################################
   #
   # Class Methods
@@ -110,6 +114,10 @@ class Template < ApplicationRecord
 
   def self.default_rack_template
     find_by(default_rack_template: true)
+  end
+
+  def self.find_by_tag(tag)
+    find_by(tag: tag)
   end
 
   #######################
