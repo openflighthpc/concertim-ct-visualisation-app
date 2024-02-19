@@ -24,4 +24,13 @@ FactoryBot.define do
     columns { 1 }
     height { 1 }
   end
+
+  trait :network_device_template do
+    template_type { "Device" }
+    rackable { "rackable" }
+    rows { 1 }
+    columns { 1 }
+    height { 1 }
+    tag { "network" }
+  end
 end
