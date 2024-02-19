@@ -41,7 +41,11 @@ class CreateClusterJob < ApplicationJob
     def initialize(cluster:, user:, **kwargs)
       @cluster = cluster
       @user = user
-      super(**kwargs)
+      super(**kwargs.reverse_merge(test_stubs: test_stubs))
+    end
+
+    def test_stubs
+      nil
     end
 
     def call

@@ -24,11 +24,12 @@ class ClustersController < ApplicationController
     authorize! :create, Cluster
     @cloud_service_config = CloudServiceConfig.first
     @cluster_type = ClusterType.find_by_foreign_id!(params[:cluster_type_foreign_id])
+    selections = (permitted_params[:selections] || {}).transform_values { |v| ActiveModel::Type::Boolean.new.cast(v) }.to_h
     @cluster = Cluster.new(
       cluster_type: @cluster_type,
       name: permitted_params[:name],
       cluster_params: permitted_params[:cluster_params],
-      selections: permitted_params[:selections].transform_values { |v| ActiveModel::Type::Boolean.new.cast(v) }.to_h,
+      selections: selections,
     )
 
     if @cloud_service_config.nil?
