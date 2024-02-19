@@ -11,7 +11,7 @@ FactoryBot.define do
   end
 
   trait :rack_template do
-    default_rack_template { true }
+    tag { "rack" }
     template_type { "HwRack" }
     rackable { "nonrackable" }
     height { 40 }
