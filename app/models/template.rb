@@ -116,10 +116,6 @@ class Template < ApplicationRecord
     find_by(default_rack_template: true)
   end
 
-  def self.find_by_tag(tag)
-    find_by(tag: tag)
-  end
-
   #######################
   #
   # Instance Methods
