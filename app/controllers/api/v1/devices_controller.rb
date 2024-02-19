@@ -67,7 +67,6 @@ class Api::V1::DevicesController < Api::V1::ApplicationController
           :login_user,
           :volume_details
         )
-        legacy_params[:type] = 'Device::ComputeDetails'
         return legacy_params
       end
     end
