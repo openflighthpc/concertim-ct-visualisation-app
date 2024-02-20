@@ -21,7 +21,7 @@ START_U=${4}
 
 NETWORK_TEMPLATE_ID=$( "${SCRIPT_DIR}/list-templates.sh" | jq -r "sort_by(.height) | (.[] | select(.tag | . and contains(\"network\"))) | .id" )
 
-if [ -z "${NETWORK_TEMPLATE_ID}"]; then
+if [ -z "${NETWORK_TEMPLATE_ID}" ]; then
     echo "Couldn't find a template with tag='network'"
     exit 1
 fi
