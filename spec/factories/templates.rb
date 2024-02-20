@@ -33,4 +33,13 @@ FactoryBot.define do
     height { 1 }
     tag { "network" }
   end
+
+  trait :volume_device_template do
+    template_type { "Device" }
+    rackable { "rackable" }
+    rows { 1 }
+    columns { 1 }
+    height { 2 }
+    tag { "volume" }
+  end
 end

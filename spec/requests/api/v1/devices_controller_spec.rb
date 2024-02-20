@@ -393,6 +393,53 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
           end
         end
       end
+
+      context 'with a volume device' do
+        let(:device_template) { create(:template, :volume_device_template) }
+        let(:details) { create(:device_volume_details) }
+        let!(:device) { create(:device, chassis: chassis, details: details) }
+
+        context "with valid parameters" do
+          let(:attributes) {
+            {
+              device: {
+                name: device.name + "-updated",
+                status: "ACTIVE",
+                details: {
+                  bootable: true
+                }
+              }
+            }
+          }
+          def send_request
+            patch url_under_test,
+              params: attributes,
+              headers: headers,
+              as: :json
+          end
+
+          it "renders a successful response" do
+            send_request
+            expect(response).to have_http_status :ok
+          end
+
+          it "updates the device" do
+            expect {
+              send_request
+            }.to change{ device.reload.updated_at }
+          end
+
+          it "includes the device in the response" do
+            send_request
+
+            parsed_device = JSON.parse(response.body)
+            expect(parsed_device["name"]).to eq attributes[:device][:name]
+            expect(parsed_device["status"]).to eq attributes[:device][:status]
+            parsed_details = parsed_device # ['details'] after revertion of 6b8d3e9
+            expect(parsed_details["bootable"]).to eq attributes[:device][:details][:bootable]
+          end
+        end
+      end
     end
 
     context "when not logged in" do
