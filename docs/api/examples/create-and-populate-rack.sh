@@ -26,6 +26,16 @@ echo "Created empty rack ${RACK_NAME}" >&2
 "${SCRIPT_DIR}/show-rack.sh" "${RACK_ID}"
 echo
 
+
+OUTPUT=$("${SCRIPT_DIR}/create-volume.sh" vol-1 "${RACK_ID}" f 1)
+if [ $? -ne 0 ] ; then
+    # Errors will have been sent to stderr.
+    exit
+fi
+echo "Created network device"
+
+read -s -n 1
+
 # Create a badly named and located device in that empty rack.
 LARGEST_TEMPLATE=$( "${SCRIPT_DIR}/list-templates.sh" | jq "sort_by(.height) | reverse | .[0]" )
 TEMPLATE_ID=$(echo "${LARGEST_TEMPLATE}" | jq -r .id)
@@ -52,7 +62,7 @@ echo "Renamed device" >&2
 echo
 
 # Correct the location of the device.
-OUTPUT=$("${SCRIPT_DIR}/move-device.sh" "${DEVICE_ID}" "${RACK_ID}" f 1)
+OUTPUT=$("${SCRIPT_DIR}/move-device.sh" "${DEVICE_ID}" "${RACK_ID}" f 3)
 if [ $? -ne 0 ] ; then
     # Errors will have been sent to stderr.
     exit
@@ -69,8 +79,8 @@ fi
 echo "Created network device"
 
 # Leave some space at the top to allow dragging devices around the IRV.
-START_U=$(( ${TEMPLATE_HEIGHT} + 1 ))
-END_U=$(( $RACK_HEIGHT - 4 ))
+START_U=$(( ${TEMPLATE_HEIGHT} + 3 ))
+END_U=$(( $RACK_HEIGHT - 6 ))
 "${SCRIPT_DIR}/populate-rack.sh" ${RACK_ID} ${START_U} ${END_U} comp102
 
 "${SCRIPT_DIR}/show-rack.sh" "${RACK_ID}"
