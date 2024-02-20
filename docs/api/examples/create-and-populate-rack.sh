@@ -32,7 +32,7 @@ if [ $? -ne 0 ] ; then
     # Errors will have been sent to stderr.
     exit
 fi
-echo "Created network device"
+echo "Created volume device"
 
 read -s -n 1
 
