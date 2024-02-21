@@ -46,7 +46,6 @@ class CreateClusterJob < ApplicationJob
 
     def call
       response = connection.post(path, body)
-      Rails.logger.info(response)
       Result.new(response.success?, response.reason_phrase || "Unknown error", response.status)
 
     rescue Faraday::BadRequestError
