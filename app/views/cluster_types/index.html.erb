@@ -35,12 +35,12 @@
           </select>
         </div>
         <div class="constraint-text">
-          Must have at least <%= Rails.application.config.cluster_credit_requirement %> credits
+          You must be a team admin and the team have at least <%= Rails.application.config.cluster_credit_requirement %> credits
         </div>
       </div>
     <% else %>
       <p>
-        You must belong to a team with at least <%= Rails.application.config.cluster_credit_requirement %> credits to create a cluster.
+        You must be admin for a team with at least <%= Rails.application.config.cluster_credit_requirement %> credits to create a cluster.
       </p>
     <% end %>
   </div>

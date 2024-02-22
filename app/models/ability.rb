@@ -38,14 +38,17 @@ class Ability
     can :read, InteractiveRackView
 
     can :read, Template
-    can :manage, Chassis, location: {rack: {team_id: @user.team_ids }}
-    can :manage, Device, chassis: {location: {rack: {team_id: @user.team_ids }}}
-    can :manage, HwRack, team_id: @user.team_ids
+    can :read, Chassis, location: {rack: {team_id: @user.team_ids }}
+    can :read, Device, chassis: {location: {rack: {team_id: @user.team_ids }}}
+    can :read, HwRack, team_id: @user.team_ids
+    can :manage, Chassis, location: {rack: {team_id: @user.teams_where_admin.pluck(:id) }}
+    can :manage, Device, chassis: {location: {rack: {team_id: @user.teams_where_admin.pluck(:id) }}}
+    can :manage, HwRack, team_id: @user.teams_where_admin.pluck(:id)
 
     can :manage, RackviewPreset, user: @user
 
     can :read, ClusterType
-    can :create, Cluster, team_id: @user.team_ids
+    can :create, Cluster, team_id: @user.teams_where_admin.pluck(:id)
 
     can :read, KeyPair, user: @user
     can :create, KeyPair, user: @user
