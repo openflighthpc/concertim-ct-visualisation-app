@@ -1,4 +1,7 @@
 class MigrateDefaultRackTemplateToTag < ActiveRecord::Migration[7.1]
+
+  class Template < ApplicationRecord; end
+
   def change
     reversible do |dir|
       dir.up do
