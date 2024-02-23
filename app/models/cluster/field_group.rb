@@ -10,6 +10,7 @@ class Cluster::FieldGroup
   ####################################
 
   attr_reader :label, :description
+  attr_accessor :selected
 
   ####################################
   #
@@ -17,11 +18,13 @@ class Cluster::FieldGroup
   #
   ####################################
 
-  def initialize(label:, description:, parameters:)
+  def initialize(label:, description:, parameters:, optional: nil)
     @label = label
     @description = description
     @parameters = parameters || []
+    @optional = optional
     @fields = {}
+    @selected = optional? ? @optional["default"] : true
   end
 
   # contains_field? returns true if the group is configured to contain the given field_id.
@@ -31,6 +34,7 @@ class Cluster::FieldGroup
 
   # add adds the given field to this group.
   def add(field)
+    field.group = self
     @fields[field.id] = field
   end
 
@@ -50,5 +54,21 @@ class Cluster::FieldGroup
 
   def empty?
     fields.empty?
+  end
+
+  def optional?
+    @optional.present?
+  end
+
+  def selected?
+    !!selected
+  end
+
+  def selection_label
+    @optional["label"]
+  end
+
+  def selection_form_name
+    @optional["name"]
   end
 end

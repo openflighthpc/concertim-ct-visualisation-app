@@ -1,3 +1,7 @@
+<% content_for(:head) do %>
+  <%= javascript_import_module_tag "clusters/new" %>
+<% end %>
+
 <% set_title 'Configure cluster' -%>
 <% content_for(:side_content) do %>
   <%= render 'actions' %>
@@ -12,12 +16,20 @@
 
   <% @cluster.field_groups.each do |field_group| %>
     <% next if field_group.empty? %>
-    <div class="cluster-field-group">
+    <div class="cluster-field-group" data-cluster-form-optional-field-group="field-group">
       <h4 class="cluster-field-group-label"><%= field_group.label %></h4>
       <% unless field_group.description.blank? %>
         <div class="cluster-field-group-description"><%= field_group.description %></div>
       <% end %>
-      <div class="cluster-field-group-fields">
+      <% if field_group.optional? %>
+        <div class="cluster-field-group-optional-toggle" data-cluster-form-optional-field-group="toggle">
+          <%= f.fields_for :selections, field_group do |selection| %>
+            <%= selection.check_box(field_group.selection_form_name, checked: field_group.selected) %>
+            <label for="cluster_selections_<%= field_group.selection_form_name %>"><%= field_group.selection_label %></label>
+          <% end %>
+        </div>
+      <% end %>
+      <div class="cluster-field-group-fields ct-collapsible" data-cluster-form-optional-field-group="fields">
         <% field_group.fields.each do |field| %>
           <% field = Cluster::FieldPresenter.new(field, self, @cloud_assets) %>
           <%= f.fields_for :cluster_params, field do |cluster_param| %>

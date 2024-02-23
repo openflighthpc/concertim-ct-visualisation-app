@@ -77,7 +77,8 @@ RSpec.describe CreateClusterJob, type: :job do
       expect(subject[:cluster]).to eq({
                                           "cluster_type_id" => cluster.cluster_type.foreign_id,
                                           "name" => cluster.name,
-                                          "parameters" => cluster.field_values
+                                          "parameters" => cluster.field_values,
+                                          "selections" => cluster.selections,
                                         })
     end
 

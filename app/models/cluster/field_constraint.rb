@@ -90,6 +90,10 @@ class Cluster::FieldConstraint
     klass.new(description: description, definition: definition)
   end
 
+  def inspect
+    "#<#{self.class.inspect}: @attributes=#{attributes}>"
+  end
+
   private
 
   ############################
