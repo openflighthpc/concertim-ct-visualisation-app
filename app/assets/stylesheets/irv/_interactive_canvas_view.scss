@@ -157,6 +157,10 @@
     -moz-box-shadow: 3px 3px 12px 3px rgba(0,0,0,0.3);
     -webkit-box-shadow: 3px 3px 12px 3px rgba(0,0,0,0.3);
     box-shadow: 3px 3px 12px 3px rgba(0,0,0,0.3);
+
+    .menu-spacer:last-child {
+      display: none; /* Hide spacer if no subsequent options */
+    }
   }
 
   .disabled_context_menu_item

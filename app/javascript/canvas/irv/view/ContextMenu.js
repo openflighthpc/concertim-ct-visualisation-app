@@ -112,8 +112,8 @@ class ContextMenu {
         for (var option of Array.from(total_options)) {
           // If the option has the attribute RBAC defined, then query the @model.RBAC object 
           // to see if such permission has been granted. Otherwise, continue to the next option.
-          if (option.RBAC != null) {
-            if (!this.model.RBAC.can_i(option.RBAC.action,option.RBAC.resource)) { continue; }
+          if (option.rbacAction != null) {
+            if (!this.model.RBAC.can_i(option.rbacAction, option_set, device.teamRole)) { continue; }
           }
 
           if (option.availableToBuildStatuses !== undefined && option.availableToBuildStatuses.indexOf(device.buildStatus) === -1) {

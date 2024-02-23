@@ -2,6 +2,13 @@ object @rack
 attributes :id, :name
 attribute :currency_cost => :cost
 attributes u_height: :uHeight, status: :buildStatus
+node(:team_role) do |rack|
+  if locals[:user].root
+    "superAdmin"
+  else
+    locals[:user].team_roles.where(team_id: rack.team_id).pluck(:role).first
+  end
+end
 
 child :team, root: 'owner' do
   extends 'api/v1/teams/show'

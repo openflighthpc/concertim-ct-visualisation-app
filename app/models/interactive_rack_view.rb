@@ -64,6 +64,16 @@ class InteractiveRackView
       end
     end
 
+    def role_query(user)
+      return unless user
+
+      if user.root
+        "( SELECT 'superAdmin' as \"teamRole\" ) as \"teamRole\","
+      else
+        "( SELECT TR.role AS \"teamRole\" FROM team_roles TR WHERE TR.team_id = R.team_id AND TR.user_id = '#{user.id.to_s}' LIMIT 1) AS \"teamRole\","
+      end
+    end
+
     def generate_sql(racks, user)
       ids = rack_ids(racks, user)
       sanitized_ids = ids.map { |id| "'#{ApplicationRecord.sanitize_sql(id)}'" }.join(',')
@@ -74,6 +84,7 @@ WITH sorted_racks AS (
         SELECT racks.id AS id, racks.name AS name, racks.u_height AS u_height, racks.status AS status, ROUND(racks.cost, 2) AS cost, racks.template_id AS template_id, racks.team_id AS team_id
           FROM racks
           JOIN teams as teams ON racks.team_id = teams.id
+          JOIN team_roles as team_roles ON racks.team_id = team_roles.team_id
       ORDER BY LOWER(teams.name)
              , SUBSTRING("racks"."name" FROM E'^(.*?)(\\\\d+)?$')
              , LPAD(SUBSTRING( "racks"."name" FROM E'(\\\\d+)$'), 30, '0') ASC
@@ -87,6 +98,7 @@ SELECT
                        R.u_height AS "uHeight" ,
                        R.status AS "buildStatus" ,
                        cast(R.cost as money) AS "cost",
+                       #{role_query(user)}
                        ( SELECT id FROM sorted_racks OFFSET (SELECT row_num FROM (SELECT id,row_number() OVER () AS row_num FROM sorted_racks) t WHERE id=R.id) LIMIT 1) AS "nextRackId"),
                        ( SELECT XmlElement( name "owner", XmlAttributes (O.id, O.name))
                            FROM teams O WHERE O.id = R.team_id LIMIT 1 
@@ -155,7 +167,7 @@ SELECT
                        )      
                 )
     )
-   ) FROM sorted_racks R 
+   ) FROM sorted_racks R
 SQL
 
       ret + condition
