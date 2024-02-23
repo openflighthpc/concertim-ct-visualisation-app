@@ -61,9 +61,16 @@ echo "Moved device" >&2
 "${SCRIPT_DIR}/show-device.sh" "${DEVICE_ID}"
 echo
 
+OUTPUT=$("${SCRIPT_DIR}/create-network.sh" net-1 "${RACK_ID}" f "$RACK_HEIGHT")
+if [ $? -ne 0 ] ; then
+    # Errors will have been sent to stderr.
+    exit
+fi
+echo "Created network device"
+
 # Leave some space at the top to allow dragging devices around the IRV.
 START_U=$(( ${TEMPLATE_HEIGHT} + 1 ))
-END_U=$(( $RACK_HEIGHT - 3 ))
+END_U=$(( $RACK_HEIGHT - 4 ))
 "${SCRIPT_DIR}/populate-rack.sh" ${RACK_ID} ${START_U} ${END_U} comp102
 
 "${SCRIPT_DIR}/show-rack.sh" "${RACK_ID}"

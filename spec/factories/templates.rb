@@ -11,7 +11,7 @@ FactoryBot.define do
   end
 
   trait :rack_template do
-    default_rack_template { true }
+    tag { "rack" }
     template_type { "HwRack" }
     rackable { "nonrackable" }
     height { 40 }
@@ -23,5 +23,14 @@ FactoryBot.define do
     rows { 1 }
     columns { 1 }
     height { 1 }
+  end
+
+  trait :network_device_template do
+    template_type { "Device" }
+    rackable { "rackable" }
+    rows { 1 }
+    columns { 1 }
+    height { 1 }
+    tag { "network" }
   end
 end

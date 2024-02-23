@@ -344,6 +344,55 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
           expect(response).to have_http_status :unprocessable_entity
         end
       end
+
+      context 'with a network device' do
+        let(:device_template) { create(:template, :network_device_template) }
+        let(:details) { create(:device_network_details) }
+        let!(:device) { create(:device, chassis: chassis, details: details) }
+
+        context "with valid parameters" do
+          let(:attributes) {
+            {
+              device: {
+                name: device.name + "-updated",
+                status: "ACTIVE",
+                cost: 42.42,
+                details: {
+                  mtu: 1138
+                }
+              }
+            }
+          }
+          def send_request
+            patch url_under_test,
+              params: attributes,
+              headers: headers,
+              as: :json
+          end
+
+          it "renders a successful response" do
+            send_request
+            expect(response).to have_http_status :ok
+          end
+
+          it "updates the device" do
+            expect {
+              send_request
+            }.to change{ device.reload.updated_at }
+          end
+
+          it "includes the device in the response" do
+            send_request
+
+            parsed_device = JSON.parse(response.body)
+            expect(parsed_device["name"]).to eq attributes[:device][:name]
+            expect(parsed_device["status"]).to eq attributes[:device][:status]
+            expect(parsed_device["cost"]).to eq "#{'%.2f' % attributes[:device][:cost]}"
+            parsed_details = parsed_device # ['details'] after revertion of 6b8d3e9
+            expect(parsed_details["mtu"]).to eq attributes[:device][:details][:mtu]
+          end
+        end
+      end
     end
 
     context "when not logged in" do

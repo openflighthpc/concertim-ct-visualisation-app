@@ -6,8 +6,8 @@ child(:template, if: @include_full_template_details) do
   extends 'api/v1/templates/show'
 end
 
-glue :details do
-  attributes :public_ips, :private_ips, :ssh_key,  :login_user, :volume_details
+glue :details do |details|
+  extends "api/v1/devices/details/#{details.class.name.split('::').last.underscore}"
   #node :type do |details|
   #  details.class.name
   #end

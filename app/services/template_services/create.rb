@@ -37,11 +37,18 @@ module TemplateServices
         # Needed for IRV structure.  Should be removed eventually.
         model: nil,
         rack_repeat_ratio: nil,
-        )
 
-      # For now we have hard-coded images and padding.  We should support
-      # users uploading their images here.
-      set_images_from_height(template)
+        tag: params[:tag],
+        images: params[:images]
+      )
+
+      if template.images.empty?
+        # Users can't upload images here, only use existing ones (though I
+        # suppose they could use fully-qualified URLs too)
+        set_images_from_height(template)
+      end
+
+      # For now we have hard-coded padding.
       set_padding_from_height(template)
 
       template
