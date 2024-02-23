@@ -43,6 +43,8 @@ module TemplateServices
       )
 
       if template.images.empty?
+        # Users can't upload images here, only use existing ones (though I
+        # suppose they could use fully-qualified URLs too)
         set_images_from_height(template)
       end
 
