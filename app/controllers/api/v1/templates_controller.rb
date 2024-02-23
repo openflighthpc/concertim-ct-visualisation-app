@@ -41,8 +41,8 @@ class Api::V1::TemplatesController < Api::V1::ApplicationController
 
   private
 
-  CREATE_ONLY_PARAMS = %w(height version schema_version)
-  PERMITTED_PARAMS = %w(name description foreign_id vcpus ram disk tag) << { images: ['front', 'rear'] }
+  CREATE_ONLY_PARAMS = %w(height version schema_version tag)
+  PERMITTED_PARAMS = %w(name description foreign_id vcpus ram disk) << { images: ['front', 'rear'] }
   def template_params
     params.require(:template).permit(*PERMITTED_PARAMS, *CREATE_ONLY_PARAMS)
   end
