@@ -362,7 +362,7 @@
       "*COMMENT*" : "e.g. for a rack and chassis options will also be displayed for a device",
       "verbose"           : false,
       "urlInternalPrefix" : "internal::",
-      "spacer"            : "<img src='/images/irv/concertim/spacer.gif'>",
+      "spacer"            : "<img class='menu-spacer' src='/images/irv/concertim/spacer.gif'>",
 
       "aspectMap":
       {
@@ -404,7 +404,8 @@
           },
           {
             "caption" : "View details",
-            "url"     : "/racks/[[rack_id]]"
+            "url"     : "/racks/[[rack_id]]",
+            "rbacAction" : "view"
           },
 	  {
             "caption": "[[spacer]]"
@@ -412,7 +413,8 @@
           {
             "caption" : "Destroy",
             "url"     : "internal::statusChangeRequest,destroy,racks,[[rack_id]],[[rack_name]]",
-            "availableToBuildStatuses": ["STOPPED", "ACTIVE", "FAILED"]
+            "availableToBuildStatuses": ["STOPPED", "ACTIVE", "FAILED"],
+            "rbacAction" : "manage"
           }
         ],
 
@@ -423,7 +425,8 @@
           },
           {
             "caption" : "Focus",
-            "url"     : "internal::focusOn,chassis,[[chassis_id]]"
+            "url"     : "internal::focusOn,chassis,[[chassis_id]]",
+            "rbacAction" : "view"
           }
         ],
 
@@ -434,11 +437,13 @@
           },
           {
             "caption" : "Focus",
-            "url"     : "internal::focusOn,devices,[[device_id]]"
+            "url"     : "internal::focusOn,devices,[[device_id]]",
+            "rbacAction" : "view"
           },
           {
             "caption" : "View details",
-            "url"     : "/devices/[[device_id]]"
+            "url"     : "/devices/[[device_id]]",
+            "rbacAction" : "view"
           },
 	  {
             "caption": "[[spacer]]"
@@ -446,27 +451,32 @@
           {
             "caption" : "Switch off",
             "url"     : "internal::statusChangeRequest,off,devices,[[device_id]],[[device_name]]",
-            "availableToBuildStatuses": ["ACTIVE"]
+            "availableToBuildStatuses": ["ACTIVE"],
+            "rbacAction" : "manage"
           },
           {
             "caption" : "Switch on",
             "url"     : "internal::statusChangeRequest,on,devices,[[device_id]],[[device_name]]",
-            "availableToBuildStatuses": ["STOPPED"]
+            "availableToBuildStatuses": ["STOPPED"],
+            "rbacAction" : "manage"
           },
           {
             "caption" : "Suspend",
             "url"     : "internal::statusChangeRequest,suspend,devices,[[device_id]],[[device_name]]",
-            "availableToBuildStatuses": ["ACTIVE"]
+            "availableToBuildStatuses": ["ACTIVE"],
+            "rbacAction" : "manage"
           },
           {
             "caption" : "Resume",
             "url"     : "internal::statusChangeRequest,resume,devices,[[device_id]],[[device_name]]",
-            "availableToBuildStatuses": ["SUSPENDED"]
+            "availableToBuildStatuses": ["SUSPENDED"],
+            "rbacAction" : "manage"
           },
           {
             "caption" : "Destroy",
             "url"     : "internal::statusChangeRequest,destroy,devices,[[device_id]],[[device_name]]",
-            "availableToBuildStatuses": ["STOPPED", "ACTIVE", "SUSPENDED", "FAILED"]
+            "availableToBuildStatuses": ["STOPPED", "ACTIVE", "SUSPENDED", "FAILED"],
+            "rbacAction" : "manage"
           }
         ],
 

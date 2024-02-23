@@ -1013,7 +1013,7 @@ class RackSpace {
   evHalfFlipped(img_id) {
     const show_u_labels   = this.scale >= RackSpace.U_LBL_SCALE_CUTOFF;
     const show_name_label = this.scale >= RackSpace.NAME_LBL_SCALE_CUTOFF;
-    const show_owner_label = show_name_label && this.model.RBAC.can_i("view", "all");
+    const show_owner_label = show_name_label;
 
     // redraw the rack in the (hidden) rack layer, since the rack image in the fx layer is a slice of the rack layer it will automatically
     // reflect the changes
@@ -1376,14 +1376,13 @@ class RackSpace {
     this.infoGfx.setScale(this.targetScale);
     this.alertGfx.setScale(this.targetScale);
 
-    // decide wether to show rack labels
+    // decide whether to show rack labels
     const show_name_label = this.targetScale >= RackSpace.NAME_LBL_SCALE_CUTOFF;
     const show_u_labels   = this.targetScale >= RackSpace.U_LBL_SCALE_CUTOFF;
-    const show_owner_label = show_name_label && this.model.RBAC.can_i("view", "all");
 
     if (this.model.showingRacks()) {
       for (var rack of Array.from(this.racks)) {
-        if (rack instanceof Rack) { rack.showOwnerLabel(show_owner_label); }
+        if (rack instanceof Rack) { rack.showOwnerLabel(show_name_label); }
         rack.showNameLabel(show_name_label);
         if (rack instanceof Rack) { rack.showULabels(show_u_labels, this.targetScale); }
 

@@ -31,6 +31,7 @@ class RackSpaceDragHandler {
 
         if (this.draggee == null || !this.canIMoveThisItem()) {
             // If not over a device or we're not permitted to move it abort.
+            this.draggee = null;
             return;
         }
 
@@ -111,7 +112,7 @@ class RackSpaceDragHandler {
     }
 
     doIHavePermissionToMoveOrDrag() {
-        return ((this.draggee instanceof Chassis || this.draggee instanceof Machine) && this.model.RBAC.can_i_move_devices());
+        return ((this.draggee instanceof Chassis || this.draggee instanceof Machine) && this.model.RBAC.can_i_move_device(this.draggee));
     }
 
     // public method, updates dragging of a draggee box or device

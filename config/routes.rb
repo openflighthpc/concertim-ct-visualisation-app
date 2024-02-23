@@ -127,7 +127,7 @@ Rails.application.routes.draw do
         resources :users, only: [:index, :update, :destroy] do
           collection do
             # Endpoint for checking user abilities.
-            get :can_i, action: :can_i?, as: :ability_check
+            get :permissions, action: :permissions, as: :permissions
             # Endpoint for getting the currently signed in user.
             get :current
           end

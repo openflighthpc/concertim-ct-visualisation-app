@@ -1,5 +1,5 @@
 class Api::V1::UsersController < Api::V1::ApplicationController
-  load_and_authorize_resource :user, :class => User, except: [:current, :can_i?]
+  load_and_authorize_resource :user, :class => User, except: [:current, :permissions]
 
   def index
     @users = @users.map {|user| Api::V1::UserPresenter.new(user)}
@@ -38,36 +38,26 @@ class Api::V1::UsersController < Api::V1::ApplicationController
   end
 
   #
-  # GET /api/v1/users/can_i
+  # GET /api/v1/users/permissions
   #
-  # Endpoint for cancan check - this just passes the "can" request on to the
-  # cancan ability checker - used to check yourself and your own abilities.
+  # Endpoint for specifying what permissions each team role/ being root provides.
+  # This is based on the assumption that such permissions are based purely
+  # on team role for the given object (or being root).
   #
-  def can_i?
-    # On the permissions params, this action should receive a structure of the
-    # following form
-    #
-    # {
-    #   "permissions" => {
-    #     "manage" => {"0" => "HwRack", "1" => "Device"},
-    #     "read" => {"0" => "Device"},
-    #     "move" => {"0" => "Device"},
-    #   }
-    # }
-
-    result = {}
-    params[:permissions].each do |rbac_action,rbac_resources|
-      result[rbac_action] = {}
-      rbac_resources.each do |_, rbac_resource|
-        if rbac_resource == "all"
-          result[rbac_action][rbac_resource] = current_user.can?(rbac_action.to_sym, :all)
-        elsif rbac_resource.safe_constantize
-          result[rbac_action][rbac_resource] = current_user.can?(rbac_action.to_sym, rbac_resource.safe_constantize)
-        else
-          result[rbac_action][rbac_resource] = false
-        end
-      end
-    end
+  def permissions
+    admins = %w(superAdmin admin)
+    all = admins + ["member"]
+    result = {
+      manage: {
+        racks: admins, devices: admins, chassis: admins
+      },
+      move: {
+        racks: [], devices: admins, chassis: admins
+      },
+      view: {
+        racks: all, devices: all, chassis: all
+      }
+    }
     render json: result
   end
 

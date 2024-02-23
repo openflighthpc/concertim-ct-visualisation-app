@@ -7,13 +7,16 @@ class BroadcastRackChangeJob < ApplicationJob
     else
       msg = rack_content(rack_id, action)
     end
-    user_ids = TeamRole.where(team_id: team_id).pluck(:user_id)
-    User.where(root: true).or(User.where(id: user_ids)).each do |user|
+    user_roles = TeamRole.where(team_id: team_id)
+    role_mapping = user_roles.pluck(:user_id, :role).to_h
+    User.where(root: true).or(User.where(id: role_mapping.keys)).each do |user|
+      role = user.root? ? "superAdmin" : role_mapping[user.id]
+      msg[:rack][:teamRole] = role
       InteractiveRackViewChannel.broadcast_to(user, msg)
     end
   end
 
   def rack_content(rack_id, action)
-   { action: action, rack: Irv::HwRackServices::Show.call(rack_id) }
+    { action: action, rack: Irv::HwRackServices::Show.call(rack_id) }
   end
 end

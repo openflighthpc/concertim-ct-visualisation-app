@@ -123,7 +123,6 @@ class Rack extends RackObject {
     this.selected        = false;
     this.visible         = true;
     this.assets          = [];
-  
     this.addImageLink();
   
     const len      = def.chassis.length;

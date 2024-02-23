@@ -28,11 +28,12 @@ module Irv
           @racks = @user.root? ? HwRack.all : @user.racks
           @racks = @racks.where(id: @rack_ids) if @rack_ids&.any?
           @racks = @racks.map { |rack| Api::V1::RackPresenter.new(rack) }
-          renderer = Rabl::Renderer.new('api/v1/irv/racks/index', @racks, view_path: 'app/views', format: 'hash')
+          renderer = Rabl::Renderer.new('api/v1/irv/racks/index', @racks, view_path: 'app/views', format: 'hash', locals: { user: @user} )
           {Racks: {Rack: renderer.render}}
         else
           # The fast and awkward to understand method.
           irv_rack_structure = Crack::XML.parse(InteractiveRackView.get_structure(@rack_ids, @user))
+          Rails.logger.info(irv_rack_structure)
           fix_structure(irv_rack_structure)
           irv_rack_structure
         end
