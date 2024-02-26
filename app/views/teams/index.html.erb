@@ -35,6 +35,7 @@
   <% t.actions_column do |actions, team| %>
     <% actions.add_with_auth can: :edit, on: team, title: 'Edit', path: edit_team_path(team) %>
     <% actions.add_with_auth can: :manage, on: TeamRole.new(team_id: team.id), title: 'Manage Users', path: team_team_roles_path(team) %>
+    <% actions.add_with_auth can: :read, on: Invoice.new(account: team), title: 'View Invoices', path: team_invoices_path(team) %>
     <%
       actions.add_with_auth(can: :destroy, on: team,
                             title: 'Delete',
