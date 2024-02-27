@@ -34,8 +34,6 @@ if [ $? -ne 0 ] ; then
 fi
 echo "Created volume device"
 
-read -s -n 1
-
 # Create a badly named and located device in that empty rack.
 LARGEST_TEMPLATE=$( "${SCRIPT_DIR}/list-templates.sh" | jq "sort_by(.height) | reverse | .[0]" )
 TEMPLATE_ID=$(echo "${LARGEST_TEMPLATE}" | jq -r .id)
