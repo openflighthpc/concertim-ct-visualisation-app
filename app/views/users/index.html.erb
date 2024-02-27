@@ -10,7 +10,7 @@
   <% end %>
 
   <% t.attribute_column :id, sortable: true %>
-  <% t.attribute_column :login, text: "Username", sortable: true do |user, login| %>
+  <% t.attribute_column :login, title: "Username", sortable: true do |user, login| %>
     <% user != current_user ? login : "#{login} (you)" %>
   <% end %>
   <% t.attribute_column :name, sortable: true %>
@@ -20,7 +20,7 @@
   <% t.custom_column "Teams" do |user| %>
     <% presenter_for(user).team_role_list %>
   <% end %>
-  <% t.attribute_column :cloud_user_id, text: "Cloud User ID", sortable: true %>
+  <% t.attribute_column :cloud_user_id, title: "Cloud User ID", sortable: true %>
   <% t.custom_column "Status", sortable: true, db_column: :deleted_at do |user| %>
     <% presenter_for(user).status %>
   <% end %>
