@@ -39,12 +39,12 @@ module TemplateServices
         rack_repeat_ratio: nil,
 
         tag: params[:tag],
-        images: params[:images]
+        # Users can't upload images here, only use existing ones (though I
+        # suppose they could use fully-qualified URLs too)
+        images: params[:images] || {}
       )
 
       if template.images.empty?
-        # Users can't upload images here, only use existing ones (though I
-        # suppose they could use fully-qualified URLs too)
         set_images_from_height(template)
       end
 
