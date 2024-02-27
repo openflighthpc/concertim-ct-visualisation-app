@@ -102,6 +102,8 @@ class Cluster
   ####################################
 
   def valid_fields?
+    return unless cluster_type
+
     fields.each do |field|
       unless field.valid?
         errors.add(field.label, field.errors.messages_for(:value).join("; "))
