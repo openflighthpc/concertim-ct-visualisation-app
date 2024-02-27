@@ -17,8 +17,8 @@ class ActionsCell < Cell::ViewModel
 
   attr_reader :actions, :dropdown_id
 
-  def show(title, block, opts = {})
-    # @title = title
+  def show(text, block, opts = {})
+    # @text = text
     @is_dropdown = opts[:is_dropdown] || false
     @dropdown_id = opts[:dropdown_id] || 'drop'
     @side = opts[:side] || false
@@ -73,11 +73,11 @@ class ActionsCell < Cell::ViewModel
       @current_user = current_user
       @cell = cell
     end
-    
+
     #
     # add
     #
-    # Adds an action based on options hash. Valid options are: title, path, html, side
+    # Adds an action based on options hash. Valid options are: text, path, html, side
     #
     # 'side' == true will render to the sidebar only.
     #
@@ -85,32 +85,32 @@ class ActionsCell < Cell::ViewModel
     #
     # e.g:
     #
-    # add(title: 'View', path: user_path(@user))
+    # add(text: 'View', path: user_path(@user))
     # # => <li><a href="/users/2">View</a></li>
     #
-    def add(title_or_options, path = nil, &block)
-      if title_or_options.kind_of? String
+    def add(text_or_options, path = nil, &block)
+      if text_or_options.kind_of? String
         options = {}
-        title = title_or_options
+        text = text_or_options
       else
-        options = title_or_options
-        title = options[:title]
+        options = text_or_options
+        text = options[:text]
         path = options[:path]
       end
 
       html = (block_given? ? block.call : options[:html])
-      opts = options.reject {|k, v| [:title, :html, :path, :can, :cannot, :on].include?(k)}
+      opts = options.reject {|k, v| [:text, :html, :path, :can, :cannot, :on].include?(k)}
 
       if html
         add_custom(html, opts)
       else
-        add_item(title, path, opts)
+        add_item(text, path, opts)
       end
     end
 
     def add_with_auth(options, &block)
       resource_or_class = options[:on]
-      
+
       if options.has_key? :cannot
         action_name = options[:cannot]
         permission = :cannot?
@@ -118,10 +118,10 @@ class ActionsCell < Cell::ViewModel
         action_name = options[:can]
         permission = :can?
       end
-    
+
       opts = options.reject {|k, v| [:can, :cannot, :on].include?(k)}
       ability = @current_user.ability
-      
+
       if ability.send(permission, action_name, resource_or_class)
         if block_given?
           add(opts, &block)
@@ -130,32 +130,32 @@ class ActionsCell < Cell::ViewModel
         end
       end
     end
-    
+
     #
     # divider
     #
-    # Adds a label with a title that separates menu items.
+    # Adds a label with content that separates menu items.
     #
-    def divider(title = nil)
+    def divider(text = nil)
       unless @dropdown_actions.empty?
-        divider = ActionDivider.new(title)
+        divider = ActionDivider.new(text)
         @dropdown_actions << divider
       end
     end
- 
+
     private
 
     def side?
       @cell.side?
     end
-  
+
     #
     # add_item
     #
     # Adds a basic link action
     #
-    def add_item(title, path, opts = {})
-      action = Action.new(title, path, opts, @cell)
+    def add_item(text, path, opts = {})
+      action = Action.new(text, path, opts, @cell)
       if side?
         @actions << action
       else
@@ -178,12 +178,12 @@ class ActionsCell < Cell::ViewModel
       end
     end
  end
-  
+
   class ActionItem
     def li_opts
       @opts.reject {|k, v| [:path, :side, :method, :confirm].include?(k) }
     end
-    
+
     def matches_request?(request)
       request.fullpath == @path unless @opts[:method].to_s == 'delete'
     end
@@ -194,24 +194,24 @@ class ActionsCell < Cell::ViewModel
   end
 
   class Action < ActionItem
-    attr_reader :title, :path, :opts
-    def initialize(title, path, opts = {}, cell)
-      @title = title
+    attr_reader :text, :path, :opts
+    def initialize(text, path, opts = {}, cell)
+      @text = text
       @path = path
       @opts = opts
       @cell = cell
     end
 
     def html
-      @cell.link_to @title, @path, @opts
+      @cell.link_to @text, @path, @opts
     end
   end
 
   class ActionDivider < ActionItem
-    attr_reader :title
+    attr_reader :text
 
-    def initialize(title)
-      @title = title
+    def initialize(text)
+      @text = text
       @path = nil
       @opts = {}
     end
