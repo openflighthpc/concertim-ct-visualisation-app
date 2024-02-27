@@ -10,8 +10,6 @@ class Cluster
   attr_accessor :cluster_type
   attr_accessor :team
   attr_accessor :name
-  attr_accessor :fields
-  attr_accessor :field_groups
 
   ####################################
   #
@@ -45,9 +43,19 @@ class Cluster
     @cluster_type = cluster_type
     @team = team
     @name = name
-    @field_groups = Cluster::FieldGroups.new(self, cluster_type.field_groups, cluster_type.fields)
-    @fields = @field_groups.fields
-    fields.each { |field| field.value = cluster_params[field.id] } if cluster_params
+    @cluster_params = cluster_params
+  end
+
+  def field_groups
+    @field_groups ||= Cluster::FieldGroups.new(self, cluster_type.field_groups, cluster_type.fields)
+  end
+
+  def fields
+    return @fields if @fields
+
+    @fields = self.field_groups.fields
+    @fields.each { |field| field.value = @cluster_params[field.id] } if @cluster_params
+    @fields
   end
 
   def type_id

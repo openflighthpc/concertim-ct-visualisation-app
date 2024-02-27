@@ -7,25 +7,25 @@
         <% if column.select_all_column? %>
           <th class="<%= column.html_class(idx) %>">
             <span class="select_all">
-              <a title="<%= column.tooltip %>"><%= column.title %></a>
+              <a text="<%= column.tooltip %>"><%= column.text %></a>
             </span>
           </th>
         <% elsif column.sortable? %>
           <th class="<%= column.html_class(idx) %>">
             <% column.sortable_header(sort_column, sort_direction) do |sort, direction, current| %>
-              <%= link_to params.permit!.to_h.merge(sort: sort, direction: direction), title: column.tooltip do %>
+              <%= link_to params.permit!.to_h.merge(sort: sort, direction: direction), text: column.tooltip do %>
                 <% if current %>
                   <%= tag.span(class: [:current, direction]) %>
                 <% else %>
                   <%= tag.span(class: ['asc-desc']) %>
                 <% end %>
-                <%= column.title %>
+                <%= column.text %>
               <% end %>
             <% end %>
           </th>
         <% else %>
           <th class="<%= column.html_class(idx) %>">
-            <%= column.title %>
+            <%= column.text %>
           </th>
         <% end %>
       <% end %>

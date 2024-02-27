@@ -1,7 +1,7 @@
 require 'faraday'
 
 # GetCloudAssetsJob retrieves cloud assets from cluster builder such as the
-# list of flavors, images and networks available to the given user.
+# list of flavors, images and networks available to the given user/team.
 class GetCloudAssetsJob < ApplicationJob
   queue_as :default
 

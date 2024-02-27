@@ -27,7 +27,7 @@ SimpleNavigation::Configuration.run do |navigation|
 
       if current_user.can?(:read, ClusterType)
         html_options = {}
-        if !current_ability.enough_credits_to_create_cluster?
+        if !current_user.teams.meets_cluster_credit_requirement.exists?
           html_options[:class] = "limited-action-icon"
           html_options[:title] = "You must belong to a team with at least #{Rails.application.config.cluster_credit_requirement} credits to create a cluster"
         end
