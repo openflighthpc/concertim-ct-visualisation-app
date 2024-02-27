@@ -19,8 +19,8 @@
     <% end %>
   <% end %>
   <% if current_user.root? %>
-    <% t.attribute_column :project_id, text: "Project ID", sortable: true %>
-    <% t.attribute_column :billing_acct_id, text: "Billing Account ID", sortable: true %>
+    <% t.attribute_column :project_id, title: "Project ID", sortable: true %>
+    <% t.attribute_column :billing_acct_id, title: "Billing Account ID", sortable: true %>
   <% end %>
   <% t.custom_column "Credits", sortable: true, db_column: :credits do |team| %>
     <% presenter_for(team).formatted_credits %>

@@ -62,8 +62,8 @@ class ResourceTableCell < Cell::ViewModel
       add_column AttributeColumn.new(method, opts, &block), opts
     end
 
-    def custom_column(text, opts = {}, &block)
-      add_column CustomColumn.new(text, opts, &block), opts
+    def custom_column(title, opts = {}, &block)
+      add_column CustomColumn.new(title, opts, &block), opts
     end
 
     def select_all_column(opts = {}, &block)
@@ -186,10 +186,10 @@ class ResourceTableCell < Cell::ViewModel
   class Column
     include ActionView::Helpers::TagHelper
 
-    attr_reader :text, :tooltip
+    attr_reader :title, :tooltip
 
-    def initialize(text, opts = {}, &block)
-      @text = opts.delete(:text) || text
+    def initialize(title, opts = {}, &block)
+      @title = opts.delete(:title) || title
       @tooltip = opts.delete(:tooltip)
       @html_class = opts.delete(:class)
       @opts = opts
@@ -259,8 +259,8 @@ class ResourceTableCell < Cell::ViewModel
   #
   class CustomColumn < Column
 
-    def initialize(text, opts, &block)
-      super(text.to_s, opts, &block)
+    def initialize(title, opts, &block)
+      super(title.to_s, opts, &block)
     end
 
     def render_content_for(item)
@@ -307,7 +307,7 @@ class ResourceTableCell < Cell::ViewModel
   class SelectAllColumn < Column
 
     def initialize(opts, &block)
-      super(opts[:text] || "Select All", opts, &block)
+      super(opts[:title] || "Select All", opts, &block)
     end
 
     def render_content_for(item)
@@ -333,7 +333,7 @@ class ResourceTableCell < Cell::ViewModel
   #   render_resource_table_for @users do |t|
   #     t.actions_column do |actions, user|
   #       actions.add 'View', user_path(user)
-  #       actions.add_with_auth text: 'Edit', path: edit_user_path(user), can: :edit, on: user
+  #       actions.add_with_auth title: 'Edit', path: edit_user_path(user), can: :edit, on: user
   #     end
   #   end
   #
