@@ -6,10 +6,6 @@ class Ability
     enable_abilities
   end
 
-  def enough_credits_to_create_cluster?
-    @user.teams.meets_cluster_credit_requirement.exists?
-  end
-
   private
 
   def enable_abilities
@@ -47,8 +43,7 @@ class Ability
     can :manage, RackviewPreset, user: @user
 
     can :read, ClusterType
-    can :new, Cluster if enough_credits_to_create_cluster?
-    can :create, Cluster, team_id: @user.teams.meets_cluster_credit_requirement.pluck(:id)
+    can :create, Cluster, team_id: @user.team_ids
 
     can :read, KeyPair, user: @user
     can :create, KeyPair, user: @user

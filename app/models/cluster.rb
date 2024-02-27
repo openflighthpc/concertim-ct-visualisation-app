@@ -47,9 +47,19 @@ class Cluster
     @team = team
     @name = name
     @selections = selections
-    @field_groups = Cluster::FieldGroups.new(self, cluster_type.field_groups, cluster_type.fields)
-    @fields = @field_groups.fields
-    fields.each { |field| field.value = cluster_params[field.id] } if cluster_params
+    @cluster_params = cluster_params
+  end
+
+  def field_groups
+    @field_groups ||= Cluster::FieldGroups.new(self, cluster_type.field_groups, cluster_type.fields)
+  end
+
+  def fields
+    return @fields if @fields
+
+    @fields = self.field_groups.fields
+    @fields.each { |field| field.value = @cluster_params[field.id] } if @cluster_params
+    @fields
   end
 
   def type_id
