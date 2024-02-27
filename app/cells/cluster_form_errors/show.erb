@@ -1,5 +1,11 @@
-<% if has_errors? %>
+<% if has_errors_without_input_field? %>
   <div class="alert-box alert">
-    Please correct the <%= "error".pluralize(error_count) %> below and try again.
+    Unable to launch cluster: <%= inputless_errors_text %>
+  </div>
+<% end %>
+
+<% if has_input_field_errors? %>
+  <div class="alert-box alert">
+    Please correct the <%= "error".pluralize(input_field_error_count) %> below and try again.
   </div>
 <% end %>
