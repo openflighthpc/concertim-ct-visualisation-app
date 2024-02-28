@@ -17,7 +17,7 @@ class DevicePresenter < Presenter
   delegate :vcpus, :ram, :disk,
     to: :template
 
-  delegate :is_compute_device?, :additional_details, to: :details
+  delegate :additional_details, to: :details
 
   # location returns the location of the device.  For devices in simple
   # chassis, the chassis's location is returned. Devices in complex chassis,
