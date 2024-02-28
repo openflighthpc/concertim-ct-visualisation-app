@@ -24,7 +24,8 @@ BODY=$(jq --null-input '
         "images": {
           "front": "disk_front_2u.png",
           "rear": "generic_rear_2u.png"
-        }
+        },
+        "rackable": "rackable"
     }
 }
 ' \

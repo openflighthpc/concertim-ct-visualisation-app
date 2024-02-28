@@ -24,7 +24,8 @@ BODY=$(jq --null-input '
         "images": {
           "front": "switch_front_1u.png",
           "rear": "switch_rear_1u.png"
-        }
+        },
+        "rackable": "rackable"
     }
 }
 ' \
