@@ -1,5 +1,8 @@
 class SeedNetworkDeviceTemplate < ActiveRecord::Migration[7.1]
+  class Template < ApplicationRecord; end
+
   def change
+    Template.reset_column_information
     reversible do |dir|
 
       dir.up do
