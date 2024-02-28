@@ -57,17 +57,6 @@ Rails.application.routes.draw do
 
   resources :team_roles, only: [:edit, :update, :destroy]
 
-  resources :teams do
-    resources :team_roles, only: [:index, :new, :create]
-    resources :invoices, only: [:index, :show] do
-      collection do
-        get 'draft'
-      end
-    end
-  end
-
-  resources :team_roles, only: [:edit, :update, :destroy]
-
   resources :key_pairs, only: [:index, :new, :create] do
     collection do
       get '/success', to: 'key_pairs#success'
