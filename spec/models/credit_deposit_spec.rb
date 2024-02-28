@@ -26,4 +26,14 @@ RSpec.describe CreditDeposit, type: :model do
     subject.team = nil
     expect(subject).to have_error(:team, :blank)
   end
+
+  it "is not valid if team has no project id" do
+    subject.team.project_id = nil
+    expect(subject).to have_error(:team, "must have a project id")
+  end
+
+  it "is not valid if team has no billing account id" do
+    subject.team.billing_acct_id = nil
+    expect(subject).to have_error(:team, "must have a billing account id")
+  end
 end

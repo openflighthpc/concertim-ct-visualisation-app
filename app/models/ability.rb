@@ -31,11 +31,6 @@ class Ability
 
     # Don't allow any admin users to be deleted.
     cannot :destroy, User, root: true
-
-    cannot :create, CreditDeposit do |deposit|
-      team = deposit.team
-      team.project_id.nil? || team.billing_acct_id.nil?
-    end
   end
 
   # Abilities for non-root users.
