@@ -4,4 +4,8 @@ class Device::DetailsPresenter < Presenter
     false
   end
 
+  def additional_details
+    []
+  end
+
 end
