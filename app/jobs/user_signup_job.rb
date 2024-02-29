@@ -38,6 +38,7 @@ class UserSignupJob < ApplicationJob
       result = Result.from(response.body)
       result.validate!(:cloud)
       result.sync(@user, :cloud)
+      CreateUserTeamJob.perform_later(@user, @cloud_service_config)
     rescue ::ActiveModel::ValidationError
       @logger.warn("Failed to sync response to user: #{$!.message}")
       raise
