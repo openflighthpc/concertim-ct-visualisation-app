@@ -1,31 +1,25 @@
-require 'faraday'
-
 class CreateUserTeamJob < CreateTeamJob
+  queue_as :default
+  retry_on ::ActiveModel::ValidationError, wait: :polynomially_longer, attempts: 10
 
   def perform(user, cloud_service_config, **options)
-    records_created = false
     team = nil
 
     ActiveRecord::Base.transaction do
-      team = Team.new(name: "#{user.name}_team")
+      team = Team.new(name: "#{user.name}_team", single_user: true)
       unless team.save
         logger.info("Unable to create team for #{user.name} #{team.errors.full_messages.join("; ")}")
-        return
+        raise ActiveModel::ValidationError, team
       end
 
       team_role = TeamRole.new(team: team, user: user, role: "admin")
-      if team_role.save
-        records_created = true
-      else
+      unless team_role.save
         logger.info("Unable to create team role for #{user.name} #{team_role.errors.full_messages.join("; ")}")
-        raise ActiveRecord::Rollback, "Team role creation failed, rolling back creation of user team"
+        logger.info("Rolling back creation of team #{team.name}")
+        raise ActiveModel::ValidationError, team_role
       end
     end
 
-    if records_created
-      super(team, cloud_service_config, **options)
-    else
-      raise
-    end
+    CreateTeamJob.perform_later(team, cloud_service_config)
   end
 end
