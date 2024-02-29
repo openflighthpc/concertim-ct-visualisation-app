@@ -124,4 +124,16 @@ class User < ApplicationRecord
     update(deleted_at: Time.current)
     allowlisted_jwts.destroy_all
   end
+
+  ####################################
+  #
+  # Private Instance Methods
+  #
+  ####################################
+
+  private
+
+  def teams_where_admin
+    @teams_where_admin ||= teams.where(team_roles: { role: 'admin' })
+  end
 end
