@@ -28,7 +28,7 @@ fi
 RACK_HEIGHT=$(echo "${OUTPUT}" | jq -r .u_height)
 RACK_NAME=$(echo "${OUTPUT}" | jq -r .name)
 
-SMALL_TEMPLATE_ID=$( "${SCRIPT_DIR}/list-templates.sh" | jq -r "sort_by(.height) | .[0] | .id" )
+SMALL_TEMPLATE_ID=$( "${SCRIPT_DIR}/list-templates.sh" | jq -r "map(select(.tag == null)) | sort_by(.height) | .[0] | .id" )
 for i in $(seq -w 0 $(( 10#${END_U} - 10#${FIRST_U} )) ) ; do
   # i=$(( 10#${i} - 1 ))
   sleep 0.5

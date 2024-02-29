@@ -35,7 +35,7 @@ fi
 echo "Created volume device"
 
 # Create a badly named and located device in that empty rack.
-LARGEST_TEMPLATE=$( "${SCRIPT_DIR}/list-templates.sh" | jq "sort_by(.height) | reverse | .[0]" )
+LARGEST_TEMPLATE=$( "${SCRIPT_DIR}/list-templates.sh" | jq "map(select(.tag == null)) | sort_by(.height) | reverse | .[0]" )
 TEMPLATE_ID=$(echo "${LARGEST_TEMPLATE}" | jq -r .id)
 TEMPLATE_HEIGHT=$(echo "${LARGEST_TEMPLATE}" | jq -r .height)
 START_U=$(( ${RACK_HEIGHT} - ${TEMPLATE_HEIGHT} + 1 ))
