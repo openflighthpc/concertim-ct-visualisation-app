@@ -17,13 +17,13 @@ AUTH_TOKEN=${AUTH_TOKEN:-$("${SCRIPT_DIR}"/get-auth-token.sh)}
 BODY=$(jq --null-input '
 {
     "template": {
-        "name": "network",
-        "description": "Network",
-        "height": 1,
-        "tag": "network",
+        "name": "volume",
+        "description": "Volume",
+        "height": 2,
+        "tag": "volume",
         "images": {
-          "front": "switch_front_1u.png",
-          "rear": "switch_rear_1u.png"
+          "front": "disk_front_2u.png",
+          "rear": "generic_rear_2u.png"
         },
         "rackable": "rackable"
     }

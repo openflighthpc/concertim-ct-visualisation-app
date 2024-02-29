@@ -19,10 +19,10 @@ RACK_ID=${2}
 FACING=${3}
 START_U=${4}
 
-NETWORK_TEMPLATE_ID=$( "${SCRIPT_DIR}/list-templates.sh" | jq -r '.[] | select(.tag == "network") | .id' )
+VOLUME_TEMPLATE_ID=$( "${SCRIPT_DIR}/list-templates.sh" | jq -r '.[] | select(.tag == "volume") | .id' )
 
-if [ -z "${NETWORK_TEMPLATE_ID}" ]; then
-    echo "Couldn't find a template with tag='network'"
+if [ -z "${VOLUME_TEMPLATE_ID}" ]; then
+    echo "Couldn't find a template with tag='volume'"
     exit 1
 fi
 
@@ -30,11 +30,11 @@ fi
 
 BODY=$(jq --null-input \
     --arg name "${NAME}" \
-    --arg description "This is ${NAME} network" \
+    --arg description "This is ${NAME} volume" \
     --arg facing "${FACING}" \
     --arg start_u "${START_U}" \
     --arg rack_id "${RACK_ID}" \
-    --arg template_id "${NETWORK_TEMPLATE_ID}" \
+    --arg template_id "${VOLUME_TEMPLATE_ID}" \
     '
 {
     "template_id": $template_id,
@@ -52,10 +52,10 @@ BODY=$(jq --null-input \
           "status": ["build", "scheduling", ""]
         },
         "details": {
-            "type": "Device::NetworkDetails",
-            "admin_state_up": true,
-            "dns_domain": "moose.local",
-            "mtu": 1500
+            "type": "Device::VolumeDetails",
+            "bootable": false,
+            "encrypted": false,
+            "size": 2
         }
     }
 }

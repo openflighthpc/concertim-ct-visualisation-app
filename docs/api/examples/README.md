@@ -171,6 +171,15 @@ facing are `f` or `b` for front and back respectively.
 ./create-device.sh <NAME> <RACK_ID> <FACING> <START_U> <TEMPLATE_ID>
 ```
 
+To create network and volume devices use the following scripts.  They are
+similar to the `create-device.sh` script except the template id is determined
+automatically.
+
+```
+./create-network.sh <NAME> <RACK_ID> <FACING> <START_U>
+./create-volume.sh <NAME> <RACK_ID> <FACING> <START_U>
+```
+
 Move a device.
 
 ```

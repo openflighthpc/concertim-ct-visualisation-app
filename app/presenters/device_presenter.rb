@@ -17,7 +17,7 @@ class DevicePresenter < Presenter
   delegate :vcpus, :ram, :disk,
     to: :template
 
-  delegate :is_compute_device?, to: :details
+  delegate :additional_details, to: :details
 
   # location returns the location of the device.  For devices in simple
   # chassis, the chassis's location is returned. Devices in complex chassis,
@@ -54,22 +54,6 @@ class DevicePresenter < Presenter
 
   def details
     h.presenter_for(o.details)
-  end
-
-  def has_login_details?
-    is_compute_device? && (details.public_ips || details.private_ips || details.ssh_key || details.login_user)
-  end
-
-  def login_user
-    o.details.login_user.presence || h.content_tag(:em, 'Unknown')
-  end
-
-  def ssh_key
-    o.details.ssh_key.presence || h.content_tag(:em, 'Unknown')
-  end
-
-  def has_volume_details?
-    is_compute_device? && !o.details.volume_details.empty?
   end
 
   def has_metadata?

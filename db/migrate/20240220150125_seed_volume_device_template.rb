@@ -1,4 +1,4 @@
-class SeedNetworkDeviceTemplate < ActiveRecord::Migration[7.1]
+class SeedVolumeDeviceTemplate < ActiveRecord::Migration[7.1]
 
   class Template < ApplicationRecord
     enum rackable: { rackable: 1, zerouable: 2, nonrackable: 3 }
@@ -10,27 +10,27 @@ class SeedNetworkDeviceTemplate < ActiveRecord::Migration[7.1]
 
       dir.up do
         t = Template.new(
-          name: 'network',
+          name: 'volume',
           template_type: 'Device',
-          tag: 'network',
+          tag: 'volume',
           version: 1,
-          height: 1,
+          height: 2,
           depth: 2,
           rows: 1,
           columns: 1,
           rackable: 'rackable',
           simple: true,
-          description: 'Network',
+          description: 'Volume',
           images: {
-            'front' => 'switch_front_1u.png',
-            'rear' => 'switch_rear_1u.png',
+            'front' => 'disk_front_2u.png',
+            'rear' => 'generic_rear_2u.png',
           }
         )
         t.save!
       end
 
       dir.down do
-        Template.find_by_tag('network')&.destroy!
+        Template.find_by_tag('volume')&.destroy!
       end
       
     end

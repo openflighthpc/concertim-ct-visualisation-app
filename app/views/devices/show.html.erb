@@ -12,21 +12,8 @@
         dl.item "Status:", device.status
         dl.item "Cost this billing period:", device.currency_cost
 
-        if device.has_login_details?
-          dl.sublist "Access details:" do |sl|
-            sl.item "Login user:", device.login_user
-            sl.item "Public IPs:", device.public_ips
-            sl.item "Private IPs:", device.private_ips
-            sl.item "SSH Key:", device.ssh_key
-          end
-        end
-
-        if device.has_volume_details?
-          dl.sublist "Volume details:" do |sl|
-            device.volume_details.each do |key, val|
-              sl.item key, val
-            end
-          end
+        device.additional_details.each do |label, details_list|
+          dl.recurse_items label, details_list
         end
 
         dl.sublist "Template:" do |sl|

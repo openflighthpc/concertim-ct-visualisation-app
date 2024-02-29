@@ -261,6 +261,66 @@ RSpec.describe "Api::V1::NodesControllers", type: :request do
           expect(parsed_details["dns_domain"]).to eq valid_attributes[:device][:details][:dns_domain]
         end
       end
+
+      context "with parameters for a volume device" do
+        let(:device_template) { create(:template, :volume_device_template) }
+        let(:valid_attributes) {
+          {
+            template_id: device_template.id,
+            device: {
+              name: "vol-1",
+              description: "vol-1 description",
+              location: {
+                rack_id: rack.id,
+                start_u: 1,
+                facing: 'f',
+              },
+              cost: 77.77,
+              details: {
+                type: 'Device::VolumeDetails',
+                bootable: true,
+                size: 4
+              },
+              metadata: { "foo" => "bar", "baz" => "qux" },
+              status: 'IN_PROGRESS',
+            }
+          }
+        }
+
+        def send_request
+          post url_under_test,
+            params: valid_attributes,
+            headers: headers,
+            as: :json
+        end
+
+        it "creates a new device" do
+          expect {
+            send_request
+          }.to change(Device, :count).by(1)
+        end
+
+        it "renders a successful response" do
+          send_request
+          expect(response).to have_http_status :ok
+        end
+
+        it "includes the device in the response" do
+          send_request
+          parsed_device = JSON.parse(response.body)
+
+          expect(parsed_device["name"]).to eq valid_attributes[:device][:name]
+          expect(parsed_device["description"]).to eq valid_attributes[:device][:description]
+          expect(parsed_device["metadata"]).to eq valid_attributes[:device][:metadata]
+          expect(parsed_device["status"]).to eq valid_attributes[:device][:status]
+          expect(parsed_device["template"]["id"]).to eq valid_attributes[:template_id]
+          expect(parsed_device["cost"]).to eq "#{'%.2f' % valid_attributes[:device][:cost]}"
+
+          parsed_details = parsed_device #["details"]
+          expect(parsed_details["bootable"]).to eq valid_attributes[:device][:details][:bootable]
+          expect(parsed_details["size"]).to eq valid_attributes[:device][:details][:size]
+        end
+      end
     end
   end
 end
