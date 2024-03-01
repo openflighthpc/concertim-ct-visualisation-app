@@ -67,7 +67,7 @@ RSpec.describe UserSignupJob, type: :job do
         clear_performed_jobs
 
         subject.call rescue nil
-        expect(CreateUserTeamJob).not_to have_been_enqueued
+        expect(CreateSingleUserTeamJob).not_to have_been_enqueued
       end
     end
 
@@ -89,7 +89,7 @@ RSpec.describe UserSignupJob, type: :job do
         clear_performed_jobs
 
         subject.call
-        expect(CreateUserTeamJob).to have_been_enqueued.with(user, cloud_service_config)
+        expect(CreateSingleUserTeamJob).to have_been_enqueued.with(user, cloud_service_config)
       end
     end
   end

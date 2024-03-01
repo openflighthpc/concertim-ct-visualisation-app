@@ -1,9 +1,10 @@
-class CreateUserTeamJob < ApplicationJob
+class CreateSingleUserTeamJob < ApplicationJob
   queue_as :default
   retry_on ::ActiveModel::ValidationError, wait: :polynomially_longer, attempts: 10
 
   def perform(user, cloud_service_config)
     team = nil
+    team_role = nil
 
     ActiveRecord::Base.transaction do
       team = Team.new(name: "#{user.login}_team", single_user: true)
@@ -20,6 +21,6 @@ class CreateUserTeamJob < ApplicationJob
       end
     end
 
-    CreateTeamJob.perform_later(team, cloud_service_config)
+    CreateTeamThenRoleJob.perform_later(team, team_role, cloud_service_config)
   end
 end

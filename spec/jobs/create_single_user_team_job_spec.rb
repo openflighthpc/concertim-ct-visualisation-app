@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe CreateUserTeamJob, type: :job do
+RSpec.describe CreateSingleUserTeamJob, type: :job do
   include ActiveJob::TestHelper
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
   let!(:user) { create(:user, :with_openstack_account, login: "bilbo") }
@@ -8,7 +8,7 @@ RSpec.describe CreateUserTeamJob, type: :job do
   let(:cloud_service_config) { create(:cloud_service_config) }
 
   subject(:job) {
-    CreateUserTeamJob.perform_now(user, cloud_service_config)
+    CreateSingleUserTeamJob.perform_now(user, cloud_service_config)
   }
 
   before(:each) do
@@ -42,18 +42,18 @@ RSpec.describe CreateUserTeamJob, type: :job do
     expect(TeamRole.count).to eq 0
     expect(Team.count).to eq 0
 
-    expect(CreateTeamJob).not_to have_been_enqueued
+    expect(CreateTeamThenRoleJob).not_to have_been_enqueued
   end
 
   it "enqueues creation of a team in openstack" do
     subject
-    expect(CreateTeamJob).to have_been_enqueued.with(Team.last, cloud_service_config)
+    expect(CreateTeamThenRoleJob).to have_been_enqueued.with(Team.last, TeamRole.last, cloud_service_config)
   end
 
   it "does not enqueue creation of team in openstack if unsuccessful" do
     create(:team, name: "bilbo_team")
     expect { subject }.not_to change(Team, :count)
-    expect(CreateTeamJob).not_to have_been_enqueued
+    expect(CreateTeamThenRoleJob).not_to have_been_enqueued
   end
 
 end
