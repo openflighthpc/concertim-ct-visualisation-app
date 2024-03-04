@@ -3,10 +3,9 @@ require 'faraday'
 class CreateCreditDepositJob < ApplicationJob
   queue_as :default
 
-  def perform(credit_deposit, cloud_service_config, user, **options)
+  def perform(credit_deposit, cloud_service_config, **options)
     runner = Runner.new(
       credit_deposit: credit_deposit,
-      user: user,
       cloud_service_config: cloud_service_config,
       logger: logger,
       **options
@@ -31,9 +30,8 @@ class CreateCreditDepositJob < ApplicationJob
   end
 
   class Runner < HttpRequests::Faraday::JobRunner
-    def initialize(credit_deposit:, user:, **kwargs)
+    def initialize(credit_deposit:, **kwargs)
       @credit_deposit = credit_deposit
-      @user = user
       super(**kwargs)
     end
 
