@@ -30,7 +30,13 @@ class Cluster
     end
 
     def form_field_type
-      select_box? ? 'select' : "#{MAPPED_FIELD_TYPES[type]}"
+      if select_box?
+        'select'
+      elsif type == 'string' && hidden
+        'password_field'
+      else
+        MAPPED_FIELD_TYPES[type]
+      end
     end
 
     def select_box?

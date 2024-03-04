@@ -75,7 +75,11 @@ class ClustersController < ApplicationController
     valid_selections = @cluster_type.field_groups
       .select { |group| group["optional"].present? }
       .map { |group| group["optional"]["name"] }
-    params.require(:cluster).permit(:name, cluster_params: @cluster_type.fields.keys, selections: valid_selections)
+    params.require(:cluster).permit(:name, cluster_params: @cluster_type.fields.keys, selections: valid_selections).tap do |h|
+      if !h.key?(:name) && h[:cluster_params].key?(Cluster::NAME_FIELD.to_sym)
+        h[:name] = h[:cluster_params][Cluster::NAME_FIELD.to_sym]
+      end
+    end
   end
 
   def set_cloud_assets

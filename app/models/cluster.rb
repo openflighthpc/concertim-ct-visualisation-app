@@ -1,6 +1,10 @@
 class Cluster
   include ActiveModel::API
 
+  # The field from which the cluster name will be copied if such a field
+  # exists.
+  NAME_FIELD = 'clustername'.freeze
+
   ####################################
   #
   # Properties
