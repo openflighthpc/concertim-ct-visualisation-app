@@ -1,0 +1,7 @@
+<% cluster_type = card_content %>
+
+<h2 class="cluster-type-card-title"><%= cluster_type.name %></h2>
+<% if cluster_type.logo_url.present? %>
+  <%= image_tag cluster_type.logo_url, class: "cluster-type-card-icon" %>
+<% end %>
+<span class="cluster-type-card-description"><%= cluster_type.description %></span>

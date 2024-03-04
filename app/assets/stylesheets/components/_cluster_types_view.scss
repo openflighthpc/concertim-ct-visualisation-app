@@ -1,17 +1,77 @@
+.cluster-types-card-deck {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(28em, 1fr));
+    grid-gap: 1rem;
+    justify-content: space-between;
+    justify-items: center;
+    padding: 1.25rem 2.5rem;
+}
+
+
 .cluster-type-card {
-  width: 19rem;
-  border: darkgray 1px solid;
-  padding: 0.5em;
-  margin-left: 0.5rem;
-  margin-right: 0.5rem;
+    border: solid #3b5168 1px;
+    border-radius: 2px;
+    padding: 1.5rem;
+    font-weight: 400;
+    transition: background 125ms;
+}
 
-  .card-divider {
-    border-bottom: darkgray 1px solid;
-  }
+.cluster-type-card {
+    display: grid;
+    grid-template-rows: [row1-start] auto [row1-end row2-start] auto [row2-end row3-start] auto [row3-end];
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "header header" "icon stats" ". button";
 
-  .disabled-cluster-link {
-    color: #63666A;
-    cursor: not-allowed;
-    font-weight: bold;
-  }
+    column-gap: 1.2rem;
+    row-gap: 0.3rem;
+
+    align-items: center;
+    margin: 0 !important;
+    width: 100%;
+    min-height: 14.2rem;
+}
+
+.cluster-type-card-title {
+    grid-area: header;
+    text-align: center;
+    margin: 0;
+    line-height: 1.8;
+    font-weight: 400;
+}
+
+.cluster-type-card-icon {
+    grid-area: icon;
+    margin: 10px 0 10px 10px;
+    justify-self: end;
+    max-height: 10rem;
+    max-width: calc(100% - 0.5rem) !important;
+}
+
+.cluster-type-card-description {
+    font-size: larger;
+    color: #3b5168;
+}
+
+.cluster-type-select-link {
+    grid-area: button;
+    justify-self: end;
+
+    .disabled-cluster-link {
+        color: #63666A;
+        cursor: not-allowed;
+        font-weight: bold;
+    }
+}
+
+.cluster-type-card:hover {
+    background: $lightest-blue;
+    .cluster-type-card-title { }
+    .cluster-type-card-description { }
+}
+
+.cluster-type-card--disabled {
+    background: $lighter-grey;
+    &:hover {
+        background: $lighter-grey;
+    }
 }

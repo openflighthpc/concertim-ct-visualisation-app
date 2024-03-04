@@ -23,7 +23,11 @@ class ClusterType < ApplicationRecord
 
   # fields will require some sophisticated validation
   validates :fields,
-            presence: true
+    presence: true
+
+  validates :order,
+    presence: true,
+    numericality: true
 
   validate :valid_fields_structure?
 

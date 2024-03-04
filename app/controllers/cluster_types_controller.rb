@@ -8,5 +8,6 @@ class ClusterTypesController < ApplicationController
       result = SyncAllClusterTypesJob.perform_now(@cloud_service_config, use_cache)
       flash.now.alert = result.error_message unless result.success?
     end
+    @cluster_types = @cluster_types.reorder(:order, :id)
   end
 end
