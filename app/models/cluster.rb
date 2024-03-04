@@ -10,8 +10,6 @@ class Cluster
   attr_accessor :cluster_type
   attr_accessor :team
   attr_accessor :name
-  attr_accessor :fields
-  attr_accessor :field_groups
   attr_reader :selections
 
   ####################################
