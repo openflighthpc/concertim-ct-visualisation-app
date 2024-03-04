@@ -82,7 +82,7 @@ class ResourceTableCell < Cell::ViewModel
       @table.empty_collection_block = block
     end
 
-    private 
+    private
 
     def add_column(column, opts)
       return if opts[:suppress_if]
@@ -99,9 +99,9 @@ class ResourceTableCell < Cell::ViewModel
   #
   # ResourceTable
   #
-  # A model representing the actual table itself. 
+  # A model representing the actual table itself.
   #
-  # Attributes of note: 
+  # Attributes of note:
   #
   #   => @id              The html id of the table
   #   => @items           The items being rendered by the table
@@ -129,7 +129,7 @@ class ResourceTableCell < Cell::ViewModel
 
       establish_if_paginatable
     end
-    
+
     def empty?
       @items.empty?
     end
@@ -180,8 +180,8 @@ class ResourceTableCell < Cell::ViewModel
 
   #
   # Column
-  # 
-  # Base class for all types of column that could be added to the table. 
+  #
+  # Base class for all types of column that could be added to the table.
   #
   class Column
     include ActionView::Helpers::TagHelper
@@ -214,7 +214,7 @@ class ResourceTableCell < Cell::ViewModel
     # render_content_for
     #
     # Simple accessor for the row/column's content. This *may* become more complex over time, for
-    # example if someone asks for all dates in tables to look a certain way, this is where you 
+    # example if someone asks for all dates in tables to look a certain way, this is where you
     # would make this change in order to keep that logic out of the view.
     #
     def render_content_for(item)
@@ -223,7 +223,7 @@ class ResourceTableCell < Cell::ViewModel
 
     def sortable?
       @opts[:sortable] == true
-    end   
+    end
 
     # If this table is sortable, this yields the data required to render the sortable header that the
     # user clicks on.  The `yield`ed values are:
@@ -235,9 +235,9 @@ class ResourceTableCell < Cell::ViewModel
     def sortable_header(current_sort_column, current_sort_direction)
       sort_expression = sort_column.to_s
       is_current      = sort_expression == current_sort_column
-      sort_order      = (is_current && current_sort_direction == "asc") ? "desc" : "asc" 
+      sort_order      = (is_current && current_sort_direction == "asc") ? "desc" : "asc"
 
-      yield sort_expression, sort_order, is_current 
+      yield sort_expression, sort_order, is_current
     end
 
     # Will either be the method name (in the case of attribute columns) or will be
@@ -254,7 +254,7 @@ class ResourceTableCell < Cell::ViewModel
 
   #
   # CustomColumn
-  # 
+  #
   # This is a basic column type that just yields the item back to the view.
   #
   class CustomColumn < Column
@@ -275,7 +275,7 @@ class ResourceTableCell < Cell::ViewModel
 
   #
   # AttributeColumn
-  # 
+  #
   # This column type will call a given method on the item, and then yield the
   # result of that method as well as the item back to the view.
   #
@@ -291,7 +291,7 @@ class ResourceTableCell < Cell::ViewModel
         if @block
           @block.call item, item.send(@method)
         else
-          item.send(@method) 
+          item.send(@method)
         end
       rescue Exception => e
         raise "Tried to call method '#{@method}' on #{item}: #{e.message}"
@@ -303,7 +303,7 @@ class ResourceTableCell < Cell::ViewModel
   # SelectAllColumn
   #
   # Renders a "select all" column to the view, yielding the item.
-  # 
+  #
   class SelectAllColumn < Column
 
     def initialize(opts, &block)

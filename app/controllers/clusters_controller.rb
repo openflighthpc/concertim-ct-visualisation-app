@@ -9,6 +9,7 @@ class ClustersController < ApplicationController
     end
 
     @cluster_type = ClusterType.find_by_foreign_id!(params[:cluster_type_foreign_id])
+    @team = current_user.teams.find(params[:team_id])
     use_cache = params[:use_cache] != "false"
     result = SyncIndividualClusterTypeJob.perform_now(@cloud_service_config, @cluster_type, use_cache)
     unless result.success?
@@ -17,20 +18,23 @@ class ClustersController < ApplicationController
       return
     end
     set_cloud_assets
-    @cluster = Cluster.new(cluster_type: @cluster_type)
+    @cluster = Cluster.new(cluster_type: @cluster_type, team: @team)
   end
 
   def create
-    authorize! :create, Cluster
     @cloud_service_config = CloudServiceConfig.first
     @cluster_type = ClusterType.find_by_foreign_id!(params[:cluster_type_foreign_id])
+    @team = Team.find(permitted_params[:team_id])
     selections = (permitted_params[:selections] || {}).transform_values { |v| ActiveModel::Type::Boolean.new.cast(v) }.to_h
     @cluster = Cluster.new(
       cluster_type: @cluster_type,
       name: permitted_params[:name],
       cluster_params: permitted_params[:cluster_params],
       selections: selections,
+      team: @team
     )
+
+    authorize! :create, @cluster
 
     if @cloud_service_config.nil?
       flash.now.alert = "Unable to send cluster configuration: cloud environment config not set. Please contact an admin"
@@ -38,8 +42,8 @@ class ClustersController < ApplicationController
       return
     end
 
-    unless current_user.project_id
-      flash.now.alert = "Unable to send cluster configuration: you do not yet have a project id. " \
+    unless @team.project_id
+      flash.now.alert = "Unable to send cluster configuration: your team does not yet have a project id. " \
                         "This will be added automatically shortly."
       render action: :new
       return
@@ -75,11 +79,11 @@ class ClustersController < ApplicationController
     valid_selections = @cluster_type.field_groups
       .select { |group| group["optional"].present? }
       .map { |group| group["optional"]["name"] }
-    params.require(:cluster).permit(:name, cluster_params: @cluster_type.fields.keys, selections: valid_selections)
+    params.require(:cluster).permit(:name, :team_id, cluster_params: @cluster_type.fields.keys, selections: valid_selections)
   end
 
   def set_cloud_assets
-    result = GetCloudAssetsJob.perform_now(@cloud_service_config, current_user)
+    result = GetCloudAssetsJob.perform_now(@cloud_service_config, current_user, @team)
     if result.success?
       @cloud_assets = result.assets
     else

@@ -2,7 +2,7 @@
 
 <%=
   render_lhm_actions("Cluster actions") do |actions|
-    actions.add title: "Re-select cluster type", path: cluster_types_path
-    actions.add title: "Check for cluster type updates", path: new_cluster_type_cluster_path(@cluster_type, use_cache: false)
+    actions.add text: "Re-select cluster type or team", path: cluster_types_path(team_id: @team)
+    actions.add text: "Check for cluster type updates", path: new_cluster_type_cluster_path(@cluster_type, use_cache: false, team_id: @team)
   end
 %>
