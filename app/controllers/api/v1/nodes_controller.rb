@@ -28,9 +28,7 @@ class Api::V1::NodesController < Api::V1::ApplicationController
   end
 
   def device_params
-    permitted_params.except(:location, :template_id, :details, 
-      :public_ips, :private_ips, :ssh_key, :login_user, :volume_details
-    )
+    permitted_params.except(:location, :template_id, :details)
   end
 
   def location_params
@@ -40,26 +38,12 @@ class Api::V1::NodesController < Api::V1::ApplicationController
   end
 
   def details_params
-    permitted_params.fetch(:details, {}).tap do |details|
-      if details.empty?
-        legacy_params = permitted_params.slice(
-          :public_ips,
-          :private_ips,
-          :ssh_key,
-          :login_user,
-          :volume_details
-        )
-        legacy_params[:type] = 'Device::ComputeDetails'
-        return legacy_params
-      end
-    end
+    permitted_params.fetch(:details, {})
   end
 
   PERMITTED_PARAMS = [
-    "name", "description", "status", "cost", 
-    "public_ips", "private_ips", "ssh_key", "login_user",
-    "location" => %w[rack_id start_u facing],
-  ] << {metadata: {}, details: {}, volume_details: {}}
+    "name", "description", "status", "cost", "location" => %w[rack_id start_u facing]
+  ] << {metadata: {}, details: {}}
 
   def permitted_params
     params.require(:device).permit(*PERMITTED_PARAMS)
