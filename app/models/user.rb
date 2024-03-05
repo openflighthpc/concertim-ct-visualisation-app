@@ -125,14 +125,6 @@ class User < ApplicationRecord
     allowlisted_jwts.destroy_all
   end
 
-  ####################################
-  #
-  # Private Instance Methods
-  #
-  ####################################
-
-  private
-
   def teams_where_admin
     @teams_where_admin ||= teams.where(team_roles: { role: 'admin' })
   end
