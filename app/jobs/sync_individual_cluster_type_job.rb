@@ -39,6 +39,7 @@ class SyncIndividualClusterTypeJob < SyncAllClusterTypesJob
       @cluster_type.version = type_details["last_modified"]
       @cluster_type.order = type_details["order"]
       @cluster_type.logo_url = type_details["logo_url"]
+      @cluster_type.instructions = type_details["instructions"]
       unless @cluster_type.save
         ["Unable to update type '#{@cluster_type.descriptive_name}': #{@cluster_type.errors.full_messages.join("; ")}"]
       else

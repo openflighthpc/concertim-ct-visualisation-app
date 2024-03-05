@@ -86,6 +86,7 @@ class SyncAllClusterTypesJob < ApplicationJob
         type.version = type_details["last_modified"]
         type.order = type_details["order"]
         type.logo_url = type_details["logo_url"]
+        type.instructions = type_details["instructions"]
         unless type.save
           errors << "Unable to #{type.persisted? ? "update" : "create"} type '#{type.descriptive_name}': #{type.errors.full_messages.join("; ")}"
         end

@@ -52,5 +52,12 @@ Complete the details below and click "Launch".
     </div>
   <% end %>
 
+  <% presenter = presenter_for(@cluster_type) %>
+  <% if presenter.instruction('launch').present? %>
+    <div class="cluster-launch-instructions">
+      <%= MarkdownRenderer.render(presenter.instruction('launch')['text']) %>
+    </div>
+  <% end %>
+
   <%= f.submit 'Launch' %>
 <% end %>

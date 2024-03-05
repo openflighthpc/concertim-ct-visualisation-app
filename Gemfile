@@ -82,6 +82,7 @@ gem "cells-erb", "~> 0.1.0"
 gem "rabl", "~> 0.16.1"
 gem "pagy", "~> 6.4"
 gem "simple_form", "~> 5.3"
+gem "commonmarker", "~> 1.0"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
