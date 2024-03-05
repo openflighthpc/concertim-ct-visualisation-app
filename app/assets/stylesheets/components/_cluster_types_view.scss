@@ -20,7 +20,7 @@
     display: grid;
     grid-template-rows: [row1-start] auto [row1-end row2-start] auto [row2-end row3-start] auto [row3-end];
     grid-template-columns: 1fr 1fr;
-    grid-template-areas: "header header" "icon stats" ". button";
+    grid-template-areas: "header header" "icon description" ". button";
 
     column-gap: 1.2rem;
     row-gap: 0.3rem;
@@ -73,5 +73,28 @@
     background: $lighter-grey;
     &:hover {
         background: $lighter-grey;
+    }
+}
+
+
+.cluster-type-header {
+    display: grid;
+    grid-template-rows: [row1-start] auto [row1-end row2-start] auto [row2-end];
+    grid-template-columns: auto auto;
+    grid-template-areas: "icon header" "icon description";
+    column-gap: 1.2rem;
+    row-gap: 0.3rem;
+    justify-content: start;
+
+    .cluster-type-card-title {
+	    justify-self: left;
+	    align-self: end;
+	    max-width: 28em;
+    }
+
+    .cluster-type-card-description {
+	    justify-self: left;
+	    align-self: start;
+	    max-width: 28em;
     }
 }

@@ -7,8 +7,14 @@
   <%= render 'actions' %>
 <% end %>
 
-<p>Configure details for cluster <strong><%= @cluster_type.name %></strong></p>
-<p><%= @cluster_type.description %></p>
+<div class="cluster-type-header">
+  <%= render partial: 'cluster_types/card_content', object: @cluster_type %>
+</div>
+
+<p>
+Complete the details below and click "Launch".
+</p>
+
 
 <%= form_for(@cluster, url: cluster_type_clusters_path(@cluster_type)) do |f| %>
   <%= cell('cluster_form_errors').(:show, @cluster) %>
@@ -46,5 +52,5 @@
     </div>
   <% end %>
 
-  <%= f.submit 'Create' %>
+  <%= f.submit 'Launch' %>
 <% end %>

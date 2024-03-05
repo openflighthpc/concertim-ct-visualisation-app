@@ -74,6 +74,8 @@ class Cluster
             @cloud_assets[cloud_asset].map { |a| [a["name"], a["id"]] }
           end
         form.send(form_field_type, :value, values, {prompt: true}, form_options)
+      elsif form_field_type == 'password_field'
+        form.send(form_field_type, :value, form_options.merge(autocomplete: 'off'))
       else
         form.send(form_field_type, :value, form_options)
        end
