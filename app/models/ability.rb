@@ -29,12 +29,6 @@ class Ability
     cannot :destroy, User, root: true
 
     cannot :manage, TeamRole, team_id: Team.where(single_user: true).pluck(:id)
-
-    # Don't allow admins to receive credits
-    cannot :create, CreditDeposit do |deposit|
-      user = deposit.user
-      user.root || user.project_id.nil? || user.billing_acct_id.nil?
-    end
   end
 
   # Abilities for non-root users.
