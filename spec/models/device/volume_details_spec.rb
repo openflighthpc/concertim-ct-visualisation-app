@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Device::VolumeDetails, type: :model do
-  let(:user) { create(:user) }
+  let(:team) { create(:team) }
   let!(:rack_template) { create(:template, :rack_template) }
-  let!(:rack) { create(:rack, user: user, template: rack_template) }
+  let!(:rack) { create(:rack, team: team, template: rack_template) }
   let(:location) { create(:location, rack: rack) }
   let(:chassis) { create(:chassis, location: location, template: template) }
 
