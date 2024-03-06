@@ -59,7 +59,7 @@ class RackObject extends RackSpaceObject {
 
     // Based on the assumption that items in a rack share the same role.
     // This will need to change if we have more specific permissions e.g. for individual devices
-    this.teamRole = def.teamRole || this.parent().teamRole;
+    this.teamRole = def.teamRole || this.parent()?.teamRole || "unknown";
 
     this.setLayers();
 
