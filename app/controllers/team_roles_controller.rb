@@ -94,7 +94,7 @@ class TeamRolesController < ApplicationController
 
     if result.success?
       flash[:info] = "Successfully updated team role"
-      redirect_to team_team_roles_path(@team_role.team, @team_role)
+      redirect_to @team_role.user == current_user ? teams_path : team_team_roles_path(@team_role.team)
     else
       flash[:alert] = "Unable to update team role"
       render action: :edit
