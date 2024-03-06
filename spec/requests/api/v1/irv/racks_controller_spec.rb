@@ -50,6 +50,7 @@ RSpec.describe "Api::V1::Irv::RacksControllers", type: :request do
             expect(parsed_rack["name"]).to eq rack.name
             expect(parsed_rack["uHeight"].to_i).to eq rack.u_height
             expect(parsed_rack["cost"]).to eq "$9.99"
+            expect(parsed_rack["teamRole"]).to eq "superAdmin"
           end
 
           it "includes the rack's template" do

@@ -33,7 +33,6 @@ module Irv
         else
           # The fast and awkward to understand method.
           irv_rack_structure = Crack::XML.parse(InteractiveRackView.get_structure(@rack_ids, @user))
-          Rails.logger.info(irv_rack_structure)
           fix_structure(irv_rack_structure)
           irv_rack_structure
         end

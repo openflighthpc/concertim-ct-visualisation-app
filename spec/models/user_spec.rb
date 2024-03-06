@@ -74,4 +74,48 @@ RSpec.describe User, type: :model do
       end
     end
   end
+
+  describe 'teams where admin' do
+    let!(:team) { create(:team) }
+
+    context "no team roles" do
+      it "returns empty" do
+        expect(user.teams_where_admin).to eq []
+      end
+    end
+
+    context "with member role" do
+      let!(:role) { create(:team_role, user: user, team: team, role: "member") }
+
+      it "returns empty" do
+        expect(user.teams_where_admin).to eq []
+      end
+
+      context "team has other users with roles" do
+        let!(:other_users_role) { create(:team_role, team: team, role: "member") }
+        let!(:another_users_role) { create(:team_role, team: team, role: "admin") }
+
+        it "returns empty" do
+          expect(user.teams_where_admin).to eq []
+        end
+      end
+    end
+
+    context "with admin role" do
+      let!(:role) { create(:team_role, user: user, team: team, role: "admin") }
+
+      it "returns team" do
+        expect(user.teams_where_admin).to eq [team]
+      end
+
+      context "with roles in other teams" do
+        let!(:other_role) { create(:team_role, user: user, role: "member") }
+        let!(:another_role) { create(:team_role, user: user, role: "admin") }
+
+        it "returns all teams where admin" do
+          expect(user.teams_where_admin.sort).to eq [team, another_role.team].sort
+        end
+      end
+    end
+  end
 end

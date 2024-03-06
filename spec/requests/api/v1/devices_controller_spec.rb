@@ -32,7 +32,7 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
       include_examples "unauthorised JSON response"
     end
 
-    context "when logged in as admin" do
+    context "when logged in as super admin" do
       include_context "Logged in as admin"
 
       context "when there are no racks" do
@@ -117,7 +117,7 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
       end
     end
 
-    context "when logged in as admin" do
+    context "when logged in as super admin" do
       include_context "Logged in as admin"
       include_examples "successful JSON response"
 
@@ -444,18 +444,27 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
 
     context "when logged in as device's rack team member" do
       include_context "Logged in as non-admin"
-      let!(:team_role) { create(:team_role, team: device.rack.team, user: authenticated_user) }
+      include_examples "forbidden JSON response" do
+        let(:request_method) { :patch }
+        let!(:team_role) { create(:team_role, team: device.rack.team, user: authenticated_user, role: "member") }
+      end
+    end
+
+    context "when logged in as device's rack team admin" do
+      include_context "Logged in as non-admin"
+      let!(:team_role) { create(:team_role, team: device.rack.team, user: authenticated_user, role: "admin") }
       include_examples "authorized user updating device"
     end
 
     context "when logged in as another user" do
       include_context "Logged in as non-admin"
       include_examples "forbidden JSON response" do
+        let(:request_method) { :patch }
         let!(:team_role) { create(:team_role, user: authenticated_user) }
       end
     end
 
-    context "when logged in as admin" do
+    context "when logged in as super admin" do
       include_context "Logged in as admin"
       include_examples "authorized user updating device"
     end

@@ -363,17 +363,27 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
       include_examples "unauthorised JSON response"
     end
 
-    context "when logged in as member of rack's team" do
+    context "when logged in as admin of rack's team" do
       include_context "Logged in as non-admin"
-      let!(:team_role) { create(:team_role, user: authenticated_user, team: rack.team) }
+      let!(:team_role) { create(:team_role, user: authenticated_user, team: rack.team, role: "admin") }
       include_examples "authorized user updating rack" do
         let(:can_update_order_id) { false }
+      end
+    end
+
+    context "when logged in as member of rack's team" do
+      include_context "Logged in as non-admin"
+      let!(:team_role) { create(:team_role, user: authenticated_user, team: rack.team, role: "member") }
+      include_examples "forbidden JSON response" do
+        let(:request_method) { :patch }
+        let!(:team_role) { create(:team_role, user: authenticated_user) }
       end
     end
 
     context "when logged in as another user" do
       include_context "Logged in as non-admin"
       include_examples "forbidden JSON response" do
+        let(:request_method) { :patch }
         let!(:team_role) { create(:team_role, user: authenticated_user) }
       end
     end

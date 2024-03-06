@@ -10,8 +10,10 @@ class BroadcastRackChangeJob < ApplicationJob
     user_roles = TeamRole.where(team_id: team_id)
     role_mapping = user_roles.pluck(:user_id, :role).to_h
     User.where(root: true).or(User.where(id: role_mapping.keys)).each do |user|
-      role = user.root? ? "superAdmin" : role_mapping[user.id]
-      msg[:rack][:teamRole] = role
+      unless action == "deleted"
+        role = user.root? ? "superAdmin" : role_mapping[user.id]
+        msg[:rack][:teamRole] = role
+      end
       InteractiveRackViewChannel.broadcast_to(user, msg)
     end
   end
