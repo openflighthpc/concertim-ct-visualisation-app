@@ -2,7 +2,7 @@ object @rack
 attributes :id, :name
 attribute :currency_cost => :cost
 attributes u_height: :uHeight, status: :buildStatus
-node(:team_role) do |rack|
+node(:teamRole) do |rack|
   if locals[:user].root
     "superAdmin"
   else

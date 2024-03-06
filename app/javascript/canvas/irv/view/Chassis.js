@@ -151,10 +151,6 @@ class Chassis extends RackObject {
     }
   }
 
-  teamRole() {
-
-  }
-
   setCoordsBasedOnUStart() {
     const x = (this.parent().x + (this.parent().width / 2)) - (this.width/2);
     const y = (RackObject.U_PX_HEIGHT * (this.parent().uHeight - this.uStart() - this.uHeight)) + this.parent().chassisOffsetY + this.parent().y;

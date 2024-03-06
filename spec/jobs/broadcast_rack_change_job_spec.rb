@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe BroadcastRackChangeJob, type: :job do
   let(:user) { create(:user) }
   let(:team) { create(:team) }
-  let!(:team_role) { create(:team_role, team: team, user: user) }
+  let!(:team_role) { create(:team_role, team: team, user: user, role: "member") }
   let(:template) { create(:template, :rack_template) }
   let(:device_template) { create(:template, :device_template) }
   let!(:rack) { create(:rack, team: team, template: template) }
@@ -33,6 +33,7 @@ RSpec.describe BroadcastRackChangeJob, type: :job do
         expect(rack_data["id"]).to eq rack.id.to_s
         expect(rack_data["name"]).to eq rack.name
         expect(rack_data["cost"]).to eq "$0.00"
+        expect(rack_data["teamRole"]).to eq "member"
       }
 
       expect { subject }.to have_broadcasted_to(user).from_channel(InteractiveRackViewChannel).with(nil, &expected)
