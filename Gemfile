@@ -95,6 +95,7 @@ gem "simple_form", "~> 5.3"
 
 gem "crack", "~> 0.4.5"
 gem "good_job", "~> 3.23"
+gem "lograge" 
 
 
 ###################################

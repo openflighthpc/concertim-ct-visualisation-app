@@ -184,6 +184,11 @@ GEM
       actionview (>= 5.0.0)
       activesupport (>= 5.0.0)
     jwt (2.7.1)
+    lograge (0.14.0)
+      actionpack (>= 4)
+      activesupport (>= 4)
+      railties (>= 4)
+      request_store (~> 1.0)
     loofah (2.22.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -271,6 +276,8 @@ GEM
     regexp_parser (2.8.1)
     reline (0.4.2)
       io-console (~> 0.5)
+    request_store (1.6.0)
+      rack (>= 1.4)
     responders (3.1.1)
       actionpack (>= 5.2)
       railties (>= 5.2)
@@ -364,6 +371,7 @@ DEPENDENCIES
   good_job (~> 3.23)
   importmap-rails
   jbuilder
+  lograge
   pagy (~> 6.4)
   pg (~> 1.5)
   puma (~> 6.4)
