@@ -1,6 +1,10 @@
 class TeamPresenter < Presenter
   include Costed
 
+  def name(user)
+    personal_team_for_user?(user) ? "#{o.name} (your personal team)" : o.name
+  end
+
   def status
     if o.deleted_at.nil?
       "Active"
@@ -48,5 +52,9 @@ class TeamPresenter < Presenter
     else
       I18n.t("simple_form.customisations.hints.team.edit.#{attribute}.present")
     end
+  end
+
+  def personal_team_for_user?(user)
+    o.single_user && !user.root && user.teams_where_admin.where(id: o.id).exists?
   end
 end

@@ -12,8 +12,12 @@
   <% end %>
 
   <% t.attribute_column :id, sortable: true %>
-  <% t.attribute_column :name, sortable: true %>
-  <% t.attribute_column :single_user, title: "Single user team", sortable: true, tooltip: "A single user team cannot have more than one user assigned" %>
+  <% t.custom_column "Name", sortable: true, db_column: :name do |team| %>
+    <% presenter_for(team).name(current_user) %>
+  <% end %>
+  <% if current_user.root? %>
+    <% t.attribute_column :single_user, title: "Single user team", sortable: true, tooltip: "A single user team cannot have more than one user assigned" %>
+  <% end %>
   <% TeamRole::VALID_ROLES.each do |role| %>
     <% t.custom_column role.pluralize.capitalize do |team| %>
       <% presenter_for(team).team_users_list(role) %>
