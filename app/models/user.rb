@@ -126,6 +126,6 @@ class User < ApplicationRecord
   end
 
   def teams_where_admin
-    @teams_where_admin ||= teams.where(team_roles: { role: 'admin'})
+    @teams_where_admin ||= teams.where(team_roles: { role: 'admin' })
   end
 end
