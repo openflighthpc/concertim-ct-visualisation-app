@@ -6,6 +6,38 @@ Concertim Visualisation App allows visualising devices and their reported metric
 
 ![racks with metrics](images/racks-with-metrics.png)
 
+
+## Quick start
+
+1. Clone the repository
+    ```bash
+    git clone https://github.com/alces-flight/concertim-ct-visualisation-app.git
+    ```
+2. Build the docker image
+    ```bash
+    docker build --network=host --tag concertim-visualisation:latest .
+    ```
+3. Start the docker container
+    ```bash
+	docker run -d --name concertim-visualisation \
+		--network=host \
+		concertim-visualisation
+    ```
+
+## Building the docker image
+
+Concertim Visualisation App is intended to be deployed as a Docker container.
+There is a Dockerfile in this repo for building the image.
+
+1. Clone the repository
+    ```bash
+    git clone https://github.com/alces-flight/concertim-ct-visualisation-app.git
+    ```
+2. Build the docker image
+    ```bash
+    docker build --network=host --tag concertim-visualisation:latest .
+    ```
+
 ## Usage
 
 Racks and devices can be added and removed using the rack and device API.  Once
