@@ -11,9 +11,9 @@
   <%= render partial: 'cluster_types/card_content', object: @cluster_type %>
 </div>
 
-<p>
+<div class="cluster-form-instructions">
 Complete the details below and click "Launch".
-</p>
+</div>
 
 
 <%= form_for(@cluster, url: cluster_type_clusters_path(@cluster_type)) do |f| %>
@@ -23,7 +23,7 @@ Complete the details below and click "Launch".
   <% @cluster.field_groups.each do |field_group| %>
     <% next if field_group.empty? %>
     <div class="cluster-field-group" data-cluster-form-optional-field-group="field-group">
-      <h4 class="cluster-field-group-label"><%= field_group.label %></h4>
+      <h2 class="cluster-field-group-label"><%= field_group.label %></h2>
       <% unless field_group.description.blank? %>
         <div class="cluster-field-group-description"><%= field_group.description %></div>
       <% end %>
@@ -54,6 +54,7 @@ Complete the details below and click "Launch".
 
   <% presenter = presenter_for(@cluster_type) %>
   <% if presenter.instruction('launch').present? %>
+    <h2><%= presenter.instruction('launch')['title'] %></h2>
     <div class="cluster-launch-instructions">
       <%= MarkdownRenderer.render(presenter.instruction('launch')['text']) %>
     </div>
