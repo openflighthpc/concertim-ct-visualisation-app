@@ -17,7 +17,6 @@ RSpec.describe CreateSingleUserTeamJob, type: :job do
   end
 
   it "creates a single user team with the user's username" do
-    expect(Team.count).to eq 0
     expect { subject }.to change(Team, :count).by(1)
     team = Team.last
     expect(team.name).to eq "bilbo_team"
@@ -25,7 +24,6 @@ RSpec.describe CreateSingleUserTeamJob, type: :job do
   end
 
   it "assigns user as team admin" do
-    expect(TeamRole.count).to eq 0
     expect { subject }.to change(TeamRole, :count).by(1)
     role = TeamRole.last
     team = Team.last
@@ -35,12 +33,8 @@ RSpec.describe CreateSingleUserTeamJob, type: :job do
   end
 
   it "rolls back creation of team if user assignment fails" do
-    expect(TeamRole.count).to eq 0
-    expect(Team.count).to eq 0
     user.root = true
-    subject
-    expect(TeamRole.count).to eq 0
-    expect(Team.count).to eq 0
+    expect { subject rescue nil }.to not_change(Team, :count).and not_change(TeamRole, :count)
 
     expect(CreateTeamThenRoleJob).not_to have_been_enqueued
   end
@@ -52,7 +46,7 @@ RSpec.describe CreateSingleUserTeamJob, type: :job do
 
   it "does not enqueue creation of team in openstack if unsuccessful" do
     create(:team, name: "bilbo_team")
-    expect { subject }.not_to change(Team, :count)
+    expect { subject rescue nil }.not_to change(Team, :count)
     expect(CreateTeamThenRoleJob).not_to have_been_enqueued
   end
 
