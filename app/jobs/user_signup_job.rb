@@ -23,7 +23,7 @@ class UserSignupJob < ApplicationJob
   class Result
     include HttpRequests::ResultSyncer
 
-    property :cloud_user_id, from: :user_id, context: :cloud
+    property :cloud_user_id, from: :user_cloud_id, context: :cloud
     validates :cloud_user_id, presence: true, on: :cloud
   end
 
@@ -47,7 +47,7 @@ class UserSignupJob < ApplicationJob
     private
 
     def url
-      "#{@cloud_service_config.user_handler_base_url}/create_user"
+      "#{@cloud_service_config.user_handler_base_url}/user"
     end
 
     def body
@@ -59,6 +59,7 @@ class UserSignupJob < ApplicationJob
           project_id: @cloud_service_config.admin_project_id,
         },
         username: @user.login,
+        name: @user.name,
         password: @user.foreign_password,
         email: @user.email
       }

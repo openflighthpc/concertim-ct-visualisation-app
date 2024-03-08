@@ -11,7 +11,7 @@ RSpec.describe UserSignupJob, type: :job do
   }
 
   describe "url" do
-    let(:user_service_path) { "/create_user" }
+    let(:user_service_path) { "/user" }
 
     subject { super().send(:url) }
 
@@ -46,7 +46,7 @@ RSpec.describe UserSignupJob, type: :job do
   end
 
   describe "updating the user's details from the response" do
-    let(:user_service_path) { "/create_user" }
+    let(:user_service_path) { "/user" }
     context "when response does not contain expected fields" do
       let(:response_body) { {} }
 
@@ -73,7 +73,7 @@ RSpec.describe UserSignupJob, type: :job do
 
     context "when response contains expected fields" do
       let(:cloud_user_id) { SecureRandom.uuid }
-      let(:response_body) { { "user_id" => cloud_user_id } }
+      let(:response_body) { { "user_cloud_id" => cloud_user_id } }
 
       before(:each) do
         stubs.post(user_service_path) { |env| [ 201, {}, response_body ] }
