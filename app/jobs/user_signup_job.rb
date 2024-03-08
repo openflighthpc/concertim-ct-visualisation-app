@@ -1,6 +1,7 @@
 require 'faraday'
 
 class UserSignupJob < ApplicationJob
+  include GoodJob::ActiveJobExtensions::Batches
   queue_as :default
 
   retry_on ::Faraday::Error, wait: :polynomially_longer, attempts: 10
@@ -38,7 +39,7 @@ class UserSignupJob < ApplicationJob
       result = Result.from(response.body)
       result.validate!(:cloud)
       result.sync(@user, :cloud)
-      CreateSingleUserTeamJob.perform_later(@user, @cloud_service_config)
+      GoodJob::Batch.enqueue(on_finish: CreateSingleUserTeamJob, user: @user, cloud_service_config: @cloud_service_config)
     rescue ::ActiveModel::ValidationError
       @logger.warn("Failed to sync response to user: #{$!.message}")
       raise
