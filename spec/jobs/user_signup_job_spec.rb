@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe UserSignupJob, type: :job do
+  include ActiveJob::TestHelper
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
   let(:cloud_service_config) { create(:cloud_service_config) }
   let(:user) { create(:user) }
@@ -60,6 +61,14 @@ RSpec.describe UserSignupJob, type: :job do
       it "does not update the cloud_user_id" do
         expect { subject.call rescue nil }.not_to change(user, :cloud_user_id).from(nil)
       end
+
+      it "does not enqueue user team creation" do
+        clear_enqueued_jobs
+        clear_performed_jobs
+
+        subject.call rescue nil
+        expect(CreateSingleUserTeamJob).not_to have_been_enqueued
+      end
     end
 
     context "when response contains expected fields" do
@@ -73,6 +82,14 @@ RSpec.describe UserSignupJob, type: :job do
       it "updates the user's cloud_user_id, project_id and billing_acct_id" do
         expect { subject.call }
           .to  change(user, :cloud_user_id).from(nil).to(cloud_user_id)
+      end
+
+      it "enqueues user team creation" do
+        clear_enqueued_jobs
+        clear_performed_jobs
+
+        subject.call
+        expect(CreateSingleUserTeamJob).to have_been_enqueued.with(user, cloud_service_config)
       end
     end
   end

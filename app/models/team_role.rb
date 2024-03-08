@@ -46,6 +46,7 @@ class TeamRole < ApplicationRecord
   validates :user_id, uniqueness: { scope: :team_id, message: "User can only have one role per team" }
 
   validate :user_not_root
+  validate :one_role_for_single_user_team
 
   ######################################
   #
@@ -75,6 +76,12 @@ class TeamRole < ApplicationRecord
 
   def user_not_root
     self.errors.add(:user, 'must not be super admin') if user&.root?
+  end
+
+  def one_role_for_single_user_team
+    if team&.single_user && team.team_roles.where.not(id: id).exists?
+      self.errors.add(:team, 'is a single user team and already has an assigned user')
+    end
   end
 
   # What user can see in irv may have changed

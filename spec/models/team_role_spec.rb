@@ -28,9 +28,31 @@ RSpec.describe TeamRole, type: :model do
       end
     end
 
-    it "is not valid without a team" do
-      subject.team = nil
-      expect(subject).to have_error(:team, :blank)
+    describe "team" do
+      it "is not valid without a team" do
+        subject.team = nil
+        expect(subject).to have_error(:team, :blank)
+      end
+
+      it "must be a unique user team combination" do
+        new_role = build(:team_role, team: subject.team, user: subject.user)
+        expect(new_role).to have_error(:user_id, :taken)
+        new_role.team = team
+        expect(new_role).to be_valid
+      end
+
+      it "allows multiple roles for a regular team" do
+        new_role = build(:team_role, team: subject.team)
+        expect(new_role).to be_valid
+      end
+
+      it "does not allow multiple roles for a single user team" do
+        subject.team.single_user = true
+        subject.team.save!
+        new_role = build(:team_role, team: subject.team)
+        expect(new_role).to have_error(:team, "is a single user team and already has an assigned user")
+        expect(subject).to be_valid
+      end
     end
 
     describe "role" do
@@ -43,13 +65,6 @@ RSpec.describe TeamRole, type: :model do
         subject.role = "viewer"
         expect(subject).to have_error(:role, :inclusion)
       end
-    end
-
-    it "must be a unique user team combination" do
-      new_role = build(:team_role, team: subject.team, user: subject.user)
-      expect(new_role).to have_error(:user_id, :taken)
-      new_role.team = team
-      expect(new_role).to be_valid
     end
   end
 end

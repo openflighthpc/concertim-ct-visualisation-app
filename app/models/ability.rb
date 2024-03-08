@@ -27,6 +27,8 @@ class Ability
 
     # Don't allow any admin users to be deleted.
     cannot :destroy, User, root: true
+
+    cannot :manage, TeamRole, team: Team.where(single_user: true)
   end
 
   # Abilities for non-root users.
@@ -51,7 +53,7 @@ class Ability
 
     can [:read, :update], User, id: @user.id
     can :read, Team, id: @user.team_ids
-    can :manage, TeamRole, team_id: @user.team_roles.where(role: "admin").pluck(:team_id)
+    can :manage, TeamRole, team: @user.teams_where_admin.where(single_user: false)
 
     # Invoice is an ActiveModel::Model, but not an ActiveRecord::Base.  Setting
     # abilities like this might not work too well.  Or perhaps its fine.
