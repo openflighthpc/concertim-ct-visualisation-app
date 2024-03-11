@@ -56,7 +56,7 @@ class DeleteTeamJob < ApplicationJob
 
     def url
       url = URI(@cloud_service_config.user_handler_base_url)
-      url.path = "/delete_team"
+      url.path = "/team"
       url.to_s
     end
 
