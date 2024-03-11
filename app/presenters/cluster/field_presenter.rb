@@ -30,7 +30,13 @@ class Cluster
     end
 
     def form_field_type
-      select_box? ? 'select' : "#{MAPPED_FIELD_TYPES[type]}"
+      if select_box?
+        'select'
+      elsif type == 'string' && hidden
+        'password_field'
+      else
+        MAPPED_FIELD_TYPES[type]
+      end
     end
 
     def select_box?
@@ -68,6 +74,8 @@ class Cluster
             @cloud_assets[cloud_asset].map { |a| [a["name"], a["id"]] }
           end
         form.send(form_field_type, :value, values, {prompt: true}, form_options)
+      elsif form_field_type == 'password_field'
+        form.send(form_field_type, :value, form_options.merge(autocomplete: 'off'))
       else
         form.send(form_field_type, :value, form_options)
        end

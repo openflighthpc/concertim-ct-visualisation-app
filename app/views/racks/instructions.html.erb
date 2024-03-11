@@ -1,0 +1,10 @@
+<% set_title "Rack: #{@rack.name}" -%>
+<%= render partial: 'racks/tabbar' %>
+
+<% rack = presenter_for(@rack, RackPresenter) %>
+
+<%= render_tab_content do %>
+  <div class="usage-instructions">
+    <%= MarkdownRenderer.render(rack.instruction(@instruction_id)['text']) %>
+  </div>
+<% end %>

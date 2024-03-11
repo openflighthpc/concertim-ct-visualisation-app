@@ -1,23 +1,17 @@
 <% cluster_type = card %>
 
-<div class="cluster-type-card">
-  <div class="card-divider">
-    <h4><%= cluster_type.name %></h4>
-  </div>
-  <div class="card-section">
-    <p><%= cluster_type.description %></p>
-  </div>
-  <div class="card-section">
-    <% if current_user.can?(:create, Cluster) %>
-      <%= link_to "Select", new_cluster_type_cluster_path(cluster_type) %>
-    <% else %>
-      <% title =  if current_ability.enough_credits_to_create_cluster?
-                    "You do not have permission to create clusters"
-                  else
-                    "Insufficient credits. You must have at least #{Rails.application.config.cluster_credit_requirement} credits to create a cluster"
-                  end
-      %>
-      <span title="<%= title %>" class="disabled-cluster-link">Select</span>
-    <% end %>
-  </div>
-</div>
+<% if current_user.can?(:create, Cluster) %>
+  <%= link_to(new_cluster_type_cluster_path(cluster_type), class: "cluster-type-card") do %>
+    <%= render partial: 'card_content', object: cluster_type %>
+  <% end %>
+<% else %>
+  <% title =  if current_ability.enough_credits_to_create_cluster?
+                "You do not have permission to create clusters"
+              else
+                "Insufficient credits. You must have at least #{Rails.application.config.cluster_credit_requirement} credits to create a cluster"
+              end
+  %>
+  <span title="<%= title %>" class="cluster-type-card cluster-type-card--disabled">
+    <%= render partial: 'card_content', object: cluster_type %>
+  </span>
+<% end %>

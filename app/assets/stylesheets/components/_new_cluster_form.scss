@@ -1,4 +1,5 @@
 #new_cluster {
+    border: none;
     .formItem {
         margin-bottom: 1rem;
     }
@@ -18,7 +19,7 @@
     }
 
     .cluster-field-group {
-        margin-bottom: 2rem;
+        margin-bottom: 0.625rem;
     }
     .cluster-field-group-label { }
     .cluster-field-group-description {
@@ -36,4 +37,15 @@
     .cluster-field-group-fields {
         margin-left: 1rem;
     }
+}
+
+.cluster-form-instructions {
+	padding-left: 10px;
+	margin-bottom: 0.625rem;
+}
+
+.cluster-launch-instructions {
+	max-width: 30rem;
+	margin-bottom: 1rem;
+	margin-left: 1rem;
 }

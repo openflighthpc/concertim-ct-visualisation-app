@@ -1,0 +1,14 @@
+.usage-instructions {
+    margin-bottom: 2em;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    pre {
+        background: #fff !important;
+        code {
+            background: #2b303b;
+        }
+    }
+}

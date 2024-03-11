@@ -27,6 +27,7 @@ Rails.application.routes.draw do
   resources :racks, only: [:show] do
     member do
       get :devices
+      get 'instructions/:instruction_id', to: 'racks#instructions', as: :instructions
     end
   end
 

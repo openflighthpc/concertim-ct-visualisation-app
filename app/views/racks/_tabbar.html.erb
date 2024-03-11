@@ -2,5 +2,10 @@
   render_tabbar do |tabs|
     tabs.add 'Overview', rack_path(@rack)
     tabs.add 'Devices', devices_rack_path(@rack)
+
+    (presenter_for(@rack, RackPresenter).instructions || []).each do |instruction|
+      next if instruction['id'] == 'launch'
+      tabs.add(instruction['title'], instructions_rack_path(@rack, instruction['id']))
+    end
   end
 %>

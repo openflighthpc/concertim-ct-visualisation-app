@@ -8,4 +8,8 @@ class RacksController < ApplicationController
   def devices
     @devices = resource_table_collection(@rack.devices, model: Device)
   end
+
+  def instructions
+    @instruction_id = params[:instruction_id]
+  end
 end

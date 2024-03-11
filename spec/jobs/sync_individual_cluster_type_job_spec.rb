@@ -49,6 +49,8 @@ RSpec.describe SyncIndividualClusterTypeJob, type: :job do
         },
         parameter_groups: [],
         title: "Fault-Tolerant Web Hosting",
+        order: 100,
+        logo_url: '/images/cluster-types/testing-cluster-one.svg',
       }
     end
     let!(:cluster_type) do

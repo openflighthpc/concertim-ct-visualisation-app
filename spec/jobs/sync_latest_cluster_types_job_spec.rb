@@ -48,7 +48,9 @@ RSpec.describe SyncAllClusterTypesJob, type: :job do
             },
           },
           parameter_groups: {},
-          title: "Fault-Tolerant Web Hosting"
+          title: "Fault-Tolerant Web Hosting",
+          order: 100,
+          logo_url: '/images/cluster-types/testing-cluster-one.svg',
         }
       end
       let(:cluster_two_details) do
@@ -96,7 +98,9 @@ RSpec.describe SyncAllClusterTypesJob, type: :job do
             },
           },
           parameter_groups: {},
-          title: "My testing cluster type"
+          title: "My testing cluster type",
+          order: 100,
+          logo_url: '/images/cluster-types/testing-cluster-two.svg',
         }
       end
 

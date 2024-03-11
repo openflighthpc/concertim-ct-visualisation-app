@@ -7,8 +7,14 @@
   <%= render 'actions' %>
 <% end %>
 
-<p>Configure details for cluster <strong><%= @cluster_type.name %></strong></p>
-<p><%= @cluster_type.description %></p>
+<div class="cluster-type-header">
+  <%= render partial: 'cluster_types/card_content', object: @cluster_type %>
+</div>
+
+<div class="cluster-form-instructions">
+Complete the details below and click "Launch".
+</div>
+
 
 <%= form_for(@cluster, url: cluster_type_clusters_path(@cluster_type)) do |f| %>
   <%= cell('cluster_form_errors').(:show, @cluster) %>
@@ -17,7 +23,7 @@
   <% @cluster.field_groups.each do |field_group| %>
     <% next if field_group.empty? %>
     <div class="cluster-field-group" data-cluster-form-optional-field-group="field-group">
-      <h4 class="cluster-field-group-label"><%= field_group.label %></h4>
+      <h2 class="cluster-field-group-label"><%= field_group.label %></h2>
       <% unless field_group.description.blank? %>
         <div class="cluster-field-group-description"><%= field_group.description %></div>
       <% end %>
@@ -46,5 +52,13 @@
     </div>
   <% end %>
 
-  <%= f.submit 'Create' %>
+  <% presenter = presenter_for(@cluster_type) %>
+  <% if presenter.instruction('launch').present? %>
+    <h2><%= presenter.instruction('launch')['title'] %></h2>
+    <div class="cluster-launch-instructions">
+      <%= MarkdownRenderer.render(presenter.instruction('launch')['text']) %>
+    </div>
+  <% end %>
+
+  <%= f.submit 'Launch' %>
 <% end %>

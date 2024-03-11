@@ -4,10 +4,21 @@ class ClusterFormNameCell < Cell::ViewModel
     @form = form
     @errors = @record.errors
     @attribute = :name
-    render
+    if has_clustername_parameter?
+      # We don't render anything here.  Instead the value provided for the
+      # 'clustername' parameter will be used.
+    else
+      render
+    end
   end
 
   private
+
+  def has_clustername_parameter?
+    @record.fields.any? do |field|
+      field.id == Cluster::NAME_FIELD
+    end
+  end
 
   def label_text
     'Cluster name'

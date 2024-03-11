@@ -19,9 +19,7 @@
 
       dl.item "Network details", @rack.network_details
 
-      dl.sublist "Creation Output" do |sl|
-        sl.item "Result", @rack.creation_output
-      end
+      dl.recurse_items "Creation Output", presenter_for(@rack, RackPresenter).creation_output
 
       dl.recurse_items "Metadata", @rack.metadata
     end
