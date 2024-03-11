@@ -64,7 +64,7 @@ class CreateTeamRoleJob < ApplicationJob
     end
 
     def path
-      "/create_team_role"
+      "/team_role"
     end
 
     def body
