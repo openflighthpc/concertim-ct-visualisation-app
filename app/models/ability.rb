@@ -40,7 +40,7 @@ class Ability
     can :read, Template
     can :read, Chassis, location: {rack: {team_id: @user.team_ids }}
     can :read, Device, chassis: {location: {rack: {team_id: @user.team_ids }}}
-    can :read, HwRack, team_id: @user.team_ids
+    can [:read, :devices], HwRack, team_id: @user.team_ids
     can :manage, Chassis, location: {rack: {team_id: @user.teams_where_admin.pluck(:id) }}
     can :manage, Device, chassis: {location: {rack: {team_id: @user.teams_where_admin.pluck(:id) }}}
     can :manage, HwRack, team_id: @user.teams_where_admin.pluck(:id)
