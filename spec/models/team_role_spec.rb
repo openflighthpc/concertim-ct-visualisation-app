@@ -37,7 +37,7 @@ RSpec.describe TeamRole, type: :model do
       it "must be a unique user team combination" do
         new_role = build(:team_role, team: subject.team, user: subject.user)
         expect(new_role).to have_error(:user_id, :taken)
-        new_role.team = team
+        new_role.team = create(:team)
         expect(new_role).to be_valid
       end
 
