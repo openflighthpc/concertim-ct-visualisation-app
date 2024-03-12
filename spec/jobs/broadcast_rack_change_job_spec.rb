@@ -1,9 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe BroadcastRackChangeJob, type: :job do
-  let(:user) { create(:user) }
+  let(:user) { create(:user, :as_team_member, team: team) }
   let(:team) { create(:team) }
-  let!(:team_role) { create(:team_role, team: team, user: user, role: "member") }
   let(:template) { create(:template, :rack_template) }
   let(:device_template) { create(:template, :device_template) }
   let!(:rack) { create(:rack, team: team, template: template) }

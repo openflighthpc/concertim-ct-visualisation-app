@@ -149,8 +149,7 @@ RSpec.describe HwRack, type: :model do
   end
 
   describe "broadcast changes" do
-    let!(:user) { create(:user) }
-    let!(:team_role) { create(:team_role, user: user, team: team) }
+    let!(:user) { create(:user, :as_team_member, team: team) }
 
     shared_examples 'rack details' do
       it 'broadcasts rack details' do

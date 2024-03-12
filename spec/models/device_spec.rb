@@ -7,8 +7,7 @@ RSpec.describe Device, type: :model do
   let(:chassis) { create(:chassis, location: location, template: device_template) }
   let(:location) { create(:location, rack: rack) }
   let!(:rack) { create(:rack, template: rack_template) }
-  let(:user) { create(:user) }
-  let!(:team_role) { create(:team_role, team: rack.team, user: user) }
+  let(:user) { create(:user, :as_team_member, team: rack.team) }
   let(:device_template) { create(:template, :device_template) }
 
   describe 'validations' do

@@ -31,4 +31,25 @@ FactoryBot.define do
       create(:team_role, team: rack.team, user: user)
     end
   end
+
+  trait :with_team_role do
+    transient do
+      role { 'member' }
+      team { create(:team) }
+    end
+
+    after(:create) do |user, evaluator|
+      user.team_roles.create!(role: evaluator.role, team: evaluator.team)
+    end
+  end
+
+  trait :as_team_member do
+    with_team_role
+    role { 'member' }
+  end
+
+  trait :as_team_admin do
+    with_team_role
+    role { 'admin' }
+  end
 end
