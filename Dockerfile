@@ -28,7 +28,6 @@ WORKDIR /opt/concertim/opt/ct-visualisation-app
 COPY . /opt/concertim/opt/ct-visualisation-app
 COPY docker/licence-limits.yml /opt/concertim/etc/licence-limits.yml
 
-ENV RAILS_LOG_TO_STDOUT=true
 ENV PORT=7000
 EXPOSE 7000
 RUN ./bin/bundle install

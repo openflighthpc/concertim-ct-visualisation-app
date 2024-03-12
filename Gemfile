@@ -96,6 +96,7 @@ gem "commonmarker", "~> 1.0"
 
 gem "crack", "~> 0.4.5"
 gem "good_job", "~> 3.23"
+gem "lograge" 
 
 
 ###################################

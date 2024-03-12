@@ -87,8 +87,8 @@ module HttpRequests
             f.response :raise_error
             f.response :logger, @logger, {
               formatter: HttpRequests::Faraday::LogFormatter,
-              headers: {request: true, response: true, errors: false},
-              bodies: true,
+              headers: {request: !Rails.env.production?, response: !Rails.env.production?, errors: false},
+              bodies: !Rails.env.production?,
               errors: true
             } do |logger|
                 logger.filter(/("password"\s*:\s*)("[^"]*")/, '\1"[FILTERED]"')
