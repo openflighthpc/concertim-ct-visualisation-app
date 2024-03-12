@@ -186,7 +186,7 @@ RSpec.describe "Api::V1::NodesControllers", type: :request do
           expect(parsed_device["template"]["id"]).to eq valid_attributes[:template_id]
           expect(parsed_device["cost"]).to eq "#{'%.2f' % valid_attributes[:device][:cost]}"
 
-          parsed_details = parsed_device #["details"]
+          parsed_details = parsed_device["details"]
           expect(parsed_details["mtu"]).to eq valid_attributes[:device][:details][:mtu]
           expect(parsed_details["dns_domain"]).to eq valid_attributes[:device][:details][:dns_domain]
         end
@@ -246,7 +246,7 @@ RSpec.describe "Api::V1::NodesControllers", type: :request do
           expect(parsed_device["template"]["id"]).to eq valid_attributes[:template_id]
           expect(parsed_device["cost"]).to eq "#{'%.2f' % valid_attributes[:device][:cost]}"
 
-          parsed_details = parsed_device #["details"]
+          parsed_details = parsed_device["details"]
           expect(parsed_details["bootable"]).to eq valid_attributes[:device][:details][:bootable]
           expect(parsed_details["size"]).to eq valid_attributes[:device][:details][:size]
         end

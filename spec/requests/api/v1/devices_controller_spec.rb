@@ -334,7 +334,7 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
             expect(parsed_device["name"]).to eq attributes[:device][:name]
             expect(parsed_device["status"]).to eq attributes[:device][:status]
             expect(parsed_device["cost"]).to eq "#{'%.2f' % attributes[:device][:cost]}"
-            parsed_details = parsed_device # ['details'] after revertion of 6b8d3e9
+            parsed_details = parsed_device['details']
             expect(parsed_details["mtu"]).to eq attributes[:device][:details][:mtu]
           end
         end
@@ -381,7 +381,7 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
             parsed_device = JSON.parse(response.body)
             expect(parsed_device["name"]).to eq attributes[:device][:name]
             expect(parsed_device["status"]).to eq attributes[:device][:status]
-            parsed_details = parsed_device # ['details'] after revertion of 6b8d3e9
+            parsed_details = parsed_device['details']
             expect(parsed_details["bootable"]).to eq attributes[:device][:details][:bootable]
           end
         end
