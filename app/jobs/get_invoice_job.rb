@@ -28,7 +28,7 @@ class GetInvoiceJob < ApplicationJob
     private
 
     def parse_body(body)
-      @invoice = parse_invoice(body["account_invoice"])
+      @invoice = parse_invoice(body["invoice"])
     end
   end
 
@@ -71,7 +71,7 @@ class GetInvoiceJob < ApplicationJob
     def body
       {
         invoice: {
-          billing_account_id: @team.billing_acct_id,
+          billing_acct_id: @team.billing_acct_id,
           invoice_id: @invoice_id,
         },
       }
