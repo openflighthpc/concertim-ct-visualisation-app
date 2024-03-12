@@ -16,7 +16,7 @@
       t.attribute_column :cost, sortable: true
 
       t.actions_column do |actions, device|
-        actions.add title: 'View details', path: device_path(device)
+        actions.add text: 'View details', path: device_path(device)
       end
     end
   end
