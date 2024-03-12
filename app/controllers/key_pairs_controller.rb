@@ -101,6 +101,6 @@ class KeyPairsController < ApplicationController
   # key pairs are user (not project) specific, but membership of a project is required
   # to view, create and delete them
   def set_project_id
-    @project_id = current_user.teams.where.not(project_id: nil).first&.project_id
+    @project_id = current_user.teams.where.not(project_id: nil).where(deleted_at: nil).first&.project_id
   end
 end

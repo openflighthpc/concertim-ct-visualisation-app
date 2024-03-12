@@ -49,8 +49,7 @@ class GetUserKeyPairsJob < ApplicationJob
       end
 
       results = response.body
-      key_pairs = results["key_pairs"].map do |key_pair|
-        details = key_pair["keypair"]
+      key_pairs = results["key_pairs"].map do |details|
         KeyPair.new(user: @user, name: details["name"], fingerprint: details["fingerprint"], key_type: details["type"] || "ssh")
       end
       return Result.new(true, key_pairs, "")
