@@ -47,8 +47,8 @@ class Device < ApplicationRecord
             presence: true,
             length: { maximum: 150 },
             format: {
-              with: /\A[a-zA-Z0-9\-]*\Z/,
-              message: "can contain only alphanumeric characters and hyphens."
+              with: /\A[a-zA-Z0-9\-\.]*\Z/,
+              message: "can contain only alphanumeric characters, dots and hyphens."
             }
   validates :status,
             presence: true,
