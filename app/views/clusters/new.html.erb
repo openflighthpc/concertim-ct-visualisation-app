@@ -2,7 +2,7 @@
   <%= javascript_import_module_tag "clusters/new" %>
 <% end %>
 
-<% set_title 'Create cluster - configure cluster' -%>
+<% set_title "Create cluster for team #{@team.name} - configure cluster" -%>
 <% content_for(:side_content) do %>
   <%= render 'actions' %>
 <% end %>
