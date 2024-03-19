@@ -2,7 +2,7 @@
   <%= javascript_import_module_tag "clusters/new" %>
 <% end %>
 
-<% set_title 'Create cluster - configure cluster' -%>
+<% set_title "Create cluster for team #{@team.name} - configure cluster" -%>
 <% content_for(:side_content) do %>
   <%= render 'actions' %>
 <% end %>
@@ -14,9 +14,6 @@
 <div class="cluster-form-instructions">
 Complete the details below and click "Launch".
 </div>
-
-<p>Configure details for cluster <strong><%= @cluster_type.name %></strong> in team <strong><%= @team.name %></strong></p>
-<p><%= @cluster_type.description %></p>
 
 <%= form_for(@cluster, url: cluster_type_clusters_path(@cluster_type)) do |f| %>
   <%= f.hidden_field :team_id %>

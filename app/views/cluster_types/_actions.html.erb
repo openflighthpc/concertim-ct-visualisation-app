@@ -1,7 +1,0 @@
-<h4>Actions</h4>
-
-<%=
-  render_lhm_actions("Cluster type actions") do |actions|
-    actions.add text: "Check for latest cluster types", path: cluster_types_path(use_cache: false, team_id: @team)
-  end
-%>

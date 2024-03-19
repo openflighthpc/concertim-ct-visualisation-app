@@ -24,7 +24,7 @@
   %>
 <% end %>
 <%= link_to( disabled ? "#" : new_cluster_type_cluster_path(cluster_type, team_id: team&.id),
-             { class: "cluster-type-card cluster-type-card#{"--disabled" if disabled }", title: title,
+             { class: "cluster-type-card #{"disabled-cluster-type-card" if disabled }", title: title,
                data: { base_target_url: new_cluster_type_cluster_path(cluster_type) } }) do %>
   <%= render partial: 'card_content', object: cluster_type %>
 <% end %>
