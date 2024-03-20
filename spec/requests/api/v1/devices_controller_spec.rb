@@ -214,7 +214,7 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
           expect(parsed_device["cost"]).to eq "#{'%.2f' % valid_attributes[:device][:cost]}"
           expect(parsed_device["template"]["id"]).to eq device_template.id
 
-          parsed_details = parsed_device #['details']
+          parsed_details = parsed_device['details']
           expect(parsed_details["public_ips"]).to eq valid_attributes[:device][:details][:public_ips]
           expect(parsed_details["private_ips"]).to eq valid_attributes[:device][:details][:private_ips]
           expect(parsed_details["ssh_key"]).to eq valid_attributes[:device][:details][:ssh_key]
@@ -246,60 +246,6 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
             .and not_change { device.details.private_ips }
             .and not_change { device.details.login_user }
             .and not_change { device.details.volume_details }
-        end
-      end
-
-      context "with legacy valid parameters" do
-        let(:attributes) {
-          {
-            device: {
-              name: device.name + "-updated",
-              metadata: device.metadata.merge("kate" => "kate"),
-              status: "ACTIVE",
-              cost: 99.99,
-              public_ips: "1.1.1.1",
-              private_ips: "2.2.2.2",
-              ssh_key: "abc",
-              login_user: "Billy Bob",
-              volume_details: { id: "abc" }
-            }
-          }
-        }
-
-        def send_request
-          patch url_under_test,
-            params: attributes,
-            headers: headers,
-            as: :json
-        end
-
-        it "renders a successful response" do
-          send_request
-          expect(response).to have_http_status :ok
-        end
-
-        it "updates the device" do
-          expect {
-            send_request
-          }.to change{ device.reload.updated_at }
-        end
-
-        it "includes the device in the response" do
-          expect(device.metadata).not_to eq attributes[:device][:metadata]
-
-          send_request
-
-          parsed_device = JSON.parse(response.body)
-          expect(parsed_device["name"]).to eq attributes[:device][:name]
-          expect(parsed_device["metadata"]).to eq attributes[:device][:metadata]
-          expect(parsed_device["status"]).to eq attributes[:device][:status]
-          expect(parsed_device["cost"]).to eq "#{'%.2f' % attributes[:device][:cost]}"
-          expect(parsed_device["template"]["id"]).to eq device_template.id
-          expect(parsed_device["public_ips"]).to eq attributes[:device][:public_ips]
-          expect(parsed_device["private_ips"]).to eq attributes[:device][:private_ips]
-          expect(parsed_device["ssh_key"]).to eq attributes[:device][:ssh_key]
-          expect(parsed_device["login_user"]).to eq attributes[:device][:login_user]
-          expect(parsed_device["volume_details"]["id"]).to eq attributes[:device][:volume_details][:id]
         end
       end
 
@@ -388,7 +334,7 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
             expect(parsed_device["name"]).to eq attributes[:device][:name]
             expect(parsed_device["status"]).to eq attributes[:device][:status]
             expect(parsed_device["cost"]).to eq "#{'%.2f' % attributes[:device][:cost]}"
-            parsed_details = parsed_device # ['details'] after revertion of 6b8d3e9
+            parsed_details = parsed_device['details']
             expect(parsed_details["mtu"]).to eq attributes[:device][:details][:mtu]
           end
         end
@@ -435,7 +381,7 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
             parsed_device = JSON.parse(response.body)
             expect(parsed_device["name"]).to eq attributes[:device][:name]
             expect(parsed_device["status"]).to eq attributes[:device][:status]
-            parsed_details = parsed_device # ['details'] after revertion of 6b8d3e9
+            parsed_details = parsed_device['details']
             expect(parsed_details["bootable"]).to eq attributes[:device][:details][:bootable]
           end
         end

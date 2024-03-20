@@ -45,10 +45,7 @@ class Api::V1::DevicesController < Api::V1::ApplicationController
   private
 
   def device_params
-    permitted_params.except(
-      :location, :details, :public_ips, :private_ips, :ssh_key, :login_user,
-      :volume_details
-    )
+    permitted_params.except(:location, :details)
   end
 
   def location_params
@@ -58,25 +55,12 @@ class Api::V1::DevicesController < Api::V1::ApplicationController
   end
 
   def details_params
-    permitted_params.fetch(:details, {}).tap do |details|
-      if details.empty?
-        legacy_params = permitted_params.slice(
-          :public_ips,
-          :private_ips,
-          :ssh_key,
-          :login_user,
-          :volume_details
-        )
-        return legacy_params
-      end
-    end
+    permitted_params.fetch(:details, nil)
   end
 
   PERMITTED_PARAMS = [
-    "name", "description", "status", "cost", 
-    "public_ips", "private_ips", "ssh_key", "login_user",
-    "location" => %w[rack_id start_u facing]
-  ] << {metadata: {}, details: {}, volume_details: {}}
+    "name", "description", "status", "cost", "location" => %w[rack_id start_u facing]
+  ] << {metadata: {}, details: {}}
   def permitted_params
     params.require(:device).permit(*PERMITTED_PARAMS)
   end
