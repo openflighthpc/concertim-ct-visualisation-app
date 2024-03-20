@@ -1,16 +1,16 @@
 require 'rails_helper'
 
-RSpec.describe UpdateTeamRoleJob, type: :job do
+RSpec.describe CreateTeamRoleJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
-  let!(:team_role) { create(:team_role, role: "member") }
+  let!(:team_role) { build(:team_role, role: "member") }
   let(:new_role) { "admin" }
   let(:cloud_service_config) { create(:cloud_service_config) }
-  let(:update_team_roles_path) { "/update_team_role" }
+  let(:create_team_roles_path) { "/team_role" }
   let(:expected_url) {
-    "#{cloud_service_config.user_handler_base_url}#{update_team_roles_path}"
+    "#{cloud_service_config.user_handler_base_url}#{create_team_roles_path}"
   }
 
-  subject { UpdateTeamRoleJob::Runner.new(cloud_service_config: cloud_service_config, team_role: team_role, new_role: new_role) }
+  subject { CreateTeamRoleJob::Runner.new(cloud_service_config: cloud_service_config, team_role: team_role) }
 
   describe "url" do
     subject { super().send(:url) }
@@ -32,10 +32,11 @@ RSpec.describe UpdateTeamRoleJob, type: :job do
                                         })
     end
 
-    it "contains the team role's project and billing ids" do
+    it "contains the team role's details" do
       expect(subject[:team_role]).to be_a Hash
       expect(subject[:team_role][:user_id]).to eq team_role.user.cloud_user_id
       expect(subject[:team_role][:project_id]).to eq team_role.team.project_id
+      expect(subject[:team_role][:role]).to eq team_role.role
     end
   end
 
@@ -44,12 +45,12 @@ RSpec.describe UpdateTeamRoleJob, type: :job do
 
     shared_examples "makes a request to the middleware" do
       it "makes a request to the middleware" do
-        runner = described_class::Runner.new(team_role: team_role, new_role: new_role, cloud_service_config: cloud_service_config)
+        runner = described_class::Runner.new(team_role: team_role, cloud_service_config: cloud_service_config)
         expect(described_class::Runner).to receive(:new)
-                                             .with(hash_including(team_role: team_role, new_role: new_role, cloud_service_config: cloud_service_config))
+                                             .with(hash_including(team_role: team_role, cloud_service_config: cloud_service_config))
                                              .and_return(runner)
         allow(runner).to receive(:call).and_call_original
-        described_class.perform_now(team_role, new_role, cloud_service_config)
+        described_class.perform_now(team_role, cloud_service_config)
         expect(runner).to have_received(:call)
       end
     end
@@ -62,10 +63,10 @@ RSpec.describe UpdateTeamRoleJob, type: :job do
 
       include_examples "makes a request to the middleware"
 
-      it "updates role" do
+      it "persists role" do
         expect {
-          described_class.perform_now(team_role, new_role, cloud_service_config, test_stubs: stubs)
-        }.to change(team_role, :role)
+          described_class.perform_now(team_role, cloud_service_config, test_stubs: stubs)
+        }.to change(TeamRole, :count).by(1)
       end
     end
 
@@ -79,8 +80,8 @@ RSpec.describe UpdateTeamRoleJob, type: :job do
 
       it "does not change the role" do
         expect {
-          described_class.perform_now(team_role, new_role ,cloud_service_config)
-        }.not_to change(team_role, :role)
+          described_class.perform_now(team_role,cloud_service_config)
+        }.not_to change(TeamRole, :count)
       end
     end
   end

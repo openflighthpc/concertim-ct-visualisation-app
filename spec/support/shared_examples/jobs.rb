@@ -15,7 +15,7 @@ end
 
 RSpec.shared_examples "creating team job" do
   describe "url" do
-    let(:team_service_path) { "/create_team" }
+    let(:team_service_path) { "/team" }
 
     subject { super().send(:url) }
 
@@ -53,7 +53,7 @@ RSpec.shared_examples "creating team job" do
 
       it "contains the team's billing account id" do
         expect(team.billing_acct_id).not_to be_nil
-        expect(subject["billing_account_id"]).to eq team.billing_acct_id
+        expect(subject["billing_acct_id"]).to eq team.billing_acct_id
       end
     end
 
@@ -76,7 +76,7 @@ RSpec.shared_examples "creating team job" do
   end
 
   describe "updating the team's details from the response" do
-    let(:team_service_path) { "/create_team" }
+    let(:team_service_path) { "/team" }
     context "when response does not contain expected fields" do
       let(:response_body) { {} }
 
@@ -101,7 +101,7 @@ RSpec.shared_examples "creating team job" do
       let(:project_id) { SecureRandom.uuid }
       let(:billing_acct_id) { SecureRandom.uuid }
       let(:response_body) {
-        {project_id: project_id, billing_account_id: billing_acct_id}
+        {project_id: project_id, billing_acct_id: billing_acct_id}
           .stringify_keys
       }
 

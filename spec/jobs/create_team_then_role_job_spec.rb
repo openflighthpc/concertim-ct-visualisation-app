@@ -14,7 +14,7 @@ RSpec.describe CreateTeamThenRoleJob, type: :job do
   include_examples 'creating team job'
 
   describe "creating role on success" do
-    let(:team_service_path) { "/create_team" }
+    let(:team_service_path) { "/team" }
 
     before(:each) do
       clear_enqueued_jobs
@@ -25,7 +25,7 @@ RSpec.describe CreateTeamThenRoleJob, type: :job do
       let(:project_id) { SecureRandom.uuid }
       let(:billing_acct_id) { SecureRandom.uuid }
       let(:response_body) {
-        {project_id: project_id, billing_account_id: billing_acct_id}
+        {project_id: project_id, billing_acct_id: billing_acct_id}
           .stringify_keys
       }
 

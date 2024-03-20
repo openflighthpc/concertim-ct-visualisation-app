@@ -4,7 +4,7 @@ RSpec.describe CreateCreditDepositJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
   let(:cloud_service_config) { create(:cloud_service_config) }
   let(:team) { create(:team, :with_openstack_details) }
-  let(:path) { "#{cloud_service_config.user_handler_base_url}/add_credits" }
+  let(:path) { "#{cloud_service_config.user_handler_base_url}/credits" }
   let(:credit_deposit) { build(:credit_deposit, team: team) }
   subject { CreateCreditDepositJob::Runner.new(credit_deposit: credit_deposit, cloud_service_config: cloud_service_config) }
 
@@ -21,7 +21,7 @@ RSpec.describe CreateCreditDepositJob, type: :job do
     end
 
     it "uses a hard-coded path" do
-      expect(subject.path).to eq "/add_credits"
+      expect(subject.path).to eq "/credits"
     end
   end
 
@@ -76,8 +76,8 @@ RSpec.describe CreateCreditDepositJob, type: :job do
 
     it 'contains credit deposit details' do
       expect(subject[:credits]).to eq({
-                                         "billing_account_id" => credit_deposit.billing_acct_id,
-                                         "credits_to_add" => credit_deposit.amount
+                                         "billing_acct_id" => credit_deposit.billing_acct_id,
+                                         "amount" => credit_deposit.amount
                                        })
     end
   end

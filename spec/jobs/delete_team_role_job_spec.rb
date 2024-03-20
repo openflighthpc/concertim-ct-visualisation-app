@@ -4,8 +4,8 @@ RSpec.describe DeleteTeamRoleJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
   let!(:team_role) { create(:team_role, role: "member") }
   let(:cloud_service_config) { create(:cloud_service_config) }
-  let(:delete_team_role_path) { "/delete_team_role" }
-  let(:path) { "#{cloud_service_config.user_handler_base_url}/delete_team_role" }
+  let(:delete_team_role_path) { "/team_role" }
+  let(:path) { "#{cloud_service_config.user_handler_base_url}#{delete_team_role_path}" }
 
   subject { DeleteTeamRoleJob::Runner.new(cloud_service_config: cloud_service_config, team_role: team_role) }
 
@@ -19,10 +19,6 @@ RSpec.describe DeleteTeamRoleJob, type: :job do
 
     it "uses the ip and port given in the config" do
       expect(subject.connection.url_prefix.to_s).to eq "#{cloud_service_config.user_handler_base_url}/"
-    end
-
-    it "uses a hard-coded path" do
-      expect(subject.path).to eq "/delete_team_role"
     end
   end
 

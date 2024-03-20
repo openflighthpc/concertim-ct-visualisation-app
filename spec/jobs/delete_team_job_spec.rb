@@ -4,7 +4,7 @@ RSpec.describe DeleteTeamJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
   let!(:team) { create(:team, :with_openstack_details) }
   let(:cloud_service_config) { create(:cloud_service_config) }
-  let(:delete_team_path) { "/delete_team" }
+  let(:delete_team_path) { "/team" }
   let(:expected_url) {
     "#{cloud_service_config.user_handler_base_url}#{delete_team_path}"
   }

@@ -65,7 +65,7 @@ class CreateTeamJob < ApplicationJob
         name: @team.name
       }.tap do |h|
         h[:project_id] = @team.project_id unless @team.project_id.blank?
-        h[:billing_account_id] = @team.billing_acct_id unless @team.billing_acct_id.blank?
+        h[:billing_acct_id] = @team.billing_acct_id unless @team.billing_acct_id.blank?
       end
     end
   end
