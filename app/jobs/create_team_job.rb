@@ -26,7 +26,7 @@ class CreateTeamJob < ApplicationJob
     property :project_id, context: :cloud
     validates :project_id, presence: true, on: :cloud
 
-    property :billing_acct_id, from: :billing_account_id, context: :billing
+    property :billing_acct_id, context: :billing
     validates :billing_acct_id, presence: true, on: :billing
   end
 
@@ -51,7 +51,7 @@ class CreateTeamJob < ApplicationJob
     private
 
     def url
-      "#{@cloud_service_config.user_handler_base_url}/create_team"
+      "#{@cloud_service_config.user_handler_base_url}/team"
     end
 
     def body
@@ -65,7 +65,7 @@ class CreateTeamJob < ApplicationJob
         name: @team.name
       }.tap do |h|
         h[:project_id] = @team.project_id unless @team.project_id.blank?
-        h[:billing_account_id] = @team.billing_acct_id unless @team.billing_acct_id.blank?
+        h[:billing_acct_id] = @team.billing_acct_id unless @team.billing_acct_id.blank?
       end
     end
   end

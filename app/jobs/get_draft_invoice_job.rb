@@ -71,7 +71,7 @@ class GetDraftInvoiceJob < ApplicationJob
     def body
       {
         invoice: {
-          billing_account_id: @team.billing_acct_id,
+          billing_acct_id: @team.billing_acct_id,
           target_date: Date.today.to_formatted_s(:iso8601),
         },
       }

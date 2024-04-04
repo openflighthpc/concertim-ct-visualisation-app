@@ -44,7 +44,7 @@ class UpdateTeamRoleJob < ApplicationJob
     end
 
     def call
-      response = super
+      response = connection.patch("", body)
 
       unless response.success?
         return Result.new(false, "#{error_description}: #{response.reason_phrase || "Unknown error"}")
@@ -67,7 +67,7 @@ class UpdateTeamRoleJob < ApplicationJob
     private
 
     def url
-      "#{@cloud_service_config.user_handler_base_url}/update_team_role"
+      "#{@cloud_service_config.user_handler_base_url}/team_role"
     end
 
     def body

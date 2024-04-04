@@ -71,7 +71,7 @@ class DeleteTeamRoleJob < ApplicationJob
     end
 
     def path
-      "/delete_team_role"
+      "/team_role"
     end
 
     def body

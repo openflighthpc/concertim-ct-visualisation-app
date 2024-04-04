@@ -33,12 +33,15 @@ class CreateTeamRoleJob < ApplicationJob
 
     def initialize(team_role:, **kwargs)
       @team_role = team_role
-      super(**kwargs)
+      super(**kwargs.reverse_merge(test_stubs: test_stubs))
+    end
+
+    def test_stubs
+      nil
     end
 
     def call
-      response = connection.post(path, body)
-
+      response = super
       unless response.success?
         return Result.new(false, "#{error_description}: #{response.reason_phrase || "Unknown error"}")
       end
@@ -60,11 +63,7 @@ class CreateTeamRoleJob < ApplicationJob
     private
 
     def url
-      @cloud_service_config.user_handler_base_url
-    end
-
-    def path
-      "/create_team_role"
+      "#{@cloud_service_config.user_handler_base_url}/team_role"
     end
 
     def body

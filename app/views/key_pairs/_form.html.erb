@@ -14,12 +14,12 @@
 
   <div class="formItem">
     <%= f.label :name, "Key name", class: 'required_field' %>
-    <%= f.text_field :name, autocomplete: :off, pattern: "^[a-zA-Z][a-zA-Z0-9\\-_]*$" %>
+    <%= f.text_field :name, autocomplete: :off, pattern: "^[a-zA-Z][a-zA-Z0-9\\-_]*$", required: true %>
   </div>
 
   <div class="formItem">
     <%= f.label :key_type, "Key type", class: 'required_field' %>
-    <%= f.select :key_type, [["SSH Key", "ssh"]] %>
+    <%= f.select :key_type, [["SSH Key", "ssh"]], required: true %>
   </div>
 
   <div class="formItem">

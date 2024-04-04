@@ -5,9 +5,9 @@ RSpec.describe UpdateTeamRoleJob, type: :job do
   let!(:team_role) { create(:team_role, role: "member") }
   let(:new_role) { "admin" }
   let(:cloud_service_config) { create(:cloud_service_config) }
-  let(:update_users_path) { "/update_team_role" }
+  let(:update_roles_path) { "/team_role" }
   let(:expected_url) {
-    "#{cloud_service_config.user_handler_base_url}#{update_users_path}"
+    "#{cloud_service_config.user_handler_base_url}#{update_roles_path}"
   }
 
   subject { UpdateTeamRoleJob::Runner.new(cloud_service_config: cloud_service_config, team_role: team_role, new_role: new_role) }
@@ -56,7 +56,7 @@ RSpec.describe UpdateTeamRoleJob, type: :job do
 
     context "when the request is successful" do
       before(:each) do
-        stubs.post(expected_url) { |env| [ 204, {}, "No Content"] }
+        stubs.patch(expected_url) { |env| [ 204, {}, "No Content"] }
         allow_any_instance_of(described_class::Runner).to receive(:test_stubs).and_return(stubs)
       end
 
@@ -71,7 +71,7 @@ RSpec.describe UpdateTeamRoleJob, type: :job do
 
     context "when the request is unsuccessful" do
       before(:each) do
-        stubs.post(expected_url) { |env| [ 500, {}, {"error" => "Some error message"}] }
+        stubs.patch(expected_url) { |env| [ 500, {}, {"error" => "Some error message"}] }
         allow_any_instance_of(described_class::Runner).to receive(:test_stubs).and_return(stubs)
       end
 
