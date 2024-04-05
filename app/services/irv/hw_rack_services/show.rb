@@ -2,8 +2,11 @@ module Irv
   module HwRackServices
     class Show < Irv::HwRackServices::Index
 
-      def initialize(user, rack_id, slow)
-        @user = user
+      def self.call(rack_id, slow=false)
+        new(rack_id, slow).call
+      end
+
+      def initialize(rack_id, slow)
         @rack_id = rack_id
         @slow = slow
       end

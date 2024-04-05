@@ -1,0 +1,14 @@
+<%
+  set_title "Add user to team #{@team.name}"
+-%>
+
+<% presenter = presenter_for(@team) %>
+<% if presenter.possible_new_users.exists? %>
+  <%= simple_form_for [@team, @team_role], html: {class: 'no_border'} do |f| %>
+    <%= f.input :user_id, collection: presenter.possible_new_users, label_method: :name, value_method: :id, required: true %>
+    <%= f.input :role, collection: TeamRole::VALID_ROLES %>
+    <%= f.button :submit, "Add to team" %>
+  <% end %>
+<% else %>
+  <p> There are currently no users eligible to join this team.</p>
+<% end %>

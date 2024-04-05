@@ -539,9 +539,8 @@ class RackSpace {
 
     const show_u_labels = this.scale >= RackSpace.U_LBL_SCALE_CUTOFF;
     const show_name_label = this.scale >= RackSpace.NAME_LBL_SCALE_CUTOFF;
-    const show_owner_label = show_name_label && this.model.RBAC.can_i("view", "all");
     if (this.model.showingRacks()) {
-      for (var rack of Array.from(this.racks)) { rack.draw(show_u_labels, show_name_label, show_owner_label); }
+      for (var rack of Array.from(this.racks)) { rack.draw(show_u_labels, show_name_label); }
       this.updateRackImage();
     }
     if (this.model.showHoldingArea()) {
@@ -1013,11 +1012,10 @@ class RackSpace {
   evHalfFlipped(img_id) {
     const show_u_labels   = this.scale >= RackSpace.U_LBL_SCALE_CUTOFF;
     const show_name_label = this.scale >= RackSpace.NAME_LBL_SCALE_CUTOFF;
-    const show_owner_label = show_name_label && this.model.RBAC.can_i("view", "all");
 
     // redraw the rack in the (hidden) rack layer, since the rack image in the fx layer is a slice of the rack layer it will automatically
     // reflect the changes
-    this.rackLookup[img_id].draw(show_u_labels, show_name_label, show_owner_label);
+    this.rackLookup[img_id].draw(show_u_labels, show_name_label);
 
     const x     = this.fx.getAttribute(img_id, 'x');
     const width = this.fx.getAttribute(img_id, 'sliceWidth');
@@ -1376,14 +1374,13 @@ class RackSpace {
     this.infoGfx.setScale(this.targetScale);
     this.alertGfx.setScale(this.targetScale);
 
-    // decide wether to show rack labels
+    // decide whether to show rack labels
     const show_name_label = this.targetScale >= RackSpace.NAME_LBL_SCALE_CUTOFF;
     const show_u_labels   = this.targetScale >= RackSpace.U_LBL_SCALE_CUTOFF;
-    const show_owner_label = show_name_label && this.model.RBAC.can_i("view", "all");
 
     if (this.model.showingRacks()) {
       for (var rack of Array.from(this.racks)) {
-        if (rack instanceof Rack) { rack.showOwnerLabel(show_owner_label); }
+        if (rack instanceof Rack) { rack.showOwnerLabel(show_name_label); }
         rack.showNameLabel(show_name_label);
         if (rack instanceof Rack) { rack.showULabels(show_u_labels, this.targetScale); }
 

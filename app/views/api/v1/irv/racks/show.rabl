@@ -2,9 +2,16 @@ object @rack
 attributes :id, :name
 attribute :currency_cost => :cost
 attributes u_height: :uHeight, status: :buildStatus
+node(:teamRole) do |rack|
+  if locals[:user].root
+    "superAdmin"
+  else
+    locals[:user].team_roles.where(team_id: rack.team_id).pluck(:role).first
+  end
+end
 
-child :user, root: 'owner' do
-  extends 'api/v1/users/show'
+child :team, root: 'owner' do
+  extends 'api/v1/teams/show'
 end
 
 node(:template) do |rack|
@@ -34,7 +41,8 @@ child(:chassis, root: 'Chassis') do |foo|
         id: chassis.device.id,
         name: chassis.device.name,
         buildStatus: chassis.device.status,
-        cost: chassis.device.currency_cost
+        cost: chassis.device.currency_cost,
+        type: chassis.device.details_type
       },
     }
   end

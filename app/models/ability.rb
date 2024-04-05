@@ -6,10 +6,6 @@ class Ability
     enable_abilities
   end
 
-  def enough_credits_to_create_cluster?
-    @user.credits > 0 && @user.credits >= Rails.application.config.cluster_credit_requirement
-  end
-
   private
 
   def enable_abilities
@@ -32,11 +28,7 @@ class Ability
     # Don't allow any admin users to be deleted.
     cannot :destroy, User, root: true
 
-    # Don't allow admins to receive credits
-    cannot :create, CreditDeposit do |deposit|
-      user = deposit.user
-      user.root || user.project_id.nil? || user.billing_acct_id.nil?
-    end
+    cannot :manage, TeamRole, team: Team.where(single_user: true)
   end
 
   # Abilities for non-root users.
@@ -46,23 +38,29 @@ class Ability
     can :read, InteractiveRackView
 
     can :read, Template
-    can :manage, Chassis, location: {rack: {user: @user}}
-    can :manage, Device, chassis: {location: {rack: {user: @user}}}
-    can :manage, HwRack, user: @user
+    can :read, Chassis, location: {rack: {team_id: @user.team_ids }}
+    can :read, Device, chassis: {location: {rack: {team_id: @user.team_ids }}}
+    can [:read, :devices], HwRack, team_id: @user.team_ids
+    can :manage, Chassis, location: {rack: {team_id: @user.teams_where_admin.pluck(:id) }}
+    can :manage, Device, chassis: {location: {rack: {team_id: @user.teams_where_admin.pluck(:id) }}}
+    can :manage, HwRack, team_id: @user.teams_where_admin.pluck(:id)
+
     can :manage, RackviewPreset, user: @user
 
     can :read, ClusterType
-    can :create, Cluster if enough_credits_to_create_cluster?
+    can :create, Cluster, team_id: @user.teams_where_admin.pluck(:id)
 
     can :read, KeyPair, user: @user
     can :create, KeyPair, user: @user
     can :destroy, KeyPair, user: @user
 
     can [:read, :update], User, id: @user.id
+    can :read, Team, id: @user.team_ids
+    can :manage, TeamRole, team: @user.teams_where_admin.where(single_user: false)
 
     # Invoice is an ActiveModel::Model, but not an ActiveRecord::Base.  Setting
     # abilities like this might not work too well.  Or perhaps its fine.
-    can :read, Invoice, account: @user
+    can :read, Invoice, account: @user.team_roles.where(role: "admin").map(&:team)
   end
 
   # Despite specifying what a user can/can't do, you will eventually come

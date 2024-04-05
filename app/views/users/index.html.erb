@@ -17,28 +17,28 @@
   <% t.custom_column "Authorization Level", sortable: true, db_column: :root do |user| %>
     <% presenter_for(user).authorization %>
   <% end %>
+  <% t.custom_column "Teams" do |user| %>
+    <% presenter_for(user).team_role_list %>
+  <% end %>
   <% t.attribute_column :cloud_user_id, title: "Cloud User ID", sortable: true %>
-  <% t.attribute_column :project_id, title: "Project ID", sortable: true %>
-  <% t.attribute_column :billing_acct_id, title: "Billing Account ID", sortable: true %>
   <% t.custom_column "Status", sortable: true, db_column: :deleted_at do |user| %>
     <% presenter_for(user).status %>
   <% end %>
 
   <% t.actions_column do |actions, user| %>
     <% if user == current_user %>
-      <% actions.add title: 'Edit', path: edit_user_registration_path %>
+      <% actions.add text: 'Edit', path: edit_user_registration_path %>
     <% else %>
-      <% actions.add_with_auth can: :edit, on: user, title: 'Edit', path: edit_user_path(user) %>
+      <% actions.add_with_auth can: :edit, on: user, text: 'Edit', path: edit_user_path(user) %>
     <% end %>
-    <% actions.add_with_auth can: :create, on: CreditDeposit.new(user: user), title: 'Add Credits', path: new_credit_deposit_path(user) %>
     <%
         actions.add_with_auth(can: :destroy, on: user,
-          title: 'Delete',
+          text: 'Delete',
           path: user_path(user),
           method: 'delete',
           data: {confirm: presenter_for(user).delete_confirmation_message},
         )
-      %>
+    %>
   <% end %>
 
 <% end %>

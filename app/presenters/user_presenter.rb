@@ -1,15 +1,8 @@
 class UserPresenter < Presenter
-  include Costed
-
-  def billing_period
-    return "pending (awaiting update)" unless o.billing_period_start && o.billing_period_end
-
-    "#{o.billing_period_start.strftime("%Y/%m/%d")} - #{o.billing_period_end.strftime("%Y/%m/%d")}"
-  end
 
   def authorization
     if o.root?
-      "Administrator"
+      "Super Admin"
     else
       "User"
     end
@@ -24,24 +17,15 @@ class UserPresenter < Presenter
   end
 
   def delete_confirmation_message
-    "Are you sure you want to delete user #{o.name} (#{o.login})?" \
-      " This will delete all of their racks and devices."
+    "Are you sure you want to delete user #{o.name} (#{o.login})?"
   end
 
-  def formatted_credits
-    '%.2f' % o.credits
+  def team_role_list
+    o.team_roles.map {|team_role| "#{team_role.team.name} (#{team_role.role})" }.sort.join(", ")
   end
 
   def cloud_user_id_form_hint
     form_hint(:cloud_user_id)
-  end
-
-  def project_id_form_hint
-    form_hint(:project_id)
-  end
-
-  def billing_acct_id_form_hint
-    form_hint(:billing_acct_id)
   end
 
   private

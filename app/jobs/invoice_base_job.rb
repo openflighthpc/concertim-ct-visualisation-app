@@ -44,20 +44,20 @@ module InvoiceBaseJob
       raise NotImplementedError
     end
 
-    # Return the user that the given invoice was generated for.
-    def user_for_invoice(invoice_data)
+    # Return the team that the given invoice was generated for.
+    def team_for_invoice(invoice_data)
       billing_account_id = invoice_data["accountId"] || invoice_data["account_id"]
-      User.find_by(billing_acct_id: billing_account_id).tap do |user|
-        if user.nil?
+      Team.find_by(billing_acct_id: billing_account_id).tap do |team|
+        if team.nil?
           invoice_id = invoice_data["invoiceId"] || invoice_data["invoice_id"]
-          Rails.logger.warn("Unable to find matching user for invoice. invoice_id:#{invoice_id} account_id:#{billing_account_id}")
+          Rails.logger.warn("Unable to find matching team for invoice. invoice_id:#{invoice_id} account_id:#{billing_account_id}")
         end
       end
     end
 
     def parse_invoice(invoice_data)
       Invoice.new.tap do |invoice|
-        invoice.account = user_for_invoice(invoice_data)
+        invoice.account = team_for_invoice(invoice_data)
         (invoice.attribute_names - %w(account items)).each do |attr|
           invoice.send("#{attr}=", invoice_data[attr] || invoice_data[attr.camelize(:lower)])
         end

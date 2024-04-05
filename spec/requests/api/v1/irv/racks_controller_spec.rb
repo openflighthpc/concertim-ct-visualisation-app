@@ -14,7 +14,6 @@ RSpec.describe "Api::V1::Irv::RacksControllers", type: :request do
 
       context "when logged in as admin" do
         include_context "Logged in as admin"
-        let(:user) { authenticated_user }
 
         context "when there are no racks" do
           let(:parsed_body) { JSON.parse(response.body) }
@@ -31,7 +30,7 @@ RSpec.describe "Api::V1::Irv::RacksControllers", type: :request do
 
         context "when there is one rack" do
           let!(:template) { create(:template, :rack_template) }
-          let!(:rack) { create(:rack, user: user, template: template, cost: 9.99) }
+          let!(:rack) { create(:rack, template: template, cost: 9.99) }
 
           let(:parsed_body) { JSON.parse(response.body) }
           let(:parsed_racks) { parsed_body["Racks"]["Rack"] }
@@ -51,6 +50,7 @@ RSpec.describe "Api::V1::Irv::RacksControllers", type: :request do
             expect(parsed_rack["name"]).to eq rack.name
             expect(parsed_rack["uHeight"].to_i).to eq rack.u_height
             expect(parsed_rack["cost"]).to eq "$9.99"
+            expect(parsed_rack["teamRole"]).to eq "superAdmin"
           end
 
           it "includes the rack's template" do
@@ -66,9 +66,8 @@ RSpec.describe "Api::V1::Irv::RacksControllers", type: :request do
           it "includes the rack's owner" do
             get url_under_test, headers: headers, as: :json
             expected_owner = {
-              id: (strings? ? user.id.to_s : user.id),
-              login: user.login,
-              name: user.name,
+              id: (strings? ? rack.team.id.to_s : rack.team.id),
+              name: rack.team.name
             }.stringify_keys
             expect(parsed_racks.first["owner"].slice(*expected_owner.keys)).to eq expected_owner
           end
@@ -76,7 +75,7 @@ RSpec.describe "Api::V1::Irv::RacksControllers", type: :request do
 
         context "when there are two racks" do
           let!(:template) { create(:template, :rack_template) }
-          let!(:racks) { create_list(:rack, 2, user: user, template: template) }
+          let!(:racks) { create_list(:rack, 2, template: template) }
 
           let(:parsed_body) { JSON.parse(response.body) }
           let(:parsed_racks) { parsed_body["Racks"]["Rack"] }

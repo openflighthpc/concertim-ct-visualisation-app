@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe KeyPair, type: :model do
-  let(:user) { create(:user, :with_openstack_details) }
+  let(:user) { create(:user, :with_openstack_account) }
   subject { build(:key_pair, user: user, fingerprint: "abc") }
 
   it "is valid with valid attributes" do

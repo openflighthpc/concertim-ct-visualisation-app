@@ -15,7 +15,7 @@ BASE_URL="https://${CONCERTIM_HOST}/api/v1"
 AUTH_TOKEN=${AUTH_TOKEN:-$("${SCRIPT_DIR}"/get-auth-token.sh)}
 
 ORDER_ID=${1}
-USER_ID=${2}
+TEAM_ID=${2}
 NAME=${3}
 U_HEIGHT=${4}
 
@@ -25,13 +25,13 @@ U_HEIGHT=${4}
 # * ORDER_ID is mandatory.
 # * NAME is optional.
 # * U_HEIGHT is optional.
-# * USER_ID is mandatory if the rack is being created for an admin user.
+# * TEAM_ID is mandatory.
 #   Otherwise it should not be provided and will be ignored if it is.
 #
 # To achieve this, we use jq to construct a JSON document, such as
 #
 # ```
-# {"rack": {"name": "", "u_height": 42, "user_id": "3", "order_id": "42"}}
+# {"rack": {"name": "", "u_height": 42, "team_id": "3", "order_id": "42"}}
 # ```
 #
 # Then we pipe that document to jq passing a funky script which dives into the
@@ -39,20 +39,20 @@ U_HEIGHT=${4}
 # resulting document would be:
 #
 # ```
-# {"rack": {"u_height": 42, "user_id": "3", "order_id": "42"}}
+# {"rack": {"u_height": 42, "team_id": "3", "order_id": "42"}}
 # ```
 #
 # The metadata below is hardcoded but it could be any valid JSON document.
 BODY=$( jq --null-input  \
   --arg name "${NAME}" \
-  --arg user_id "${USER_ID}" \
+  --arg team_id "${TEAM_ID}" \
   --arg u_height "${U_HEIGHT}" \
   --arg order_id "${ORDER_ID}" \
   '
 {
   "rack": {
     "name": $name,
-    "user_id": $user_id,
+    "team_id": $team_id,
     "u_height": $u_height|(try tonumber catch ""),
     "order_id": $order_id,
     "status": "IN_PROGRESS",

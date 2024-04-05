@@ -1,14 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe BroadcastRackChangeJob, type: :job do
-  let(:user) { create(:user) }
+  let(:user) { create(:user, :as_team_member, team: team) }
+  let(:team) { create(:team) }
   let(:template) { create(:template, :rack_template) }
   let(:device_template) { create(:template, :device_template) }
-  let!(:rack) { create(:rack, user: user, template: template) }
+  let!(:rack) { create(:rack, team: team, template: template) }
   let!(:device) { create(:device, chassis: chassis) }
   let(:chassis) { create(:chassis, location: location, template: device_template) }
   let(:location) { create(:location, rack: rack) }
-  subject { BroadcastRackChangeJob.perform_now(rack.id, user.id, action) }
+  subject { BroadcastRackChangeJob.perform_now(rack.id, team.id, action) }
 
   context 'rack deletion' do
     let(:action) { "deleted" }
@@ -25,12 +26,13 @@ RSpec.describe BroadcastRackChangeJob, type: :job do
         expect(data["action"]).to eq action
         rack_data = data["rack"]
         expect(rack_data.present?).to be true
-        expect(rack_data["owner"]["id"]).to eq rack.user.id.to_s
+        expect(rack_data["owner"]["id"]).to eq rack.team.id.to_s
         expect(rack_data["template"]["name"]).to eq rack.template.name
         expect(rack_data["Chassis"]["Slots"]["Machine"]["id"]).to eq device.id.to_s
         expect(rack_data["id"]).to eq rack.id.to_s
         expect(rack_data["name"]).to eq rack.name
         expect(rack_data["cost"]).to eq "$0.00"
+        expect(rack_data["teamRole"]).to eq "member"
       }
 
       expect { subject }.to have_broadcasted_to(user).from_channel(InteractiveRackViewChannel).with(nil, &expected)

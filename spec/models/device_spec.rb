@@ -6,8 +6,8 @@ RSpec.describe Device, type: :model do
   let(:device) { create(:device, chassis: chassis) }
   let(:chassis) { create(:chassis, location: location, template: device_template) }
   let(:location) { create(:location, rack: rack) }
-  let!(:rack) { create(:rack, user: user, template: rack_template) }
-  let(:user) { create(:user) }
+  let!(:rack) { create(:rack, template: rack_template) }
+  let(:user) { create(:user, :as_team_member, team: rack.team) }
   let(:device_template) { create(:template, :device_template) }
 
   describe 'validations' do
@@ -55,7 +55,7 @@ RSpec.describe Device, type: :model do
     end
 
     it "can duplicate names for devices in other racks" do
-      new_rack = create(:rack, user: user, template: rack_template)
+      new_rack = create(:rack, template: rack_template)
       new_location = create(:location, rack: new_rack)
       new_chassis = create(:chassis, location: new_location, template: device_template)
       new_device = build(:device, chassis: new_chassis, name: subject.name)
@@ -100,7 +100,7 @@ RSpec.describe Device, type: :model do
           expect(data["action"]).to eq action
           rack_data = data["rack"]
           expect(rack_data.present?).to be true
-          expect(rack_data["owner"]["id"]).to eq rack.user.id.to_s
+          expect(rack_data["owner"]["id"]).to eq rack.team.id.to_s
           expect(rack_data["template"]["name"]).to eq rack.template.name
           expect(rack_data["id"]).to eq rack.id.to_s
           expect(rack_data["name"]).to eq rack.name

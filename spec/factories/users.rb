@@ -5,18 +5,14 @@ FactoryBot.define do
     sequence(:login) { |n| "user-#{n}" }
     sequence(:name) { |n| "User #{n}" }
     email { "#{login}@example.com" }
-    project_id { nil }
     cloud_user_id { nil }
-    billing_acct_id { nil }
     root { false }
 
     password { SecureRandom.alphanumeric }
   end
 
-  trait :with_openstack_details do
-    project_id { Faker::Alphanumeric.alphanumeric(number: 10) }
+  trait :with_openstack_account do
     cloud_user_id { Faker::Alphanumeric.alphanumeric(number: 10) }
-    billing_acct_id { Faker::Alphanumeric.alphanumeric(number: 10) }
   end
 
   trait :admin do
@@ -25,13 +21,35 @@ FactoryBot.define do
     root { true }
   end
 
-  trait :with_empty_rack do
+  trait :member_of_empty_rack do
     after(:create) do |user, context|
       rack_template = Template.default_rack_template
       if rack_template.nil?
         rack_template = create(:template, :rack_template)
       end
-      create(:rack, user: user, template: rack_template)
+      rack = create(:rack, template: rack_template)
+      create(:team_role, team: rack.team, user: user)
     end
+  end
+
+  trait :with_team_role do
+    transient do
+      role { 'member' }
+      team { create(:team) }
+    end
+
+    after(:create) do |user, evaluator|
+      user.team_roles.create!(role: evaluator.role, team: evaluator.team)
+    end
+  end
+
+  trait :as_team_member do
+    with_team_role
+    role { 'member' }
+  end
+
+  trait :as_team_admin do
+    with_team_role
+    role { 'admin' }
   end
 end

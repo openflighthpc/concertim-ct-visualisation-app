@@ -3,9 +3,9 @@ require 'faraday'
 class GetDraftInvoiceJob < ApplicationJob
   queue_as :default
 
-  def perform(cloud_service_config, user, **options)
+  def perform(cloud_service_config, team, **options)
     runner = Runner.new(
-      user: user,
+      team: team,
       cloud_service_config: cloud_service_config,
       logger: logger,
       **options
@@ -33,8 +33,8 @@ class GetDraftInvoiceJob < ApplicationJob
   end
 
   class Runner < InvoiceBaseJob::Runner
-    def initialize(user:, **kwargs)
-      @user = user
+    def initialize(team:, **kwargs)
+      @team = team
       super(**kwargs)
     end
 
@@ -53,7 +53,7 @@ class GetDraftInvoiceJob < ApplicationJob
       data = renderer.render(
         template: "invoices/fakes/draft",
         layout: false,
-        locals: {account_id: @user.root? ? "034796e0-4129-45cd-b2ed-fcfc27cd8a7f" : @user.billing_acct_id},
+        locals: {account_id: @team.billing_acct_id},
       )
       build_fake_response(
         success: true,
@@ -71,7 +71,7 @@ class GetDraftInvoiceJob < ApplicationJob
     def body
       {
         invoice: {
-          billing_account_id: @user.billing_acct_id,
+          billing_acct_id: @team.billing_acct_id,
           target_date: Date.today.to_formatted_s(:iso8601),
         },
       }

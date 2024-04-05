@@ -4,15 +4,15 @@ RSpec.describe GetDraftInvoiceJob, type: :job do
 
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
   let(:cloud_service_config) { create(:cloud_service_config) }
-  let(:user) { create(:user, :with_openstack_details) }
+  let(:team) { create(:team, :with_openstack_details) }
 
   subject(:job_runner) {
-    described_class::Runner.new(user: user, cloud_service_config: cloud_service_config, test_stubs: stubs)
+    described_class::Runner.new(team: team, cloud_service_config: cloud_service_config, test_stubs: stubs)
   }
 
-  let(:user_invoice_path) { "/get_draft_invoice" }
+  let(:team_invoice_path) { "/get_draft_invoice" }
   let(:expected_url) {
-    "#{cloud_service_config.user_handler_base_url}#{user_invoice_path}"
+    "#{cloud_service_config.user_handler_base_url}#{team_invoice_path}"
   }
 
   describe "url" do
@@ -28,7 +28,7 @@ RSpec.describe GetDraftInvoiceJob, type: :job do
 
     it "contains invoice config" do
       expect(subject[:invoice]).to eq({
-        "billing_account_id" => user.billing_acct_id,
+        "billing_acct_id" => team.billing_acct_id,
         "target_date" => "#{Date.today.year}-#{"%02d" % Date.today.month}-#{"%02d" % Date.today.day}",
       })
     end
@@ -42,7 +42,7 @@ RSpec.describe GetDraftInvoiceJob, type: :job do
 
       let(:draft_invoice) {
         {
-          account_id: user.billing_acct_id,
+          account_id: team.billing_acct_id,
           amount: 1,
           balance: 2,
           credit_adj: 0,
@@ -57,14 +57,14 @@ RSpec.describe GetDraftInvoiceJob, type: :job do
       }
 
       it "returns a successful result" do
-        result = described_class.perform_now(cloud_service_config, user, test_stubs: stubs)
+        result = described_class.perform_now(cloud_service_config, team, test_stubs: stubs)
         expect(result).to be_success
       end
 
       it "contains the invoice document in the result" do
-        result = described_class.perform_now(cloud_service_config, user, test_stubs: stubs)
+        result = described_class.perform_now(cloud_service_config, team, test_stubs: stubs)
         expected_invoice = Invoice.new(
-          account: user,
+          account: team,
           amount: 1,
           balance: 2,
           credit_adj: 0,
@@ -86,12 +86,12 @@ RSpec.describe GetDraftInvoiceJob, type: :job do
       end
 
       it "returns an unsuccessful result" do
-        result = described_class.perform_now(cloud_service_config, user, test_stubs: stubs)
+        result = described_class.perform_now(cloud_service_config, team, test_stubs: stubs)
         expect(result).not_to be_success
       end
 
       it "returns a sensible error_message" do
-        result = described_class.perform_now(cloud_service_config, user, test_stubs: stubs)
+        result = described_class.perform_now(cloud_service_config, team, test_stubs: stubs)
         expect(result.error_message).to eq "the server responded with status 404"
       end
     end
@@ -103,12 +103,12 @@ RSpec.describe GetDraftInvoiceJob, type: :job do
       let(:timeout) { 0.1 }
 
       it "returns an unsuccessful result" do
-        result = described_class.perform_now(cloud_service_config, user, test_stubs: stubs, timeout: timeout)
+        result = described_class.perform_now(cloud_service_config, team, test_stubs: stubs, timeout: timeout)
         expect(result).not_to be_success
       end
 
       it "returns a sensible error_message" do
-        result = described_class.perform_now(cloud_service_config, user, test_stubs: stubs, timeout: timeout)
+        result = described_class.perform_now(cloud_service_config, team, test_stubs: stubs, timeout: timeout)
         expect(result.error_message).to eq "execution expired"
       end
     end

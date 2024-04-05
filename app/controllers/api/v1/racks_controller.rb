@@ -13,9 +13,9 @@ class Api::V1::RacksController < Api::V1::ApplicationController
   end
 
   def create
-    @rack = HwRackServices::Create.call(rack_params.to_h, current_user)
+    @rack = HwRack.new(rack_params)
 
-    if @rack.persisted?
+    if @rack.save
       @rack = Api::V1::RackPresenter.new(@rack)
       render action: :show
     else
@@ -51,7 +51,7 @@ class Api::V1::RacksController < Api::V1::ApplicationController
   def rack_params
     permitted = PERMITTED_PARAMS.dup.tap do |a|
       a << :order_id if current_user.root?
-      a << :user_id  if current_user.root? && params[:action] == 'create'
+      a << :team_id  if params[:action] == 'create'
     end
     params.fetch(:rack).permit(*permitted)
   end

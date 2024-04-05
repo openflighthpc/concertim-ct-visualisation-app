@@ -123,7 +123,6 @@ class Rack extends RackObject {
     this.selected        = false;
     this.visible         = true;
     this.assets          = [];
-  
     this.addImageLink();
   
     const len      = def.chassis.length;
@@ -307,14 +306,14 @@ class Rack extends RackObject {
     })();
   }
 
-  draw(show_u_labels, show_name_label, show_owner_label) {
+  draw(show_u_labels, show_name_label) {
     Profiler.begin(Profiler.DEBUG, this.draw);
     // clear
     for (var asset of Array.from(this.assets)) { RackObject.RACK_GFX.remove(asset); }
     this.assets = [];
 
     // add labels as necessary
-    this.showOwnerLabel(show_owner_label);
+    this.showOwnerLabel(show_name_label);
     this.showNameLabel(show_name_label);
     this.showULabels(show_u_labels);
 

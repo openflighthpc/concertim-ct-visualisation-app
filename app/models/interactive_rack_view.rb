@@ -10,7 +10,12 @@ class InteractiveRackView
   # Canvas functions
 
   class << self
-    def get_structure(racks=nil, user)
+    def get_structure(racks=nil, user=nil)
+      unless racks || user
+        Rails.logger.debug("Argument error: must have racks or a user")
+        return ['<error>Missing arguments</error>']
+      end
+
       sql = generate_sql(racks, user)
       begin
         xml = ApplicationRecord.connection.exec_query(sql).rows.join
@@ -47,11 +52,25 @@ class InteractiveRackView
         else
           nil
         end
-      permitted_ids = HwRack.accessible_by(user.ability).pluck('id')
-      if requested_ids.nil?
-        permitted_ids
+      if user
+        permitted_ids = HwRack.accessible_by(user.ability).pluck('id')
+        if requested_ids.nil?
+          permitted_ids
+        else
+          requested_ids & permitted_ids
+        end
       else
-        requested_ids & permitted_ids
+        requested_ids
+      end
+    end
+
+    def role_query(user)
+      return unless user
+
+      if user.root?
+        "( SELECT 'superAdmin' as \"teamRole\" ) as \"teamRole\","
+      else
+        "( SELECT TR.role AS \"teamRole\" FROM team_roles TR WHERE TR.team_id = R.team_id AND TR.user_id = '#{user.id.to_s}' LIMIT 1) AS \"teamRole\","
       end
     end
 
@@ -62,10 +81,10 @@ class InteractiveRackView
 
       ret = (<<SQL)
 WITH sorted_racks AS (
-        SELECT racks.id AS id, racks.name AS name, racks.u_height AS u_height, racks.status AS status, ROUND(racks.cost, 2) AS cost, racks.template_id AS template_id, racks.user_id AS user_id
+        SELECT racks.id AS id, racks.name AS name, racks.u_height AS u_height, racks.status AS status, ROUND(racks.cost, 2) AS cost, racks.template_id AS template_id, racks.team_id AS team_id
           FROM racks
-          JOIN users as users ON racks.user_id = users.id
-      ORDER BY LOWER(users.name)
+          JOIN teams as teams ON racks.team_id = teams.id
+      ORDER BY LOWER(teams.name)
              , SUBSTRING("racks"."name" FROM E'^(.*?)(\\\\d+)?$')
              , LPAD(SUBSTRING( "racks"."name" FROM E'(\\\\d+)$'), 30, '0') ASC
 )
@@ -78,9 +97,10 @@ SELECT
                        R.u_height AS "uHeight" ,
                        R.status AS "buildStatus" ,
                        cast(R.cost as money) AS "cost",
+                       #{role_query(user)}
                        ( SELECT id FROM sorted_racks OFFSET (SELECT row_num FROM (SELECT id,row_number() OVER () AS row_num FROM sorted_racks) t WHERE id=R.id) LIMIT 1) AS "nextRackId"),
-                       ( SELECT XmlElement( name "owner", XmlAttributes (O.id, O.name, O.login))
-                           FROM users O WHERE O.id = R.user_id LIMIT 1 
+                       ( SELECT XmlElement( name "owner", XmlAttributes (O.id, O.name))
+                           FROM teams O WHERE O.id = R.team_id LIMIT 1 
                        ),
                        ( SELECT XmlAgg( XmlElement( name "template",
                                           XmlAttributes (T.id,T.name,T.model,T.rackable,
@@ -117,7 +137,8 @@ SELECT
                                                                                                XmlAttributes( D.id AS "id",
                                                                                                               D.name AS "name",
                                                                                                               D.status AS "buildStatus",
-                                                                                                              cast(D.cost as money) AS "cost" 
+                                                                                                              cast(D.cost as money) AS "cost",
+                                                                                                              D.details_type AS "type"
                                                                                                             )
                                                                                            ))
                                                                                 FROM devices D WHERE D.id = S.id
@@ -146,7 +167,7 @@ SELECT
                        )      
                 )
     )
-   ) FROM sorted_racks R 
+   ) FROM sorted_racks R
 SQL
 
       ret + condition

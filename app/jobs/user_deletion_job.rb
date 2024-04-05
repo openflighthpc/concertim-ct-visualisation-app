@@ -1,5 +1,6 @@
 require 'faraday'
 
+# This can be simplified now there's just cloud user to delete
 class UserDeletionJob < ApplicationJob
   include GoodJob::ActiveJobExtensions::Concurrency
 
@@ -17,12 +18,10 @@ class UserDeletionJob < ApplicationJob
   )
 
   def perform(user, cloud_service_config, **options)
-    # If the user doesn't have any cloud or billing IDs we can just delete it
+    # If the user doesn't have a cloud ID we can just delete it
     # without involving the middleware.
-    if user.cloud_user_id.nil? && user.project_id.nil? && user.billing_acct_id.nil?
-      user.destroy!
-      return
-    end
+    return user.destroy! if user.cloud_user_id.nil?
+
     runner = Runner.new(
       user: user,
       cloud_service_config: cloud_service_config,
@@ -56,7 +55,7 @@ class UserDeletionJob < ApplicationJob
 
     def url
       url = URI(@cloud_service_config.user_handler_base_url)
-      url.path = "/delete_user"
+      url.path = "/user"
       url.to_s
     end
 
@@ -69,9 +68,7 @@ class UserDeletionJob < ApplicationJob
           project_id: @cloud_service_config.admin_project_id,
         },
         user_info: {
-          billing_acct_id: @user.billing_acct_id,
           cloud_user_id: @user.cloud_user_id,
-          project_id: @user.project_id,
         }
       }
     end

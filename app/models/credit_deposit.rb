@@ -11,11 +11,11 @@ class CreditDeposit
             presence: true,
             numericality: { greater_than: 0 }
 
-  validates :user,
+  validates :team,
             presence: true
 
-  validate :user_not_root
-
+  validate :team_has_project_id
+  validate :team_has_billing_account
 
   ####################################
   #
@@ -23,8 +23,8 @@ class CreditDeposit
   #
   ####################################
 
-  attr_accessor :amount, :user
-  delegate :billing_acct_id, to: :user
+  attr_accessor :amount, :team
+  delegate :billing_acct_id, to: :team
 
   ############################
   #
@@ -32,20 +32,25 @@ class CreditDeposit
   #
   ############################
 
-  def initialize(user:, amount: 1)
-    @user = user
+  def initialize(team:, amount: 1)
+    @team = team
     @amount = amount
   end
 
-  ######################################
+  ############################
   #
   # Private Instance Methods
   #
-  ######################################
+  ############################
 
   private
 
-  def user_not_root
-    errors.add(:user, "cannot be an admin") if user&.root
+  def team_has_project_id
+    errors.add(:team, "must have a project id") if team && !team.project_id
   end
+
+  def team_has_billing_account
+    errors.add(:team, "must have a billing account id") if team && !team.billing_acct_id
+  end
+
 end

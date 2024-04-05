@@ -11,9 +11,6 @@ RSpec.describe User, type: :model do
         email: "an@email.com",
         login: "login",
         password: "password",
-        cost: 99.99,
-        billing_period_start: Date.current,
-        billing_period_end: Date.current + 3.days
       )
       expect(user).to be_valid
     end
@@ -58,49 +55,6 @@ RSpec.describe User, type: :model do
       end
     end
 
-    describe "cost" do
-      it "is not valid when negative" do
-        subject.cost = -99
-        expect(subject).to have_error(:cost, :greater_than_or_equal_to)
-      end
-
-      it "is valid with no cost" do
-        subject.cost = nil
-        expect(subject).to be_valid
-      end
-    end
-
-    describe "credits" do
-      it "is not valid with nil credits" do
-        subject.credits = nil
-        expect(subject).to have_error(:credits, :blank)
-      end
-
-      it "must be a number" do
-        subject.credits = "not a number"
-        expect(subject).to have_error(:credits, :not_a_number)
-      end
-    end
-
-    describe "project_id" do
-      it "must be unique if present" do
-        user.project_id = SecureRandom.uuid
-        user.save!
-        user.reload
-        expect(user.project_id).not_to be_nil
-
-        new_user = build(:user, project_id: user.project_id)
-        expect(new_user).to have_error(:project_id, :taken)
-      end
-
-      specify "duplicate nils are ok" do
-        expect(user.project_id).to be_nil
-
-        new_user = build(:user, project_id: user.project_id)
-        expect(new_user).not_to have_error(:project_id, :taken)
-      end
-    end
-
     describe "cloud_user_id" do
       it "must be unique if present" do
         user.cloud_user_id = SecureRandom.uuid
@@ -119,60 +73,48 @@ RSpec.describe User, type: :model do
         expect(new_user).not_to have_error(:cloud_user_id, :taken)
       end
     end
+  end
 
-    describe "billing_acct_id" do
-      it "must be unique if present" do
-        user.billing_acct_id = SecureRandom.uuid
-        user.save!
-        user.reload
-        expect(user.billing_acct_id).not_to be_nil
+  describe 'teams where admin' do
+    let!(:team) { create(:team) }
 
-        new_user = build(:user, billing_acct_id: user.billing_acct_id)
-        expect(new_user).to have_error(:billing_acct_id, :taken)
-      end
-
-      specify "duplicate nils are ok" do
-        expect(user.billing_acct_id).to be_nil
-
-        new_user = build(:user, billing_acct_id: user.billing_acct_id)
-        expect(new_user).not_to have_error(:billing_acct_id, :taken)
+    context "no team roles" do
+      it "returns empty" do
+        expect(user.teams_where_admin).to eq []
       end
     end
 
-    describe "billing period dates" do
-      it 'is not valid if has only a start or only an end' do
-        user.billing_period_start = Date.current
-        expect(user).to have_error(:billing_period, 'must have a start date and end date, or neither')
+    context "with member role" do
+      let!(:role) { create(:team_role, user: user, team: team, role: "member") }
 
-        user.billing_period_end = Date.current + 2.days
-        expect(user).to be_valid
-
-        user.billing_period_end = nil
-        expect(user).to have_error(:billing_period, 'must have a start date and end date, or neither')
-
-        user.billing_period_start = nil
-        expect(user).to be_valid
+      it "returns empty" do
+        expect(user.teams_where_admin).to eq []
       end
 
-      it 'is not valid if end not after start' do
-        user.billing_period_start = Date.current
-        user.billing_period_end = Date.current
-        expect(user).to have_error(:billing_period_end, :greater_than)
+      context "team has other users with roles" do
+        let!(:other_users_role) { create(:team_role, team: team, role: "member") }
+        let!(:another_users_role) { create(:team_role, team: team, role: "admin") }
 
-        user.billing_period_end = Date.current - 2.days
-        expect(user).to have_error(:billing_period_end, :greater_than)
+        it "returns empty" do
+          expect(user.teams_where_admin).to eq []
+        end
+      end
+    end
+
+    context "with admin role" do
+      let!(:role) { create(:team_role, user: user, team: team, role: "admin") }
+
+      it "returns team" do
+        expect(user.teams_where_admin).to eq [team]
       end
 
-      it 'is not valid if start later than today' do
-        user.billing_period_start = Date.current + 1.month
-        user.billing_period_end = Date.current + 2.months
-        expect(user).to have_error(:billing_period_start, "must be today or earlier")
-      end
+      context "with roles in other teams" do
+        let!(:other_role) { create(:team_role, user: user, role: "member") }
+        let!(:another_role) { create(:team_role, user: user, role: "admin") }
 
-      it 'is not valid if end earlier than today' do
-        user.billing_period_start = Date.current - 1.month
-        user.billing_period_end = Date.current - 2.days
-        expect(user).to have_error(:billing_period_end, "must be today or later")
+        it "returns all teams where admin" do
+          expect(user.teams_where_admin.sort).to eq [team, another_role.team].sort
+        end
       end
     end
   end

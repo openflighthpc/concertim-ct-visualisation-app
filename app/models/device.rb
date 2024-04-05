@@ -31,8 +31,8 @@ class Device < ApplicationRecord
   belongs_to :chassis, foreign_key: :base_chassis_id
   has_one :rack, through: :chassis, source: :rack
   has_one :location, through: :chassis, source: :location
-
   has_one :template, through: :chassis, source: :template
+  has_one :team, through: :rack
 
   belongs_to :details, polymorphic: :true, dependent: :destroy
 
@@ -47,8 +47,8 @@ class Device < ApplicationRecord
             presence: true,
             length: { maximum: 150 },
             format: {
-              with: /\A[a-zA-Z0-9\-]*\Z/,
-              message: "can contain only alphanumeric characters and hyphens."
+              with: /\A[a-zA-Z0-9\-\.]*\Z/,
+              message: "can contain only alphanumeric characters, dots and hyphens."
             }
   validates :status,
             presence: true,
@@ -102,13 +102,18 @@ class Device < ApplicationRecord
   ####################################
 
   def valid_action?(action)
+    return false unless compute_device?
+
     VALID_STATUS_ACTION_MAPPINGS[status].include?(action)
+  end
+
+  def compute_device?
+    self.details_type == "Device::ComputeDetails"
   end
 
   def openstack_id
     metadata['openstack_instance_id']
   end
-
 
   ############################
   #

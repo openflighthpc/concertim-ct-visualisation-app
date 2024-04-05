@@ -3,9 +3,9 @@ require 'faraday'
 class GetInvoicesJob < ApplicationJob
   queue_as :default
 
-  def perform(cloud_service_config, user, **options)
+  def perform(cloud_service_config, team, **options)
     runner = Runner.new(
-      user: user,
+      team: team,
       cloud_service_config: cloud_service_config,
       logger: logger,
       **options
@@ -43,8 +43,8 @@ class GetInvoicesJob < ApplicationJob
   end
 
   class Runner < InvoiceBaseJob::Runner
-    def initialize(user:, offset:, limit:, **kwargs)
-      @user = user
+    def initialize(team:, offset:, limit:, **kwargs)
+      @team = team
       @offset = offset
       @limit = limit
       super(**kwargs)
@@ -57,7 +57,7 @@ class GetInvoicesJob < ApplicationJob
       data = renderer.render(
         template: "invoices/fakes/list",
         layout: false,
-        locals: {account_id: @user.root? ? "034796e0-4129-45cd-b2ed-fcfc27cd8a7f" : @user.billing_acct_id},
+        locals: {account_id: @team.billing_acct_id},
       )
       body = JSON.parse(data)
       # Return a slice of all invoices just as the real API does.
@@ -74,7 +74,7 @@ class GetInvoicesJob < ApplicationJob
     def body
       {
         invoices: {
-          billing_account_id: @user.billing_acct_id,
+          billing_acct_id: @team.billing_acct_id,
           offset: @offset,
           limit: @limit,
         },

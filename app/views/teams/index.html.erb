@@ -1,0 +1,62 @@
+<% set_title "#{"Your " unless current_user.root? }Teams" -%>
+
+<% if current_user.can?(:create, Team) %>
+  <%= link_to "+ New Team", new_team_path, class: "button" %>
+<% end %>
+
+<%= render_resource_table_for @teams, searchable: true do |t| %>
+  <% t.on_empty_collection do %>
+    <% capture do %>
+      No teams have been found.
+    <% end %>
+  <% end %>
+
+  <% t.attribute_column :id, sortable: true %>
+  <% t.custom_column "Name", sortable: true, db_column: :name do |team| %>
+    <% presenter_for(team).name(current_user) %>
+  <% end %>
+  <% if current_user.root? %>
+    <% t.attribute_column :single_user, title: "Single user team", sortable: true, tooltip: "A single user team cannot have more than one user assigned" %>
+  <% end %>
+  <% TeamRole::VALID_ROLES.each do |role| %>
+    <% t.custom_column role.pluralize.capitalize do |team| %>
+      <% presenter_for(team).team_users_list(role) %>
+    <% end %>
+  <% end %>
+  <% if current_user.root? %>
+    <% t.attribute_column :project_id, title: "Project ID", sortable: true %>
+    <% t.attribute_column :billing_acct_id, title: "Billing Account ID", sortable: true %>
+  <% end %>
+  <% t.custom_column "Credits", sortable: true, db_column: :credits do |team| %>
+    <% presenter_for(team).formatted_credits %>
+  <% end %>
+  <% t.custom_column "Cost", sortable: true, db_column: :cost do |team| %>
+    <% presenter_for(team).currency_cost %>
+  <% end %>
+  <% t.custom_column "Status", sortable: true, db_column: :deleted_at do |team| %>
+    <% presenter_for(team).status %>
+  <% end %>
+
+  <% t.actions_column do |actions, team| %>
+    <% actions.add_with_auth can: :edit, on: team, text: 'Edit', path: edit_team_path(team) %>
+    <% actions.add_with_auth can: :manage, on: TeamRole.new(team_id: team.id), text: 'Manage Users', path: team_team_roles_path(team) %>
+    <% actions.add_with_auth can: :read, on: Invoice.new(account: team), text: 'View Invoices', path: team_invoices_path(team) %>
+    <% actions.add_with_auth can: :create, on: CreditDeposit.new(team: team), text: 'Add Credits', path: new_team_credit_deposit_path(team) %>
+    <% if can? :create, Cluster.new(team: team, cluster_type: ClusterType.new) %>
+      <% if Team.meets_cluster_credit_requirement.where(id: team.id).exists? %>
+        <% actions.add text: 'Create Cluster', path: cluster_types_path(team_id: team.id) %>
+      <% else  %>
+        <% actions.add text: 'Create Cluster', path: '#', class: "disabled-action", title: "Team has insufficient credits to create cluster" %>
+      <% end %>
+    <% end %>
+    <%
+      actions.add_with_auth(can: :destroy, on: team,
+                            text: 'Delete',
+                            path: team_path(team),
+                            method: 'delete',
+                            data: {confirm: presenter_for(team).delete_confirmation_message},
+                            )
+    %>
+  <% end %>
+
+<% end %>

@@ -42,6 +42,16 @@
           width: 1rem;
         }
       }
+
+      .disabled-action {
+        color: grey;
+        cursor: not-allowed;
+
+        &:hover {
+          color: grey;
+          background-color: white;
+        }
+      }
     
       &.current a:before {
         @include icon-style;

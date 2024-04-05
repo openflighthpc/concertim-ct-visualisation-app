@@ -195,7 +195,6 @@ RSpec.describe "users index page table", type: :system do
     end
 
     it "respects both sort order and pagination" do
-      #visit users_path
       visit users_path(direction: :asc, sort: :name)
       table = find('.resource_table')
 
@@ -224,10 +223,10 @@ RSpec.describe "users index page table", type: :system do
 
   describe "searching" do
     before(:each) do
-      # Create enough users to fill an entire page.  They will have login's
+      # Create enough users to fill an entire page.  They will have logins
       # such as `user-1`, `user-2`, etc..
       create_list(:user, items_per_page)
-      # Create a couple of users with login's that sort after the earlier
+      # Create a couple of users with logins that sort after the earlier
       # users.  They will not be displayed on the initial page load.
       create(:user, login: 'zzz-wanted-1')
       create(:user, login: 'zzz-wanted-2')
@@ -252,6 +251,34 @@ RSpec.describe "users index page table", type: :system do
       expect(table).to have_content('zzz-wanted-1')
       expect(table).to have_content('zzz-wanted-2')
       expect(table.all('tbody tr').count).to eq 2
+    end
+
+    context 'users have teams' do
+      let!(:team) { create(:team, name: "Hufflepuff") }
+      let!(:team_role) { create(:team_role, team: team) }
+      let!(:another_role) { create(:team_role, team: team) }
+
+      it "allows searching for users by team name" do
+        visit users_path
+
+        controls = find('.search_controls')
+        within(controls) do
+          fill_in "Search", with: 'Hufflepuff'
+          click_on "Go"
+        end
+
+        table = find('.resource_table')
+        expect(table.all('tbody tr').count).to eq 2
+        expect(table).to have_content(team_role.user.login)
+        expect(table).to have_content(another_role.user.login)
+
+        within(controls) do
+          fill_in "Search", with: 'Slytherin'
+          click_on "Go"
+        end
+
+        expect(page).to have_content('No users have been found')
+      end
     end
   end
 end

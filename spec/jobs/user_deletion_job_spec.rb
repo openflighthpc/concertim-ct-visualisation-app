@@ -2,9 +2,9 @@ require 'rails_helper'
 
 RSpec.describe UserDeletionJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
-  let!(:user) { create(:user, :with_openstack_details) }
+  let!(:user) { create(:user, :with_openstack_account) }
   let(:cloud_service_config) { create(:cloud_service_config) }
-  let(:delete_user_path) { "/delete_user" }
+  let(:delete_user_path) { "/user" }
   let(:expected_url) {
     "#{cloud_service_config.user_handler_base_url}#{delete_user_path}"
   }
@@ -31,11 +31,9 @@ RSpec.describe UserDeletionJob, type: :job do
       })
     end
 
-    it "contains the user's cloud env and billing ids" do
+    it "contains the user's cloud env id" do
       expect(subject[:user_info]).to be_a Hash
       expect(subject[:user_info][:cloud_user_id]).to eq user.cloud_user_id
-      expect(subject[:user_info][:project_id]).to eq user.project_id
-      expect(subject[:user_info][:billing_acct_id]).to eq user.billing_acct_id
     end
   end
 

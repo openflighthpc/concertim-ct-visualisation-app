@@ -13,8 +13,8 @@
       dl.item "Cost this billing period:", presenter_for(@rack, RackPresenter).currency_cost
 
       dl.sublist "Owner" do |sl|
-        sl.item "Name", @rack.user.name
-        sl.item "Username", @rack.user.login
+        sl.item "Name", @rack.team.name
+        sl.item "Project ID", @rack.team.project_id
       end
 
       dl.item "Network details", @rack.network_details

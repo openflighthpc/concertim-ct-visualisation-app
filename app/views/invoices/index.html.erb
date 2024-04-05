@@ -1,8 +1,8 @@
-<% set_title "Invoices" -%>
+<% set_title "Invoices for team #{@team.name}" -%>
 
 <%
     content_for :title_actions do
-      link_to 'Preview invoice', draft_invoices_path,
+      link_to 'Preview invoice', draft_team_invoices_path(@team),
         title: 'Preview invoice for current billing period',
         class: 'button'
     end
@@ -21,6 +21,6 @@
   <% t.custom_column "Amount"       do |invoice| invoice.formatted_amount_charged end %>
 
   <% t.actions_column do |actions, invoice| %>
-    <% actions.add_with_auth can: :show, on: invoice, title: 'View invoice', path: invoice_path(invoice) %>
+    <% actions.add_with_auth can: :show, on: invoice, text: 'View invoice', path: team_invoice_path(@team, invoice) %>
   <% end %>
 <% end %>

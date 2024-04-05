@@ -25,14 +25,14 @@ class UsersController < ApplicationController
       flash[:info] = "Scheduled user for deletion"
       redirect_to users_path
     else
-      flash[:alert] = "Unable to scheduled user for deletion"
+      flash[:alert] = "Unable to schedule user for deletion"
       redirect_to users_path
     end
   end
 
   private
 
-  PERMITTED_PARAMS = %w[name cloud_user_id project_id billing_acct_id password password_confirmation]
+  PERMITTED_PARAMS = %w[name cloud_user_id password password_confirmation]
   def user_params
     params.fetch(:user).permit(*PERMITTED_PARAMS)
   end

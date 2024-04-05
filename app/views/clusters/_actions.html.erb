@@ -2,6 +2,7 @@
 
 <%=
   render_lhm_actions("Cluster actions") do |actions|
-    actions.add title: "Manage key-pairs", path: key_pairs_path
+    actions.add text: "Manage key-pairs", path: key_pairs_path
+    actions.add text: "Re-select cluster type or team", path: cluster_types_path(team_id: @team)
   end
 %>

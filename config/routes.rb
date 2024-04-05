@@ -42,28 +42,26 @@ Rails.application.routes.draw do
     end
   end
 
-  resources :users, only: [:index, :edit, :update, :destroy] do
-    member do
-      # A placeholder action for developing the resource table used on the
-      # users/index page.  This should be removed once we have real actions to
-      # go in the actions dropdown.
-      get :placeholder
-      resources :credit_deposits, only: [:new, :create]
-    end
-  end
+  resources :users, only: [:index, :edit, :update, :destroy]
 
   resource :settings, only: [:edit, :update]
+
+  resources :teams do
+    resources :team_roles, only: [:index, :new, :create]
+    resources :invoices, only: [:index, :show] do
+      collection do
+        get 'draft'
+      end
+    end
+    resources :credit_deposits, only: [:new, :create]
+  end
+
+  resources :team_roles, only: [:edit, :update, :destroy]
 
   resources :key_pairs, only: [:index, :new, :create] do
     collection do
       get '/success', to: 'key_pairs#success'
       delete '/:name', to: 'key_pairs#destroy', as: :delete
-    end
-  end
-
-  resources :invoices, only: [:index, :show] do
-    collection do
-      get 'draft'
     end
   end
 
@@ -87,6 +85,7 @@ Rails.application.routes.draw do
           resources :metrics, :constraints => { :id => /.*/ }, only: [:show]
         end
         resources :data_source_maps, path: 'data-source-maps', only: [:index]
+        resources :teams, only: [:index, :create, :update, :destroy]
 
         # For use by the interactive rack view
         namespace :irv do
@@ -128,7 +127,7 @@ Rails.application.routes.draw do
         resources :users, only: [:index, :update, :destroy] do
           collection do
             # Endpoint for checking user abilities.
-            get :can_i, action: :can_i?, as: :ability_check
+            get :permissions, action: :permissions, as: :permissions
             # Endpoint for getting the currently signed in user.
             get :current
           end

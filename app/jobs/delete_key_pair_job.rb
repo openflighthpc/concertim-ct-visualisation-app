@@ -3,10 +3,11 @@ require 'faraday'
 class DeleteKeyPairJob < ApplicationJob
   queue_as :default
 
-  def perform(key_pair_name, cloud_service_config, user, **options)
+  def perform(key_pair_name, cloud_service_config, user, project_id, **options)
     runner = Runner.new(
       key_pair_name: key_pair_name,
       user: user,
+      project_id: project_id,
       cloud_service_config: cloud_service_config,
       logger: logger,
       **options
@@ -32,9 +33,10 @@ class DeleteKeyPairJob < ApplicationJob
   end
 
   class Runner < HttpRequests::Faraday::JobRunner
-    def initialize(key_pair_name:, user:, **kwargs)
+    def initialize(key_pair_name:, user:, project_id:, **kwargs)
       @key_pair_name = key_pair_name
       @user = user
+      @project_id = project_id
       super(**kwargs)
     end
 
@@ -81,7 +83,7 @@ class DeleteKeyPairJob < ApplicationJob
         auth_url: @cloud_service_config.internal_auth_url,
         user_id: @user.cloud_user_id,
         password: @user.foreign_password,
-        project_id: @user.project_id
+        project_id: @project_id
       }
     end
   end

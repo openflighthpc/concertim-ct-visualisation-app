@@ -3,9 +3,13 @@ require 'rails_helper'
 RSpec.describe DeleteKeyPairJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
   let(:cloud_service_config) { create(:cloud_service_config) }
-  let(:user) { create(:user, :with_openstack_details) }
+  let(:user) { create(:user, :with_openstack_account) }
+  let(:project_id) { Faker::Alphanumeric.alphanumeric(number: 10) }
   let(:path) { "#{cloud_service_config.user_handler_base_url}/key_pairs" }
-  subject { DeleteKeyPairJob::Runner.new(key_pair_name: "my_lovely_key_pair", cloud_service_config: cloud_service_config, user: user) }
+  subject do
+    DeleteKeyPairJob::Runner.new(key_pair_name: "my_lovely_key_pair", cloud_service_config: cloud_service_config,
+                                 user: user, project_id: project_id)
+  end
 
   describe "url" do
     before(:each) do
@@ -31,7 +35,7 @@ RSpec.describe DeleteKeyPairJob, type: :job do
       end
 
       it "returns a successful result" do
-        result = described_class.perform_now("my_lovely_key_pair", cloud_service_config, user, test_stubs: stubs)
+        result = described_class.perform_now("my_lovely_key_pair", cloud_service_config, user, project_id, test_stubs: stubs)
         expect(result).to be_success
       end
     end
@@ -42,12 +46,12 @@ RSpec.describe DeleteKeyPairJob, type: :job do
       end
 
       it "returns an unsuccessful result" do
-        result = described_class.perform_now("my_lovely_key_pair", cloud_service_config, user, test_stubs: stubs)
+        result = described_class.perform_now("my_lovely_key_pair", cloud_service_config, user, project_id, test_stubs: stubs)
         expect(result).not_to be_success
       end
 
       it "returns a sensible error_message" do
-        result = described_class.perform_now("my_lovely_key_pair", cloud_service_config, user, test_stubs: stubs)
+        result = described_class.perform_now("my_lovely_key_pair", cloud_service_config, user, project_id, test_stubs: stubs)
         expect(result.error_message).to eq "the server responded with status 404"
       end
     end
@@ -59,12 +63,12 @@ RSpec.describe DeleteKeyPairJob, type: :job do
       end
 
       it "returns an unsuccessful result" do
-        result = described_class.perform_now("my_lovely_key_pair", cloud_service_config, user, test_stubs: stubs)
+        result = described_class.perform_now("my_lovely_key_pair", cloud_service_config, user, project_id, test_stubs: stubs)
         expect(result).not_to be_success
       end
 
       it "returns a sensible error_message" do
-        result = described_class.perform_now("my_lovely_key_pair", cloud_service_config, user, test_stubs: stubs)
+        result = described_class.perform_now("my_lovely_key_pair", cloud_service_config, user, project_id, test_stubs: stubs)
         expect(result.error_message).to eq "Something happened"
       end
     end
@@ -76,12 +80,12 @@ RSpec.describe DeleteKeyPairJob, type: :job do
       let(:timeout) { 0.1 }
 
       it "returns an unsuccessful result" do
-        result = described_class.perform_now("my_lovely_key_pair", cloud_service_config, user, test_stubs: stubs, timeout: timeout)
+        result = described_class.perform_now("my_lovely_key_pair", cloud_service_config, user, project_id, test_stubs: stubs, timeout: timeout)
         expect(result).not_to be_success
       end
 
       it "returns a sensible error_message" do
-        result = described_class.perform_now("my_lovely_key_pair", cloud_service_config, user, test_stubs: stubs, timeout: timeout)
+        result = described_class.perform_now("my_lovely_key_pair", cloud_service_config, user, project_id, test_stubs: stubs, timeout: timeout)
         expect(result.error_message).to eq "execution expired"
       end
     end
@@ -99,7 +103,7 @@ RSpec.describe DeleteKeyPairJob, type: :job do
                                           "auth_url" => cloud_service_config.internal_auth_url,
                                           "user_id" => user.cloud_user_id,
                                           "password" => user.foreign_password,
-                                          "project_id" => user.project_id
+                                          "project_id" => project_id
                                         })
     end
   end

@@ -4,10 +4,27 @@ class User < ApplicationRecord
   include Devise::JWT::RevocationStrategies::Allowlist
 
   include Searchable
-  default_search_scope :login, :name, :cloud_user_id, :project_id, :billing_acct_id
+  default_search_scope :login, :name, :cloud_user_id
 
   encrypts :foreign_password
   encrypts :pending_foreign_password
+
+  ############################
+  #
+  # Class Methods
+  #
+  ############################
+
+  def self.perform_search(term, search_scope = default_searchable_columns, include_teams = true)
+    matches = super(term, search_scope)
+    return matches unless include_teams
+
+    matching_teams = Team.perform_search(term, [:name], false)
+    return matches if matching_teams.empty?
+
+    matching_team_roles = TeamRole.where(team_id: matching_teams)
+    matches.or(User.where(id: matching_team_roles.pluck(:user_id)))
+  end
 
   ####################################
   #
@@ -15,16 +32,11 @@ class User < ApplicationRecord
   #
   ####################################
 
-  has_many :racks,
-    class_name: 'HwRack',
+  has_many :team_roles,
     dependent: :destroy
 
-  ####################################
-  #
-  # Hooks
-  #
-  ####################################
-  before_validation :strip_project_id
+  has_many :teams, through: :team_roles
+  has_many :racks, through: :teams
 
 
   ###############################
@@ -43,33 +55,12 @@ class User < ApplicationRecord
     format: { with: /\A[a-zA-Z0-9\-\_\.]*\Z/, message: "can contain only alphanumeric characters, hyphens, underscores and periods."}
   validates :email,
     presence: true
-  validates :project_id,
-    uniqueness: true,
-    length: { maximum: 255 },
-    allow_nil: true,
-    allow_blank: true
+
   validates :cloud_user_id,
-    uniqueness: true,
-    allow_nil: true,
-    allow_blank: true
-  validates :credits,
-    numericality: true,
-    presence: true
-  validates :cost,
-    numericality: { greater_than_or_equal_to: 0 },
-    allow_blank: true
-  validates :billing_acct_id,
-    uniqueness: true,
-    length: { maximum: 255 },
-    allow_nil: true,
-    allow_blank: true
-  validates :billing_period_end, comparison: { greater_than: :billing_period_start },
-            unless: -> { billing_period_start.blank? || billing_period_end.blank? }
-  validate :billing_period_start_today_or_ealier,
-            if: -> { billing_period_start && billing_period_start_changed? }
-  validate :billing_period_end_today_or_later,
-            if: -> { billing_period_end && billing_period_end_changed? }
-  validate :complete_billing_period
+            uniqueness: true,
+            length: { maximum: 255 },
+            allow_nil: true,
+            allow_blank: true
 
   ####################################
   #
@@ -134,33 +125,7 @@ class User < ApplicationRecord
     allowlisted_jwts.destroy_all
   end
 
-  ####################################
-  #
-  # Private Instance Methods
-  #
-  ####################################
-
-  private
-
-  def strip_project_id
-    self.project_id = nil if self.project_id.blank?
-  end
-
-  def complete_billing_period
-    unless !!billing_period_start == !!billing_period_end
-      errors.add(:billing_period, 'must have a start date and end date, or neither')
-    end
-  end
-
-  def billing_period_start_today_or_ealier
-    if billing_period_start && billing_period_start > Date.current
-      errors.add(:billing_period_start, 'must be today or earlier')
-    end
-  end
-
-  def billing_period_end_today_or_later
-    if billing_period_end && billing_period_end < Date.current
-      errors.add(:billing_period_end, 'must be today or later')
-    end
+  def teams_where_admin
+    @teams_where_admin ||= teams.where(team_roles: { role: 'admin' })
   end
 end

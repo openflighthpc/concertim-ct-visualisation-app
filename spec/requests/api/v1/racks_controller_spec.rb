@@ -20,9 +20,8 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
     it "has the correct owner" do
       get url_under_test, headers: headers, as: :json
       expected_owner = {
-        id: rack.user.id,
-        login: rack.user.login,
-        name: rack.user.name,
+        id: rack.team.id,
+        name: rack.team.name,
       }.stringify_keys
       expect(parsed_rack["owner"].slice(*expected_owner.keys)).to eq expected_owner
     end
@@ -78,7 +77,7 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
       end
 
       context "when there is one rack" do
-        let!(:rack) { create(:rack, user: user, template: template, metadata: rack_metadata) }
+        let!(:rack) { create(:rack, template: template, metadata: rack_metadata) }
         let(:rack_metadata) { {} }
 
         let(:parsed_body) { JSON.parse(response.body) }
@@ -101,7 +100,7 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
       end
 
       context "when there are two racks" do
-        let!(:racks) { create_list(:rack, 2, user: user, template: template, metadata: rack_metadata) }
+        let!(:racks) { create_list(:rack, 2, template: template, metadata: rack_metadata) }
         let(:rack_metadata) { {} }
 
         let(:parsed_body) { JSON.parse(response.body) }
@@ -128,31 +127,29 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
 
   describe "GET :show" do
     let(:url_under_test) { urls.api_v1_rack_path(rack) }
-    let!(:rack) { create(:rack, user: rack_owner, template: template, metadata: rack_metadata) }
+    let!(:rack) { create(:rack, template: template, metadata: rack_metadata) }
     let(:rack_metadata) { {} }
 
     context "when not logged in" do
-      let(:rack_owner) { create(:user) }
       include_examples "unauthorised JSON response"
     end
 
-    context "when logged in as rack owner" do
+    context "when logged in as rack team member" do
       include_context "Logged in as non-admin"
       include_examples "successful JSON response" do
-        let(:rack_owner) { authenticated_user }
+        let!(:role) { create(:team_role, team: rack.team, user: authenticated_user) }
       end
     end
 
-    context "when logged in as another user" do
+    context "when logged in as non team member" do
       include_context "Logged in as non-admin"
       include_examples "forbidden JSON response" do
-        let(:rack_owner) { create(:user) }
+        let!(:role) { create(:team_role, user: authenticated_user) }
       end
     end
 
     context "when logged in as admin" do
       include_context "Logged in as admin"
-      let(:rack_owner) { create(:user) }
       include_examples "successful JSON response"
 
       let(:parsed_body) { JSON.parse(response.body) }
@@ -176,6 +173,7 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
 
   describe "POST :create" do
     let(:url_under_test) { urls.api_v1_racks_path }
+    let!(:team) { create(:team) }
 
     context "when not logged in" do
       include_examples "unauthorised JSON response"
@@ -183,12 +181,11 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
 
     context "when logged in as admin" do
       include_context "Logged in as admin"
-      let(:rack_owner) { create(:user) }
       let(:valid_attributes) {
         {
           rack: {
             u_height: 20,
-            user_id: rack_owner.id,
+            team_id: team.id,
             status: 'IN_PROGRESS',
             metadata: { "foo" => "bar" },
             creation_output: "all tasks complete",
@@ -230,7 +227,7 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
           send_request
           parsed_rack = JSON.parse(response.body)
           expect(parsed_rack["u_height"]).to eq valid_attributes[:rack][:u_height]
-          expect(parsed_rack["owner"]["id"]).to eq valid_attributes[:rack][:user_id]
+          expect(parsed_rack["owner"]["id"]).to eq valid_attributes[:rack][:team_id]
           expect(parsed_rack["metadata"]).to eq valid_attributes[:rack][:metadata]
           expect(parsed_rack["cost"]).to eq "0.00"
           expect(parsed_rack["creation_output"]).to eq valid_attributes[:rack][:creation_output]
@@ -265,7 +262,6 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
     let(:url_under_test) { urls.api_v1_rack_path(rack) }
     let!(:rack) {
       create(:rack,
-        user: rack_owner,
         template: template,
         metadata: initial_rack_metadata,
         u_height: initial_u_height,
@@ -365,27 +361,35 @@ RSpec.describe "Api::V1::RacksControllers", type: :request do
 
     context "when not logged in" do
       include_examples "unauthorised JSON response"
-      let(:rack_owner) { create(:user) }
     end
 
-    context "when logged in as rack owner" do
+    context "when logged in as admin of rack's team" do
       include_context "Logged in as non-admin"
-      let(:rack_owner) { authenticated_user }
+      let!(:team_role) { create(:team_role, user: authenticated_user, team: rack.team, role: "admin") }
       include_examples "authorized user updating rack" do
         let(:can_update_order_id) { false }
+      end
+    end
+
+    context "when logged in as member of rack's team" do
+      include_context "Logged in as non-admin"
+      let!(:team_role) { create(:team_role, user: authenticated_user, team: rack.team, role: "member") }
+      include_examples "forbidden JSON response" do
+        let(:request_method) { :patch }
+        let!(:team_role) { create(:team_role, user: authenticated_user) }
       end
     end
 
     context "when logged in as another user" do
       include_context "Logged in as non-admin"
       include_examples "forbidden JSON response" do
-        let(:rack_owner) { create(:user) }
+        let(:request_method) { :patch }
+        let!(:team_role) { create(:team_role, user: authenticated_user) }
       end
     end
 
     context "when logged in as admin" do
       include_context "Logged in as admin"
-      let(:rack_owner) { create(:user) }
       include_examples "authorized user updating rack" do
         let(:can_update_order_id) { true }
       end

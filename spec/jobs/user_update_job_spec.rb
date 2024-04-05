@@ -2,10 +2,10 @@ require 'rails_helper'
 
 RSpec.describe UserUpdateJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
-  let!(:user) { create(:user, :with_openstack_details) }
+  let!(:user) { create(:user, :with_openstack_account) }
   let(:changes) { {} }
   let(:cloud_service_config) { create(:cloud_service_config) }
-  let(:update_users_path) { "/change_user_details" }
+  let(:update_users_path) { "/user" }
   let(:expected_url) {
     "#{cloud_service_config.user_handler_base_url}#{update_users_path}"
   }
@@ -32,10 +32,9 @@ RSpec.describe UserUpdateJob, type: :job do
       })
     end
 
-    it "contains the user's cloud env and billing ids" do
+    it "contains the user's cloud env id" do
       expect(subject[:user_info]).to be_a Hash
       expect(subject[:user_info][:cloud_user_id]).to eq user.cloud_user_id
-      expect(subject[:user_info][:billing_acct_id]).to eq user.billing_acct_id
     end
 
     [
@@ -91,7 +90,7 @@ RSpec.describe UserUpdateJob, type: :job do
 
       context "when the request is successful" do
         before(:each) do
-          stubs.post(expected_url) { |env| [ 204, {}, "No Content"] }
+          stubs.patch(expected_url) { |env| [ 204, {}, "No Content"] }
           allow_any_instance_of(described_class::Runner).to receive(:test_stubs).and_return(stubs)
         end
 
@@ -106,7 +105,7 @@ RSpec.describe UserUpdateJob, type: :job do
 
       context "when the request is unsuccessful" do
         before(:each) do
-          stubs.post(expected_url) { |env| [ 500, {}, {"error" => "Some error message"}] }
+          stubs.patch(expected_url) { |env| [ 500, {}, {"error" => "Some error message"}] }
           allow_any_instance_of(described_class::Runner).to receive(:test_stubs).and_return(stubs)
         end
 

@@ -3,9 +3,10 @@ require 'faraday'
 class GetUserKeyPairsJob < ApplicationJob
   queue_as :default
 
-  def perform(cloud_service_config, user, **options)
+  def perform(cloud_service_config, user, project_id, **options)
     runner = Runner.new(
       user: user,
+      project_id: project_id,
       cloud_service_config: cloud_service_config,
       logger: logger,
       **options
@@ -33,8 +34,9 @@ class GetUserKeyPairsJob < ApplicationJob
   end
 
   class Runner < HttpRequests::Faraday::JobRunner
-    def initialize(user:, **kwargs)
+    def initialize(user:, project_id:, **kwargs)
       @user = user
+      @project_id = project_id
       super(**kwargs)
     end
 
@@ -47,8 +49,7 @@ class GetUserKeyPairsJob < ApplicationJob
       end
 
       results = response.body
-      key_pairs = results["key_pairs"].map do |key_pair|
-        details = key_pair["keypair"]
+      key_pairs = results["key_pairs"].map do |details|
         KeyPair.new(user: @user, name: details["name"], fingerprint: details["fingerprint"], key_type: details["type"] || "ssh")
       end
       return Result.new(true, key_pairs, "")
@@ -74,7 +75,7 @@ class GetUserKeyPairsJob < ApplicationJob
           auth_url: @cloud_service_config.internal_auth_url,
           user_id: @user.cloud_user_id,
           password: @user.foreign_password,
-          project_id: @user.project_id
+          project_id: @project_id
         }
       }
     end
