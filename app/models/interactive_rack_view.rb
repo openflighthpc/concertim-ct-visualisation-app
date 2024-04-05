@@ -137,7 +137,8 @@ SELECT
                                                                                                XmlAttributes( D.id AS "id",
                                                                                                               D.name AS "name",
                                                                                                               D.status AS "buildStatus",
-                                                                                                              cast(D.cost as money) AS "cost" 
+                                                                                                              cast(D.cost as money) AS "cost",
+                                                                                                              D.details_type AS "type"
                                                                                                             )
                                                                                            ))
                                                                                 FROM devices D WHERE D.id = S.id
