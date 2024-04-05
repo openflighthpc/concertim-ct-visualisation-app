@@ -131,6 +131,7 @@ class ContextMenu {
           var option_url = option.url;
           var disabled   = false;
           var on_click   = disabled ? null : option.onClick;
+          let newTab     = option.newTab;
 
           piece = Util.substitutePhrase(piece, 'view_devices', view_devices);
           piece = Util.substitutePhrase(piece, 'device_id', device_id);
@@ -191,7 +192,7 @@ class ContextMenu {
                 parsed[idx].push(`<a href='${option_url}' onclick=\"${on_click}\" ><div class='context_menu_item ${div_class}'>${piece}</div></a>`);
               } else {
                 total_clickable_options_added += 1;
-                parsed[idx].push(`<a href='${option_url}'><div class='context_menu_item ${div_class}'>${piece}</div></a>`);
+                parsed[idx].push(`<a href='${option_url}'${newTab ? ' target="_blank"' : ''}><div class='context_menu_item ${div_class}'>${piece}</div></a>`);
               }
             } else {
               parsed[idx].push(piece);

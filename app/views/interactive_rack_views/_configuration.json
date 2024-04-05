@@ -405,7 +405,8 @@
           {
             "caption" : "View details",
             "url"     : "/racks/[[rack_id]]",
-            "rbacAction" : "view"
+            "rbacAction" : "view",
+            "newTab": true
           },
 	      {
             "caption": "[[spacer]]"
@@ -444,7 +445,8 @@
             {
               "caption" : "View details",
               "url"     : "/devices/[[device_id]]",
-              "rbacAction" : "view"
+              "rbacAction" : "view",
+              "newTab":  true
             }
           ],
           "Device::ComputeDetails": [
