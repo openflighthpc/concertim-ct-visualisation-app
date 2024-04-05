@@ -100,8 +100,14 @@ class ContextMenu {
         var view_devices;
         var idx = parsed.length;
         parsed.push([]);
+        let total_options = null;
 
-        var total_options = [].concat(ContextMenu.OPTIONS[option_set]);
+        if(option_set === "devices") {
+          let typeOptions = ContextMenu.OPTIONS["devices"][device.type] || [];
+          total_options = [].concat(ContextMenu.OPTIONS["devices"]["common"].concat(typeOptions));
+        } else {
+          total_options = [].concat(ContextMenu.OPTIONS[option_set]);
+        }
 
         if (option_set === "racks") { 
           if (device.children.length > 0) {

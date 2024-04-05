@@ -65,6 +65,7 @@ class Machine extends RackObject {
     this.slot_id     = null;
     this.selected    = false;
     this.assets      = [];
+    this.type        = def.type;
 
     if (RackObject.MODEL.metricLevel !== undefined) {
       this.metric   = new BarMetric(this.componentClassName, this.id, this, this.x, this.y, this.width, this.height, RackObject.MODEL);

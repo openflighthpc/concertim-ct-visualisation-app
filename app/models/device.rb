@@ -102,7 +102,13 @@ class Device < ApplicationRecord
   ####################################
 
   def valid_action?(action)
+    return false unless compute_device?
+
     VALID_STATUS_ACTION_MAPPINGS[status].include?(action)
+  end
+
+  def compute_device?
+    self.details_type == "Device::ComputeDetails"
   end
 
   def openstack_id

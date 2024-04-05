@@ -41,7 +41,8 @@ child(:chassis, root: 'Chassis') do |foo|
         id: chassis.device.id,
         name: chassis.device.name,
         buildStatus: chassis.device.status,
-        cost: chassis.device.currency_cost
+        cost: chassis.device.currency_cost,
+        type: chassis.device.details_type
       },
     }
   end
