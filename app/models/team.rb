@@ -66,7 +66,7 @@ class Team < ApplicationRecord
             numericality: { greater_than_or_equal_to: 0 },
             allow_blank: true
   validates :credits,
-            numericality: { greater_than_or_equal_to: 0 },
+            numericality: true,
             presence: true
   validates :billing_period_end, comparison: { greater_than: :billing_period_start },
             unless: -> { billing_period_start.blank? || billing_period_end.blank? }
