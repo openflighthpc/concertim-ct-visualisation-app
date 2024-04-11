@@ -46,7 +46,7 @@
         <th class="invoice-amount">Credits change</th>
       </tr>
     </thead>
-    <% @invoice.items.each do |item| %>
+    <% @invoice.sorted_items.each do |item| %>
       <tr class="item last">
         <td><%= item.formatted_date %>
         <td><%= item.description %></td>

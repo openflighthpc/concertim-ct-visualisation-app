@@ -66,6 +66,10 @@ class Invoice
     "#{"%0.2f" % refund_adj} #{currency}"
   end
 
+  def sorted_items
+    self.items.sort_by(&:type)
+  end
+
   private
 
   def amount_paid
