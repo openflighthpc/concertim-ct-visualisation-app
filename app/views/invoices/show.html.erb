@@ -42,19 +42,22 @@
       <tr class="invoice-items-header">
         <th>Date</th>
         <th>Description</th>
-        <th>Amount</th>
+        <th class="invoice-amount">Cost</th>
+        <th class="invoice-amount">Credits change</th>
       </tr>
     </thead>
     <% @invoice.items.each do |item| %>
       <tr class="item last">
         <td><%= item.formatted_date %>
-        <td><%= item.openstack_stack_name %></td>
-        <td><%= item.formatted_amount %></td>
+        <td><%= item.description %></td>
+        <td class="invoice-amount"><%= item.cost %></td>
+        <td class="invoice-amount"><%= item.credits %></td>
       </tr>
     <% end %>
     <tr class="invoice-items-total">
-      <td colspan="2">Amount:</td>
-      <td><%= @invoice.formatted_amount_charged %></td>
+      <td colspan="2">Total:</td>
+      <td class="invoice-amount"><%= @invoice.formatted_amount_charged %></td>
+      <td class="invoice-amount"><%= @invoice.formatted_credit_adjustment %></td>
     </tr>
   </table>
 </div>
