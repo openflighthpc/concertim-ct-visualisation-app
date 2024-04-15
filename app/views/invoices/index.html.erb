@@ -18,9 +18,9 @@
   <% t.attribute_column :invoice_id %>
   <% t.attribute_column :invoice_number %>
   <% t.custom_column "Invoice Date" do |invoice| invoice.formatted_invoice_date end %>
-  <% t.custom_column "Amount"       do |invoice| invoice.formatted_amount_charged end %>
-
+  <% t.custom_column "Cost" do |invoice| invoice.formatted_amount_charged end %>
+  <% t.custom_column "Credits Change" do |invoice| invoice.formatted_credit_adjustment end %>
   <% t.actions_column do |actions, invoice| %>
-    <% actions.add_with_auth can: :show, on: invoice, text: 'View invoice', path: team_invoice_path(@team, invoice) %>
+    <% actions.add_with_auth can: :show, on: invoice, text: 'View invoice', path: team_invoice_path(@team, id: invoice.invoice_id) %>
   <% end %>
 <% end %>

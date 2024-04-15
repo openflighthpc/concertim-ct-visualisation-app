@@ -6,31 +6,33 @@ class Invoice::Item
   attribute :currency, :string
   attribute :end_date, :date
   attribute :invoice
-  attribute :openstack_stack_id, :string
-  attribute :openstack_stack_name, :string
   attribute :start_date, :date
+  attribute :type, :string
 
   validates :amount, presence: true, numericality: true
   validates :currency, presence: true
   validates :end_date, presence: true
   validates :invoice, presence: true
-  validates :openstack_stack_id, presence: true
-  validates :openstack_stack_name, presence: true
   validates :start_date, presence: true
-
-  def rack
-    HwRack.find_by_openstack_id(openstack_stack_id)
-  end
+  validates :type, presence: true
 
   # Extract these `formatted_*` and `pretty_*` methods to a presenter if they
   # get large/complicated/numerous.
 
   def formatted_date
-    if end_date.nil?
-      formatted_start_date
-    else
-      "#{formatted_start_date} - #{formatted_end_date}"
-    end
+    "#{formatted_start_date} - #{formatted_end_date}"
+  end
+
+  def description
+    ""
+  end
+
+  def cost
+    "-"
+  end
+
+  def credits
+    "-"
   end
 
   def formatted_amount

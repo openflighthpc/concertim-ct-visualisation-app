@@ -59,11 +59,15 @@ class Invoice
   end
 
   def formatted_credit_adjustment
-    "#{"%0.2f" % credit_adj} #{currency}"
+    "#{'+' if credit_adj > 0}#{"%0.2f" % credit_adj} #{currency}"
   end
 
   def formatted_refund_adjustment
     "#{"%0.2f" % refund_adj} #{currency}"
+  end
+
+  def sorted_items
+    self.items.sort_by(&:type)
   end
 
   private

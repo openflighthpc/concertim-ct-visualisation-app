@@ -62,7 +62,11 @@ module InvoiceBaseJob
           invoice.send("#{attr}=", invoice_data[attr] || invoice_data[attr.camelize(:lower)])
         end
         invoice_data["items"].each do |item_id, item_data|
-          invoice.items << Invoice::Item.new.tap do |item|
+          class_name = "Invoice::#{item_data['type'].capitalize}Item"
+          next unless Object.const_defined?(class_name)
+
+          klass = Object.const_get(class_name)
+          invoice.items << klass.new.tap do |item|
             item.invoice = invoice
             (item.attribute_names - %w(invoice)).each do |attr|
               item.send("#{attr}=", item_data[attr] || item_data[attr.camelize(:lower)])
