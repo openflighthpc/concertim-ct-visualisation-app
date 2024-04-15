@@ -1,0 +1,12 @@
+<%
+  set_title "Statistics"
+-%>
+
+<% @stats.each do |group, metrics| %>
+  <h3 class="stats-group-title"><%= group.capitalize %></h3>
+  <div class="stats-group-deck">
+    <% metrics.each do |name, value| %>
+      <%= render partial: 'card', locals: { name: name, value: value } %>
+    <% end %>
+  </div>
+<% end %>

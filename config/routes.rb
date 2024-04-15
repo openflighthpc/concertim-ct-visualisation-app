@@ -46,6 +46,8 @@ Rails.application.routes.draw do
 
   resource :settings, only: [:edit, :update]
 
+  get '/statistics', to: 'statistics#index'
+
   resources :teams do
     resources :team_roles, only: [:index, :new, :create]
     resources :invoices, only: [:index, :show] do

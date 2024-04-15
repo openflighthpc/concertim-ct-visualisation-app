@@ -55,6 +55,13 @@ SimpleNavigation::Configuration.run do |navigation|
                      icon: :config,
                      highlights_on: %r(/settings)
       end
+
+      if current_user.root?
+        primary.item :config, 'Statistics', url_helpers.statistics_path,
+                     icon: :info,
+                     highlights_on: %r(/statistics)
+      end
+
     else
       primary.item :login, 'Log in', url_helpers.new_user_session_path,
         icon: :login,
