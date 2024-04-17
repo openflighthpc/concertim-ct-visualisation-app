@@ -1,0 +1,14 @@
+<div class="stats-section">
+  <% if local_assigns[:stats].empty? %>
+    <h3>Unable to retrieve statistics</h3>
+  <% else %>
+    <% local_assigns[:stats].each do |group, metrics| %>
+      <h3 class="stats-group-title"><%= group.to_s.titleize %></h3>
+      <div class="stats-group-deck">
+        <% metrics.each do |name, value| %>
+          <%= render partial: 'card', locals: { name: name, value: value } %>
+        <% end %>
+      </div>
+    <% end %>
+  <% end %>
+</div>

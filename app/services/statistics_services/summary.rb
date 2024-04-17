@@ -26,8 +26,8 @@ module StatisticsServices
           active: servers.where(status: %w(ACTIVE IN_PROGRESS)).count,
           inactive: servers.where(status: %w(FAILED STOPPED SUSPENDED)).count,
           total_vcpus: servers.sum("templates.vcpus"),
-          total_ram:  "#{servers.sum("templates.ram")}GB",
-          total_mem: "#{servers.sum("templates.disk")}GB"
+          total_ram:  "#{servers.sum("templates.ram") / 1024.0}GB",
+          total_disk_space: "#{servers.sum("templates.disk")}GB"
         }
       end
 
@@ -36,7 +36,7 @@ module StatisticsServices
         {
           active: volumes.where(status: %w(ACTIVE IN_PROGRESS)).count,
           inactive: volumes.where(status: %w(FAILED STOPPED SUSPENDED)).count,
-          total_mem: "#{volumes.reduce(0) {|sum, volume| sum + (volume.details.size || 0)}}GB"
+          total_disk_space: "#{volumes.reduce(0) {|sum, volume| sum + (volume.details.size || 0)}}GB"
         }
       end
 
@@ -57,11 +57,3 @@ module StatisticsServices
     end
   end
 end
-
-# active clusters
-# active servers
-# inactive clusters
-# inactive servers
-# used VCPUs
-# used memory
-# total teams

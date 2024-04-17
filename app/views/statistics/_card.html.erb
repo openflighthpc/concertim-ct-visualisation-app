@@ -1,4 +1,4 @@
 <div class="stats-card">
-  <h3 class="stat-name"> <%= local_assigns[:name].to_s.titleize %></h3>
+  <h3 class="stat-name"> <%= format_statistic_title(local_assigns[:name]) %></h3>
   <h3 class="stat-value"> <%= local_assigns[:value] %></h3>
 </div>

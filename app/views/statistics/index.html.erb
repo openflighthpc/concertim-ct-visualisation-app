@@ -2,11 +2,12 @@
   set_title "Statistics"
 -%>
 
-<% @stats.each do |group, metrics| %>
-  <h3 class="stats-group-title"><%= group.capitalize %></h3>
-  <div class="stats-group-deck">
-    <% metrics.each do |name, value| %>
-      <%= render partial: 'card', locals: { name: name, value: value } %>
-    <% end %>
-  </div>
-<% end %>
+<h2 class="text-center">
+  Cloud Platform Statistics<a href="#" title="Includes all assets on the cloud platform (Concertim assets + any others)" onClick="return false;"><sup>?</sup></a>
+</h2>
+<%= render partial: 'stats', locals: { stats: @cloud_stats } %>
+
+<h2 class="text-center">
+  Concertim Statistics<a href="#" title="Includes only Concertim assets" onClick="return false;"><sup>?</sup></a>
+</h2>
+<%= render partial: 'stats', locals: { stats: @concertim_stats } %>
