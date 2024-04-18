@@ -1,5 +1,6 @@
 class StatisticsController < ApplicationController
   def index
+    authorize! :read, :statistics
     @concertim_stats = StatisticsServices::Summary.call
     @cloud_stats = {}
     @cloud_service_config = CloudServiceConfig.first
