@@ -8,8 +8,8 @@ module TeamServices
       @team = team
       {
         total_vcpus: "#{total_vcpus} / #{quotas["cores"]}",
-        total_ram: "#{total_ram_mb / 1024} / #{quotas["ram"] /1024}GB",
         total_disk_space: "#{total_disk_space} / #{quotas["gigabytes"]}GB",
+        total_ram: "#{total_ram_mb / 1024} / #{quotas["ram"] /1024}GB",
         servers: "#{servers.count} / #{quotas["instances"]}",
         volumes: "#{volumes.count} / #{quotas["volumes"]}",
         networks: "#{networks.count} / #{quotas["network"]}"

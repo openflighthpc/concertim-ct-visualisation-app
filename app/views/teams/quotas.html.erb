@@ -3,7 +3,9 @@
 -%>
 
 <h2 class="text-center">
-  Cloud Platform Quotas<a href="#" title="Allowed usage for the team, as determined by your cloud platform configuration" onClick="return false;"><sup>?</sup></a>
+  Cloud Platform Quotas<a href="#"
+                          title="Allowed usage for the team, as determined by your cloud platform configuration. Please note this does not account for overall available resources on your cloud platform. "
+                          onClick="return false;"><sup>?</sup></a>
 </h2>
 
 <%= render partial: 'statistics/stats', locals: { stats: @quotas } %>
