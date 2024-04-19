@@ -59,8 +59,8 @@ class GetCloudStatsJob < ApplicationJob
     def format_response(data)
       {
         "Allocated / Total VCPUs" => "#{data['used_vcpus']} / #{data['total_vcpus']}",
-        "Allocated / Total Disk Space" => "#{data['used_disk_space'].ceil(1)} / #{data['total_disk_space'].ceil(1)}GB",
-        "Allocated / Total RAM" => "#{data['used_ram'].ceil(1)} / #{data['total_ram'].ceil(1)}GB",
+        "Allocated / Total Disk Space" => "#{data['used_disk_space']&.ceil(1)} / #{data['total_disk_space']&.ceil(1)}GB",
+        "Allocated / Total RAM" => "#{data['used_ram']&.ceil(1)} / #{data['total_ram']&.ceil(1)}GB",
         "Virtual Machines" => "#{data['running_vms']}"
       }
     end
