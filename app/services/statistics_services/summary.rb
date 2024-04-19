@@ -45,7 +45,6 @@ module StatisticsServices
         {
           active: networks.where(status: %w(ACTIVE IN_PROGRESS)).count,
           inactive: networks.where(status: %w(FAILED STOPPED SUSPENDED)).count,
-
         }
       end
 

@@ -6,7 +6,7 @@
       <h3 class="stats-group-title"><%= group.to_s.titleize %></h3>
       <div class="stats-group-deck">
         <% metrics.each do |name, value| %>
-          <%= render partial: 'card', locals: { name: name, value: value } %>
+          <%= render partial: 'statistics/card', locals: { name: name, value: value } %>
         <% end %>
       </div>
     <% end %>
