@@ -59,7 +59,8 @@ class GetTeamQuotasJob < ApplicationJob
     end
 
     def filter_response(quotas)
-      quotas.reject {|k, v| k == "id" }
+      quotas.delete("id")
+      quotas
     end
 
     def error_description

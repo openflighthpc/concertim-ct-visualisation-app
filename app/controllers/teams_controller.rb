@@ -15,6 +15,13 @@ class TeamsController < ApplicationController
       redirect_to teams_path_path
       return
     end
+
+    if @team.project_id.nil?
+      flash[:alert] = "Unable to view team quotas: team does not have a cloud project."
+      redirect_to teams_path_path
+      return
+    end
+
     result = GetTeamQuotasJob.perform_now(@cloud_service_config, @team)
     if result.success?
       @quotas = {totals: TeamServices::QuotaStats.call(@team, result.quotas)}
