@@ -34,6 +34,7 @@ class Team < ApplicationRecord
   has_many :racks,
            class_name: 'HwRack',
            dependent: :destroy
+  has_many :devices, through: :racks
 
   ############################
   #

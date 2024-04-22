@@ -46,7 +46,12 @@ Rails.application.routes.draw do
 
   resource :settings, only: [:edit, :update]
 
+  get '/statistics', to: 'statistics#index'
+
   resources :teams do
+    member do
+      get :quotas
+    end
     resources :team_roles, only: [:index, :new, :create]
     resources :invoices, only: [:index, :show] do
       collection do

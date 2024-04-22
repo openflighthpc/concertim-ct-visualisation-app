@@ -6,6 +6,31 @@ class TeamsController < ApplicationController
     @teams = resource_table_collection(@teams)
   end
 
+  def quotas
+    @cloud_service_config = CloudServiceConfig.first
+    authorize! :read, @team
+
+    if @cloud_service_config.nil?
+      flash[:alert] = "Unable to view team quotas: cloud environment config not set."
+      redirect_to teams_path
+      return
+    end
+
+    if @team.project_id.nil?
+      flash[:alert] = "Unable to view team quotas: team does not have a cloud project."
+      redirect_to teams_path
+      return
+    end
+
+    result = GetTeamQuotasJob.perform_now(@cloud_service_config, @team)
+    if result.success?
+      @quotas = {totals: TeamServices::QuotaStats.call(@team, result.quotas)}
+    else
+      flash[:alert] = result.error_message
+      redirect_to teams_path
+    end
+  end
+
   def create
     @cloud_service_config = CloudServiceConfig.first
     @team = Team.new(name: team_params[:name])

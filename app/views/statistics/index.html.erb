@@ -1,0 +1,13 @@
+<%
+  set_title "Statistics"
+-%>
+
+<h2 class="text-center">
+  Cloud Platform Statistics<a href="#" title="Includes all assets on the cloud platform (Concertim assets + any others)" onClick="return false;"><sup>?</sup></a>
+</h2>
+<%= render partial: 'stats', locals: { stats: @cloud_stats } %>
+
+<h2 class="text-center">
+  Concertim Statistics<a href="#" title="Includes only Concertim assets" onClick="return false;"><sup>?</sup></a>
+</h2>
+<%= render partial: 'stats', locals: { stats: @concertim_stats } %>

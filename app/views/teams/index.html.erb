@@ -40,6 +40,7 @@
   <% t.actions_column do |actions, team| %>
     <% actions.add_with_auth can: :edit, on: team, text: 'Edit', path: edit_team_path(team) %>
     <% actions.add_with_auth can: :manage, on: TeamRole.new(team_id: team.id), text: 'Manage Users', path: team_team_roles_path(team) %>
+    <% actions.add_with_auth can: :quotas, on: team, text: 'View Quotas', path: quotas_team_path(id: team.id) %>
     <% actions.add_with_auth can: :read, on: Invoice.new(account: team), text: 'View Invoices', path: team_invoices_path(team) %>
     <% actions.add_with_auth can: :create, on: CreditDeposit.new(team: team), text: 'Add Credits', path: new_team_credit_deposit_path(team) %>
     <% if can? :create, Cluster.new(team: team, cluster_type: ClusterType.new) %>
