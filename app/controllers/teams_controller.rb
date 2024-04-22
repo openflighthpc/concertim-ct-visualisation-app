@@ -12,13 +12,13 @@ class TeamsController < ApplicationController
 
     if @cloud_service_config.nil?
       flash[:alert] = "Unable to view team quotas: cloud environment config not set."
-      redirect_to teams_path_path
+      redirect_to teams_path
       return
     end
 
     if @team.project_id.nil?
       flash[:alert] = "Unable to view team quotas: team does not have a cloud project."
-      redirect_to teams_path_path
+      redirect_to teams_path
       return
     end
 

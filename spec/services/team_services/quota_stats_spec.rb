@@ -6,6 +6,9 @@ RSpec.describe TeamServices::QuotaStats, type: :service do
   let!(:rack) { create(:rack, team: team, template: rack_template) }
   let(:location) { create(:location, rack: rack) }
   let(:chassis) { create(:chassis, template: template, location: location) }
+  let!(:other_team_rack) { create(:rack, template: rack_template) }
+  let(:other_team_location) { create(:location, rack: other_team_rack) }
+  let(:other_team_chassis) { create(:chassis, template: template, location: other_team_location) }
   let(:quotas) {
     {
       "backup_gigabytes" => 1024,
@@ -41,7 +44,7 @@ RSpec.describe TeamServices::QuotaStats, type: :service do
     let!(:server) { create(:device, status: "STOPPED", chassis: chassis) }
     let!(:another_server) { create(:device, status: "FAILED", chassis: chassis) }
     let!(:further_server) { create(:device, status: "ACTIVE", chassis: chassis) }
-    let!(:other_team_server) { create(:device) }
+    let!(:other_team_server) { create(:device, chassis: other_team_chassis) }
 
     it 'includes counts, vcpu, ram and disk usage' do
       expected = {
@@ -56,8 +59,10 @@ RSpec.describe TeamServices::QuotaStats, type: :service do
     end
 
     context 'and volume' do
+      let(:another_location) { create(:location, rack: rack) }
+      let(:another_chassis) { create(:chassis, template: template, location: location) }
       let(:vol_template) { create(:template, :volume_device_template) }
-      let!(:volume) { create(:device, details: Device::VolumeDetails.new(size: 100), status: "STOPPED", chassis: chassis) }
+      let!(:volume) { create(:device, details: Device::VolumeDetails.new(size: 100), status: "STOPPED", chassis: another_chassis) }
 
       it 'combines server and volume disk space' do
         expected = {
@@ -78,7 +83,7 @@ RSpec.describe TeamServices::QuotaStats, type: :service do
     let!(:volume) { create(:device, details: Device::VolumeDetails.new(size: 100), status: "STOPPED", chassis: chassis) }
     let!(:another_volume) { create(:device, details: Device::VolumeDetails.new(size: 200), status: "FAILED", chassis: chassis) }
     let!(:further_volume) { create(:device, details: Device::VolumeDetails.new(size: 10), status: "ACTIVE", chassis: chassis) }
-    let!(:other_team_volume) { create(:device, details: Device::VolumeDetails.new(size: 10)) }
+    let!(:other_team_volume) { create(:device, details: Device::VolumeDetails.new(size: 10), chassis: other_team_chassis) }
 
     it 'includes counts and disk usage' do
       expected = {
@@ -99,6 +104,7 @@ RSpec.describe TeamServices::QuotaStats, type: :service do
     let!(:network) { create(:device, details: Device::NetworkDetails.new, status: "STOPPED", chassis: chassis) }
     let!(:another_network) { create(:device, details: Device::NetworkDetails.new, status: "ACTIVE", chassis: chassis) }
     let!(:further_network) { create(:device, details: Device::NetworkDetails.new, status: "ACTIVE", chassis: chassis) }
+    let!(:other_team_network) { create(:device, details: Device::NetworkDetails.new, status: "ACTIVE", chassis: other_team_chassis) }
 
     it 'includes network count' do
       expected = {
