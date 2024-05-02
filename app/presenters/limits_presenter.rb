@@ -2,7 +2,7 @@ class LimitsPresenter < Presenter
 
   def grouped_limits
     disk_max = o["maxTotalVolumeGigabytes"] == -1 ? "GB / No limit" :  " / #{o["maxTotalVolumeGigabytes"]}GB"
-    ram_max = o["maxTotalRAMSize"] == -1 ? "MB / No limit" :  " / #{o["maxTotalRAMSize"] /1024.0}MB"
+    ram_max = o["maxTotalRAMSize"] == -1 ? "GB / No limit" :  " / #{o["maxTotalRAMSize"] /1024.0}GB"
     %w(maxTotalCores maxTotalInstances maxTotalVolumes).each {|max| o[max] = "No limit" if o[max] == -1 }
     {
       total_vcpus: "#{o["totalCoresUsed"]} / #{o["maxTotalCores"]}",
