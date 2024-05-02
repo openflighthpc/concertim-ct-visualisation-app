@@ -59,7 +59,7 @@ class GetTeamLimitsJob < ApplicationJob
     end
 
     def path
-      "/team/#{@team.project_id}/limits"
+      "/team/limits"
     end
 
     def error_description

@@ -10,7 +10,7 @@ RSpec.describe GetTeamLimitsJob, type: :job do
     described_class::Runner.new(team: team, user: user, cloud_service_config: cloud_service_config, test_stubs: stubs)
   }
 
-  let(:limits_path) { "/team/#{team.project_id}/limits" }
+  let(:limits_path) { "/team/limits" }
   let(:expected_url) {
     "#{cloud_service_config.user_handler_base_url}"
   }
