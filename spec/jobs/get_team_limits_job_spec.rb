@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe GetTeamQuotasJob, type: :job do
+RSpec.describe GetTeamLimitsJob, type: :job do
   let(:stubs) { Faraday::Adapter::Test::Stubs.new }
   let(:cloud_service_config) { create(:cloud_service_config) }
   let(:team) { create(:team, :with_openstack_details) }
@@ -9,7 +9,7 @@ RSpec.describe GetTeamQuotasJob, type: :job do
     described_class::Runner.new(team: team, cloud_service_config: cloud_service_config, test_stubs: stubs)
   }
 
-  let(:quotas_path) { "/team/#{team.project_id}/quotas" }
+  let(:quotas_path) { "/team/#{team.project_id}/limits" }
   let(:expected_url) {
     "#{cloud_service_config.user_handler_base_url}"
   }

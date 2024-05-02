@@ -8,4 +8,4 @@
                           onClick="return false;"><sup>?</sup></a>
 </h2>
 
-<%= render partial: 'statistics/stats', locals: { stats: @quotas } %>
+<%= render partial: 'statistics/stats', locals: { stats: {totals: presenter_for(@limits, LimitsPresenter).grouped_limits } } %>

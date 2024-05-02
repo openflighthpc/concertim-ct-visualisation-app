@@ -50,7 +50,7 @@ Rails.application.routes.draw do
 
   resources :teams do
     member do
-      get :quotas
+      get :usage_limits
     end
     resources :team_roles, only: [:index, :new, :create]
     resources :invoices, only: [:index, :show] do

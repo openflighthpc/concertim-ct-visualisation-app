@@ -6,7 +6,7 @@ class TeamsController < ApplicationController
     @teams = resource_table_collection(@teams)
   end
 
-  def quotas
+  def usage_limits
     @cloud_service_config = CloudServiceConfig.first
     authorize! :read, @team
 
@@ -22,9 +22,9 @@ class TeamsController < ApplicationController
       return
     end
 
-    result = GetTeamQuotasJob.perform_now(@cloud_service_config, @team)
+    result = GetTeamLimitsJob.perform_now(@cloud_service_config, @team, current_user)
     if result.success?
-      @quotas = {totals: TeamServices::QuotaStats.call(@team, result.quotas)}
+      @limits = result.limits
     else
       flash[:alert] = result.error_message
       redirect_to teams_path
