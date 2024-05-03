@@ -63,7 +63,7 @@ class Api::V1::Irv::DevicesController < Api::V1::Irv::BaseController
       return
     end
 
-    result = RequestStatusChangeJob.perform_now(@device, "devices", action, @cloud_service_config, current_user)
+    result = RequestStatusChangeJob.perform_now(@device, @device.subtype, action, @cloud_service_config, current_user)
 
     if result.success?
       render json: { success: true }

@@ -42,7 +42,7 @@ class Device < ApplicationRecord
   VALID_STATUS_ACTION_MAPPINGS = {
     "IN_PROGRESS" => [],
     "FAILED" => %w(destroy),
-    "ACTIVE" => %w(destroy off suspend),
+    "ACTIVE" => %w(destroy off suspend detach),
     "STOPPED" => %w(destroy on),
     "SUSPENDED" => %w(destroy resume)
   }
@@ -129,13 +129,18 @@ class Device < ApplicationRecord
   ####################################
 
   def valid_action?(action)
-    return false unless compute_device?
+    # return false unless compute_device? || action ==  "destroy"
 
     VALID_STATUS_ACTION_MAPPINGS[status].include?(action)
   end
 
   def compute_device?
     self.details_type == "Device::ComputeDetails"
+  end
+
+  # This suggests we probably do/will need subclasses
+  def subtype
+    self.details_type == "Device::ComputeDetails" ? "instances" : self.details_type[/::(\w+)Details/, 1].downcase << "s"
   end
 
   def openstack_id
