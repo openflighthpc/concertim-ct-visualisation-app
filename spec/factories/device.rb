@@ -30,6 +30,7 @@ FactoryBot.define do
     sequence(:name) { |n| "Device-#{n}" }
     metadata { {openstack_instance: "abc"} }
     status { 'IN_PROGRESS' }
+    type { "Instance" }
 
     association :chassis
     association :details, factory: :device_compute_details

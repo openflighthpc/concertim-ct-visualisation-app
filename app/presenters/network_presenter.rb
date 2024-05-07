@@ -1,0 +1,2 @@
+class NetworkPresenter < DevicePresenter
+end

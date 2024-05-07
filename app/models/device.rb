@@ -26,7 +26,6 @@
 #==============================================================================
 
 class Device < ApplicationRecord
-
   include LiveUpdate::Device
 
   include Searchable
@@ -42,7 +41,7 @@ class Device < ApplicationRecord
   VALID_STATUS_ACTION_MAPPINGS = {
     "IN_PROGRESS" => [],
     "FAILED" => %w(destroy),
-    "ACTIVE" => %w(destroy off suspend detach),
+    "ACTIVE" => %w(destroy off suspend),
     "STOPPED" => %w(destroy on),
     "SUSPENDED" => %w(destroy resume)
   }
@@ -84,10 +83,9 @@ class Device < ApplicationRecord
             numericality: { greater_than_or_equal_to: 0 },
             allow_blank: true
   validates :details, presence: :true
-  validate :name_validator
+  # validate :name_validator
   validate :device_limit, if: :new_record?
   validate :metadata_format
-  validate :valid_details_type
   validate :details_type_not_changed
   validates_associated :details
 
@@ -129,18 +127,19 @@ class Device < ApplicationRecord
   ####################################
 
   def valid_action?(action)
-    # return false unless compute_device? || action ==  "destroy"
-
     VALID_STATUS_ACTION_MAPPINGS[status].include?(action)
   end
 
   def compute_device?
-    self.details_type == "Device::ComputeDetails"
+    false
   end
 
-  # This suggests we probably do/will need subclasses
   def subtype
-    self.details_type == "Device::ComputeDetails" ? "instances" : self.details_type[/::(\w+)Details/, 1].downcase << "s"
+    self.class.name.downcase
+  end
+
+  def data_map_class_name
+    "device"
   end
 
   def openstack_id
@@ -193,16 +192,6 @@ class Device < ApplicationRecord
 
   def metadata_format
     self.errors.add(:metadata, "Must be an object") unless metadata.is_a?(Hash)
-  end
-
-  def valid_details_type
-    return unless details_type.present?
-    begin
-      dt = details_type.constantize
-      self.errors.add(:details_type, "Must be a valid subtype of Device::Details") unless dt < Device::Details
-    rescue NameError
-      self.errors.add(:details_type, "Must be a valid and recognised type")
-    end
   end
 
   def details_type_not_changed

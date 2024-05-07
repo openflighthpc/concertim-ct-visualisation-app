@@ -42,7 +42,7 @@ child(:chassis, root: 'Chassis') do |foo|
         name: chassis.device.name,
         buildStatus: chassis.device.status,
         cost: chassis.device.currency_cost,
-        type: chassis.device.details_type
+        type: chassis.device.type
       },
     }
   end

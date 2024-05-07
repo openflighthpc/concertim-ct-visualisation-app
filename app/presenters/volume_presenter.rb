@@ -1,0 +1,2 @@
+class VolumePresenter < DevicePresenter
+end

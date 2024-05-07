@@ -452,7 +452,7 @@
               "caption": "[[spacer]]"
             }
           ],
-          "Device::ComputeDetails": [
+          "Instance": [
             {
               "caption" : "Switch off",
               "url"     : "internal::statusChangeRequest,off,devices,[[device_id]],[[device_name]]",
@@ -484,7 +484,7 @@
               "rbacAction" : "manage"
             }
           ],
-          "Device::VolumeDetails": [
+          "Volume": [
             {
               "caption" : "Destroy",
               "url"     : "internal::statusChangeRequest,destroy,devices,[[device_id]],[[device_name]]",

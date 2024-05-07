@@ -6,6 +6,7 @@
     definition_list "Details" do |dl|
       presenter_for(@device) do |device|
         dl.item "Name:", device.name
+        dl.item "Type", device.type
         dl.item "Description:", device.description
         dl.item "Height:", device.u_height
         dl.item "Location:", device.location
@@ -21,10 +22,12 @@
           sl.item "Description:", device.template_description
         end
 
-        dl.sublist "Resources:" do |sl|
-          sl.item "VCPUs:", device.vcpus
-          sl.item "RAM (MB)", device.ram
-          sl.item "Disk (GB)", device.disk
+        if device.respond_to?(:vcpus)
+          dl.sublist "Resources:" do |sl|
+            sl.item "VCPUs:", device.vcpus
+            sl.item "RAM (MB)", device.ram
+            sl.item "Disk (GB)", device.disk
+          end
         end
 
         if device.has_metadata?
