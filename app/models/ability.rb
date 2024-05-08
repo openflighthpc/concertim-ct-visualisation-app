@@ -55,7 +55,7 @@ class Ability
     can :destroy, KeyPair, user: @user
 
     can [:read, :update], User, id: @user.id
-    can [:read, :quotas], Team, id: @user.team_ids
+    can [:read, :usage_limits], Team, id: @user.team_ids
     can :manage, TeamRole, team: @user.teams_where_admin.where(single_user: false)
 
     # Invoice is an ActiveModel::Model, but not an ActiveRecord::Base.  Setting
