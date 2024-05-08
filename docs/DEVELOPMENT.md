@@ -124,5 +124,5 @@ You can then run all tests with `yarn jest`, or specify a file, e.g. `yarn jest 
 
 1. Select available story in Pivotal tracker.
 2. Implement it with test coverage on a feature branch.
-3. Create PR https://github.com/alces-flight/concertim-ct-visualisation-app/pulls.
+3. Create PR https://github.com/openflighthpc/concertim-ct-visualisation-app/pulls.
 4. Update Pivotal tracker with PR details and mark story as finished.

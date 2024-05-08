@@ -11,7 +11,7 @@ Concertim Visualisation App allows visualising devices and their reported metric
 
 1. Clone the repository
     ```bash
-    git clone https://github.com/alces-flight/concertim-ct-visualisation-app.git
+    git clone https://github.com/openflighthpc/concertim-ct-visualisation-app.git
     ```
 2. Build the docker image
     ```bash
@@ -31,7 +31,7 @@ There is a Dockerfile in this repo for building the image.
 
 1. Clone the repository
     ```bash
-    git clone https://github.com/alces-flight/concertim-ct-visualisation-app.git
+    git clone https://github.com/openflighthpc/concertim-ct-visualisation-app.git
     ```
 2. Build the docker image
     ```bash
@@ -63,6 +63,29 @@ Concertim Visualisation App is deployed as part of the Concertim appliance
 using the [Concertim ansible
 playbook](https://github.com/alces-flight/concertim-ansible-playbook).
 
-## Copyright and License
+# Contributing
 
-Copyright (C) 2022-present Stephen F Norledge & Alces Flight Ltd.
+Fork the project. Make your feature addition or bug fix. Send a pull
+request. Bonus points for topic branches.
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md) for more details.
+
+# Copyright and License
+
+Eclipse Public License 2.0, see [LICENSE.txt](LICENSE.txt) for details.
+
+Copyright (C) 2024-present Alces Flight Ltd.
+
+This program and the accompanying materials are made available under
+the terms of the Eclipse Public License 2.0 which is available at
+[https://www.eclipse.org/legal/epl-2.0](https://www.eclipse.org/legal/epl-2.0),
+or alternative license terms made available by Alces Flight Ltd -
+please direct inquiries about licensing to
+[licensing@alces-flight.com](mailto:licensing@alces-flight.com).
+
+Concertim Visualisation App is distributed in the hope that it will be
+useful, but WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EITHER
+EXPRESS OR IMPLIED INCLUDING, WITHOUT LIMITATION, ANY WARRANTIES OR
+CONDITIONS OF TITLE, NON-INFRINGEMENT, MERCHANTABILITY OR FITNESS FOR
+A PARTICULAR PURPOSE. See the [Eclipse Public License 2.0](https://opensource.org/licenses/EPL-2.0) for more
+details.
