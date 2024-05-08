@@ -11,7 +11,7 @@ Concertim Visualisation App allows visualising devices and their reported metric
 
 1. Clone the repository
     ```bash
-    git clone https://github.com/alces-flight/concertim-ct-visualisation-app.git
+    git clone https://github.com/openflighthpc/concertim-ct-visualisation-app.git
     ```
 2. Build the docker image
     ```bash
@@ -31,7 +31,7 @@ There is a Dockerfile in this repo for building the image.
 
 1. Clone the repository
     ```bash
-    git clone https://github.com/alces-flight/concertim-ct-visualisation-app.git
+    git clone https://github.com/openflighthpc/concertim-ct-visualisation-app.git
     ```
 2. Build the docker image
     ```bash

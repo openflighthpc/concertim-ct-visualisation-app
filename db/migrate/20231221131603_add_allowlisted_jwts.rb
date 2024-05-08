@@ -22,7 +22,7 @@
 #  https://opensource.org/licenses/EPL-2.0
 #
 # For more information on Concertim Visualisation App, please visit:
-# https://github.com/openflighthpc/ct-visualisation-app
+# https://github.com/openflighthpc/concertim-ct-visualisation-app
 #==============================================================================
 
 class AddAllowlistedJwts < ActiveRecord::Migration[7.0]
