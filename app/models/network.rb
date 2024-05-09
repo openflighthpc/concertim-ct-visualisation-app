@@ -1,19 +1,34 @@
 class Network < Device
+
+  ####################################
+  #
+  # Class Methods
+  #
+  ####################################
+
+  def self.valid_statuses
+    %w(IN_PROGRESS FAILED ACTIVE STOPPED SUSPENDED)
+  end
+
+  def self.valid_status_action_mappings
+    {
+      "IN_PROGRESS" => [],
+      "FAILED" => [],
+      "ACTIVE" => [],
+      "STOPPED" => [],
+      "SUSPENDED" => []
+    }
+  end
+
+
+  ####################################
+  #
+  # Validations
+  #
+  ####################################
+
   validate :has_network_details
   validate :has_network_template
-
-  #############################
-  #
-  # CONSTANTS
-  #
-  ############################
-
-  VALID_STATUS_ACTION_MAPPINGS = {
-    "IN_PROGRESS" => [],
-    "FAILED" => [],
-    "ACTIVE" => [],
-    "STOPPED" => [],
-    "SUSPENDED" => []  }
 
   private
 

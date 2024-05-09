@@ -1,21 +1,33 @@
 class Volume < Device
+
+  ####################################
+  #
+  # Class Methods
+  #
+  ####################################
+
+  def self.valid_statuses
+    %w(IN_PROGRESS FAILED ACTIVE STOPPED SUSPENDED)
+  end
+
+  def self.valid_status_action_mappings
+    {
+      "IN_PROGRESS" => [],
+      "FAILED" => %w(destroy),
+      "ACTIVE" => %w(detach),
+      "STOPPED" => %w(destroy),
+      "SUSPENDED" => %w(destroy)
+    }
+  end
+
+  ####################################
+  #
+  # Validations
+  #
+  ####################################
+
   validate :has_volume_details
   validate :has_volume_template
-
-  #############################
-  #
-  # CONSTANTS
-  #
-  ############################
-
-  VALID_STATUSES = %w(IN_PROGRESS FAILED ACTIVE STOPPED SUSPENDED)
-  VALID_STATUS_ACTION_MAPPINGS = {
-    "IN_PROGRESS" => [],
-    "FAILED" => %w(destroy),
-    "ACTIVE" => %w(detach),
-    "STOPPED" => %w(destroy),
-    "SUSPENDED" => %w(destroy)
-  }
 
   private
 

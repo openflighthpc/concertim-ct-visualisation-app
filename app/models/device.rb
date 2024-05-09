@@ -31,21 +31,6 @@ class Device < ApplicationRecord
   include Searchable
   default_search_scope :name, :status
 
-  #############################
-  #
-  # CONSTANTS
-  #
-  ############################
-
-  VALID_STATUSES = %w(IN_PROGRESS FAILED ACTIVE STOPPED SUSPENDED)
-  VALID_STATUS_ACTION_MAPPINGS = {
-    "IN_PROGRESS" => [],
-    "FAILED" => %w(destroy),
-    "ACTIVE" => %w(destroy off suspend),
-    "STOPPED" => %w(destroy on),
-    "SUSPENDED" => %w(destroy resume)
-  }
-
   ####################################
   #
   # Associations
@@ -63,6 +48,26 @@ class Device < ApplicationRecord
   belongs_to :details, polymorphic: :true, dependent: :destroy
 
 
+  ####################################
+  #
+  # Class Methods
+  #
+  ####################################
+
+  def self.valid_statuses
+    %w(IN_PROGRESS FAILED ACTIVE STOPPED SUSPENDED)
+  end
+
+  def self.valid_status_action_mappings
+    {
+      "IN_PROGRESS" => [],
+      "FAILED" => %w(destroy),
+      "ACTIVE" => %w(destroy off suspend),
+      "STOPPED" => %w(destroy on),
+      "SUSPENDED" => %w(destroy resume)
+    }
+  end
+
   ###########################
   #
   # Validations
@@ -78,7 +83,7 @@ class Device < ApplicationRecord
             }
   validates :status,
             presence: true,
-            inclusion: { in: VALID_STATUSES, message: "must be one of #{VALID_STATUSES.to_sentence(last_word_connector: ' or ')}" }
+            inclusion: { in: valid_statuses, message: "must be one of #{valid_statuses.to_sentence(last_word_connector: ' or ')}" }
   validates :cost,
             numericality: { greater_than_or_equal_to: 0 },
             allow_blank: true
@@ -127,7 +132,7 @@ class Device < ApplicationRecord
   ####################################
 
   def valid_action?(action)
-    VALID_STATUS_ACTION_MAPPINGS[status].include?(action)
+    self.class.valid_status_action_mappings[status].include?(action)
   end
 
   def compute_device?
@@ -135,7 +140,7 @@ class Device < ApplicationRecord
   end
 
   def subtype
-    self.class.name.downcase
+    self.class.name.downcase.pluralize
   end
 
   def data_map_class_name
