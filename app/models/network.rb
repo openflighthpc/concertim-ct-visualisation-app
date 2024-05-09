@@ -24,7 +24,7 @@ class Network < Device
   end
 
   def has_network_template
-    unless device.template.tag == 'volume'
+    unless self.template.tag == 'network'
       self.errors.add(:template, 'must use the network template')
     end
   end
