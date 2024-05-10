@@ -488,7 +488,7 @@
             {
               "caption" : "Destroy",
               "url"     : "internal::statusChangeRequest,destroy,devices,[[device_id]],[[device_name]]",
-              "availableToBuildStatuses": ["STOPPED", "FAILED"],
+              "availableToBuildStatuses": ["AVAILABLE", "FAILED"],
               "rbacAction" : "manage"
             },
             {

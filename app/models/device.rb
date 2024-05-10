@@ -81,14 +81,13 @@ class Device < ApplicationRecord
               with: /\A[a-zA-Z0-9\-\.]*\Z/,
               message: "can contain only alphanumeric characters, dots and hyphens."
             }
-  validates :status,
-            presence: true,
-            inclusion: { in: valid_statuses, message: "must be one of #{valid_statuses.to_sentence(last_word_connector: ' or ')}" }
+  validates :status, presence: true
+  validate :status_validator
   validates :cost,
             numericality: { greater_than_or_equal_to: 0 },
             allow_blank: true
   validates :details, presence: :true
-  # validate :name_validator
+  validate :name_validator
   validate :device_limit, if: :new_record?
   validate :metadata_format
   validate :details_type_not_changed
@@ -183,6 +182,14 @@ class Device < ApplicationRecord
 
     if taken_names.include?(name)
       errors.add(:name, :taken)
+    end
+  end
+
+  def status_validator
+    return unless self.status
+
+    unless self.class.valid_statuses.include?(self.status)
+      errors.add(:status, "must be one of #{self.class.valid_statuses.to_sentence(last_word_connector: ' or ')}")
     end
   end
 

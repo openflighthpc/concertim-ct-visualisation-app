@@ -1605,9 +1605,15 @@ class RackSpace {
       case 'focusOn':
         return this.focusOn(params[1], params[2]);
       case 'statusChangeRequest':
-        if (params[1] !== 'destroy' || confirm(`Are you sure you want to destroy ${params[4]}? This cannot be undone.`)) {
-          return this.requestStatusChange(params[1], params[2], params[3], params[4]);
+        let act = false;
+        if (!['destroy', 'detach'].includes(params[1])) {
+          act = true;
+        } else if (params[1] === 'destroy' && confirm(`Are you sure you want to destroy ${params[4]}? This cannot be undone.`)) {
+          act = true;
+        } else if (params[1] === 'detach' && confirm(`Are you sure you want to detach ${params[4]}? This may impact operation of its associated instance(s).`)) {
+          act = true;
         }
+        if (act) return this.requestStatusChange(params[1], params[2], params[3], params[4]);
       case 'reset':
         return Events.dispatchEvent(this.rackEl, 'rackSpaceReset');
       case 'clearDeselected':

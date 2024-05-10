@@ -7,7 +7,7 @@ class Volume < Device
   ####################################
 
   def self.valid_statuses
-    %w(IN_PROGRESS FAILED ACTIVE STOPPED SUSPENDED)
+    %w(IN_PROGRESS FAILED ACTIVE AVAILABLE)
   end
 
   def self.valid_status_action_mappings
@@ -15,8 +15,7 @@ class Volume < Device
       "IN_PROGRESS" => [],
       "FAILED" => %w(destroy),
       "ACTIVE" => %w(detach),
-      "STOPPED" => %w(destroy),
-      "SUSPENDED" => %w(destroy)
+      "AVAILABLE" => %w(destroy)
     }
   end
 
