@@ -2,7 +2,7 @@
 
 These example scripts demonstrate usage of the rack and device API.  Example
 scripts for the metric API can be found at
-https://github.com/alces-flight/concertim-metric-reporting-daemon/tree/main/docs/examples.
+https://github.com/openflighthpc/concertim-metric-reporting-daemon/tree/main/docs/examples.
 
 For the best experience you will want to ensure that you are viewing the
 example scripts for the same release as the Concertim instance.
