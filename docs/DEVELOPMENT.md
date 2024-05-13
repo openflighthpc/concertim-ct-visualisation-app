@@ -2,14 +2,14 @@
 
 Concertim Visualisation App (aka `ct-visualisation-app` or `ct-vis-app`) is one
 of two apps that form the Concertim UI; the other is [metric reporting
-daemon](https://github.com/alces-flight/concertim-metric-reporting-daemon).
+daemon](https://github.com/openflighthpc/concertim-metric-reporting-daemon).
 
 ## Vagrant machine
 
 Development of both apps takes place on a Vagrant virtual machine, which is
 provisioned with the use of an ansible playbook.  The vagrant file and the
 ansible playbook can be found in the
-[concertim-ansible-playbook](https://github.com/alces-flight/concertim-ansible-playbook)
+[concertim-ansible-playbook](https://github.com/openflighthpc/concertim-ansible-playbook)
 repo.
 
 That repo contains details on how to build the vagrant machine and provision it
