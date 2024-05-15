@@ -33,7 +33,7 @@ RSpec.describe BroadcastRackChangeJob, type: :job do
   let(:template) { create(:template, :rack_template) }
   let(:device_template) { create(:template, :device_template) }
   let!(:rack) { create(:rack, team: team, template: template) }
-  let!(:device) { create(:device, chassis: chassis) }
+  let!(:device) { create(:instance, chassis: chassis) }
   let(:chassis) { create(:chassis, location: location, template: device_template) }
   let(:location) { create(:location, rack: rack) }
   subject { BroadcastRackChangeJob.perform_now(rack.id, team.id, action) }

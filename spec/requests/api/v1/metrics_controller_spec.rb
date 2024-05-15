@@ -33,7 +33,7 @@ RSpec.describe "Api::V1::MetricsController", type: :request do
   let(:chassis) { create(:chassis, template: device_template, location: location) }
   let(:location) { create(:location, rack: rack) }
   let(:device_template) { create(:template, :device_template) }
-  let(:device) { create(:device, chassis: chassis, metadata: {foo: :bar}) }
+  let(:device) { create(:instance, chassis: chassis, metadata: {foo: :bar}) }
   let(:rack_owner) { create(:user) }
 
   let(:headers) { {} }

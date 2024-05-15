@@ -48,7 +48,7 @@ module StatisticsServices
       end
 
       def servers_stats
-        servers = Device.joins(:template).where(details_type: "Device::ComputeDetails")
+        servers = Instance.joins(:template).all
         {
           active: servers.where(status: %w(ACTIVE IN_PROGRESS)).count,
           inactive: servers.where(status: %w(FAILED STOPPED SUSPENDED)).count,
@@ -59,19 +59,19 @@ module StatisticsServices
       end
 
       def volumes_stats
-        volumes = Device.where(details_type: "Device::VolumeDetails")
+        volumes = Volume.joins(:template).all
         {
           active: volumes.where(status: %w(ACTIVE IN_PROGRESS)).count,
-          inactive: volumes.where(status: %w(FAILED STOPPED SUSPENDED)).count,
+          inactive: volumes.where(status: %w(FAILED STOPPED AVAILABLE)).count,
           total_disk_space: "#{volumes.reduce(0) {|sum, volume| sum + (volume.details.size || 0)}}GB"
         }
       end
 
       def networks_stats
-        networks = Device.where(details_type: "Device::NetworkDetails")
+        networks = Network.joins(:template).all
         {
           active: networks.where(status: %w(ACTIVE IN_PROGRESS)).count,
-          inactive: networks.where(status: %w(FAILED STOPPED SUSPENDED)).count,
+          inactive: networks.where(status: %w(FAILED STOPPED)).count,
         }
       end
 

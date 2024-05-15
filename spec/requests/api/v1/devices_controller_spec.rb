@@ -75,7 +75,7 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
       end
 
       context "when there is one device" do
-        let!(:device) { create(:device, chassis: chassis, metadata: {foo: :bar}) }
+        let!(:device) { create(:instance, chassis: chassis, metadata: {foo: :bar}) }
         let(:chassis) { create(:chassis, template: device_template, location: location) }
         let(:location) { create(:location, rack: rack) }
 
@@ -95,8 +95,8 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
         let!(:devices) {
           dt = device_template
           [
-            create(:device, metadata: {foo: "one"}, chassis: create(:chassis, template: dt, location: create(:location, rack: rack, start_u: 1))),
-            create(:device, metadata: {foo: "two"}, chassis: create(:chassis, template: dt, location: create(:location, rack: rack, start_u: 2))),
+            create(:instance, metadata: {foo: "one"}, chassis: create(:chassis, template: dt, location: create(:location, rack: rack, start_u: 1))),
+            create(:instance, metadata: {foo: "two"}, chassis: create(:chassis, template: dt, location: create(:location, rack: rack, start_u: 2))),
           ]
         }
 
@@ -121,7 +121,7 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
 
   describe "GET :show" do
     let(:url_under_test) { urls.api_v1_device_path(device) }
-    let!(:device) { create(:device, chassis: chassis) }
+    let!(:device) { create(:instance, chassis: chassis) }
     let(:chassis) { create(:chassis, template: device_template, location: location) }
     let(:location) { create(:location, rack: rack) }
     let(:full_template_details) { true }
@@ -157,7 +157,7 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
 
   describe "PATCH :update" do
     let(:url_under_test) { urls.api_v1_device_path(device) }
-    let!(:device) { create(:device, chassis: chassis) }
+    let!(:device) { create(:instance, chassis: chassis) }
     let(:chassis) { create(:chassis, template: device_template, location: location) }
     let(:location) { create(:location, rack: rack) }
     let(:full_template_details) { true }
@@ -371,7 +371,7 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
       context 'with a network device' do
         let(:device_template) { create(:template, :network_device_template) }
         let(:details) { create(:device_network_details) }
-        let!(:device) { create(:device, chassis: chassis, details: details) }
+        let!(:device) { create(:network, chassis: chassis, details: details) }
 
         context "with valid parameters" do
           let(:attributes) {
@@ -420,7 +420,7 @@ RSpec.describe "Api::V1::DevicesControllers", type: :request do
       context 'with a volume device' do
         let(:device_template) { create(:template, :volume_device_template) }
         let(:details) { create(:device_volume_details) }
-        let!(:device) { create(:device, chassis: chassis, details: details) }
+        let!(:device) { create(:volume, chassis: chassis, details: details) }
 
         context "with valid parameters" do
           let(:attributes) {

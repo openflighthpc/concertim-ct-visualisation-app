@@ -497,6 +497,14 @@
               "availableToBuildStatuses": ["ACTIVE"],
               "rbacAction" : "manage"
             }
+          ],
+          "Network": [
+            {
+              "caption" : "Destroy",
+              "url"     : "internal::statusChangeRequest,destroy,devices,[[device_id]],[[device_name]]",
+              "availableToBuildStatuses": ["ACTIVE", "FAILED", "STOPPED"],
+              "rbacAction" : "manage"
+            }
           ]
         },
         "common": []

@@ -27,10 +27,10 @@
 
 require 'rails_helper'
 
-RSpec.describe Device, type: :model do
+RSpec.describe Instance, type: :model do
   let!(:rack_template) { create(:template, :rack_template) }
   subject { device }
-  let(:device) { create(:device, chassis: chassis) }
+  let(:device) { create(:instance, chassis: chassis) }
   let(:chassis) { create(:chassis, location: location, template: device_template) }
   let(:location) { create(:location, rack: rack) }
   let!(:rack) { create(:rack, template: rack_template) }
@@ -43,7 +43,7 @@ RSpec.describe Device, type: :model do
         chassis: chassis,
         name: 'device-0',
         status: 'IN_PROGRESS',
-        cost: 99.99
+        cost: 99.99,
       )
       device.details = Device::ComputeDetails.new
       expect(device).to be_valid
@@ -75,7 +75,7 @@ RSpec.describe Device, type: :model do
     end
 
     it "must have a unique name within its rack" do
-      new_device = build(:device, chassis: chassis, name: subject.name)
+      new_device = build(:instance, chassis: chassis, name: subject.name)
 
       expect(new_device.name).to eq device.name
       expect(new_device).to have_error(:name, :taken)
@@ -85,7 +85,7 @@ RSpec.describe Device, type: :model do
       new_rack = create(:rack, template: rack_template)
       new_location = create(:location, rack: new_rack)
       new_chassis = create(:chassis, location: new_location, template: device_template)
-      new_device = build(:device, chassis: new_chassis, name: subject.name)
+      new_device = build(:instance, chassis: new_chassis, name: subject.name)
 
       expect(new_device.name).to eq device.name
       expect(new_device).not_to have_error(:name)
@@ -98,7 +98,7 @@ RSpec.describe Device, type: :model do
 
     it "is not vaild with an invalid status" do
       subject.status = "SNAFU"
-      expect(subject).to have_error(:status, :inclusion)
+      expect(subject).to have_error(:status, "must be one of IN_PROGRESS, FAILED, ACTIVE, STOPPED or SUSPENDED")
     end
 
     it "is not valid with a negative cost" do
@@ -113,7 +113,7 @@ RSpec.describe Device, type: :model do
 
     it "is not valid with a details model that is an invalid class" do
       subject.details = location
-      expect(subject).to have_error(:details_type, "Must be a valid subtype of Device::Details")
+      expect(subject).to have_error(:details_type, "must have compute details")
       # This is a secondary error, but until we add a second Device::Details
       # subclass, this test is the only way we can assert it's returned:
       expect(subject).to have_error(:details_type, "Cannot be changed once a device has been created")
@@ -151,7 +151,7 @@ RSpec.describe Device, type: :model do
 
     context 'updated' do
       let(:action) { "modified" }
-      let!(:device) { create(:device, chassis: chassis) }
+      let!(:device) { create(:instance, chassis: chassis) }
       subject do
         device.name = "new-name"
         device.save!
@@ -162,7 +162,7 @@ RSpec.describe Device, type: :model do
 
     context 'deleted' do
       let(:action) { "modified" }
-      let!(:device) { create(:device, chassis: chassis) }
+      let!(:device) { create(:instance, chassis: chassis) }
       subject { device.destroy! }
 
       include_examples 'rack details'

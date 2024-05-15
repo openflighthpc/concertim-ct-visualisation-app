@@ -222,7 +222,7 @@ RSpec.describe HwRack, type: :model do
 
       context 'with device' do
         let(:device_template) { create(:template, :device_template) }
-        let!(:device) { create(:device, chassis: chassis) }
+        let!(:device) { create(:instance, chassis: chassis) }
         let(:chassis) { create(:chassis, location: location, template: device_template) }
         let(:location) { create(:location, rack: rack) }
 

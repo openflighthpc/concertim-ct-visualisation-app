@@ -7,16 +7,15 @@ class Network < Device
   ####################################
 
   def self.valid_statuses
-    %w(IN_PROGRESS FAILED ACTIVE STOPPED SUSPENDED)
+    %w(IN_PROGRESS FAILED ACTIVE STOPPED)
   end
 
   def self.valid_status_action_mappings
     {
       "IN_PROGRESS" => [],
-      "FAILED" => [],
-      "ACTIVE" => [],
-      "STOPPED" => [],
-      "SUSPENDED" => []
+      "FAILED" => %w(destroy),
+      "ACTIVE" => %w(destroy),
+      "STOPPED" => %w(destroy)
     }
   end
 

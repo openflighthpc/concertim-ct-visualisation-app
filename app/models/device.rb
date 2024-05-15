@@ -55,17 +55,11 @@ class Device < ApplicationRecord
   ####################################
 
   def self.valid_statuses
-    %w(IN_PROGRESS FAILED ACTIVE STOPPED SUSPENDED)
+    []
   end
 
   def self.valid_status_action_mappings
-    {
-      "IN_PROGRESS" => [],
-      "FAILED" => %w(destroy),
-      "ACTIVE" => %w(destroy off suspend),
-      "STOPPED" => %w(destroy on),
-      "SUSPENDED" => %w(destroy resume)
-    }
+    {}
   end
 
   ###########################
@@ -132,10 +126,6 @@ class Device < ApplicationRecord
 
   def valid_action?(action)
     self.class.valid_status_action_mappings[status].include?(action)
-  end
-
-  def compute_device?
-    false
   end
 
   def subtype

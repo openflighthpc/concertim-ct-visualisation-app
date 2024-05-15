@@ -26,8 +26,8 @@
 #==============================================================================
 
 FactoryBot.define do
-  factory :device, class: "Device" do
-    sequence(:name) { |n| "Device-#{n}" }
+  factory :instance, class: "Instance" do
+    sequence(:name) { |n| "Instance-#{n}" }
     metadata { {openstack_instance: "abc"} }
     status { 'IN_PROGRESS' }
     type { "Instance" }

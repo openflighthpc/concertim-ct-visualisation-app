@@ -66,9 +66,9 @@ RSpec.describe StatisticsServices::Summary, type: :service do
     let!(:rack_template) { create(:template, :rack_template) }
     let(:template) { create(:template, :device_template, vcpus: 2, ram: 4096, disk: 10) }
     let(:chassis) { create(:chassis, template: template) }
-    let!(:server) { create(:device, status: "STOPPED", chassis: chassis) }
-    let!(:another_server) { create(:device, status: "FAILED", chassis: chassis) }
-    let!(:further_server) { create(:device, status: "ACTIVE", chassis: chassis) }
+    let!(:server) { create(:instance, status: "STOPPED", chassis: chassis) }
+    let!(:another_server) { create(:instance, status: "FAILED", chassis: chassis) }
+    let!(:further_server) { create(:instance, status: "ACTIVE", chassis: chassis) }
 
     it 'includes counts, vcpu, ram and disk usage' do
       expected = {
@@ -86,9 +86,9 @@ RSpec.describe StatisticsServices::Summary, type: :service do
     let!(:rack_template) { create(:template, :rack_template) }
     let(:template) { create(:template, :volume_device_template) }
     let(:chassis) { create(:chassis, template: template) }
-    let!(:volume) { create(:device, details: Device::VolumeDetails.new(size: 100), status: "STOPPED", chassis: chassis) }
-    let!(:another_volume) { create(:device, details: Device::VolumeDetails.new(size: 200), status: "FAILED", chassis: chassis) }
-    let!(:further_volume) { create(:device, details: Device::VolumeDetails.new(size: 10), status: "ACTIVE", chassis: chassis) }
+    let!(:volume) { create(:volume, details: Device::VolumeDetails.new(size: 100), status: "AVAILABLE", chassis: chassis) }
+    let!(:another_volume) { create(:volume, details: Device::VolumeDetails.new(size: 200), status: "FAILED", chassis: chassis) }
+    let!(:further_volume) { create(:volume, details: Device::VolumeDetails.new(size: 10), status: "ACTIVE", chassis: chassis) }
 
     it 'includes counts and disk usage' do
       expected = {
@@ -104,9 +104,9 @@ RSpec.describe StatisticsServices::Summary, type: :service do
     let!(:rack_template) { create(:template, :rack_template) }
     let(:template) { create(:template, :network_device_template) }
     let(:chassis) { create(:chassis, template: template) }
-    let!(:network) { create(:device, details: Device::NetworkDetails.new, status: "STOPPED", chassis: chassis) }
-    let!(:another_network) { create(:device, details: Device::NetworkDetails.new, status: "ACTIVE", chassis: chassis) }
-    let!(:further_network) { create(:device, details: Device::NetworkDetails.new, status: "ACTIVE", chassis: chassis) }
+    let!(:network) { create(:network, details: Device::NetworkDetails.new, status: "STOPPED", chassis: chassis) }
+    let!(:another_network) { create(:network, details: Device::NetworkDetails.new, status: "ACTIVE", chassis: chassis) }
+    let!(:further_network) { create(:network, details: Device::NetworkDetails.new, status: "ACTIVE", chassis: chassis) }
 
     it 'includes network counts' do
       expect(subject[:networks]).to eq({active: 2, inactive: 1})

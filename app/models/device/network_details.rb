@@ -27,15 +27,15 @@
 
 class Device::NetworkDetails < Device::Details
 
-  validate :device_uses_network_template
+  validate :device_is_network
 
   private
 
-  def device_uses_network_template
+  def device_is_network
     reload_device
     return unless device.present?
-    unless device.template.tag == 'network'
-      self.errors.add(:device, 'must use the `network` template if it has a Device::NetworkDetails')
+    unless device.type == "Network"
+      self.errors.add(:device, 'must be a Network')
     end
   end
 

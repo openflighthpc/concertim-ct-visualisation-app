@@ -26,4 +26,16 @@
 #==============================================================================
 
 class Device::ComputeDetails < Device::Details
+
+  validate :device_is_instance
+
+  private
+
+  def device_is_instance
+    reload_device
+    return unless device.present?
+    unless device.type == "Instance"
+      self.errors.add(:device, 'must be an Instance')
+    end
+  end
 end

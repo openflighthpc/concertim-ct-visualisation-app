@@ -50,6 +50,7 @@ RSpec.describe "Api::V1::NodesControllers", type: :request do
           template_id: device_template.id,
           device: {
             name: "device-1",
+            type: "Instance",
             description: "device-1 description",
             location: {
               rack_id: rack.id,
@@ -75,6 +76,7 @@ RSpec.describe "Api::V1::NodesControllers", type: :request do
           template_id: device_template.id,
           device: {
             name: "device-1",
+            type: "Instance",
             description: "device-1 description",
             location: {
               rack_id: rack.id,
@@ -98,6 +100,7 @@ RSpec.describe "Api::V1::NodesControllers", type: :request do
           device: {
             name: "not a valid name",
             status: 'not a valid status',
+            type: "Instance",
             details: {
               type: 'herring'
             }
@@ -136,6 +139,7 @@ RSpec.describe "Api::V1::NodesControllers", type: :request do
           ).stringify_keys
 
           expect(parsed_device["name"]).to eq valid_attributes[:device][:name]
+          expect(parsed_device["type"]).to eq valid_attributes[:device][:type]
           expect(parsed_device["description"]).to eq valid_attributes[:device][:description]
           expect(parsed_device["location"]).to eq expected_location
           expect(parsed_device["metadata"]).to eq valid_attributes[:device][:metadata]
@@ -185,6 +189,7 @@ RSpec.describe "Api::V1::NodesControllers", type: :request do
           ).stringify_keys
 
           expect(parsed_device["name"]).to eq legacy_valid_attributes[:device][:name]
+          expect(parsed_device["type"]).to eq legacy_valid_attributes[:device][:type]
           expect(parsed_device["description"]).to eq legacy_valid_attributes[:device][:description]
           expect(parsed_device["location"]).to eq expected_location
           expect(parsed_device["metadata"]).to eq legacy_valid_attributes[:device][:metadata]
@@ -227,6 +232,7 @@ RSpec.describe "Api::V1::NodesControllers", type: :request do
             template_id: device_template.id,
             device: {
               name: "net-1",
+              type: "Network",
               description: "net-1 description",
               location: {
                 rack_id: rack.id,
@@ -275,6 +281,7 @@ RSpec.describe "Api::V1::NodesControllers", type: :request do
           ).stringify_keys
 
           expect(parsed_device["name"]).to eq valid_attributes[:device][:name]
+          expect(parsed_device["type"]).to eq valid_attributes[:device][:type]
           expect(parsed_device["description"]).to eq valid_attributes[:device][:description]
           expect(parsed_device["location"]).to eq expected_location
           expect(parsed_device["metadata"]).to eq valid_attributes[:device][:metadata]
@@ -295,6 +302,7 @@ RSpec.describe "Api::V1::NodesControllers", type: :request do
             template_id: device_template.id,
             device: {
               name: "vol-1",
+              type: "Volume",
               description: "vol-1 description",
               location: {
                 rack_id: rack.id,
@@ -336,6 +344,7 @@ RSpec.describe "Api::V1::NodesControllers", type: :request do
           parsed_device = JSON.parse(response.body)
 
           expect(parsed_device["name"]).to eq valid_attributes[:device][:name]
+          expect(parsed_device["type"]).to eq valid_attributes[:device][:type]
           expect(parsed_device["description"]).to eq valid_attributes[:device][:description]
           expect(parsed_device["metadata"]).to eq valid_attributes[:device][:metadata]
           expect(parsed_device["status"]).to eq valid_attributes[:device][:status]
