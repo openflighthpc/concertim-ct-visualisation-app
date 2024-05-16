@@ -73,6 +73,11 @@ RSpec.shared_examples "device models" do
       expect(subject).to have_error(:chassis, :blank)
     end
 
+    it "is not valid without appropriate template" do
+      subject.template.tag = "wrong"
+      expect(subject).to have_error(:template, "must use #{device_type[0] == "i" ? "an" : "the"} #{device_type} template")
+    end
+
     it "must have a unique name within its rack" do
       new_device = build(:instance, chassis: chassis, name: subject.name)
 
@@ -150,7 +155,7 @@ RSpec.shared_examples "device models" do
 
     context 'updated' do
       let(:action) { "modified" }
-      let!(:device) { create(:instance, chassis: chassis) }
+      let!(:device) { create(device_type, chassis: chassis) }
       subject do
         device.name = "new-name"
         device.save!
@@ -161,7 +166,7 @@ RSpec.shared_examples "device models" do
 
     context 'deleted' do
       let(:action) { "modified" }
-      let!(:device) { create(:instance, chassis: chassis) }
+      let!(:device) { create(device_type, chassis: chassis) }
       subject { device.destroy! }
 
       include_examples 'rack details'

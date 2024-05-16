@@ -54,12 +54,20 @@ class Instance < Device
   ####################################
 
   validate :has_compute_details
+  validate :has_suitable_template
 
   private
 
   def has_compute_details
     unless details_type == 'Device::ComputeDetails'
       self.errors.add(:details_type, 'must have compute details')
+    end
+  end
+
+  def has_suitable_template
+    # Tag is used to identify unique templates, i.e. network or volume
+    unless template && template.tag == nil
+      self.errors.add(:template, 'must use an instance template')
     end
   end
 end
