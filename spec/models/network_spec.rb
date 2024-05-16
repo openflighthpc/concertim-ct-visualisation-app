@@ -28,11 +28,11 @@
 require 'rails_helper'
 require_relative '../support/shared_examples/devices'
 
-RSpec.describe Instance, type: :model do
-  let(:device_type) { :instance }
-  let(:template_type) { :device_template }
-  let(:details_class) { Device::ComputeDetails }
-  let(:valid_statuses) { %w(IN_PROGRESS FAILED ACTIVE STOPPED SUSPENDED) }
+RSpec.describe Network, type: :model do
+  let(:device_type) { :network }
+  let(:template_type) { :network_device_template }
+  let(:details_class) { Device::NetworkDetails }
+  let(:valid_statuses) { %w(IN_PROGRESS FAILED ACTIVE STOPPED) }
 
   include_examples 'device models'
 end

@@ -64,7 +64,7 @@ class Volume < Device
   end
 
   def has_volume_template
-    unless self.template.tag == 'volume'
+    unless self.template&.tag == 'volume'
       self.errors.add(:template, 'must use the volume template')
     end
   end

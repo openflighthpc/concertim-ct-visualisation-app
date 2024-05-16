@@ -74,7 +74,6 @@ module NodeServices
       raise UnsupportedError, "complex chassis are not supported" if @template.complex?
 
       Rails.logger.debug("Persisting template #{@template.id}")
-      Rails.logger.debug(@device_params)
       Chassis.transaction do
         create_object_graph
         @user.ability.authorize!(:update, @chassis.rack)

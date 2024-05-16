@@ -65,7 +65,7 @@ class Network < Device
   end
 
   def has_network_template
-    unless self.template.tag == 'network'
+    unless self.template&.tag == 'network'
       self.errors.add(:template, 'must use the network template')
     end
   end
