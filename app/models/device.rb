@@ -26,26 +26,10 @@
 #==============================================================================
 
 class Device < ApplicationRecord
-
   include LiveUpdate::Device
 
   include Searchable
   default_search_scope :name, :status
-
-  #############################
-  #
-  # CONSTANTS
-  #
-  ############################
-
-  VALID_STATUSES = %w(IN_PROGRESS FAILED ACTIVE STOPPED SUSPENDED)
-  VALID_STATUS_ACTION_MAPPINGS = {
-    "IN_PROGRESS" => [],
-    "FAILED" => %w(destroy),
-    "ACTIVE" => %w(destroy off suspend),
-    "STOPPED" => %w(destroy on),
-    "SUSPENDED" => %w(destroy resume)
-  }
 
   ####################################
   #
@@ -64,6 +48,20 @@ class Device < ApplicationRecord
   belongs_to :details, polymorphic: :true, dependent: :destroy
 
 
+  ####################################
+  #
+  # Class Methods
+  #
+  ####################################
+
+  def self.valid_statuses
+    []
+  end
+
+  def self.valid_status_action_mappings
+    {}
+  end
+
   ###########################
   #
   # Validations
@@ -77,9 +75,8 @@ class Device < ApplicationRecord
               with: /\A[a-zA-Z0-9\-\.]*\Z/,
               message: "can contain only alphanumeric characters, dots and hyphens."
             }
-  validates :status,
-            presence: true,
-            inclusion: { in: VALID_STATUSES, message: "must be one of #{VALID_STATUSES.to_sentence(last_word_connector: ' or ')}" }
+  validates :status, presence: true
+  validate :status_validator
   validates :cost,
             numericality: { greater_than_or_equal_to: 0 },
             allow_blank: true
@@ -87,7 +84,6 @@ class Device < ApplicationRecord
   validate :name_validator
   validate :device_limit, if: :new_record?
   validate :metadata_format
-  validate :valid_details_type
   validate :details_type_not_changed
   validates_associated :details
 
@@ -129,13 +125,15 @@ class Device < ApplicationRecord
   ####################################
 
   def valid_action?(action)
-    return false unless compute_device?
-
-    VALID_STATUS_ACTION_MAPPINGS[status].include?(action)
+    self.class.valid_status_action_mappings[status].include?(action)
   end
 
-  def compute_device?
-    self.details_type == "Device::ComputeDetails"
+  def subtype
+    self.class.name.downcase.pluralize
+  end
+
+  def data_map_class_name
+    "device"
   end
 
   def openstack_id
@@ -177,6 +175,14 @@ class Device < ApplicationRecord
     end
   end
 
+  def status_validator
+    return unless self.status
+
+    unless self.class.valid_statuses.include?(self.status)
+      errors.add(:status, "must be one of #{self.class.valid_statuses.to_sentence(last_word_connector: ' or ')}")
+    end
+  end
+
   def device_limit
     limit_rads = YAML.load_file("/opt/concertim/licence-limits.yml")['device_limit'] rescue nil
     limit_nrads = YAML.load_file("/opt/concertim/licence-limits.yml")['nrad_limit'] rescue nil
@@ -188,16 +194,6 @@ class Device < ApplicationRecord
 
   def metadata_format
     self.errors.add(:metadata, "Must be an object") unless metadata.is_a?(Hash)
-  end
-
-  def valid_details_type
-    return unless details_type.present?
-    begin
-      dt = details_type.constantize
-      self.errors.add(:details_type, "Must be a valid subtype of Device::Details") unless dt < Device::Details
-    rescue NameError
-      self.errors.add(:details_type, "Must be a valid and recognised type")
-    end
   end
 
   def details_type_not_changed

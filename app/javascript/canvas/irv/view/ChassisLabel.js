@@ -16,6 +16,7 @@ class ChassisLabel extends NameLabel {
     ACTIVE: 'green',
     FAILED: 'red',
     SUSPENDED: "blue",
+    AVAILABLE: "blue",
   };
 
   static buildStatusImage(buildStatus) {

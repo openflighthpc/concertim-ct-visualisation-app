@@ -25,18 +25,14 @@
 # https://github.com/openflighthpc/concertim-ct-visualisation-app
 #==============================================================================
 
-class Device::NetworkDetails < Device::Details
+require 'rails_helper'
+require_relative '../support/shared_examples/devices'
 
-  validate :device_is_network
+RSpec.describe Volume, type: :model do
+  let(:device_type) { :volume }
+  let(:template_type) { :volume_device_template }
+  let(:details_class) { Device::VolumeDetails }
+  let(:valid_statuses) { %w(IN_PROGRESS FAILED ACTIVE AVAILABLE) }
 
-  private
-
-  def device_is_network
-    reload_device
-    return unless device.present?
-    unless device.type == "Network"
-      self.errors.add(:device, 'must be a Network')
-    end
-  end
-
+  include_examples 'device models'
 end

@@ -25,18 +25,8 @@
 # https://github.com/openflighthpc/concertim-ct-visualisation-app
 #==============================================================================
 
-class Device::NetworkDetails < Device::Details
-
-  validate :device_is_network
-
-  private
-
-  def device_is_network
-    reload_device
-    return unless device.present?
-    unless device.type == "Network"
-      self.errors.add(:device, 'must be a Network')
-    end
-  end
+class InstancePresenter < DevicePresenter
+  delegate :vcpus, :ram, :disk,
+           to: :template
 
 end

@@ -68,10 +68,10 @@ RSpec.describe TeamServices::QuotaStats, type: :service do
 
   context 'has servers' do
     let(:template) { create(:template, :device_template, vcpus: 2, ram: 4096, disk: 10) }
-    let!(:server) { create(:device, status: "STOPPED", chassis: chassis) }
-    let!(:another_server) { create(:device, status: "FAILED", chassis: chassis) }
-    let!(:further_server) { create(:device, status: "ACTIVE", chassis: chassis) }
-    let!(:other_team_server) { create(:device, chassis: other_team_chassis) }
+    let!(:server) { create(:instance, status: "STOPPED", chassis: chassis) }
+    let!(:another_server) { create(:instance, status: "FAILED", chassis: chassis) }
+    let!(:further_server) { create(:instance, status: "ACTIVE", chassis: chassis) }
+    let!(:other_team_server) { create(:instance, chassis: other_team_chassis) }
 
     it 'includes counts, vcpu, ram and disk usage' do
       expected = {
@@ -87,9 +87,9 @@ RSpec.describe TeamServices::QuotaStats, type: :service do
 
     context 'and volume' do
       let(:another_location) { create(:location, rack: rack) }
-      let(:another_chassis) { create(:chassis, template: template, location: location) }
+      let(:another_chassis) { create(:chassis, template: vol_template, location: location) }
       let(:vol_template) { create(:template, :volume_device_template) }
-      let!(:volume) { create(:device, details: Device::VolumeDetails.new(size: 100), status: "STOPPED", chassis: another_chassis) }
+      let!(:volume) { create(:volume, details: Device::VolumeDetails.new(size: 100), status: "AVAILABLE", chassis: another_chassis) }
 
       it 'combines server and volume disk space' do
         expected = {
@@ -107,10 +107,10 @@ RSpec.describe TeamServices::QuotaStats, type: :service do
 
   context 'has volumes' do
     let(:template) { create(:template, :volume_device_template) }
-    let!(:volume) { create(:device, details: Device::VolumeDetails.new(size: 100), status: "STOPPED", chassis: chassis) }
-    let!(:another_volume) { create(:device, details: Device::VolumeDetails.new(size: 200), status: "FAILED", chassis: chassis) }
-    let!(:further_volume) { create(:device, details: Device::VolumeDetails.new(size: 10), status: "ACTIVE", chassis: chassis) }
-    let!(:other_team_volume) { create(:device, details: Device::VolumeDetails.new(size: 10), chassis: other_team_chassis) }
+    let!(:volume) { create(:volume, details: Device::VolumeDetails.new(size: 100), status: "AVAILABLE", chassis: chassis) }
+    let!(:another_volume) { create(:volume, details: Device::VolumeDetails.new(size: 200), status: "FAILED", chassis: chassis) }
+    let!(:further_volume) { create(:volume, details: Device::VolumeDetails.new(size: 10), status: "ACTIVE", chassis: chassis) }
+    let!(:other_team_volume) { create(:volume, details: Device::VolumeDetails.new(size: 10), chassis: other_team_chassis) }
 
     it 'includes counts and disk usage' do
       expected = {
@@ -128,10 +128,10 @@ RSpec.describe TeamServices::QuotaStats, type: :service do
   context 'has networks' do
     let!(:rack_template) { create(:template, :rack_template) }
     let(:template) { create(:template, :network_device_template) }
-    let!(:network) { create(:device, details: Device::NetworkDetails.new, status: "STOPPED", chassis: chassis) }
-    let!(:another_network) { create(:device, details: Device::NetworkDetails.new, status: "ACTIVE", chassis: chassis) }
-    let!(:further_network) { create(:device, details: Device::NetworkDetails.new, status: "ACTIVE", chassis: chassis) }
-    let!(:other_team_network) { create(:device, details: Device::NetworkDetails.new, status: "ACTIVE", chassis: other_team_chassis) }
+    let!(:network) { create(:network, details: Device::NetworkDetails.new, status: "STOPPED", chassis: chassis) }
+    let!(:another_network) { create(:network, details: Device::NetworkDetails.new, status: "ACTIVE", chassis: chassis) }
+    let!(:further_network) { create(:network, details: Device::NetworkDetails.new, status: "ACTIVE", chassis: chassis) }
+    let!(:other_team_network) { create(:network, details: Device::NetworkDetails.new, status: "ACTIVE", chassis: other_team_chassis) }
 
     it 'includes network count' do
       expected = {

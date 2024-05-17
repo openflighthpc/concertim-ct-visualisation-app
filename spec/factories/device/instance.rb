@@ -25,18 +25,14 @@
 # https://github.com/openflighthpc/concertim-ct-visualisation-app
 #==============================================================================
 
-class Device::NetworkDetails < Device::Details
+FactoryBot.define do
+  factory :instance, class: "Instance" do
+    sequence(:name) { |n| "Instance-#{n}" }
+    metadata { {openstack_instance: "abc"} }
+    status { 'IN_PROGRESS' }
+    type { "Instance" }
 
-  validate :device_is_network
-
-  private
-
-  def device_is_network
-    reload_device
-    return unless device.present?
-    unless device.type == "Network"
-      self.errors.add(:device, 'must be a Network')
-    end
+    association :chassis
+    association :details, factory: :device_compute_details
   end
-
 end

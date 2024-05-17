@@ -447,12 +447,12 @@
               "url"     : "/devices/[[device_id]]",
               "rbacAction" : "view",
               "newTab":  true
-            }
-          ],
-          "Device::ComputeDetails": [
+            },
             {
               "caption": "[[spacer]]"
-            },
+            }
+          ],
+          "Instance": [
             {
               "caption" : "Switch off",
               "url"     : "internal::statusChangeRequest,off,devices,[[device_id]],[[device_name]]",
@@ -481,6 +481,28 @@
               "caption" : "Destroy",
               "url"     : "internal::statusChangeRequest,destroy,devices,[[device_id]],[[device_name]]",
               "availableToBuildStatuses": ["STOPPED", "ACTIVE", "SUSPENDED", "FAILED"],
+              "rbacAction" : "manage"
+            }
+          ],
+          "Volume": [
+            {
+              "caption" : "Destroy",
+              "url"     : "internal::statusChangeRequest,destroy,devices,[[device_id]],[[device_name]]",
+              "availableToBuildStatuses": ["AVAILABLE", "FAILED"],
+              "rbacAction" : "manage"
+            },
+            {
+              "caption" : "Detach",
+              "url"     : "internal::statusChangeRequest,detach,devices,[[device_id]],[[device_name]]",
+              "availableToBuildStatuses": ["ACTIVE"],
+              "rbacAction" : "manage"
+            }
+          ],
+          "Network": [
+            {
+              "caption" : "Destroy",
+              "url"     : "internal::statusChangeRequest,destroy,devices,[[device_id]],[[device_name]]",
+              "availableToBuildStatuses": ["ACTIVE", "FAILED", "STOPPED"],
               "rbacAction" : "manage"
             }
           ]

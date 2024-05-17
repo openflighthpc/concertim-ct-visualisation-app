@@ -33,7 +33,7 @@ RSpec.describe RequestStatusChangeJob, type: :job do
   let(:customer_user) { create(:user, :with_openstack_account) }
   let(:admin) { create(:user, :admin) }
   let(:user) { customer_user }
-  let(:device) { create(:device, chassis: chassis, status: "ACTIVE") }
+  let(:device) { create(:instance, chassis: chassis, status: "ACTIVE") }
   let(:chassis) { create(:chassis, location: location, template: device_template) }
   let(:location) { create(:location, rack: rack) }
   let(:rack) { create(:rack, template: rack_template, status: "ACTIVE") }

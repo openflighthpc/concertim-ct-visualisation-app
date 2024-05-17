@@ -25,18 +25,47 @@
 # https://github.com/openflighthpc/concertim-ct-visualisation-app
 #==============================================================================
 
-class Device::NetworkDetails < Device::Details
+class Volume < Device
 
-  validate :device_is_network
+  ####################################
+  #
+  # Class Methods
+  #
+  ####################################
+
+  def self.valid_statuses
+    %w(IN_PROGRESS FAILED ACTIVE AVAILABLE)
+  end
+
+  def self.valid_status_action_mappings
+    {
+      "IN_PROGRESS" => [],
+      "FAILED" => %w(destroy),
+      "ACTIVE" => %w(detach),
+      "AVAILABLE" => %w(destroy)
+    }
+  end
+
+  ####################################
+  #
+  # Validations
+  #
+  ####################################
+
+  validate :has_volume_details
+  validate :has_volume_template
 
   private
 
-  def device_is_network
-    reload_device
-    return unless device.present?
-    unless device.type == "Network"
-      self.errors.add(:device, 'must be a Network')
+  def has_volume_details
+    unless details_type == 'Device::VolumeDetails'
+      self.errors.add(:details_type, 'must have volume details')
     end
   end
 
+  def has_volume_template
+    unless self.template&.tag == 'volume'
+      self.errors.add(:template, 'must use the volume template')
+    end
+  end
 end

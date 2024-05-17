@@ -35,14 +35,11 @@ class DevicePresenter < Presenter
   include Costed
 
   delegate :name, :description, :status, :metadata,
-    :attributes,
+    :attributes, :type,
     to: :o
 
   delegate :name, :description,
     to: :template, prefix: :template
-
-  delegate :vcpus, :ram, :disk,
-    to: :template
 
   delegate :additional_details, to: :details
 

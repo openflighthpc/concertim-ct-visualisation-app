@@ -104,7 +104,7 @@ class DataSourceMap < ApplicationRecord
 
 
   def calculate_map_to_host
-    "#{device.class.name.demodulize.downcase}:#{device.id}"
+    "#{device.data_map_class_name}:#{device.id}"
   end
 
 

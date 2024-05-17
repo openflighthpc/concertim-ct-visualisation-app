@@ -40,6 +40,7 @@ BODY=$(jq --null-input \
     "template_id": $template_id,
     "device": {
         "name": $name,
+        "type": "Volume",
         "description": $description,
         "location": {
             "facing": $facing,

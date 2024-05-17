@@ -60,7 +60,7 @@ RSpec.describe InteractiveRackViewChannel, type: :channel do
     let!(:rack) { create(:rack, team: team, template: template) }
     let!(:team_role) { create(:team_role, team: team, user: user) }
     let(:device_template) { create(:template, :device_template) }
-    let!(:device) { create(:device, chassis: chassis) }
+    let!(:device) { create(:instance, chassis: chassis) }
     let(:chassis) { create(:chassis, location: location, template: device_template) }
     let(:location) { create(:location, rack: rack) }
 

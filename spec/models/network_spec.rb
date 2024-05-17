@@ -25,13 +25,14 @@
 # https://github.com/openflighthpc/concertim-ct-visualisation-app
 #==============================================================================
 
-FactoryBot.define do
-  factory :device, class: "Device" do
-    sequence(:name) { |n| "Device-#{n}" }
-    metadata { {openstack_instance: "abc"} }
-    status { 'IN_PROGRESS' }
+require 'rails_helper'
+require_relative '../support/shared_examples/devices'
 
-    association :chassis
-    association :details, factory: :device_compute_details
-  end
+RSpec.describe Network, type: :model do
+  let(:device_type) { :network }
+  let(:template_type) { :network_device_template }
+  let(:details_class) { Device::NetworkDetails }
+  let(:valid_statuses) { %w(IN_PROGRESS FAILED ACTIVE STOPPED) }
+
+  include_examples 'device models'
 end

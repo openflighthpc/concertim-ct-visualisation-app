@@ -46,15 +46,15 @@ module TeamServices
     private
 
     def servers
-      @team.devices.joins(:template).where(details_type: "Device::ComputeDetails")
+      @team.devices.joins(:template).where(type: "Instance")
     end
 
     def volumes
-      @team.devices.where(details_type: "Device::VolumeDetails")
+      @team.devices.where(type: "Volume")
     end
 
     def networks
-      @team.devices.where(details_type: "Device::NetworkDetails")
+      @team.devices.where(type: "Network")
     end
 
     def total_vcpus

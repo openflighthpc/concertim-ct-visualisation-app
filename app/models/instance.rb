@@ -25,18 +25,49 @@
 # https://github.com/openflighthpc/concertim-ct-visualisation-app
 #==============================================================================
 
-class Device::NetworkDetails < Device::Details
+class Instance < Device
+  ####################################
+  #
+  # Class Methods
+  #
+  ####################################
 
-  validate :device_is_network
+  def self.valid_statuses
+    %w(IN_PROGRESS FAILED ACTIVE STOPPED SUSPENDED)
+  end
+
+  def self.valid_status_action_mappings
+    {
+      "IN_PROGRESS" => [],
+      "FAILED" => %w(destroy),
+      "ACTIVE" => %w(destroy off suspend),
+      "STOPPED" => %w(destroy on),
+      "SUSPENDED" => %w(destroy resume)
+    }
+  end
+
+
+  ####################################
+  #
+  # Validations
+  #
+  ####################################
+
+  validate :has_compute_details
+  validate :has_suitable_template
 
   private
 
-  def device_is_network
-    reload_device
-    return unless device.present?
-    unless device.type == "Network"
-      self.errors.add(:device, 'must be a Network')
+  def has_compute_details
+    unless details_type == 'Device::ComputeDetails'
+      self.errors.add(:details_type, 'must have compute details')
     end
   end
 
+  def has_suitable_template
+    # Tag is used to identify unique templates, i.e. network or volume
+    unless template && template.tag == nil
+      self.errors.add(:template, 'must use an instance template')
+    end
+  end
 end

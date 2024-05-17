@@ -25,17 +25,16 @@
 # https://github.com/openflighthpc/concertim-ct-visualisation-app
 #==============================================================================
 
-require 'rails_helper'
-
-RSpec.describe Device, type: :model do
+# Requires definition of device_type, template_type, details_class and valid_statuses
+RSpec.shared_examples "device models" do
   let!(:rack_template) { create(:template, :rack_template) }
   subject { device }
-  let(:device) { create(:device, chassis: chassis) }
+  let(:device) { create(device_type, chassis: chassis) }
   let(:chassis) { create(:chassis, location: location, template: device_template) }
   let(:location) { create(:location, rack: rack) }
   let!(:rack) { create(:rack, template: rack_template) }
   let(:user) { create(:user, :as_team_member, team: rack.team) }
-  let(:device_template) { create(:template, :device_template) }
+  let(:device_template) { create(:template, template_type) }
 
   describe 'validations' do
     it "is valid with valid attributes" do
@@ -43,9 +42,9 @@ RSpec.describe Device, type: :model do
         chassis: chassis,
         name: 'device-0',
         status: 'IN_PROGRESS',
-        cost: 99.99
-      )
-      device.details = Device::ComputeDetails.new
+        cost: 99.99,
+        )
+      device.details = details_class.new
       expect(device).to be_valid
     end
 
@@ -74,8 +73,13 @@ RSpec.describe Device, type: :model do
       expect(subject).to have_error(:chassis, :blank)
     end
 
+    it "is not valid without appropriate template" do
+      subject.template.tag = "wrong"
+      expect(subject).to have_error(:template, "must use #{device_type[0] == "i" ? "an" : "the"} #{device_type} template")
+    end
+
     it "must have a unique name within its rack" do
-      new_device = build(:device, chassis: chassis, name: subject.name)
+      new_device = build(:instance, chassis: chassis, name: subject.name)
 
       expect(new_device.name).to eq device.name
       expect(new_device).to have_error(:name, :taken)
@@ -85,7 +89,7 @@ RSpec.describe Device, type: :model do
       new_rack = create(:rack, template: rack_template)
       new_location = create(:location, rack: new_rack)
       new_chassis = create(:chassis, location: new_location, template: device_template)
-      new_device = build(:device, chassis: new_chassis, name: subject.name)
+      new_device = build(:instance, chassis: new_chassis, name: subject.name)
 
       expect(new_device.name).to eq device.name
       expect(new_device).not_to have_error(:name)
@@ -98,7 +102,7 @@ RSpec.describe Device, type: :model do
 
     it "is not vaild with an invalid status" do
       subject.status = "SNAFU"
-      expect(subject).to have_error(:status, :inclusion)
+      expect(subject).to have_error(:status, "must be one of #{valid_statuses.to_sentence(last_word_connector: ' or ')}")
     end
 
     it "is not valid with a negative cost" do
@@ -113,7 +117,7 @@ RSpec.describe Device, type: :model do
 
     it "is not valid with a details model that is an invalid class" do
       subject.details = location
-      expect(subject).to have_error(:details_type, "Must be a valid subtype of Device::Details")
+      expect(subject).to have_error(:details_type, "must have #{details_class.name.match(/::(\w+)Details/)[1].downcase} details")
       # This is a secondary error, but until we add a second Device::Details
       # subclass, this test is the only way we can assert it's returned:
       expect(subject).to have_error(:details_type, "Cannot be changed once a device has been created")
@@ -151,7 +155,7 @@ RSpec.describe Device, type: :model do
 
     context 'updated' do
       let(:action) { "modified" }
-      let!(:device) { create(:device, chassis: chassis) }
+      let!(:device) { create(device_type, chassis: chassis) }
       subject do
         device.name = "new-name"
         device.save!
@@ -162,7 +166,7 @@ RSpec.describe Device, type: :model do
 
     context 'deleted' do
       let(:action) { "modified" }
-      let!(:device) { create(:device, chassis: chassis) }
+      let!(:device) { create(device_type, chassis: chassis) }
       subject { device.destroy! }
 
       include_examples 'rack details'
