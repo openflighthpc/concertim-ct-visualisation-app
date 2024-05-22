@@ -490,12 +490,6 @@
               "url"     : "internal::statusChangeRequest,destroy,devices,[[device_id]],[[device_name]]",
               "availableToBuildStatuses": ["AVAILABLE", "FAILED"],
               "rbacAction" : "manage"
-            },
-            {
-              "caption" : "Detach",
-              "url"     : "internal::statusChangeRequest,detach,devices,[[device_id]],[[device_name]]",
-              "availableToBuildStatuses": ["ACTIVE"],
-              "rbacAction" : "manage"
             }
           ],
           "Network": [

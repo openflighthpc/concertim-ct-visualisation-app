@@ -41,7 +41,7 @@ class Volume < Device
     {
       "IN_PROGRESS" => [],
       "FAILED" => %w(destroy),
-      "ACTIVE" => %w(detach),
+      "ACTIVE" => [],
       "AVAILABLE" => %w(destroy)
     }
   end
