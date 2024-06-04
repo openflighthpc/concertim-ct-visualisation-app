@@ -124,6 +124,14 @@ class Device < ApplicationRecord
   #
   ####################################
 
+  def hourly_credits
+    0
+  end
+
+  def credit_allocation
+    hours_since_creation * hourly_credits
+  end
+
   def valid_action?(action)
     self.class.valid_status_action_mappings[status].include?(action)
   end
@@ -200,5 +208,9 @@ class Device < ApplicationRecord
     if details_type_changed? && self.persisted?
       self.errors.add(:details_type, "Cannot be changed once a device has been created")
     end
+  end
+
+  def hours_since_creation
+    ((Time.now - self.created_at) / 3600).ceil
   end
 end

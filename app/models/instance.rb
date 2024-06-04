@@ -46,7 +46,6 @@ class Instance < Device
     }
   end
 
-
   ####################################
   #
   # Validations
@@ -55,6 +54,16 @@ class Instance < Device
 
   validate :has_compute_details
   validate :has_suitable_template
+
+  ####################################
+  #
+  # Instance Methods
+  #
+  ####################################
+
+  def hourly_credits
+    self.template&.hourly_credits || 0
+  end
 
   private
 

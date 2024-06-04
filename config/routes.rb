@@ -101,6 +101,8 @@ Rails.application.routes.draw do
     resources :metrics, only: [:index]
   end
 
+  resources :templates, only: [:index, :edit, :update]
+
   # API routes
   #
   # Some of these have been done in a non-railsy way (you have "posts" where you should have 

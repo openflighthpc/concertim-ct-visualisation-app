@@ -25,57 +25,31 @@
 # https://github.com/openflighthpc/concertim-ct-visualisation-app
 #==============================================================================
 
-class Volume < Device
+class TemplatesController < ApplicationController
+  include ControllerConcerns::ResourceTable
+  load_and_authorize_resource :template
 
-  ####################################
-  #
-  # Class Methods
-  #
-  ####################################
-
-  def self.valid_statuses
-    %w(IN_PROGRESS FAILED ACTIVE AVAILABLE)
+  def index
+    @templates = resource_table_collection(@templates.where(tag: nil))
   end
 
-  def self.valid_status_action_mappings
-    {
-      "IN_PROGRESS" => [],
-      "FAILED" => %w(destroy),
-      "ACTIVE" => [],
-      "AVAILABLE" => %w(destroy)
-    }
+  def edit
   end
 
-  ####################################
-  #
-  # Validations
-  #
-  ####################################
-
-  validate :has_volume_details
-  validate :has_volume_template
-
-  ####################################
-  #
-  # Instance Methods
-  #
-  ####################################
-
-  def hourly_credits
-    ((self.details&.size || 0) / 16).ceil
+  def update
+    if @template.update(template_params)
+      flash[:info] = "Successfully updated template"
+      redirect_to templates_path
+    else
+      flash[:alert] = "Unable to update template"
+      render action: :edit
+    end
   end
 
   private
 
-  def has_volume_details
-    unless details_type == 'Device::VolumeDetails'
-      self.errors.add(:details_type, 'must have volume details')
-    end
-  end
-
-  def has_volume_template
-    unless self.template&.tag == 'volume'
-      self.errors.add(:template, 'must use the volume template')
-    end
+  PERMITTED_PARAMS = %w[alias hourly_credits]
+  def template_params
+    params.fetch(:template).permit(*PERMITTED_PARAMS)
   end
 end

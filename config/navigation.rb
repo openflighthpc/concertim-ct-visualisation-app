@@ -89,6 +89,12 @@ SimpleNavigation::Configuration.run do |navigation|
                      highlights_on: %r(/statistics)
       end
 
+      if current_user.root?
+        primary.item :config, 'Manage instance templates', url_helpers.templates_path,
+                     icon: :prefs,
+                     highlights_on: %r(/templates)
+      end
+
     else
       primary.item :login, 'Log in', url_helpers.new_user_session_path,
         icon: :login,

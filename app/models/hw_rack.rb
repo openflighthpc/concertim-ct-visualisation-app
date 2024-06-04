@@ -172,6 +172,14 @@ class HwRack < ApplicationRecord
     metadata["openstack_stack_id"]
   end
 
+  def credit_allocation
+    devices.reduce(0) { |sum, device| sum + device.credit_allocation }
+  end
+
+  def hourly_credits
+    devices.reduce(0) { |sum, device| sum + device.hourly_credits }
+  end
+
   ############################
   #
   # Private Instance Methods

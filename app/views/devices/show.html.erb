@@ -12,6 +12,8 @@
         dl.item "Location:", device.location
         dl.item "Status:", device.status
         dl.item "Cost this billing period:", device.currency_cost
+        dl.item "Credits per hour:", device.hourly_credits
+        dl.item "Total credit allocation", device.credit_allocation
 
         device.additional_details.each do |label, details_list|
           dl.recurse_items label, details_list

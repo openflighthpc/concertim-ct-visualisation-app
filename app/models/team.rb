@@ -120,6 +120,10 @@ class Team < ApplicationRecord
     update(deleted_at: Time.current)
   end
 
+  def credit_allocation
+    racks.reduce(0) { |sum, rack| sum + rack.credit_allocation }
+  end
+
   ####################################
   #
   # Private Instance Methods

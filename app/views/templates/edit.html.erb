@@ -1,0 +1,10 @@
+<%
+  set_title "Edit Template #{@template.name}"
+-%>
+
+<%= simple_form_for @template, html: {class: 'no_border'} do |f| %>
+  <%= f.input :alias %>
+  <%= f.input :hourly_credits %>
+
+  <%= f.button :submit %>
+<% end %>

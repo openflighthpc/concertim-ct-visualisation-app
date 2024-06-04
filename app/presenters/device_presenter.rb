@@ -35,10 +35,10 @@ class DevicePresenter < Presenter
   include Costed
 
   delegate :name, :description, :status, :metadata,
-    :attributes, :type,
+    :attributes, :type, :hourly_credits, :credit_allocation,
     to: :o
 
-  delegate :name, :description,
+  delegate :description,
     to: :template, prefix: :template
 
   delegate :additional_details, to: :details
@@ -82,6 +82,10 @@ class DevicePresenter < Presenter
 
   def has_metadata?
     !metadata.empty?
+  end
+
+  def template_name
+    template.alias || template.name
   end
 
   private

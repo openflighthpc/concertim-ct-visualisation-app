@@ -11,6 +11,8 @@
       dl.item "Billing Order ID", @rack.order_id
 
       dl.item "Cost this billing period:", presenter_for(@rack, RackPresenter).currency_cost
+      dl.item "Credits per hour", @rack.hourly_credits
+      dl.item "Total credit allocation", @rack.credit_allocation
 
       dl.sublist "Owner" do |sl|
         sl.item "Name", @rack.team.name
