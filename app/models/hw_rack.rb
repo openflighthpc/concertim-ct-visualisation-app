@@ -90,6 +90,7 @@ class HwRack < ApplicationRecord
   validates :order_id,
     presence: true,
     uniqueness: true
+  validates :cloud_created_at, presence: true
   validate :rack_limit, if: :new_record?
   validate :metadata_format
 
