@@ -38,7 +38,7 @@ module Api::V1
     include Costed
 
     # Be selective about what attributes and methods we expose.
-    delegate :id, :name, :description, :metadata, :status, :details, :type, to: :o
+    delegate :id, :name, :description, :metadata, :status, :details, :type, :cloud_created_at, to: :o
 
     # location returns the location of the device.  For devices in simple
     # chassis, the chassis's location is returned. Devices in complex chassis,

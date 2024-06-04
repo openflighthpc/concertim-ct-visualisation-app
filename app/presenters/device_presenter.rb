@@ -34,7 +34,7 @@ class DevicePresenter < Presenter
   include Device::Common
   include Costed
 
-  delegate :name, :description, :status, :metadata,
+  delegate :name, :description, :status, :metadata, :cloud_created_at,
     :attributes, :type, :hourly_credits, :credit_allocation,
     to: :o
 

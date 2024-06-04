@@ -81,6 +81,7 @@ class Device < ApplicationRecord
             numericality: { greater_than_or_equal_to: 0 },
             allow_blank: true
   validates :details, presence: :true
+  validates :cloud_created_at, presence: :true
   validate :name_validator
   validate :device_limit, if: :new_record?
   validate :metadata_format
@@ -211,6 +212,6 @@ class Device < ApplicationRecord
   end
 
   def hours_since_creation
-    ((Time.now - self.created_at) / 3600).ceil
+    ((Time.now - self.cloud_created_at) / 3600).ceil
   end
 end
