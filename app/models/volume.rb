@@ -62,7 +62,8 @@ class Volume < Device
   ####################################
 
   def hourly_credits
-    ((self.details&.size || 0) / 16).ceil
+    gb_credits = Setting.last&.volume_gb_credits || 0
+    ((self.details&.size || 0) * gb_credits).ceil
   end
 
   private

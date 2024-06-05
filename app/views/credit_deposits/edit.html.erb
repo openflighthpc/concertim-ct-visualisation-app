@@ -3,7 +3,7 @@
 -%>
 
 <%= simple_form_for @credit_deposit, html: { class: 'no_border' } do |f| %>
-  <%= f.input :date, as: :string, input_html: { type: 'date' }, title: "Effective Date" %>
+  <%= f.input :date, as: :string, input_html: { type: 'date' }, label: "Effective Date" %>
   <%= f.input :amount, input_html: { min: 1, step: 1 } %>
   <%= f.button :submit %>
 <% end %>

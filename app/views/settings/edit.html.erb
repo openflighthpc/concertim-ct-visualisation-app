@@ -4,5 +4,7 @@
 
 <%= simple_form_for @setting, url: settings_path, html: {class: 'no_border'} do |f| %>
   <%= f.input :metric_refresh_interval, hint: 'How frequently, in seconds, to update the metric values on interactive rack page.' %>
+  <%= f.input :volume_gb_credits, as: :float, input_html: { min: 0.01, step: 0.01, placeholder: '0.25' },
+              label: "Hourly credits per volume GB", hint: 'Credit allocation per hour for each Volume, per GB' %>
   <%= f.button :submit %>
 <% end %>
