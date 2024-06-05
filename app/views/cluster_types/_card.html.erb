@@ -6,7 +6,7 @@
     <% disabled = false %>
     <%  title = "" %>
   <% else %>
-    <% title =  if Team.meets_cluster_credit_requirement.where(id: team.id).exists?
+    <% title =  if team.meets_cluster_credit_requirement?
                   "You do not have permission to create clusters"
                 else
                   "Insufficient credits. Your chosen team must have at least #{Rails.application.config.cluster_credit_requirement} credits to create a cluster"

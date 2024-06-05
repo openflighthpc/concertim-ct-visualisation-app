@@ -43,7 +43,7 @@
     <% actions.add_with_auth can: :create, on: CreditDeposit.new(team: team), text: 'Add Credits', path: new_team_credit_deposit_path(team) %>
     <% actions.add_with_auth can: :read, on: CreditDeposit.new(team: team), text: 'View Credits', path: team_credit_deposits_path(team) %>
     <% if can? :create, Cluster.new(team: team, cluster_type: ClusterType.new) %>
-      <% if Team.meets_cluster_credit_requirement.where(id: team.id).exists? %>
+      <% if team.meets_cluster_credit_requirement? %>
         <% actions.add text: 'Create Cluster', path: cluster_types_path(team_id: team.id) %>
       <% else  %>
         <% actions.add text: 'Create Cluster', path: '#', class: "disabled-action", title: "Team has insufficient credits to create cluster" %>

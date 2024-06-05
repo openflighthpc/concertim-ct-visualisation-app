@@ -28,7 +28,6 @@
 class Team < ApplicationRecord
   include Searchable
   default_search_scope :name
-  scope :meets_cluster_credit_requirement, -> { where("credits >= ?", Rails.application.config.cluster_credit_requirement) }
   normalizes :project_id, with: -> project_id { project_id.strip }
   normalizes :name, with: -> name { name.strip }
 
@@ -127,7 +126,11 @@ class Team < ApplicationRecord
   end
 
   def remaining_credits
-    credit_deposits.sum(:amount) - credit_allocation
+    @remaining_credits ||= credit_deposits.active.sum(:amount) - credit_allocation
+  end
+
+  def meets_cluster_credit_requirement?
+    remaining_credits >= Rails.application.config.cluster_credit_requirement
   end
 
   ####################################

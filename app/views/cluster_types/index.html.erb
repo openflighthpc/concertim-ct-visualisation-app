@@ -23,7 +23,7 @@
   <p>There are no cluster types available at present.</p>
 <% else %>
   <div class="new_cluster choose-team">
-    <% if @valid_teams.exists? %>
+    <% if @valid_teams.any? %>
       <div class="formItem">
         <div class="field">
           <%= label_tag :team_id, "Team", class: "required_field" %>
@@ -49,7 +49,7 @@
   </div>
 
   <div class="cluster-types-card-deck">
-    <% available_teams = @valid_teams.exists? %>
+    <% available_teams = @valid_teams.any? %>
     <% @cluster_types.each do |cluster_type| %>
       <%= render partial: 'card', object: cluster_type, locals: { team: @team, available_teams: available_teams } %>
     <% end %>

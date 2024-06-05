@@ -137,7 +137,7 @@ class Cluster
   end
 
   def team_has_enough_credits?
-    if team_id && Team.meets_cluster_credit_requirement.where(id: team_id).empty?
+    if team_id && !team.meets_cluster_credit_requirement?
       errors.add(:team, "Has insufficient credits to launch a cluster")
     end
   end
