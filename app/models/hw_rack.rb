@@ -63,7 +63,7 @@ class HwRack < ApplicationRecord
   has_many :devices, through: :chassis
 
   belongs_to :team
-
+  belongs_to :cluster_type
 
   ############################
   #
@@ -164,6 +164,10 @@ class HwRack < ApplicationRecord
   # Instance Methods
   #
   ############################
+
+  def cluster_type_name=(name)
+    self.cluster_type = ClusterType.find_by(foreign_id: name)
+  end
 
   def valid_action?(action)
     VALID_STATUS_ACTION_MAPPINGS[status].include?(action)

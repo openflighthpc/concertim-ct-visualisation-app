@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_05_104428) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_05_171125) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -239,6 +239,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_05_104428) do
     t.uuid "template_id", null: false
     t.uuid "team_id", null: false
     t.datetime "cloud_created_at", null: false
+    t.uuid "cluster_type_id", null: false
+    t.index ["cluster_type_id"], name: "index_racks_on_cluster_type_id"
     t.index ["order_id"], name: "index_racks_on_order_id", unique: true
     t.index ["team_id"], name: "index_racks_on_team_id"
     t.index ["template_id"], name: "index_racks_on_template_id"
@@ -354,6 +356,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_05_104428) do
   add_foreign_key "data_source_maps", "devices", on_update: :cascade, on_delete: :cascade
   add_foreign_key "devices", "base_chassis", on_update: :cascade, on_delete: :cascade
   add_foreign_key "locations", "racks", on_update: :cascade, on_delete: :restrict
+  add_foreign_key "racks", "cluster_types", on_delete: :restrict
   add_foreign_key "racks", "teams", on_update: :cascade, on_delete: :restrict
   add_foreign_key "racks", "templates", on_update: :cascade, on_delete: :restrict
   add_foreign_key "rackview_presets", "users", on_update: :cascade, on_delete: :cascade
