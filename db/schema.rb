@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_04_170516) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_05_104428) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -59,6 +59,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_04_170516) do
     t.integer "order", default: 0, null: false
     t.string "logo_url", limit: 255
     t.jsonb "instructions"
+  end
+
+  create_table "credit_deposits", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "amount", null: false
+    t.uuid "team_id", null: false
+    t.date "date", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["team_id"], name: "index_credit_deposits_on_team_id"
   end
 
   create_table "data_source_maps", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -341,6 +350,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_04_170516) do
   add_foreign_key "allowlisted_jwts", "users", on_delete: :cascade
   add_foreign_key "base_chassis", "locations", on_update: :cascade, on_delete: :restrict
   add_foreign_key "base_chassis", "templates", on_update: :cascade, on_delete: :restrict
+  add_foreign_key "credit_deposits", "teams"
   add_foreign_key "data_source_maps", "devices", on_update: :cascade, on_delete: :cascade
   add_foreign_key "devices", "base_chassis", on_update: :cascade, on_delete: :cascade
   add_foreign_key "locations", "racks", on_update: :cascade, on_delete: :restrict

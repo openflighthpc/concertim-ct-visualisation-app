@@ -62,6 +62,8 @@ class Team < ApplicationRecord
            class_name: 'HwRack',
            dependent: :destroy
   has_many :devices, through: :racks
+  has_many :credit_deposits,
+           dependent: :destroy
 
   ############################
   #
@@ -122,6 +124,10 @@ class Team < ApplicationRecord
 
   def credit_allocation
     racks.reduce(0) { |sum, rack| sum + rack.credit_allocation }
+  end
+
+  def remaining_credits
+    credit_deposits.sum(:amount) - credit_allocation
   end
 
   ####################################

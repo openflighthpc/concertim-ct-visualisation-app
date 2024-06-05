@@ -25,8 +25,16 @@
 # https://github.com/openflighthpc/concertim-ct-visualisation-app
 #==============================================================================
 
-class CreditDeposit
-  include ActiveModel::API
+class CreditDeposit< ApplicationRecord
+  default_scope { order(:date) }
+
+  ####################################
+  #
+  # Associations
+  #
+  ####################################
+
+  belongs_to :team
 
   ############################
   #
@@ -38,31 +46,13 @@ class CreditDeposit
             presence: true,
             numericality: { greater_than: 0 }
 
-  validates :team,
-            presence: true
-
-  validate :team_has_project_id
-  validate :team_has_billing_account
-
-  ####################################
-  #
-  # Attributes
-  #
-  ####################################
-
-  attr_accessor :amount, :team
-  delegate :billing_acct_id, to: :team
-
   ############################
   #
-  # Public Instance Methods
+  # Hooks
   #
   ############################
 
-  def initialize(team:, amount: 1)
-    @team = team
-    @amount = amount
-  end
+  before_create :set_date
 
   ############################
   #
@@ -72,12 +62,8 @@ class CreditDeposit
 
   private
 
-  def team_has_project_id
-    errors.add(:team, "must have a project id") if team && !team.project_id
+  # In future we may wish to allow specifying a future date
+  def set_date
+    self.date ||= Date.current
   end
-
-  def team_has_billing_account
-    errors.add(:team, "must have a billing account id") if team && !team.billing_acct_id
-  end
-
 end

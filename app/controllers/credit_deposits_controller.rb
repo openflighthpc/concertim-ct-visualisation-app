@@ -26,49 +26,72 @@
 #==============================================================================
 
 class CreditDepositsController < ApplicationController
+  include ControllerConcerns::ResourceTable
+  before_action :set_team, except: [:edit, :update, :destroy]
+  load_and_authorize_resource :credit_deposit, only: [:edit, :update, :destroy]
+
   def new
-    @team = Team.find(params[:team_id])
-    @credit_deposit = CreditDeposit.new(team: @team)
+    @credit_deposit = CreditDeposit.new(team: @team, amount: 1)
     authorize! :create, @credit_deposit
-    @cloud_service_config = CloudServiceConfig.first
-    if @cloud_service_config.nil?
-      flash[:alert] = "Unable to add credits: cloud environment config not set"
-      redirect_to teams_path
-    elsif !@credit_deposit.valid?
+    unless @credit_deposit.valid?
       flash[:alert] = "Unable to add credits: #{@credit_deposit.errors.full_messages.join("; ")}"
       redirect_to teams_path
     end
   end
 
+  def edit
+  end
+
   def create
-    @team = Team.find(params[:team_id])
-    @cloud_service_config = CloudServiceConfig.first
     @credit_deposit = CreditDeposit.new(team: @team, amount: credit_deposit_params[:amount])
     authorize! :create, @credit_deposit
 
-    if @cloud_service_config.nil?
-      flash[:alert] = "Unable to add credits: cloud environment config not set"
-      redirect_to teams_path
-      return
-    elsif !@credit_deposit.valid?
+    unless @credit_deposit.valid?
       flash.now[:alert] = "Unable to add credits: #{@credit_deposit.errors.full_messages.join("; ")}"
       render :new
       return
     end
 
-    result = CreateCreditDepositJob.perform_now(@credit_deposit, @cloud_service_config)
-    if result.success?
-      flash[:success] = "Credit deposit submitted for #{@team.name}. It may take a few minutes for the team's new balance to be reflected."
-      redirect_to teams_path
+    if @credit_deposit.save
+      flash[:success] = "Credit deposit added for #{@team.name}."
+      redirect_to team_credit_deposits_path(team_id: @team.id)
     else
-      flash.now[:alert] = "Unable to submit credit deposit: #{result.error_message}"
+      flash.now[:alert] = "Unable to add credits: #{@credit_deposit.errors.full_messages.join("; ")}"
       render :new
     end
   end
 
+  def index
+    authorize! :read, CreditDeposit.new(team: @team)
+    @deposits = resource_table_collection(@team.credit_deposits)
+  end
+
+  def update
+    if @credit_deposit.update(credit_deposit_params)
+      flash[:info] = "Successfully updated deposit"
+      redirect_to team_credit_deposits_path(team_id: @credit_deposit.team_id)
+    else
+      flash[:alert] = "Unable to update deposit: #{@credit_deposit.errors.full_messages.join("; ")}"
+      render action: :edit
+    end
+  end
+
+  def destroy
+    if @credit_deposit.destroy
+      flash[:info] = "Credit deposit destroyed"
+    else
+      flash[:alert] = "Unable to delete deposit: #{@credit_deposit.errors.full_messages.join("; ")}"
+    end
+    redirect_to team_credit_deposits_path(team_id: @credit_deposit.team_id)
+  end
+
   private
 
-  PERMITTED_PARAMS = %w[amount]
+  def set_team
+    @team = Team.find(params[:team_id])
+  end
+
+  PERMITTED_PARAMS = %w[amount date]
   def credit_deposit_params
     params.require(:credit_deposit).permit(*PERMITTED_PARAMS)
   end

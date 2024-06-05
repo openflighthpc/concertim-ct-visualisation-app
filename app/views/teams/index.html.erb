@@ -27,9 +27,7 @@
     <% t.attribute_column :project_id, title: "Project ID", sortable: true %>
     <% t.attribute_column :billing_acct_id, title: "Billing Account ID", sortable: true %>
   <% end %>
-  <% t.custom_column "Credits", sortable: true, db_column: :credits do |team| %>
-    <% presenter_for(team).formatted_credits %>
-  <% end %>
+  <% t.attribute_column :remaining_credits, sortable: false %>
   <% t.custom_column "Cost", sortable: true, db_column: :cost do |team| %>
     <% presenter_for(team).currency_cost %>
   <% end %>
@@ -43,6 +41,7 @@
     <% actions.add_with_auth can: :usage_limits, on: team, text: 'View Usage Limits', path: usage_limits_team_path(id: team.id) %>
     <% actions.add_with_auth can: :read, on: Invoice.new(account: team), text: 'View Invoices', path: team_invoices_path(team) %>
     <% actions.add_with_auth can: :create, on: CreditDeposit.new(team: team), text: 'Add Credits', path: new_team_credit_deposit_path(team) %>
+    <% actions.add_with_auth can: :read, on: CreditDeposit.new(team: team), text: 'View Credits', path: team_credit_deposits_path(team) %>
     <% if can? :create, Cluster.new(team: team, cluster_type: ClusterType.new) %>
       <% if Team.meets_cluster_credit_requirement.where(id: team.id).exists? %>
         <% actions.add text: 'Create Cluster', path: cluster_types_path(team_id: team.id) %>

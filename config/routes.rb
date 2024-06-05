@@ -85,9 +85,10 @@ Rails.application.routes.draw do
         get 'draft'
       end
     end
-    resources :credit_deposits, only: [:new, :create]
+    resources :credit_deposits, only: [:new, :create, :index]
   end
 
+  resources :credit_deposits, only: [:edit, :update, :destroy]
   resources :team_roles, only: [:edit, :update, :destroy]
 
   resources :key_pairs, only: [:index, :new, :create] do

@@ -1,0 +1,30 @@
+<% set_title "Credit Deposits for team #{@team.name}" -%>
+
+
+<% if current_user.can?(:create, CreditDeposit.new(team: @team)) %>
+  <%= link_to "+ New Credit Deposit", new_team_credit_deposit_path(@team), class: "button" %>
+<% end %>
+
+<%= render_resource_table_for @deposits, searchable: false do |t| %>
+  <% t.on_empty_collection do %>
+    <% capture do %>
+      No credit deposits have been found.
+    <% end %>
+  <% end %>
+
+  <% t.attribute_column :id, sortable: true %>
+  <% t.attribute_column :created_at, sortable: true %>
+  <% t.attribute_column :date, sortable: true %>
+  <% t.attribute_column :amount, sortable: true, title: "Credit Amount" %>
+
+  <% t.actions_column do |actions, deposit| %>
+    <% actions.add_with_auth can: :edit, on: deposit, text: 'Edit', path: edit_credit_deposit_path(deposit) %>
+    <% actions.add_with_auth(can: :destroy, on: deposit,
+                             text: 'Delete',
+                             path: credit_deposit_path(deposit),
+                             method: 'delete',
+                             data: {confirm:  "Are you sure you want to delete this deposit? It cannot be undone."}
+                            )
+    %>
+  <% end %>
+<% end %>

@@ -85,6 +85,7 @@ class Ability
     can [:read, :usage_limits], Team, id: @user.team_ids
     can :manage, TeamRole, team: @user.teams_where_admin.where(single_user: false)
 
+    can :read, CreditDeposit, team_id: @user.team_ids
     # Invoice is an ActiveModel::Model, but not an ActiveRecord::Base.  Setting
     # abilities like this might not work too well.  Or perhaps its fine.
     can :read, Invoice, account: @user.team_roles.where(role: "admin").map(&:team)
