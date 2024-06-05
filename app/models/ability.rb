@@ -49,7 +49,7 @@ class Ability
   def root_abilities
     can :manage, :all
 
-    cannot :read, ClusterType
+    cannot :index, ClusterType
     cannot :create, Cluster
 
     # Don't allow any admin users to be deleted.
@@ -75,6 +75,7 @@ class Ability
     can :manage, RackviewPreset, user: @user
 
     can :read, ClusterType
+    can :index, ClusterType
     can :create, Cluster, team_id: @user.teams_where_admin.pluck(:id)
 
     can :read, KeyPair, user: @user

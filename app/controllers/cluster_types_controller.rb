@@ -26,9 +26,38 @@
 #==============================================================================
 
 class ClusterTypesController < ApplicationController
+  include ControllerConcerns::ResourceTable
   load_and_authorize_resource :cluster_type, class: ClusterType
+  before_action :get_types, except: [:edit, :update]
 
   def index
+    @cluster_types = @cluster_types.where.not(base_credits: nil)
+    @valid_teams = current_user.teams_where_admin.select(&:meets_cluster_credit_requirement?)
+    @unavailable_teams =  current_user.teams.where.not(id: @valid_teams.pluck(:id))
+    @all_teams = current_user.teams.reorder(:name)
+    @team = Team.find(params[:team_id]) if params[:team_id]
+  end
+
+  def admin_index
+    @cluster_types = resource_table_collection(@cluster_types)
+  end
+
+  def edit
+  end
+
+  def update
+    if @cluster_type.update(cluster_type_params)
+      flash[:info] = "Successfully updated cluster type credits"
+      redirect_to admin_cluster_type_index_path
+    else
+      flash[:alert] = "Unable to update cluster type: #{@cluster_type.errors.full_messages.join("; ")}"
+      render action: :edit
+    end
+  end
+
+  private
+
+  def get_types
     @cloud_service_config = CloudServiceConfig.first
     if @cloud_service_config
       use_cache = params[:use_cache] != "false"
@@ -36,9 +65,10 @@ class ClusterTypesController < ApplicationController
       flash.now.alert = result.error_message unless result.success?
     end
     @cluster_types = @cluster_types.reorder(:order, :id)
-    @valid_teams = current_user.teams_where_admin.select(&:meets_cluster_credit_requirement?)
-    @unavailable_teams =  current_user.teams.where.not(id: @valid_teams.pluck(:id))
-    @all_teams = current_user.teams.reorder(:name)
-    @team = Team.find(params[:team_id]) if params[:team_id]
+  end
+
+  PERMITTED_PARAMS = %w[base_credits]
+  def cluster_type_params
+    params.require(:cluster_type).permit(*PERMITTED_PARAMS)
   end
 end

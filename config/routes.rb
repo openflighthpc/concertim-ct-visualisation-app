@@ -69,6 +69,12 @@ Rails.application.routes.draw do
     end
   end
 
+  scope '/credit-usage' do
+    get '/cluster-types', to: 'cluster_types#admin_index', as: :admin_cluster_type_index
+  end
+
+  resources :cluster_types, only: [:edit, :update]
+
   resources :users, only: [:index, :edit, :update, :destroy]
 
   resource :settings, only: [:edit, :update]

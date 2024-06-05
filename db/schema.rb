@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_05_171125) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_05_185054) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -59,6 +59,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_05_171125) do
     t.integer "order", default: 0, null: false
     t.string "logo_url", limit: 255
     t.jsonb "instructions"
+    t.integer "base_credits"
   end
 
   create_table "credit_deposits", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -67,6 +68,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_05_171125) do
     t.date "date", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "base_credits"
     t.index ["team_id"], name: "index_credit_deposits_on_team_id"
   end
 

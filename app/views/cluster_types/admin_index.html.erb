@@ -1,0 +1,20 @@
+<% set_title "Available Cluster ypes" -%>
+
+<%= render_resource_table_for @cluster_types, searchable: true do |t| %>
+  <% t.on_empty_collection do %>
+    <% capture do %>
+      No cluster types have been found.
+    <% end %>
+  <% end %>
+
+  <% t.attribute_column :id, sortable: true %>
+  <% t.attribute_column :name, sortable: true %>
+  <% t.attribute_column :foreign_id, sortable: true, title: "Cluster Builder ID" %>
+  <% t.attribute_column :foreign_id, sortable: true, title: "Cluster Builder ID" %>
+  <% t.attribute_column :description %>
+  <% t.attribute_column :base_credits, sortable: true, title: "Base credit usage" %>
+
+  <% t.actions_column do |actions, cluster_type| %>
+    <% actions.add_with_auth can: :edit, on: cluster_type, text: 'Edit base credits', path: edit_cluster_type_path(cluster_type.id) %>
+  <% end %>
+<% end %>

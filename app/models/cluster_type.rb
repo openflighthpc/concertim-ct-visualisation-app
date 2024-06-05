@@ -26,6 +26,9 @@
 #==============================================================================
 
 class ClusterType < ApplicationRecord
+  include Searchable
+  default_search_scope :name, :foreign_id, :description
+
   ############################
   #
   # Validations

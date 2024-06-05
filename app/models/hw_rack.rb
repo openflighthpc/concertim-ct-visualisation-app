@@ -177,12 +177,18 @@ class HwRack < ApplicationRecord
     metadata["openstack_stack_id"]
   end
 
+  def base_credits
+    self.cluster_type.base_credits || 0
+  end
+
   def credit_allocation
-    devices.reduce(0) { |sum, device| sum + device.credit_allocation }
+    base_allocation = (base_credits * hours_since_creation).ceil
+    device_allocation = devices.reduce(0) { |sum, device| sum + device.credit_allocation }
+    base_allocation + device_allocation
   end
 
   def hourly_credits
-    devices.reduce(0) { |sum, device| sum + device.hourly_credits }
+    base_credits + devices.reduce(0) { |sum, device| sum + device.hourly_credits }
   end
 
   ############################
@@ -215,5 +221,9 @@ class HwRack < ApplicationRecord
 
   def broadcast_change(action)
     BroadcastRackChangeJob.perform_now(self.id, self.team_id, action)
+  end
+
+  def hours_since_creation
+    ((Time.now - self.cloud_created_at) / 3600).ceil
   end
 end

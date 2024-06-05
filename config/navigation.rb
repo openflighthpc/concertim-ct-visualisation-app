@@ -52,7 +52,7 @@ SimpleNavigation::Configuration.run do |navigation|
           highlights_on: %r(/cloud-env/configs)
       end
 
-      if current_user.can?(:read, ClusterType)
+      if current_user.can?(:index, ClusterType)
         html_options = {}
         if !current_user.teams_where_admin.any? {|team| team.meets_cluster_credit_requirement? }
           html_options[:class] = "limited-action-icon"

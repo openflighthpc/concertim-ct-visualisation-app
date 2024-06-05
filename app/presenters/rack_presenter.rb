@@ -49,11 +49,6 @@ class RackPresenter < Presenter
   private
 
   def cluster_type
-    @cluster_type ||=
-      begin
-        cluster_type_id = creation_output['concertim_cluster_type']
-        ct = ClusterType.find_by(foreign_id: cluster_type_id)
-        h.presenter_for(ct) if ct
-      end
+    @cluster_type ||= h.presenter_for(o.cluster_type)
   end
 end
