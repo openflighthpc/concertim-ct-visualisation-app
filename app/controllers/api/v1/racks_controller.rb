@@ -77,7 +77,6 @@ class Api::V1::RacksController < Api::V1::ApplicationController
   PERMITTED_PARAMS = %w[name description u_height status creation_output] << {metadata: {}, network_details: {}}
   def rack_params
     permitted = PERMITTED_PARAMS.dup.tap do |a|
-      a << :order_id if current_user.root?
       if params[:action] == 'create'
         a << :team_id
         a << :cloud_created_at

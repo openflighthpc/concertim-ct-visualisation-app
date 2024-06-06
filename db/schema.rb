@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_06_113530) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_06_152525) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -235,13 +235,11 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_06_113530) do
     t.jsonb "network_details", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "order_id"
     t.uuid "template_id", null: false
     t.uuid "team_id", null: false
     t.datetime "cloud_created_at", null: false
     t.uuid "cluster_type_id", null: false
     t.index ["cluster_type_id"], name: "index_racks_on_cluster_type_id"
-    t.index ["order_id"], name: "index_racks_on_order_id", unique: true
     t.index ["team_id"], name: "index_racks_on_team_id"
     t.index ["template_id"], name: "index_racks_on_template_id"
   end

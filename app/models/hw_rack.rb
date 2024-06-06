@@ -84,9 +84,6 @@ class HwRack < ApplicationRecord
   validates :status,
             presence: true,
             inclusion: { in: VALID_STATUSES, message: "must be one of #{VALID_STATUSES.to_sentence(last_word_connector: ' or ')}" }
-  validates :order_id,
-    presence: true,
-    uniqueness: true
   validates :cloud_created_at, presence: true
   validate :rack_limit, if: :new_record?
   validate :metadata_format
