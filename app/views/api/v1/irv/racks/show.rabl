@@ -1,6 +1,5 @@
 object @rack
 attributes :id, :name
-attribute :currency_cost => :cost
 attributes u_height: :uHeight, status: :buildStatus
 node(:teamRole) do |rack|
   if locals[:user].root
@@ -41,7 +40,6 @@ child(:chassis, root: 'Chassis') do |foo|
         id: chassis.device.id,
         name: chassis.device.name,
         buildStatus: chassis.device.status,
-        cost: chassis.device.currency_cost,
         type: chassis.device.type
       },
     }

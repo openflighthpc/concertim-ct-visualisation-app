@@ -85,26 +85,6 @@ class Team < ApplicationRecord
             allow_nil: true,
             allow_blank: true
 
-  validates :billing_acct_id,
-            uniqueness: true,
-            length: { maximum: 255 },
-            allow_nil: true,
-            allow_blank: true
-
-  validates :cost,
-            numericality: { greater_than_or_equal_to: 0 },
-            allow_blank: true
-  validates :credits,
-            numericality: true,
-            presence: true
-  validates :billing_period_end, comparison: { greater_than: :billing_period_start },
-            unless: -> { billing_period_start.blank? || billing_period_end.blank? }
-  validate :billing_period_start_today_or_ealier,
-           if: -> { billing_period_start && billing_period_start_changed? }
-  validate :billing_period_end_today_or_later,
-           if: -> { billing_period_end && billing_period_end_changed? }
-  validate :complete_billing_period
-
   ####################################
   #
   # Public Instance Methods
@@ -131,31 +111,5 @@ class Team < ApplicationRecord
 
   def meets_cluster_credit_requirement?
     remaining_credits >= Rails.application.config.cluster_credit_requirement
-  end
-
-  ####################################
-  #
-  # Private Instance Methods
-  #
-  ####################################
-
-  private
-
-  def complete_billing_period
-    unless !!billing_period_start == !!billing_period_end
-      errors.add(:billing_period, 'must have a start date and end date, or neither')
-    end
-  end
-
-  def billing_period_start_today_or_ealier
-    if billing_period_start && billing_period_start > Date.current
-      errors.add(:billing_period_start, 'must be today or earlier')
-    end
-  end
-
-  def billing_period_end_today_or_later
-    if billing_period_end && billing_period_end < Date.current
-      errors.add(:billing_period_end, 'must be today or later')
-    end
   end
 end

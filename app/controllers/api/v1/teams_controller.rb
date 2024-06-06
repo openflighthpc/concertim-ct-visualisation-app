@@ -62,7 +62,7 @@ class Api::V1::TeamsController < Api::V1::ApplicationController
   def team_params
     permitted_params =
       if current_user.root?
-        [:project_id, :cost, :credits, :billing_acct_id, :billing_period_start, :billing_period_end]
+        [:project_id]
       else
         []
       end

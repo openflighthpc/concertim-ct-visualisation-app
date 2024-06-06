@@ -29,7 +29,6 @@
 # Base presenter class
 #
 
-# TODO: remove this
 class Presenter
 
   def initialize(object, view_context = nil)
@@ -47,16 +46,4 @@ class Presenter
     @view_context
   end
 
-end
-
-module Costed
-  extend ActiveSupport::Concern
-
-  def currency_cost
-    "$#{cost}"
-  end
-
-  def cost
-    '%.2f' % o.cost
-  end
 end

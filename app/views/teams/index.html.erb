@@ -28,9 +28,6 @@
     <% t.attribute_column :billing_acct_id, title: "Billing Account ID", sortable: true %>
   <% end %>
   <% t.attribute_column :remaining_credits, sortable: false %>
-  <% t.custom_column "Cost", sortable: true, db_column: :cost do |team| %>
-    <% presenter_for(team).currency_cost %>
-  <% end %>
   <% t.custom_column "Status", sortable: true, db_column: :deleted_at do |team| %>
     <% presenter_for(team).status %>
   <% end %>

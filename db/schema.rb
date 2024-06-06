@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_05_185054) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_06_113530) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -122,7 +122,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_05_185054) do
     t.integer "modified_timestamp", default: 0, null: false
     t.jsonb "metadata", default: {}, null: false
     t.string "status", null: false
-    t.decimal "cost", default: "0.0", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "base_chassis_id", null: false
@@ -232,7 +231,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_05_185054) do
     t.integer "modified_timestamp", default: 0, null: false
     t.jsonb "metadata", default: {}, null: false
     t.string "status", null: false
-    t.decimal "cost", default: "0.0", null: false
     t.string "creation_output"
     t.jsonb "network_details", default: {}, null: false
     t.datetime "created_at", null: false
@@ -280,10 +278,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_05_185054) do
     t.string "name", limit: 255, null: false
     t.string "project_id", limit: 255
     t.string "billing_acct_id", limit: 255
-    t.decimal "cost", default: "0.0", null: false
-    t.decimal "credits", default: "0.0", null: false
-    t.date "billing_period_start"
-    t.date "billing_period_end"
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

@@ -84,9 +84,6 @@ class HwRack < ApplicationRecord
   validates :status,
             presence: true,
             inclusion: { in: VALID_STATUSES, message: "must be one of #{VALID_STATUSES.to_sentence(last_word_connector: ' or ')}" }
-  validates :cost,
-            numericality: { greater_than_or_equal_to: 0 },
-            allow_blank: true
   validates :order_id,
     presence: true,
     uniqueness: true

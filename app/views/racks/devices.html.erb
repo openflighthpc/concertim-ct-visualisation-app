@@ -13,7 +13,6 @@
       t.attribute_column :id, sortable: true
       t.attribute_column :name, sortable: true
       t.attribute_column :status, sortable: true
-      t.attribute_column :cost, sortable: true
 
       t.actions_column do |actions, device|
         actions.add text: 'View details', path: device_path(device)

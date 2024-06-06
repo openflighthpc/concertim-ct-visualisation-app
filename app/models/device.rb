@@ -77,9 +77,6 @@ class Device < ApplicationRecord
             }
   validates :status, presence: true
   validate :status_validator
-  validates :cost,
-            numericality: { greater_than_or_equal_to: 0 },
-            allow_blank: true
   validates :details, presence: :true
   validates :cloud_created_at, presence: :true
   validate :name_validator

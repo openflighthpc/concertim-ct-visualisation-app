@@ -26,7 +26,6 @@
 #==============================================================================
 
 class RackPresenter < Presenter
-  include Costed
 
   delegate :instructions, :instruction,
     to: :cluster_type,
