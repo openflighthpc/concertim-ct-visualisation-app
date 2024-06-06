@@ -1,0 +1,7 @@
+<%=
+  render_tabbar do |tabs|
+    tabs.add 'Cluster Types', admin_cluster_type_index_path
+    tabs.add 'Instance Types', templates_path
+    tabs.add 'Volume GB Usage', edit_volume_settings_path
+  end
+%>

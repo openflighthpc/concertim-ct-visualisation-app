@@ -77,6 +77,12 @@ SimpleNavigation::Configuration.run do |navigation|
                      highlights_on: %r(/teams)
       end
 
+      if current_user.root?
+        primary.item :config, 'Manage credit usage calculations', url_helpers.admin_cluster_type_index_path,
+                     icon: :prefs,
+                     highlights_on: %r(/credit-usage)
+      end
+
       if current_user.can?(:manage, Setting)
         primary.item :config, 'Settings', url_helpers.edit_settings_path,
                      icon: :config,
@@ -87,12 +93,6 @@ SimpleNavigation::Configuration.run do |navigation|
         primary.item :config, 'Statistics', url_helpers.statistics_path,
                      icon: :info,
                      highlights_on: %r(/statistics)
-      end
-
-      if current_user.root?
-        primary.item :config, 'Manage instance templates', url_helpers.templates_path,
-                     icon: :prefs,
-                     highlights_on: %r(/templates)
       end
 
     else

@@ -1,23 +1,26 @@
-<% set_title "Instance Templates" -%>
+<% set_title "Manage credit usage calculations" -%>
+<%= render partial: 'settings/tabbar' %>
 
-<%= render_resource_table_for @templates, searchable: true do |t| %>
-  <% t.on_empty_collection do %>
-    <% capture do %>
-      No templates have been found.
+<%= render_tab_content do %>
+  <%= render_resource_table_for @templates, searchable: true do |t| %>
+    <% t.on_empty_collection do %>
+      <% capture do %>
+        No templates have been found.
+      <% end %>
     <% end %>
-  <% end %>
 
-  <% t.attribute_column :id, sortable: true %>
-  <% t.attribute_column :name, sortable: true, title: "cloud name" %>
-  <% t.attribute_column :alias, sortable: true %>
-  <% t.attribute_column :description %>
-  <% t.attribute_column :height, sortable: true %>
-  <% t.attribute_column :vcpus, sortable: true %>
-  <% t.attribute_column :ram, sortable: true %>
-  <% t.attribute_column :disk, sortable: true %>
-  <% t.attribute_column :hourly_credits, sortable: true %>
+    <% t.attribute_column :id, sortable: true %>
+    <% t.attribute_column :name, sortable: true, title: "cloud name" %>
+    <% t.attribute_column :alias, sortable: true %>
+    <% t.attribute_column :description %>
+    <% t.attribute_column :height, sortable: true %>
+    <% t.attribute_column :vcpus, sortable: true %>
+    <% t.attribute_column :ram, sortable: true %>
+    <% t.attribute_column :disk, sortable: true %>
+    <% t.attribute_column :hourly_credits, sortable: true %>
 
-  <% t.actions_column do |actions, template| %>
-      <% actions.add_with_auth can: :edit, on: template, text: 'Edit', path: edit_template_path(template) %>
+    <% t.actions_column do |actions, template| %>
+        <% actions.add_with_auth can: :edit, on: template, text: 'Edit', path: edit_template_path(template) %>
+    <% end %>
   <% end %>
 <% end %>

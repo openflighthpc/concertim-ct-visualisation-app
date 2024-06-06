@@ -71,6 +71,8 @@ Rails.application.routes.draw do
 
   scope '/credit-usage' do
     get '/cluster-types', to: 'cluster_types#admin_index', as: :admin_cluster_type_index
+    get '/instance-types', to: 'templates#index', as: :templates
+    get '/volumes', to: 'settings#edit_volume_settings', as: :edit_volume_settings
   end
 
   resources :cluster_types, only: [:edit, :update]
@@ -108,7 +110,7 @@ Rails.application.routes.draw do
     resources :metrics, only: [:index]
   end
 
-  resources :templates, only: [:index, :edit, :update]
+  resources :templates, only: [:edit, :update]
 
   # API routes
   #

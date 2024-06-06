@@ -27,7 +27,7 @@
 
 class CreditDeposit< ApplicationRecord
   default_scope { order(:date) }
-  scope :active, -> { where("date >= ?", Date.current) }
+  scope :active, -> { where("date <= ?", Date.current) }
 
   ####################################
   #

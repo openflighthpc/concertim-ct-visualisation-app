@@ -27,7 +27,9 @@
 
 #
 # Base presenter class
-# 
+#
+
+# TODO: remove this
 class Presenter
 
   def initialize(object, view_context = nil)
