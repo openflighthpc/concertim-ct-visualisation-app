@@ -88,11 +88,6 @@ Rails.application.routes.draw do
       get :usage_limits
     end
     resources :team_roles, only: [:index, :new, :create]
-    resources :invoices, only: [:index, :show] do
-      collection do
-        get 'draft'
-      end
-    end
     resources :credit_deposits, only: [:new, :create, :index]
   end
 
