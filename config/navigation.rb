@@ -54,9 +54,9 @@ SimpleNavigation::Configuration.run do |navigation|
 
       if current_user.can?(:index, ClusterType)
         html_options = {}
-        if !current_user.teams_where_admin.any? {|team| team.meets_cluster_credit_requirement? }
+        if !current_user.teams_where_admin.any? {|team| team.meets_cluster_compute_unit_requirement? }
           html_options[:class] = "limited-action-icon"
-          html_options[:title] = "You must be an admin for a team with at least #{Rails.application.config.cluster_credit_requirement} credits to create a cluster"
+          html_options[:title] = "You must be an admin for a team with at least #{Rails.application.config.cluster_compute_unit_requirement} compute_units to create a cluster"
         end
 
         primary.item :cluster_types, 'Launch cluster', url_helpers.cluster_types_path,
@@ -78,7 +78,7 @@ SimpleNavigation::Configuration.run do |navigation|
       end
 
       if current_user.root?
-        primary.item :config, 'Manage credit usage calculations', url_helpers.admin_cluster_type_index_path,
+        primary.item :config, 'Manage compute unit usage calculations', url_helpers.admin_cluster_type_index_path,
                      icon: :prefs,
                      highlights_on: %r(/credit-usage)
       end

@@ -124,7 +124,7 @@ class Template < ApplicationRecord
   validates :disk,
             numericality: { only_integer: true, greater_than: 0 },
             allow_nil: true
-  validates :hourly_credits,
+  validates :hourly_compute_units,
             numericality: { only_integer: true, greater_than_or_equal_to: 0 },
             allow_nil: true
 

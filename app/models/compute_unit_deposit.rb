@@ -25,7 +25,7 @@
 # https://github.com/openflighthpc/concertim-ct-visualisation-app
 #==============================================================================
 
-class CreditDeposit< ApplicationRecord
+class ComputeUnitDeposit< ApplicationRecord
   default_scope { order(:date) }
   scope :active, -> { where("date <= ?", Date.current) }
 
@@ -62,8 +62,7 @@ class CreditDeposit< ApplicationRecord
   ############################
 
   private
-
-  # In future we may wish to allow specifying a future date
+  
   def set_date
     self.date ||= Date.current
   end

@@ -1,10 +1,10 @@
 <%
-  set_title "Edit credit allocation for cluster type #{@cluster_type.name}"
+  set_title "Edit compute unit allocation for cluster type #{@cluster_type.name}"
 -%>
 
 <%= simple_form_for @cluster_type, url: cluster_type_path(@cluster_type.id), html: { class: 'no_border' } do |f| %>
-  <%= f.input :base_credits, label: "Base credit allocation",
-              hint: "Hourly credit allocation for clusters of this type, excluding instances and volumes",
+  <%= f.input :base_compute_units, label: "Base compute unit allocation",
+              hint: "Hourly compute unit allocation for clusters of this type, excluding instances and volumes",
               input_html: { min: 0, step: 1 }
   %>
   <%= f.button :submit %>

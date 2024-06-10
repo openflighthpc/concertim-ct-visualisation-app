@@ -43,7 +43,7 @@ class SettingsController < ApplicationController
       flash[:info] = "Settings successfully updated"
       redirect_back_or_to root_path
     else
-      flash[:alert] = "Unable to update settings"
+      flash[:alert] = "Unable to update settings: #{@setting.errors.full_messages.join("; ")}"
       render action: :edit
     end
   end

@@ -171,18 +171,21 @@ class HwRack < ApplicationRecord
     metadata["openstack_stack_id"]
   end
 
-  def base_credits
-    self.cluster_type.base_credits || 0
+  def base_compute_units
+    self.cluster_type.base_compute_units || 0
   end
 
-  def credit_allocation
-    base_allocation = (base_credits * hours_since_creation).ceil
-    device_allocation = devices.reduce(0) { |sum, device| sum + device.credit_allocation }
-    base_allocation + device_allocation
+  def base_compute_unit_allocation
+    (base_compute_units * hours_since_creation).ceil
   end
 
-  def hourly_credits
-    base_credits + devices.reduce(0) { |sum, device| sum + device.hourly_credits }
+  def compute_unit_allocation
+    device_allocation = devices.reduce(0) { |sum, device| sum + device.compute_unit_allocation }
+    base_compute_unit_allocation + device_allocation
+  end
+
+  def hourly_compute_units
+    base_compute_units + devices.reduce(0) { |sum, device| sum + device.hourly_compute_units }
   end
 
   ############################

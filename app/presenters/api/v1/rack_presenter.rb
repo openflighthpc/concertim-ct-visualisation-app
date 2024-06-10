@@ -31,7 +31,6 @@
 # Rack Presenter for the API
 module Api::V1
   class RackPresenter < Presenter
-    include Costed
 
     # Be selective about what attributes and methods we expose.
     delegate :id, :name, :u_height, :metadata, :status, :template, :rack_start_u, :rack_end_u,

@@ -55,7 +55,7 @@ class Cluster
   validates :team,
             presence: true
 
-  validate :team_has_enough_credits?
+  validate :team_has_enough_compute_units?
 
   validates :name,
             presence: true,
@@ -136,9 +136,9 @@ class Cluster
     end
   end
 
-  def team_has_enough_credits?
-    if team_id && !team.meets_cluster_credit_requirement?
-      errors.add(:team, "Has insufficient credits to launch a cluster")
+  def team_has_enough_compute_units?
+    if team_id && !team.meets_cluster_compute_unit_requirement?
+      errors.add(:team, "Has insufficient compute_units to launch a cluster")
     end
   end
 end

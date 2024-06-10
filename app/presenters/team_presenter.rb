@@ -56,6 +56,14 @@ class TeamPresenter < Presenter
     @possible_users ||= User.where.not(id: o.user_ids).where.not(root: true)
   end
 
+  def remaining_compute_units
+    h.number_with_delimiter(o.remaining_compute_units, delimiter: ",")
+  end
+
+  def hourly_compute_units
+    h.number_with_delimiter(o.hourly_compute_units, delimiter: ",")
+  end
+
   private
 
   def form_hint(attribute)

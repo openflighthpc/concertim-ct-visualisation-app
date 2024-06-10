@@ -31,8 +31,8 @@ class ClusterTypesController < ApplicationController
   before_action :get_types, except: [:edit, :update]
 
   def index
-    @cluster_types = @cluster_types.where.not(base_credits: nil)
-    @valid_teams = current_user.teams_where_admin.select(&:meets_cluster_credit_requirement?)
+    @cluster_types = @cluster_types.where.not(base_compute_units: nil)
+    @valid_teams = current_user.teams_where_admin.select(&:meets_cluster_compute_unit_requirement?)
     @unavailable_teams =  current_user.teams.where.not(id: @valid_teams.pluck(:id))
     @all_teams = current_user.teams.reorder(:name)
     @team = Team.find(params[:team_id]) if params[:team_id]
@@ -47,7 +47,7 @@ class ClusterTypesController < ApplicationController
 
   def update
     if @cluster_type.update(cluster_type_params)
-      flash[:info] = "Successfully updated cluster type credits"
+      flash[:info] = "Successfully updated cluster type compute_units"
       redirect_to admin_cluster_type_index_path
     else
       flash[:alert] = "Unable to update cluster type: #{@cluster_type.errors.full_messages.join("; ")}"
@@ -67,7 +67,7 @@ class ClusterTypesController < ApplicationController
     @cluster_types = @cluster_types.reorder(:order, :id)
   end
 
-  PERMITTED_PARAMS = %w[base_credits]
+  PERMITTED_PARAMS = %w[base_compute_units]
   def cluster_type_params
     params.require(:cluster_type).permit(*PERMITTED_PARAMS)
   end

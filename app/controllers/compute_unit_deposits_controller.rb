@@ -25,16 +25,16 @@
 # https://github.com/openflighthpc/concertim-ct-visualisation-app
 #==============================================================================
 
-class CreditDepositsController < ApplicationController
+class ComputeUnitDepositsController < ApplicationController
   include ControllerConcerns::ResourceTable
   before_action :set_team, except: [:edit, :update, :destroy]
-  load_and_authorize_resource :credit_deposit, only: [:edit, :update, :destroy]
+  load_and_authorize_resource :compute_unit_deposit, only: [:edit, :update, :destroy]
 
   def new
-    @credit_deposit = CreditDeposit.new(team: @team, amount: 1)
-    authorize! :create, @credit_deposit
-    unless @credit_deposit.valid?
-      flash[:alert] = "Unable to add credits: #{@credit_deposit.errors.full_messages.join("; ")}"
+    @compute_unit_deposit = ComputeUnitDeposit.new(team: @team, amount: 1)
+    authorize! :create, @compute_unit_deposit
+    unless @compute_unit_deposit.valid?
+      flash[:alert] = "Unable to add compute_units: #{@compute_unit_deposit.errors.full_messages.join("; ")}"
       redirect_to teams_path
     end
   end
@@ -43,46 +43,46 @@ class CreditDepositsController < ApplicationController
   end
 
   def create
-    @credit_deposit = CreditDeposit.new(team: @team, amount: credit_deposit_params[:amount])
-    authorize! :create, @credit_deposit
+    @compute_unit_deposit = ComputeUnitDeposit.new(team: @team, amount: compute_unit_deposit_params[:amount])
+    authorize! :create, @compute_unit_deposit
 
-    unless @credit_deposit.valid?
-      flash.now[:alert] = "Unable to add credits: #{@credit_deposit.errors.full_messages.join("; ")}"
+    unless @compute_unit_deposit.valid?
+      flash.now[:alert] = "Unable to add compute units: #{@compute_unit_deposit.errors.full_messages.join("; ")}"
       render :new
       return
     end
 
-    if @credit_deposit.save
-      flash[:success] = "Credit deposit added for #{@team.name}."
-      redirect_to team_credit_deposits_path(team_id: @team.id)
+    if @compute_unit_deposit.save
+      flash[:success] = "Compute unit deposit added for #{@team.name}."
+      redirect_to team_compute_unit_deposits_path(team_id: @team.id)
     else
-      flash.now[:alert] = "Unable to add credits: #{@credit_deposit.errors.full_messages.join("; ")}"
+      flash.now[:alert] = "Unable to add compute units: #{@compute_unit_deposit.errors.full_messages.join("; ")}"
       render :new
     end
   end
 
   def index
-    authorize! :read, CreditDeposit.new(team: @team)
-    @deposits = resource_table_collection(@team.credit_deposits)
+    authorize! :read, ComputeUnitDeposit.new(team: @team)
+    @deposits = resource_table_collection(@team.compute_unit_deposits)
   end
 
   def update
-    if @credit_deposit.update(credit_deposit_params)
+    if @compute_unit_deposit.update(compute_unit_deposit_params)
       flash[:info] = "Successfully updated deposit"
-      redirect_to team_credit_deposits_path(team_id: @credit_deposit.team_id)
+      redirect_to team_compute_unit_deposits_path(team_id: @compute_unit_deposit.team_id)
     else
-      flash[:alert] = "Unable to update deposit: #{@credit_deposit.errors.full_messages.join("; ")}"
+      flash[:alert] = "Unable to update deposit: #{@compute_unit_deposit.errors.full_messages.join("; ")}"
       render action: :edit
     end
   end
 
   def destroy
-    if @credit_deposit.destroy
-      flash[:info] = "Credit deposit destroyed"
+    if @compute_unit_deposit.destroy
+      flash[:info] = "Compute unit deposit destroyed"
     else
-      flash[:alert] = "Unable to delete deposit: #{@credit_deposit.errors.full_messages.join("; ")}"
+      flash[:alert] = "Unable to delete deposit: #{@compute_unit_deposit.errors.full_messages.join("; ")}"
     end
-    redirect_to team_credit_deposits_path(team_id: @credit_deposit.team_id)
+    redirect_to team_compute_unit_deposits_path(team_id: @compute_unit_deposit.team_id)
   end
 
   private
@@ -92,7 +92,7 @@ class CreditDepositsController < ApplicationController
   end
 
   PERMITTED_PARAMS = %w[amount date]
-  def credit_deposit_params
-    params.require(:credit_deposit).permit(*PERMITTED_PARAMS)
+  def compute_unit_deposit_params
+    params.require(:compute_unit_deposit).permit(*PERMITTED_PARAMS)
   end
 end

@@ -1,8 +1,8 @@
 <%
-  set_title "Edit credit deposit for team #{@credit_deposit.team.name}"
+  set_title "Edit compute unit deposit for team #{@compute_unit_deposit.team.name}"
 -%>
 
-<%= simple_form_for @credit_deposit, html: { class: 'no_border' } do |f| %>
+<%= simple_form_for @compute_unit_deposit, html: { class: 'no_border' } do |f| %>
   <%= f.input :date, as: :string, input_html: { type: 'date' }, label: "Effective Date" %>
   <%= f.input :amount, input_html: { min: 1, step: 1 } %>
   <%= f.button :submit %>

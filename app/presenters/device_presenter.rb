@@ -34,7 +34,7 @@ class DevicePresenter < Presenter
   include Device::Common
 
   delegate :name, :description, :status, :metadata, :cloud_created_at,
-    :attributes, :type, :hourly_credits, :credit_allocation,
+    :attributes, :type, :hourly_compute_units, :compute_unit_allocation,
     to: :o
 
   delegate :description,

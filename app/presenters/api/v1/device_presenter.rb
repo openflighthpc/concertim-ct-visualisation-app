@@ -35,7 +35,6 @@
 # categories, e.g., `device_presenter/location`.
 module Api::V1
   class DevicePresenter < Presenter
-    include Costed
 
     # Be selective about what attributes and methods we expose.
     delegate :id, :name, :description, :metadata, :status, :details, :type, :cloud_created_at, to: :o

@@ -1,11 +1,11 @@
-<% set_title "Manage credit usage calculations" -%>
+<% set_title "Manage compute unit usage calculations" -%>
 
 <%= render partial: 'settings/tabbar' %>
 
 <%= render_tab_content do %>
   <%= simple_form_for @setting, url: settings_path, html: {class: 'no_border'} do |f| %>
-    <%= f.input :volume_gb_credits, as: :float, input_html: { min: 0.01, step: 0.01, placeholder: '0.25' },
-                label: "Hourly credits per volume GB", hint: 'Credit allocation per hour for each volume, per GB. Total allocation for a volume will be rounded up.' %>
+    <%= f.input :volume_gb_compute_units, as: :float, input_html: { min: 0.01, step: 0.01, placeholder: '0.25' },
+                label: "Hourly compute units per volume GB", hint: 'compute unit allocation per hour for each volume, per GB. Total allocation for a volume will be rounded up.' %>
     <%= f.button :submit %>
   <% end %>
 <% end %>

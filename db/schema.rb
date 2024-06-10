@@ -60,16 +60,16 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_06_152525) do
     t.string "logo_url", limit: 255
     t.jsonb "instructions"
     t.integer "base_credits"
+    t.integer "base_compute_units"
   end
 
-  create_table "credit_deposits", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "compute_unit_deposits", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.integer "amount", null: false
     t.uuid "team_id", null: false
     t.date "date", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.integer "base_credits"
-    t.index ["team_id"], name: "index_credit_deposits_on_team_id"
+    t.index ["team_id"], name: "index_compute_unit_deposits_on_team_id"
   end
 
   create_table "data_source_maps", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -311,7 +311,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_06_152525) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "tag"
-    t.integer "hourly_credits"
+    t.integer "hourly_compute_units"
     t.string "alias", limit: 255
     t.index ["tag"], name: "index_templates_on_tag", unique: true
   end
@@ -346,7 +346,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_06_152525) do
   add_foreign_key "allowlisted_jwts", "users", on_delete: :cascade
   add_foreign_key "base_chassis", "locations", on_update: :cascade, on_delete: :restrict
   add_foreign_key "base_chassis", "templates", on_update: :cascade, on_delete: :restrict
-  add_foreign_key "credit_deposits", "teams"
+  add_foreign_key "compute_unit_deposits", "teams"
   add_foreign_key "data_source_maps", "devices", on_update: :cascade, on_delete: :cascade
   add_foreign_key "devices", "base_chassis", on_update: :cascade, on_delete: :cascade
   add_foreign_key "locations", "racks", on_update: :cascade, on_delete: :restrict

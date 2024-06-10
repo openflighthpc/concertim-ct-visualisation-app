@@ -61,9 +61,12 @@ class Volume < Device
   #
   ####################################
 
-  def hourly_credits
-    gb_credits = Setting.last&.volume_gb_credits || 0
-    ((self.details&.size || 0) * gb_credits).ceil
+  def hourly_compute_units
+    unless defined?(@hourly_compute_units)
+      gb_compute_units = Setting.last&.volume_gb_compute_units || 0
+      @hourly_compute_units = ((self.details&.size || 0) * gb_compute_units).ceil
+    end
+    @hourly_compute_units
   end
 
   private

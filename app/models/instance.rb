@@ -61,8 +61,8 @@ class Instance < Device
   #
   ####################################
 
-  def hourly_credits
-    self.template&.hourly_credits || 0
+  def hourly_compute_units
+    @hourly_compute_units ||= self.template&.hourly_compute_units || 0
   end
 
   private

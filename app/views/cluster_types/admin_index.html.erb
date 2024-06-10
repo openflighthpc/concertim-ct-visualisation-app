@@ -1,4 +1,4 @@
-<% set_title "Manage credit usage calculations" -%>
+<% set_title "Manage compute unit usage calculations" -%>
 
 <%= render partial: 'settings/tabbar' %>
 
@@ -15,10 +15,10 @@
     <% t.attribute_column :foreign_id, sortable: true, title: "Cluster Builder ID" %>
     <% t.attribute_column :foreign_id, sortable: true, title: "Cluster Builder ID" %>
     <% t.attribute_column :description %>
-    <% t.attribute_column :base_credits, sortable: true, title: "Base credit usage" %>
+    <% t.attribute_column :base_compute_units, sortable: true, title: "Base Compute Unit Usage" %>
 
     <% t.actions_column do |actions, cluster_type| %>
-      <% actions.add_with_auth can: :edit, on: cluster_type, text: 'Edit base credits', path: edit_cluster_type_path(cluster_type.id) %>
+      <% actions.add_with_auth can: :edit, on: cluster_type, text: 'Edit base compute units', path: edit_cluster_type_path(cluster_type.id) %>
     <% end %>
   <% end %>
 <% end %>

@@ -26,7 +26,7 @@
 #==============================================================================
 
 class Setting < ApplicationRecord
-  SETTINGS = %w(metric_refresh_interval volume_gb_credits)
+  SETTINGS = %w(metric_refresh_interval volume_gb_compute_units)
   SETTINGS.each do |key|
     define_method(key) do
       settings[key]
@@ -46,12 +46,12 @@ class Setting < ApplicationRecord
             presence: true,
             numericality: {only_integer: true, greater_than_or_equal_to: 15}
 
-  validates :volume_gb_credits,
+  validates :volume_gb_compute_units,
             presence: true,
             numericality: true
 
   before_save do
     self.metric_refresh_interval = self.metric_refresh_interval.to_i
-    self.volume_gb_credits = self.volume_gb_credits.to_f
+    self.volume_gb_compute_units = self.volume_gb_compute_units.to_f
   end
 end

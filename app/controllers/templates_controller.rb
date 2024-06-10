@@ -48,7 +48,7 @@ class TemplatesController < ApplicationController
 
   private
 
-  PERMITTED_PARAMS = %w[alias hourly_credits description]
+  PERMITTED_PARAMS = %w[alias hourly_compute_units description]
   def template_params
     params.fetch(:template).permit(*PERMITTED_PARAMS)
   end

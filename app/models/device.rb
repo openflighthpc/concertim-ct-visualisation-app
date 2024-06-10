@@ -122,12 +122,12 @@ class Device < ApplicationRecord
   #
   ####################################
 
-  def hourly_credits
+  def hourly_compute_units
     0
   end
 
-  def credit_allocation
-    hours_since_creation * hourly_credits
+  def compute_unit_allocation
+    hours_since_creation * hourly_compute_units
   end
 
   def valid_action?(action)

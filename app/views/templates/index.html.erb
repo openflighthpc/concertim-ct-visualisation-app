@@ -1,4 +1,4 @@
-<% set_title "Manage credit usage calculations" -%>
+<% set_title "Manage compute unit usage calculations" -%>
 <%= render partial: 'settings/tabbar' %>
 
 <%= render_tab_content do %>
@@ -17,7 +17,7 @@
     <% t.attribute_column :vcpus, sortable: true %>
     <% t.attribute_column :ram, sortable: true %>
     <% t.attribute_column :disk, sortable: true %>
-    <% t.attribute_column :hourly_credits, sortable: true %>
+    <% t.attribute_column :hourly_compute_units, sortable: true %>
 
     <% t.actions_column do |actions, template| %>
         <% actions.add_with_auth can: :edit, on: template, text: 'Edit', path: edit_template_path(template) %>

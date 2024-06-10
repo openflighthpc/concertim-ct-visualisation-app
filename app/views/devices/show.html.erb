@@ -12,8 +12,8 @@
         dl.item "Location:", device.location
         dl.item "Status:", device.status
         dl.item "Created:", device.cloud_created_at
-        dl.item "Credits per hour:", device.hourly_credits
-        dl.item "Total credit allocation", device.credit_allocation
+        dl.item "Compute Units Per Hour:", device.hourly_compute_units
+        dl.item "Total Compute Unit Allocation", number_with_delimiter(device.compute_unit_allocation, delimiter: ",")
 
         device.additional_details.each do |label, details_list|
           dl.recurse_items label, details_list

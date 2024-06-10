@@ -61,7 +61,7 @@ class Team < ApplicationRecord
            class_name: 'HwRack',
            dependent: :destroy
   has_many :devices, through: :racks
-  has_many :credit_deposits,
+  has_many :compute_unit_deposits,
            dependent: :destroy
 
   ############################
@@ -101,15 +101,19 @@ class Team < ApplicationRecord
     update(deleted_at: Time.current)
   end
 
-  def credit_allocation
-    racks.reduce(0) { |sum, rack| sum + rack.credit_allocation }
+  def compute_unit_allocation
+    racks.reduce(0) { |sum, rack| sum + rack.compute_unit_allocation }
   end
 
-  def remaining_credits
-    @remaining_credits ||= credit_deposits.active.sum(:amount) - credit_allocation
+  def remaining_compute_units
+    @remaining_compute_units ||= compute_unit_deposits.active.sum(:amount) - compute_unit_allocation
   end
 
-  def meets_cluster_credit_requirement?
-    remaining_credits >= Rails.application.config.cluster_credit_requirement
+  def hourly_compute_units
+    racks.reduce(0) { |sum, rack| sum + rack.hourly_compute_units }
+  end
+
+  def meets_cluster_compute_unit_requirement?
+    remaining_compute_units >= Rails.application.config.cluster_compute_unit_requirement
   end
 end
