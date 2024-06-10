@@ -1,0 +1,11 @@
+<% set_title 'Add compute_units' -%>
+
+<p>Add compute_units for team <strong><%= @team.name %></strong>.</p>
+
+<p>It currently has <strong><%= pluralize(@team.remaining_compute_units, 'compute unit') %>.</strong></p>
+
+<%= simple_form_for @compute_unit_deposit, html: { class: 'no_border' }, url: team_compute_unit_deposits_path(@team) do |f| %>
+  <%= f.input :date, as: :string, input_html: { type: 'date', value: Date.current }, title: 'Effective Date' %>
+  <%= f.input :amount, input_html: { min: 1, step: 1 } %>
+  <%= f.button :submit %>
+<% end %>

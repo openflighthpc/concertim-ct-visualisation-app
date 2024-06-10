@@ -55,6 +55,20 @@ class Volume < Device
   validate :has_volume_details
   validate :has_volume_template
 
+  ####################################
+  #
+  # Instance Methods
+  #
+  ####################################
+
+  def hourly_compute_units
+    unless defined?(@hourly_compute_units)
+      gb_compute_units = Setting.last&.volume_gb_compute_units || 0
+      @hourly_compute_units = ((self.details&.size || 0) * gb_compute_units).ceil
+    end
+    @hourly_compute_units
+  end
+
   private
 
   def has_volume_details

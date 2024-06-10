@@ -23,7 +23,7 @@
   <p>There are no cluster types available at present.</p>
 <% else %>
   <div class="new_cluster choose-team">
-    <% if @valid_teams.exists? %>
+    <% if @valid_teams.any? %>
       <div class="formItem">
         <div class="field">
           <%= label_tag :team_id, "Team", class: "required_field" %>
@@ -38,18 +38,18 @@
           </select>
         </div>
         <div class="constraint-text">
-          You must be a team admin and the team have at least <%= Rails.application.config.cluster_credit_requirement %> credits
+          You must be a team admin and the team have at least <%= Rails.application.config.cluster_compute_unit_requirement %> compute_units
         </div>
       </div>
     <% else %>
       <p>
-        You must be an admin for a team with at least <%= Rails.application.config.cluster_credit_requirement %> credits to create a cluster.
+        You must be an admin for a team with at least <%= Rails.application.config.cluster_compute_unit_requirement %> compute_units to create a cluster.
       </p>
     <% end %>
   </div>
 
   <div class="cluster-types-card-deck">
-    <% available_teams = @valid_teams.exists? %>
+    <% available_teams = @valid_teams.any? %>
     <% @cluster_types.each do |cluster_type| %>
       <%= render partial: 'card', object: cluster_type, locals: { team: @team, available_teams: available_teams } %>
     <% end %>

@@ -100,9 +100,9 @@ class Api::V1::DevicesController < Api::V1::ApplicationController
   end
 
   PERMITTED_PARAMS = [
-    "name", "type", "description", "status", "cost", 
+    "name", "type", "description", "status",
     "public_ips", "private_ips", "ssh_key", "login_user",
-    "location" => %w[rack_id start_u facing]
+    "cloud_created_at", "location" => %w[rack_id start_u facing]
   ] << {metadata: {}, details: {}, volume_details: {}}
   def permitted_params
     params.require(:device).permit(*PERMITTED_PARAMS)

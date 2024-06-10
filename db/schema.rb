@@ -1,30 +1,3 @@
-#==============================================================================
-# Copyright (C) 2024-present Alces Flight Ltd.
-#
-# This file is part of Concertim Visualisation App.
-#
-# This program and the accompanying materials are made available under
-# the terms of the Eclipse Public License 2.0 which is available at
-# <https://www.eclipse.org/legal/epl-2.0>, or alternative license
-# terms made available by Alces Flight Ltd - please direct inquiries
-# about licensing to licensing@alces-flight.com.
-#
-# Concertim Visualisation App is distributed in the hope that it will be useful, but
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, EITHER EXPRESS OR
-# IMPLIED INCLUDING, WITHOUT LIMITATION, ANY WARRANTIES OR CONDITIONS
-# OF TITLE, NON-INFRINGEMENT, MERCHANTABILITY OR FITNESS FOR A
-# PARTICULAR PURPOSE. See the Eclipse Public License 2.0 for more
-# details.
-#
-# You should have received a copy of the Eclipse Public License 2.0
-# along with Concertim Visualisation App. If not, see:
-#
-#  https://opensource.org/licenses/EPL-2.0
-#
-# For more information on Concertim Visualisation App, please visit:
-# https://github.com/openflighthpc/concertim-ct-visualisation-app
-#==============================================================================
-
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -37,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_07_103025) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_06_152525) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -86,6 +59,17 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_07_103025) do
     t.integer "order", default: 0, null: false
     t.string "logo_url", limit: 255
     t.jsonb "instructions"
+    t.integer "base_credits"
+    t.integer "base_compute_units"
+  end
+
+  create_table "compute_unit_deposits", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "amount", null: false
+    t.uuid "team_id", null: false
+    t.date "date", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["team_id"], name: "index_compute_unit_deposits_on_team_id"
   end
 
   create_table "data_source_maps", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -138,13 +122,13 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_07_103025) do
     t.integer "modified_timestamp", default: 0, null: false
     t.jsonb "metadata", default: {}, null: false
     t.string "status", null: false
-    t.decimal "cost", default: "0.0", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "base_chassis_id", null: false
     t.string "details_type"
     t.uuid "details_id"
     t.string "type", null: false
+    t.datetime "cloud_created_at", null: false
     t.index ["base_chassis_id"], name: "index_devices_on_base_chassis_id"
     t.index ["type"], name: "index_devices_on_type"
   end
@@ -247,15 +231,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_07_103025) do
     t.integer "modified_timestamp", default: 0, null: false
     t.jsonb "metadata", default: {}, null: false
     t.string "status", null: false
-    t.decimal "cost", default: "0.0", null: false
     t.string "creation_output"
     t.jsonb "network_details", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "order_id"
     t.uuid "template_id", null: false
     t.uuid "team_id", null: false
-    t.index ["order_id"], name: "index_racks_on_order_id", unique: true
+    t.datetime "cloud_created_at", null: false
+    t.uuid "cluster_type_id", null: false
+    t.index ["cluster_type_id"], name: "index_racks_on_cluster_type_id"
     t.index ["team_id"], name: "index_racks_on_team_id"
     t.index ["template_id"], name: "index_racks_on_template_id"
   end
@@ -292,10 +276,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_07_103025) do
     t.string "name", limit: 255, null: false
     t.string "project_id", limit: 255
     t.string "billing_acct_id", limit: 255
-    t.decimal "cost", default: "0.0", null: false
-    t.decimal "credits", default: "0.0", null: false
-    t.date "billing_period_start"
-    t.date "billing_period_end"
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -331,6 +311,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_07_103025) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "tag"
+    t.integer "hourly_compute_units"
+    t.string "alias", limit: 255
     t.index ["tag"], name: "index_templates_on_tag", unique: true
   end
 
@@ -364,9 +346,11 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_07_103025) do
   add_foreign_key "allowlisted_jwts", "users", on_delete: :cascade
   add_foreign_key "base_chassis", "locations", on_update: :cascade, on_delete: :restrict
   add_foreign_key "base_chassis", "templates", on_update: :cascade, on_delete: :restrict
+  add_foreign_key "compute_unit_deposits", "teams"
   add_foreign_key "data_source_maps", "devices", on_update: :cascade, on_delete: :cascade
   add_foreign_key "devices", "base_chassis", on_update: :cascade, on_delete: :cascade
   add_foreign_key "locations", "racks", on_update: :cascade, on_delete: :restrict
+  add_foreign_key "racks", "cluster_types", on_delete: :restrict
   add_foreign_key "racks", "teams", on_update: :cascade, on_delete: :restrict
   add_foreign_key "racks", "templates", on_update: :cascade, on_delete: :restrict
   add_foreign_key "rackview_presets", "users", on_update: :cascade, on_delete: :cascade

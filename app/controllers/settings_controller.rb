@@ -31,14 +31,19 @@ class SettingsController < ApplicationController
     authorize! :update, @setting
   end
 
+  def edit_volume_settings
+    @setting = Setting.first
+    authorize! :update, @setting
+  end
+
   def update
     @setting = Setting.first
     authorize! :update, @setting
     if @setting.update(setting_params)
       flash[:info] = "Settings successfully updated"
-      redirect_to root_path
+      redirect_back_or_to root_path
     else
-      flash[:alert] = "Unable to update settings"
+      flash[:alert] = "Unable to update settings: #{@setting.errors.full_messages.join("; ")}"
       render action: :edit
     end
   end

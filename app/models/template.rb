@@ -28,6 +28,9 @@
 class Template < ApplicationRecord
   enum rackable: { rackable: 1, zerouable: 2, nonrackable: 3 }
 
+  include Searchable
+  default_search_scope :name, :alias
+
   #######################
   #
   # Associations
@@ -120,6 +123,9 @@ class Template < ApplicationRecord
             allow_nil: true
   validates :disk,
             numericality: { only_integer: true, greater_than: 0 },
+            allow_nil: true
+  validates :hourly_compute_units,
+            numericality: { only_integer: true, greater_than_or_equal_to: 0 },
             allow_nil: true
 
   validates :tag,

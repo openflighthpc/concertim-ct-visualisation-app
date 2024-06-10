@@ -69,6 +69,14 @@ Rails.application.routes.draw do
     end
   end
 
+  scope '/compute-unit-usage' do
+    get '/cluster-types', to: 'cluster_types#admin_index', as: :admin_cluster_type_index
+    get '/instance-types', to: 'templates#index', as: :templates
+    get '/volumes', to: 'settings#edit_volume_settings', as: :edit_volume_settings
+  end
+
+  resources :cluster_types, only: [:edit, :update]
+
   resources :users, only: [:index, :edit, :update, :destroy]
 
   resource :settings, only: [:edit, :update]
@@ -80,14 +88,10 @@ Rails.application.routes.draw do
       get :usage_limits
     end
     resources :team_roles, only: [:index, :new, :create]
-    resources :invoices, only: [:index, :show] do
-      collection do
-        get 'draft'
-      end
-    end
-    resources :credit_deposits, only: [:new, :create]
+    resources :compute_unit_deposits, only: [:new, :create, :index]
   end
 
+  resources :compute_unit_deposits, only: [:edit, :update, :destroy]
   resources :team_roles, only: [:edit, :update, :destroy]
 
   resources :key_pairs, only: [:index, :new, :create] do
@@ -100,6 +104,8 @@ Rails.application.routes.draw do
   resources :devices, only: [:show] do
     resources :metrics, only: [:index]
   end
+
+  resources :templates, only: [:edit, :update]
 
   # API routes
   #

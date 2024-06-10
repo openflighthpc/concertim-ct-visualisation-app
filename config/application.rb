@@ -62,10 +62,6 @@ module CtApp
     # The base URL to use for the concertim metric reporting daemon.
     config.metric_daemon_url = ENV.fetch("METRIC_DAEMON_URL", "http://localhost:3000/")
 
-    # Display a fake invoice if ENV['FAKE_INVOICE'] is set.  Otherwise the
-    # concertim-openstack-service will be contacted to provide the invoice.
-    config.fake_invoice = ENV['FAKE_INVOICE']
-
     # Support storing credentials content on a docker volume.  This allows
     # per-site credentials and master key to be provided.
     if ENV['CREDENTIALS_CONTENT_PATH'].present?
@@ -80,13 +76,13 @@ module CtApp
       "irv.scss" => "irv.css",
     }
 
-    # minimum credits user must have to create a cluster
+    # minimum compute_units user must have to create a cluster
     config.after_initialize do
-      config.cluster_credit_requirement = if ENV['CLUSTER_CREDIT_REQUIREMENT']
+      config.cluster_compute_unit_requirement = if ENV['CLUSTER_COMPUTE_UNIT_REQUIREMENT']
         begin
-          config.cluster_credit_requirement = Float(ENV['CLUSTER_CREDIT_REQUIREMENT'])
+          config.cluster_compute_unit_requirement = Float(ENV['CLUSTER_COMPUTE_UNIT_REQUIREMENT'])
         rescue ArgumentError
-          msg = 'ENV variable CLUSTER_CREDIT_REQUIREMENT is not a valid number. Please update its value, or unset it.'
+          msg = 'ENV variable CLUSTER_COMPUTE_UNIT_REQUIREMENT is not a valid number. Please update its value, or unset it.'
           Rails.logger.warn(msg)
           $stderr.puts(msg)
           exit(1)

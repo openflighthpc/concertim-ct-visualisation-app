@@ -119,6 +119,7 @@ class SyncAllClusterTypesJob < ApplicationJob
         end
       end
 
+      # Perhaps these will need to be archived instead of deleted, for data integrity
       ClusterType.where.not(foreign_id: types.map { |type| type["id"] }).each do |to_remove|
         unless to_remove.destroy
           errors << "Unable to remove type '#{to_remove.descriptive_name}': #{to_remove.errors.full_messages.join("; ")}"

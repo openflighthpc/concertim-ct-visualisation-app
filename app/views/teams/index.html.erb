@@ -25,13 +25,12 @@
   <% end %>
   <% if current_user.root? %>
     <% t.attribute_column :project_id, title: "Project ID", sortable: true %>
-    <% t.attribute_column :billing_acct_id, title: "Billing Account ID", sortable: true %>
   <% end %>
-  <% t.custom_column "Credits", sortable: true, db_column: :credits do |team| %>
-    <% presenter_for(team).formatted_credits %>
+  <% t.custom_column "Remaining Compute Units", sortable: false do |team| %>
+    <% presenter_for(team).remaining_compute_units %>
   <% end %>
-  <% t.custom_column "Cost", sortable: true, db_column: :cost do |team| %>
-    <% presenter_for(team).currency_cost %>
+  <% t.custom_column "Total Hourly Compute Units", sortable: false do |team| %>
+    <% presenter_for(team).hourly_compute_units %>
   <% end %>
   <% t.custom_column "Status", sortable: true, db_column: :deleted_at do |team| %>
     <% presenter_for(team).status %>
@@ -41,13 +40,13 @@
     <% actions.add_with_auth can: :edit, on: team, text: 'Edit', path: edit_team_path(team) %>
     <% actions.add_with_auth can: :manage, on: TeamRole.new(team_id: team.id), text: 'Manage Users', path: team_team_roles_path(team) %>
     <% actions.add_with_auth can: :usage_limits, on: team, text: 'View Usage Limits', path: usage_limits_team_path(id: team.id) %>
-    <% actions.add_with_auth can: :read, on: Invoice.new(account: team), text: 'View Invoices', path: team_invoices_path(team) %>
-    <% actions.add_with_auth can: :create, on: CreditDeposit.new(team: team), text: 'Add Credits', path: new_team_credit_deposit_path(team) %>
+    <% actions.add_with_auth can: :create, on: ComputeUnitDeposit.new(team: team), text: 'Add Compute Units', path: new_team_compute_unit_deposit_path(team) %>
+    <% actions.add_with_auth can: :read, on: ComputeUnitDeposit.new(team: team), text: 'View Compute Unit Deposits', path: team_compute_unit_deposits_path(team) %>
     <% if can? :create, Cluster.new(team: team, cluster_type: ClusterType.new) %>
-      <% if Team.meets_cluster_credit_requirement.where(id: team.id).exists? %>
+      <% if team.meets_cluster_compute_unit_requirement? %>
         <% actions.add text: 'Create Cluster', path: cluster_types_path(team_id: team.id) %>
       <% else  %>
-        <% actions.add text: 'Create Cluster', path: '#', class: "disabled-action", title: "Team has insufficient credits to create cluster" %>
+        <% actions.add text: 'Create Cluster', path: '#', class: "disabled-action", title: "Team has insufficient compute units to create cluster" %>
       <% end %>
     <% end %>
     <%

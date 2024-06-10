@@ -49,7 +49,7 @@ class Ability
   def root_abilities
     can :manage, :all
 
-    cannot :read, ClusterType
+    cannot :index, ClusterType
     cannot :create, Cluster
 
     # Don't allow any admin users to be deleted.
@@ -75,6 +75,7 @@ class Ability
     can :manage, RackviewPreset, user: @user
 
     can :read, ClusterType
+    can :index, ClusterType
     can :create, Cluster, team_id: @user.teams_where_admin.pluck(:id)
 
     can :read, KeyPair, user: @user
@@ -85,9 +86,7 @@ class Ability
     can [:read, :usage_limits], Team, id: @user.team_ids
     can :manage, TeamRole, team: @user.teams_where_admin.where(single_user: false)
 
-    # Invoice is an ActiveModel::Model, but not an ActiveRecord::Base.  Setting
-    # abilities like this might not work too well.  Or perhaps its fine.
-    can :read, Invoice, account: @user.team_roles.where(role: "admin").map(&:team)
+    can :read, ComputeUnitDeposit, team_id: @user.team_ids
   end
 
   # Despite specifying what a user can/can't do, you will eventually come

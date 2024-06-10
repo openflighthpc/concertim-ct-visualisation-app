@@ -1,5 +1,5 @@
 object @rack
-attributes :id, :name, :u_height, :metadata, :status, :cost, :network_details, :creation_output, :order_id, :modified_timestamp
+attributes :id, :name, :u_height, :metadata, :status, :network_details, :creation_output, :order_id, :modified_timestamp
 
 child :team, root: 'owner' do
   extends 'api/v1/teams/show'

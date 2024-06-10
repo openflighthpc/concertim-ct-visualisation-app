@@ -77,10 +77,8 @@ class Device < ApplicationRecord
             }
   validates :status, presence: true
   validate :status_validator
-  validates :cost,
-            numericality: { greater_than_or_equal_to: 0 },
-            allow_blank: true
   validates :details, presence: :true
+  validates :cloud_created_at, presence: :true
   validate :name_validator
   validate :device_limit, if: :new_record?
   validate :metadata_format
@@ -123,6 +121,14 @@ class Device < ApplicationRecord
   # Instance Methods
   #
   ####################################
+
+  def hourly_compute_units
+    0
+  end
+
+  def compute_unit_allocation
+    hours_since_creation * hourly_compute_units
+  end
 
   def valid_action?(action)
     self.class.valid_status_action_mappings[status].include?(action)
@@ -200,5 +206,9 @@ class Device < ApplicationRecord
     if details_type_changed? && self.persisted?
       self.errors.add(:details_type, "Cannot be changed once a device has been created")
     end
+  end
+
+  def hours_since_creation
+    ((Time.now - self.cloud_created_at) / 3600).ceil
   end
 end

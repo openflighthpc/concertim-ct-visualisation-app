@@ -38,7 +38,7 @@ class CreateSettings < ActiveRecord::Migration[7.0]
     reversible do |dir|
       dir.up do
         Setting.reset_column_information
-        Setting.create!(settings: {metric_refresh_interval: 15})
+        Setting.create!(settings: {metric_refresh_interval: 15, volume_gb_compute_units: 0.25})
       end
       dir.down do
         Setting.reset_column_information

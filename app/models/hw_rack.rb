@@ -63,7 +63,7 @@ class HwRack < ApplicationRecord
   has_many :devices, through: :chassis
 
   belongs_to :team
-
+  belongs_to :cluster_type
 
   ############################
   #
@@ -84,12 +84,7 @@ class HwRack < ApplicationRecord
   validates :status,
             presence: true,
             inclusion: { in: VALID_STATUSES, message: "must be one of #{VALID_STATUSES.to_sentence(last_word_connector: ' or ')}" }
-  validates :cost,
-            numericality: { greater_than_or_equal_to: 0 },
-            allow_blank: true
-  validates :order_id,
-    presence: true,
-    uniqueness: true
+  validates :cloud_created_at, presence: true
   validate :rack_limit, if: :new_record?
   validate :metadata_format
 
@@ -164,12 +159,33 @@ class HwRack < ApplicationRecord
   #
   ############################
 
+  def cluster_type_name=(name)
+    self.cluster_type = ClusterType.find_by(foreign_id: name)
+  end
+
   def valid_action?(action)
     VALID_STATUS_ACTION_MAPPINGS[status].include?(action)
   end
 
   def openstack_id
     metadata["openstack_stack_id"]
+  end
+
+  def base_compute_units
+    self.cluster_type.base_compute_units || 0
+  end
+
+  def base_compute_unit_allocation
+    (base_compute_units * hours_since_creation).ceil
+  end
+
+  def compute_unit_allocation
+    device_allocation = devices.reduce(0) { |sum, device| sum + device.compute_unit_allocation }
+    base_compute_unit_allocation + device_allocation
+  end
+
+  def hourly_compute_units
+    base_compute_units + devices.reduce(0) { |sum, device| sum + device.hourly_compute_units }
   end
 
   ############################
@@ -202,5 +218,9 @@ class HwRack < ApplicationRecord
 
   def broadcast_change(action)
     BroadcastRackChangeJob.perform_now(self.id, self.team_id, action)
+  end
+
+  def hours_since_creation
+    ((Time.now - self.cloud_created_at) / 3600).ceil
   end
 end

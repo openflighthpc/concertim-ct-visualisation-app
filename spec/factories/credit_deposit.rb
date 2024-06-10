@@ -26,7 +26,7 @@
 #==============================================================================
 
 FactoryBot.define do
-  factory :credit_deposit, class: 'CreditDeposit' do
+  factory :credit_deposit, class: 'ComputeUnitDeposit' do
     amount { rand(1..10) }
     team { create(:team, :with_openstack_details) }
   end

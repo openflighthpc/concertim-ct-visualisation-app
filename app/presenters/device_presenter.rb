@@ -32,13 +32,12 @@
 #
 class DevicePresenter < Presenter
   include Device::Common
-  include Costed
 
-  delegate :name, :description, :status, :metadata,
-    :attributes, :type,
+  delegate :name, :description, :status, :metadata, :cloud_created_at,
+    :attributes, :type, :hourly_compute_units, :compute_unit_allocation,
     to: :o
 
-  delegate :name, :description,
+  delegate :description,
     to: :template, prefix: :template
 
   delegate :additional_details, to: :details
@@ -82,6 +81,10 @@ class DevicePresenter < Presenter
 
   def has_metadata?
     !metadata.empty?
+  end
+
+  def template_name
+    template.alias || template.name
   end
 
   private

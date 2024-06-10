@@ -27,7 +27,7 @@
 
 require 'rails_helper'
 
-RSpec.describe CreditDeposit, type: :model do
+RSpec.describe ComputeUnitDeposit, type: :model do
   subject { build(:credit_deposit) }
 
   it "is valid with valid attributes" do

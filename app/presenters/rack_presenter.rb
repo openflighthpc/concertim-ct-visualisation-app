@@ -26,29 +26,28 @@
 #==============================================================================
 
 class RackPresenter < Presenter
-  include Costed
 
   delegate :instructions, :instruction,
     to: :cluster_type,
     allow_nil: true
 
   def creation_output
-    outputs = o.creation_output.split(', ').map { |output| output.split('=') }
-    Hash[outputs].tap do |h|
-      if h.key?('web_access')
-        h['web_access'] = @view_context.link_to(h['web_access'], h['web_access'], target: '_blank')
+    outputs = o.creation_output.gsub(/\b\w+=/, '').gsub(/(\w+=)|'/, '' => '', "'" => '"')
+    parsed_outputs = JSON.parse("[#{outputs}]")
+    results = {}
+    parsed_outputs.each do |output|
+      if output["output_key"] == "web_access"
+        results['web_access'] = @view_context.link_to( output["output_value"], output["output_value"], target: '_blank')
+      else
+        results[output["output_key"]] = output["output_value"]
       end
     end
+    results
   end
 
   private
 
   def cluster_type
-    @cluster_type ||=
-      begin
-        cluster_type_id = creation_output['concertim_cluster_type']
-        ct = ClusterType.find_by(foreign_id: cluster_type_id)
-        h.presenter_for(ct) if ct
-      end
+    @cluster_type ||= h.presenter_for(o.cluster_type)
   end
 end

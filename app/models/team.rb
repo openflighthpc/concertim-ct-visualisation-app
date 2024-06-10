@@ -28,7 +28,6 @@
 class Team < ApplicationRecord
   include Searchable
   default_search_scope :name
-  scope :meets_cluster_credit_requirement, -> { where("credits >= ?", Rails.application.config.cluster_credit_requirement) }
   normalizes :project_id, with: -> project_id { project_id.strip }
   normalizes :name, with: -> name { name.strip }
 
@@ -62,6 +61,8 @@ class Team < ApplicationRecord
            class_name: 'HwRack',
            dependent: :destroy
   has_many :devices, through: :racks
+  has_many :compute_unit_deposits,
+           dependent: :destroy
 
   ############################
   #
@@ -84,26 +85,6 @@ class Team < ApplicationRecord
             allow_nil: true,
             allow_blank: true
 
-  validates :billing_acct_id,
-            uniqueness: true,
-            length: { maximum: 255 },
-            allow_nil: true,
-            allow_blank: true
-
-  validates :cost,
-            numericality: { greater_than_or_equal_to: 0 },
-            allow_blank: true
-  validates :credits,
-            numericality: true,
-            presence: true
-  validates :billing_period_end, comparison: { greater_than: :billing_period_start },
-            unless: -> { billing_period_start.blank? || billing_period_end.blank? }
-  validate :billing_period_start_today_or_ealier,
-           if: -> { billing_period_start && billing_period_start_changed? }
-  validate :billing_period_end_today_or_later,
-           if: -> { billing_period_end && billing_period_end_changed? }
-  validate :complete_billing_period
-
   ####################################
   #
   # Public Instance Methods
@@ -120,29 +101,19 @@ class Team < ApplicationRecord
     update(deleted_at: Time.current)
   end
 
-  ####################################
-  #
-  # Private Instance Methods
-  #
-  ####################################
-
-  private
-
-  def complete_billing_period
-    unless !!billing_period_start == !!billing_period_end
-      errors.add(:billing_period, 'must have a start date and end date, or neither')
-    end
+  def compute_unit_allocation
+    racks.reduce(0) { |sum, rack| sum + rack.compute_unit_allocation }
   end
 
-  def billing_period_start_today_or_ealier
-    if billing_period_start && billing_period_start > Date.current
-      errors.add(:billing_period_start, 'must be today or earlier')
-    end
+  def remaining_compute_units
+    @remaining_compute_units ||= compute_unit_deposits.active.sum(:amount) - compute_unit_allocation
   end
 
-  def billing_period_end_today_or_later
-    if billing_period_end && billing_period_end < Date.current
-      errors.add(:billing_period_end, 'must be today or later')
-    end
+  def hourly_compute_units
+    racks.reduce(0) { |sum, rack| sum + rack.hourly_compute_units }
+  end
+
+  def meets_cluster_compute_unit_requirement?
+    remaining_compute_units >= Rails.application.config.cluster_compute_unit_requirement
   end
 end
